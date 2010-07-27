@@ -5,7 +5,7 @@
 /*.iws
 /*.jar
 /*.patch
+/*.class
 /bin
-/data
 /scripts/*.class
 /temp.txt
