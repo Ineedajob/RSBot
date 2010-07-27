@@ -6,16 +6,15 @@ RES=resources
 BINDIR=bin
 LSTF=temp.txt
 IMGDIR=$(RES)/images
-DATADIR=data
 MANIFEST=$(RES)/Manifest.txt
 VERSIONFILE=.version
 VERSION=`cat $(VERSIONFILE)`
 SCRIPTS=scripts
-DIST=$(DATADIR)/RSBot.jar
+DIST=RSBot.jar
 
 .PHONY: all Bot Scripts mostlyclean clean
 
-all: $(DATADIR) Bot Scripts
+all: Bot Scripts
 	@rm -f $(DIST)
 	@cp $(MANIFEST) $(LSTF)
 	@echo "Specification-Version: \"$(VERSION)\"" >> $(LSTF)
@@ -36,7 +35,5 @@ clean: mostlyclean
 	@rm -rfv $(BINDIR)/*
 	@rm -fv $(LSTF)
 
-$(DATADIR):
-	@mkdir $(DATADIR)
 $(BINDIR):
 	@mkdir $(BINDIR)
