@@ -4,20 +4,16 @@ import org.rsbot.script.wrappers.RSComponent;
 import org.rsbot.script.wrappers.RSInterface;
 import org.rsbot.script.wrappers.RSItem;
 
+import java.util.ArrayList;
+
 /**
  * Store related operations.
  */
 public class Store extends MethodProvider {
-	
+
     public static final int INTERFACE_STORE = 620;
-    public static final int INTERFACE_STORE_BUTTON_CLOSE = 7;
-    public static final int INTERFACE_STORE_BUTTON_PLAYERSTORE = 17;
-    public static final int INTERFACE_STORE_BUTTON_MAINSTORE = 20;
-    
-    public static final int STOCK_MAIN = 24;
-    public static final int STOCK_PLAYER = 26;
-    
-    private int stock = STOCK_MAIN;
+    public static final int INTERFACE_STORE_BUTTON_CLOSE = 18;
+    public static final int INTERFACE_STORE_ITEMS = 25;
 
     Store(final MethodContext ctx) {
         super(ctx);
@@ -33,36 +29,47 @@ public class Store extends MethodProvider {
      */
     public boolean buy(final int itemID, final int count) {
         if (count < 0)
-            throw new IllegalArgumentException("count < 0 " + count);
+            return false;
         if (!isOpen())
             return false;
         final int inventoryCount = methods.inventory.getCount(true);
         RSItem item = getItem(itemID);
         if (item != null) {
-        	for (int tries = 0; tries < 5; tries++) {
-                switch (count) {
-                    case 0: // Withdraw All
-                    	item.doAction("Buy All");
-                        break;
-                    case 1: // Withdraw 1
-                        item.doAction("Buy 1");
-                        break;
-                    case 5: // Withdraw 5
-                        item.doAction("Buy 5");
-                        break;
-                    case 10: // Withdraw 10
-                        item.doAction("Buy 10");
-                        break;
-                    case 50: // Withdraw 50
-                        item.doAction("Buy 50");
-                    default: // Withdraw x
-                        item.doAction("Buy X");
-                        sleep(random(900, 1100));
-                        methods.inputManager.sendKeys("" + count, true);
-                }
-                sleep(random(500, 700));
+            if (count >= 500) {
+                if (item.doAction("Buy 500")) {
+                    sleep(random(500, 700));
+                    return buy(itemID, (count - 500));
+                } else
+                    return false;
+            } else if (count >= 50 && count < 500) {
+                if (item.doAction("Buy 50")) {
+                    sleep(random(500, 700));
+                    return buy(itemID, (count - 50));
+                } else
+                    return false;
+            } else if (count >= 10 && count < 50) {
+                if (item.doAction("Buy 10")) {
+                    sleep(random(500, 700));
+                    return buy(itemID, (count - 10));
+                } else
+                    return false;
+            } else if (count >= 5 && count < 10) {
+                if (item.doAction("Buy 5")) {
+                    sleep(random(500, 700));
+                    return buy(itemID, (count - 5));
+                } else
+                    return false;
+            } else if (count >= 1 && count < 5) {
+                if (item.doAction("Buy 1")) {
+                    sleep(random(500, 700));
+                    return buy(itemID, (count - 1));
+                } else
+                    return false;
+            } else {
                 if (methods.inventory.getCount(true) > inventoryCount)
                     return true;
+                else
+                    return false;
             }
         }
         return false;
@@ -76,9 +83,12 @@ public class Store extends MethodProvider {
     public boolean close() {
         if (!isOpen())
             return true;
-        methods.interfaces.getComponent(620, 18).doClick();
-        sleep(random(500, 600));
-        return !isOpen();
+
+        if (methods.interfaces.getComponent(INTERFACE_STORE, INTERFACE_STORE_BUTTON_CLOSE).doClick()) {
+            sleep(random(500, 600));
+            return !isOpen();
+        } else
+            return false;
     }
 
     /**
@@ -87,12 +97,12 @@ public class Store extends MethodProvider {
      * @return the store <tt>RSInterface</tt>
      */
     public RSInterface getInterface() {
-        return methods.interfaces.get(620);
+        return methods.interfaces.get(INTERFACE_STORE);
     }
 
     /**
      * Gets the item at a given component index.
-     * 
+     *
      * @param index The index of the component based off of the components in the Store interface.
      * @return <tt>RSComponent</tt> for the item at the given index; otherwise null.
      */
@@ -128,38 +138,33 @@ public class Store extends MethodProvider {
 
     /**
      * Gets all the items in the store inventory.
-     * 
+     *
      * @return An <tt>RSComponent</tt> array representing all of the components in the
-     * stores <tt>RSInterface</tt>.
+     *         stores <tt>RSInterface</tt>.
      */
     public RSItem[] getItems() {
-        if ((getInterface() == null) || (getInterface().getComponent(stock) == null))
-            return new RSItem[0];
+        if ((getInterface() == null) || (getInterface().getComponent(INTERFACE_STORE_ITEMS) == null))
+            return null;
 
-        RSComponent[] components = getInterface().getComponent(stock).getComponents();
-        RSItem[] items = new RSItem[components.length];
+        ArrayList<RSItem> items = new ArrayList<RSItem>();
+        RSComponent[] components = getInterface().getComponent(INTERFACE_STORE_ITEMS).getComponents();
+
         for (int i = 0; i < components.length; ++i) {
-        	items[i] = new RSItem(methods, components[i]);
+
+            if (components[i] != null && components[i].getComponentID() != -1)
+                items.add(new RSItem(methods, components[i]));
         }
-        return items;
+
+        return items.toArray(new RSItem[items.size()]);
     }
 
     /**
      * Returns whether or not the store interface is open.
-     * 
+     *
      * @return <tt>true</tt> if the store interface is open, otherwise <tt>false</tt>.
      */
     public boolean isOpen() {
         return getInterface().isValid();
     }
-
-    /**
-     * Allows switching between main stock and player stock.
-     *
-     * @param mainStock <tt>true</tt> for MainStock; <tt>false</tt> for PlayerStock
-     */
-	public void setStock(final boolean mainStock) {
-		stock = mainStock ? STOCK_MAIN : STOCK_PLAYER;
-	}
 
 }
