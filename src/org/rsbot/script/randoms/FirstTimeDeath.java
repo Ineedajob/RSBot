@@ -6,7 +6,7 @@ import org.rsbot.script.wrappers.RSNPC;
 import org.rsbot.script.wrappers.RSObject;
 import org.rsbot.script.wrappers.RSTile;
 
-@ScriptManifest(authors = {"Taha"}, name = "First Time Death", version = 1.1)
+@ScriptManifest(authors = {"Taha"}, name = "FirstTimeDeath", version = 1.1)
 public class FirstTimeDeath extends Random {
     private int step;
     private boolean exit;

@@ -10,7 +10,7 @@ import java.awt.*;
 /**
  * @author Iscream
  */
-@ScriptManifest(authors = {"Iscream"}, name = "LoginBot", version = 1.1)
+@ScriptManifest(authors = {"Iscream"}, name = "Login", version = 1.1)
 public class LoginBot extends Random {
 
     private static final int INTERFACE_MAIN = 905;

@@ -13,7 +13,7 @@ import org.rsbot.script.wrappers.*;
  * Updated by Iscream(Apr 15, 2010)
  * Updated by Iscream(Apr 23, 2010)
  */
-@ScriptManifest(authors = {"Iscream"}, name = "Prison Pete", version = 1.5)
+@ScriptManifest(authors = {"Iscream"}, name = "PrisonPete", version = 1.5)
 public class Prison extends Random {
 
     private static final int PRISON_MATE = 3118, LEVER_ID = 10817, DOOR_KEY = 6966;

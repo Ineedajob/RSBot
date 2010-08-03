@@ -16,7 +16,7 @@ import java.util.ArrayList;
  * 
  * @author PwnZ
  */
-@ScriptManifest(authors = {"PwnZ"}, name = "Molly Solver", version = 1.9)
+@ScriptManifest(authors = {"PwnZ"}, name = "Molly", version = 1.9)
 public class Molly extends Random {
 	
     private RSNPC molly;

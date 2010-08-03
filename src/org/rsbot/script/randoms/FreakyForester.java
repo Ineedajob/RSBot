@@ -11,7 +11,7 @@ import org.rsbot.script.wrappers.*;
 /**
  * @version 2.3 - 15/4/10 Fix by Iscream
  */
-@ScriptManifest(authors = {"Pwnaz0r", "Taha", "zqqou", "Zach"}, name = "Freaky Forester", version = 2.3)
+@ScriptManifest(authors = {"Pwnaz0r", "Taha", "zqqou", "Zach"}, name = "FreakyForester", version = 2.3)
 public class FreakyForester extends Random implements ServerMessageListener {
 
     private RSNPC forester;

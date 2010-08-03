@@ -5,7 +5,7 @@ import org.rsbot.script.ScriptManifest;
 import org.rsbot.script.methods.Game;
 import org.rsbot.script.wrappers.RSInterface;
 
-@ScriptManifest(authors = {"ToshiXZ"}, name = "Teleblock Closer", version = 1.0)
+@ScriptManifest(authors = {"ToshiXZ"}, name = "TeleotherCloser", version = 1.0)
 public class TeleotherCloser extends Random {
 
     @Override

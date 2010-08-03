@@ -11,7 +11,7 @@ import java.util.List;
  * <p/>
  * Last updated 16/05/10.
  */
-@ScriptManifest(authors = {"Jacmob", "HeyyamaN"}, name = "Interface Closer", version = 1.7)
+@ScriptManifest(authors = {"Jacmob", "HeyyamaN"}, name = "InterfaceCloser", version = 1.7)
 public class CloseAllInterface extends Random {
 	
 	static class ComponentDef {
