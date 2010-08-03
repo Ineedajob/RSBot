@@ -7,7 +7,7 @@ import org.rsbot.script.wrappers.RSNPC;
 /*
 * Updated by Iscream Feb 22,10
 */
-@ScriptManifest(authors = {"Nightmares18", "joku.rules", "Taha", "Fred"}, name = "Frog Cave", version = 2.3)
+@ScriptManifest(authors = {"Nightmares18", "joku.rules", "Taha", "Fred"}, name = "FrogCave", version = 2.3)
 public class FrogCave extends Random {
     private RSNPC frog;
     private boolean talkedToHerald;

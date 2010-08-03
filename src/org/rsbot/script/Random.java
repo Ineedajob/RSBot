@@ -5,6 +5,7 @@ import org.rsbot.script.methods.Methods;
 
 public abstract class Random extends Methods {
 
+    private volatile boolean enabled = true;
     private volatile boolean active = false;
     protected String name;
 
@@ -50,6 +51,14 @@ public abstract class Random extends Methods {
 
     public final boolean isActive() {
         return active;
+    }
+    
+    public final boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled =  enabled;
     }
 
     public final boolean runRandom() {

@@ -4,7 +4,7 @@ import org.rsbot.script.Random;
 import org.rsbot.script.ScriptManifest;
 import org.rsbot.script.wrappers.RSComponent;
 
-@ScriptManifest(authors = {"Holo", "Gnarly"}, name = "Bank pins manager", version = 2.1)
+@ScriptManifest(authors = {"Holo", "Gnarly"}, name = "BankPin", version = 2.1)
 public class BankPins extends Random {
 
     private String pin;

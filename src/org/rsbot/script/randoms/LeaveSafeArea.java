@@ -3,7 +3,7 @@ package org.rsbot.script.randoms;
 import org.rsbot.script.Random;
 import org.rsbot.script.ScriptManifest;
 
-@ScriptManifest(name = "Leave Safe Area", authors = "Taha", version = 1.0)
+@ScriptManifest(name = "LeaveSafeArea", authors = "Taha", version = 1.0)
 public class LeaveSafeArea extends Random {
 
     @Override

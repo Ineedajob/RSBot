@@ -6,7 +6,7 @@ import org.rsbot.script.wrappers.RSNPC;
 import org.rsbot.script.wrappers.RSObject;
 import org.rsbot.script.wrappers.RSTile;
 
-@ScriptManifest(authors = {"Keilgo"}, name = "Drill Demon", version = 0.1)
+@ScriptManifest(authors = {"Keilgo"}, name = "DrillDemon", version = 0.1)
 public class DrillDemon extends Random {
 
     public int demonID = 2790;

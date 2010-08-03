@@ -10,7 +10,7 @@ import org.rsbot.script.wrappers.*;
  * Updated by Iscream(Apr 15, 2010)
  * Updated by Iscream(May 11, 2010)
  */
-@ScriptManifest(authors = {"endoskeleton", "Johnnei"}, name = "ScapeRune Island", version = 1.27)
+@ScriptManifest(authors = {"endoskeleton", "Johnnei"}, name = "ScapeRuneIsland", version = 1.27)
 public class ScapeRuneIsland extends Random {
 
     public RSObject statue1, statue2, statue3, statue4, direction;

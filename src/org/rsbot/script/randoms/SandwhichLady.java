@@ -15,7 +15,7 @@ import org.rsbot.script.wrappers.RSObject;
  * 
  * @author Qauters
  */
-@ScriptManifest(authors = {"Qauters", "Drizzt1112", "TwistedMind"}, name = "Sandwhich Lady", version = 2.3)
+@ScriptManifest(authors = {"Qauters", "Drizzt1112", "TwistedMind"}, name = "SandwhichLady", version = 2.3)
 public class SandwhichLady extends Random {
 
     final static int ID_InterfaceSandwhichWindow = 297;

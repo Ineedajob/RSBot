@@ -129,12 +129,16 @@ public abstract class Script extends Methods implements EventListener {
     }
 
     private boolean checkForRandoms() {
+
+        if(ctx.bot.disableRandoms)
+            return false;
+            
         for (final Random random : ctx.bot.getScriptHandler().getRandoms()) {
             if (random instanceof LoginBot) {
                 if (ctx.bot.disableAutoLogin) {
                     continue;
                 }
-            } else if (ctx.bot.disableRandoms) {
+            } else if (!random.isEnabled()) {
                 continue;
             }
             if (random.runRandom()) {

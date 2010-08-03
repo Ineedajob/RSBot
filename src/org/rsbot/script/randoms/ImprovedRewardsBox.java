@@ -10,7 +10,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 
-@ScriptManifest(authors = {"Fred"}, name = "Improved Rewards Box", version = 1.1)
+@ScriptManifest(authors = {"Fred"}, name = "ImprovedRewardsBox", version = 1.1)
 public class ImprovedRewardsBox extends Random {
 
     Rectangle temp;

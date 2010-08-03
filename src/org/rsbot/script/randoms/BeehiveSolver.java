@@ -15,7 +15,7 @@ import java.awt.*;
  * @author Pwnaz0r & Velocity
  * @version 2.3 - 04/03/09
  */
-@ScriptManifest(authors = {"Pwnaz0r", "Velocity"}, name = "Bee Hive Random", version = 2.5)
+@ScriptManifest(authors = {"Pwnaz0r", "Velocity"}, name = "BeeHive", version = 2.5)
 public class BeehiveSolver extends Random {
 
     RSNPC BeehiveKeeper;

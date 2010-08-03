@@ -25,7 +25,7 @@ import java.util.Iterator;
  *
  * @author Qauters
  */
-@ScriptManifest(authors = {"Qauters"}, name = "Grave Digger", version = 1.6)
+@ScriptManifest(authors = {"Qauters"}, name = "GraveDigger", version = 1.6)
 public class GraveDigger extends Random {
 
     class Group {

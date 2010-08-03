@@ -12,7 +12,7 @@ import org.rsbot.script.wrappers.RSTile;
  * Coding by joku.rules, Fixed by FuglyNerd
  * Interface data taken from Certer solver by Nightmares18
  */
-@ScriptManifest(authors = {"joku.rules"}, name = "Certer Solver", version = 1.0)
+@ScriptManifest(authors = {"joku.rules"}, name = "Certer", version = 1.0)
 public class Certer extends Random {
     private final int[] MODEL_IDS = {2807, 8828, 8829, 8832, 8833, 8834, 8835, 8836, 8837};
     private final int[] bookPiles = {42352, 42354};

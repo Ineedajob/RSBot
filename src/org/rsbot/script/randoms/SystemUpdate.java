@@ -9,7 +9,7 @@ import org.rsbot.script.ScriptManifest;
  *
  * @author Gnarly
  */
-@ScriptManifest(authors = {"Gnarly"}, name = "System Update", version = 1.4)
+@ScriptManifest(authors = {"Gnarly"}, name = "SystemUpdate", version = 1.4)
 public class SystemUpdate extends Random {
 
     private int logoutMinutes;

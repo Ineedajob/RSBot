@@ -13,7 +13,7 @@ import org.rsbot.script.wrappers.RSObject;
  * Updated by Iscream (Feb 17,10) Fixed Exiting Issues
  */
 
-@ScriptManifest(authors = {"Keilgo", "Taha", "Equilibrium", "Twistedmind"}, name = "Cap'n Arnav", version = 0.9)
+@ScriptManifest(authors = {"Keilgo", "Taha", "Equilibrium", "Twistedmind"}, name = "CapnArnav", version = 0.9)
 public class CapnArnav extends Random {
 
     public int startValue3;
