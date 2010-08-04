@@ -22,23 +22,24 @@ public class Bank extends MethodProvider {
 		1265, 1267, 1269, 1273, 1271, 1275, 1351, 590, 303 };
 
 	public static final int INTERFACE_BANK = 762;
-	public static final int INTERFACE_BANK_BUTTON_CLOSE = 42;
-	public static final int INTERFACE_BANK_BUTTON_DEPOSIT_BEAST_INVENTORY = 36;
-	public static final int INTERFACE_BANK_BUTTON_DEPOSIT_CARRIED_ITEMS = 32;
-	public static final int INTERFACE_BANK_BUTTON_DEPOSIT_WORN_ITEMS = 34;
-	public static final int INTERFACE_BANK_BUTTON_HELP = 43;
+	public static final int INTERFACE_BANK_BUTTON_CLOSE = 43;
+	public static final int INTERFACE_BANK_BUTTON_DEPOSIT_BEAST_INVENTORY = 38;
+	public static final int INTERFACE_BANK_BUTTON_DEPOSIT_CARRIED_ITEMS = 34;
+	public static final int INTERFACE_BANK_BUTTON_DEPOSIT_WORN_ITEMS = 36;
+	public static final int INTERFACE_BANK_BUTTON_HELP = 44;
 	public static final int INTERFACE_BANK_BUTTON_INSERT = 15;
 	public static final int INTERFACE_BANK_BUTTON_ITEM = 19;
 	public static final int INTERFACE_BANK_BUTTON_NOTE = 19;
 	public static final int INTERFACE_BANK_BUTTON_SEARCH = 17;
 	public static final int INTERFACE_BANK_BUTTON_SWAP = 15;
-	public static final int INTERFACE_BANK_INVENTORY = 92;
-	public static final int INTERFACE_BANK_ITEM_FREE_COUNT = 23;
-	public static final int INTERFACE_BANK_ITEM_FREE_MAX = 24;
-	public static final int INTERFACE_BANK_ITEM_MEMBERS_COUNT = 25;
-	public static final int INTERFACE_BANK_ITEM_MEMBERS_MAX = 26;
+	public static final int INTERFACE_BANK_INVENTORY = 93;
+	public static final int INTERFACE_BANK_ITEM_FREE_COUNT = 29;
+	public static final int INTERFACE_BANK_ITEM_FREE_MAX = 30;
+	public static final int INTERFACE_BANK_ITEM_MEMBERS_COUNT = 31;
+	public static final int INTERFACE_BANK_ITEM_MEMBERS_MAX = 32;
 	public static final int INTERFACE_BANK_SCROLLBAR = 114;
-	public static final int INTERFACE_BANK_SEARCH = 17;
+	public static final int INTERFACE_BANK_SEARCH = 752;
+	public static final int INTERFACE_BANK_SEARCH_INPUT = 5;
 
 	public static final int INTERFACE_COLLECTION_BOX = 105;
 	public static final int INTERFACE_COLLECTION_BOX_CLOSE = 13;
