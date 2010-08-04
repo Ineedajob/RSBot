@@ -6,6 +6,7 @@ SET src=src
 SET lib=lib
 SET res=resources
 SET out=bin
+SET dist=RSBot.jar
 
 CALL :clean 2>NUL
 CALL "%res%\FindJDK.bat"
@@ -13,16 +14,9 @@ CALL "%res%\FindJDK.bat"
 SET lstf=temp.txt
 SET imgdir=%res%\images
 SET manifest=%res%\Manifest.txt
-SET versionfile=.version
+SET versionfile=version.txt
 FOR /F %%G IN (%versionfile%) DO SET version=%%G
 SET scripts=scripts
-SET dist=RSBot.jar
-SET full=1
-
-IF "%1"=="/S" (
-        SET full=0
-        GOTO :scripts
-)
 
 ECHO Compiling bot
 IF EXIST "%lstf%" DEL /F /Q "%lstf%"
@@ -37,7 +31,6 @@ ECHO Compiling scripts
 ECHO. > "%scripts%\.class"
 DEL /F /Q "%scripts%\*.class" > NUL
 "%cc%" %cflags% -cp "%out%" %scripts%\*.java
-IF "%full%"=="0" GOTO :end
 
 ECHO Packing JAR
 
@@ -50,6 +43,7 @@ jar cfm "%dist%" "%lstf%" -C "%out%" . %scripts%\*.class %res%\version.dat %imgd
 DEL /F /Q "%lstf%"
 
 :end
+CALL :clean 2>NUL
 ECHO Compilation successful.
 GOTO :eof
 
@@ -60,7 +54,6 @@ ECHO %gx% >> %lstf%
 GOTO :eof
 
 :clean
-RD /S /Q bin
-RD /S /Q data
-DEL /F /Q scripts\*.class
+RMDIR /S /Q "%out%"
+DEL /F /Q %scripts%\*.class
 GOTO :eof

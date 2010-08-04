@@ -7,7 +7,7 @@ BINDIR=bin
 LSTF=temp.txt
 IMGDIR=$(RES)/images
 MANIFEST=$(RES)/Manifest.txt
-VERSIONFILE=.version
+VERSIONFILE=version.txt
 VERSION=`cat $(VERSIONFILE)`
 SCRIPTS=scripts
 DIST=RSBot.jar
@@ -15,13 +15,16 @@ DIST=RSBot.jar
 .PHONY: all Bot Scripts mostlyclean clean
 
 all: Bot Scripts
-	@rm -f $(DIST)
+	@rm -fv $(LSTF)
 	@cp $(MANIFEST) $(LSTF)
 	@echo "Specification-Version: \"$(VERSION)\"" >> $(LSTF)
 	@echo "Implementation-Version: \"$(VERSION)\"" >> $(LSTF)
+	@if [ -e $(DIST) ]; then @rm -fv $(DIST); fi
 	jar cfm $(DIST) $(LSTF) -C $(BINDIR) . $(SCRIPTS)/*.class $(IMGDIR)/*.png $(RES)/*.bat $(RES)/*.sh $(RES)/version.dat
+	@rm -fv $(LSTF)
 
-Bot: $(BINDIR)
+Bot:
+	@mkdir $(BINDIR)
 	$(CC) $(CFLAGS) -d $(BINDIR) `find $(SRC) -name *.java`
 
 Scripts: mostlyclean
@@ -33,7 +36,3 @@ mostlyclean:
 clean: mostlyclean
 	@rm -fv $(DIST)
 	@rm -rfv $(BINDIR)/*
-	@rm -fv $(LSTF)
-
-$(BINDIR):
-	@mkdir $(BINDIR)
