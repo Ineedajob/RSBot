@@ -181,9 +181,9 @@ public class BotGUI extends JFrame implements ActionListener {
                 showStopScriptSelector();
             } else if ("Pause Script".equals(command[1]) || "Resume Script".equals(command[1])) {
                      pauseScript();
-            } else if ("Save Screenshot".equals(command[1])) {
+            } else if ("Screenshot".equals(command[1])) {
                 ScreenshotUtil.takeScreenshot(getBot(), isLoggedIn());
-            } else if ("Save Screenshot [No censor]".equals(command[1])) {
+            } else if ("Screenshot (Uncensored)".equals(command[1])) {
                 ScreenshotUtil.takeScreenshot(getBot(), false);
             } else if ("Login".equals(command[1])) {
                 if (BotGUI.loggedIn) {
@@ -417,7 +417,7 @@ public class BotGUI extends JFrame implements ActionListener {
     private JMenuBar constructMenuBar() {
         final String[] debugs = constructDebugs();
         final String[] titles = new String[]{"File", "Edit", "View", "Help"};
-        final String[][] elements = new String[][]{{"Run Script", "Stop Script", "Pause Script", "-", "Save Screenshot", "Save Screenshot [No censor]", "Login", "-", "Exit"}, {"Accounts", "-", "ToggleF Block User Input", "ToggleF Use Less CPU", "-", "ToggleF Disable Randoms", "ToggleF Disable Auto Login", "ToggleF Disable Break Handler"}, debugs, {"Site", "Project", "About"}};
+        final String[][] elements = new String[][]{{"Run Script", "Stop Script", "Pause Script", "-", "Screenshot", "Screenshot (Uncensored)", "Login", "-", "Exit"}, {"Accounts", "-", "ToggleF Block User Input", "ToggleF Use Less CPU", "-", "ToggleF Disable Randoms", "ToggleF Disable Auto Login", "ToggleF Disable Break Handler"}, debugs, {"Site", "Project", "About"}};
         final JMenuBar bar = new JMenuBar();
         for (int i = 0; i < titles.length; i++) {
             final String title = titles[i];
