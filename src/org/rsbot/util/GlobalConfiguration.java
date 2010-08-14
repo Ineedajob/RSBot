@@ -226,13 +226,16 @@ public class GlobalConfiguration {
     }
 
     public static String getHttpUserAgent() {
-        String agent = "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1; Trident/4.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET CLR 3.0.30729; Tablet PC 2.0)";
-        if (GlobalConfiguration.getCurrentOperatingSystem() == GlobalConfiguration.OperatingSystem.MAC) {
-            agent = "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_5_8; en-us) AppleWebKit/531.9 (KHTML, like Gecko) Version/4.0.3 Safari/531.9";
-        } else if (GlobalConfiguration.getCurrentOperatingSystem() != GlobalConfiguration.OperatingSystem.WINDOWS) {
-            agent = "Mozilla/5.0 (X11; U; Linux i686; en-GB; rv:1.9.1.5) Gecko/20091109 Firefox/3.5.5";
-        }
-        return agent;
+    	String plat = "Windows", os = "Windows NT 5.2";
+    	if (GlobalConfiguration.getCurrentOperatingSystem() == GlobalConfiguration.OperatingSystem.MAC) {
+    		plat = "Macintosh"; os = "Intel Mac OS X 10_6_4";
+    	} else if (GlobalConfiguration.getCurrentOperatingSystem() != GlobalConfiguration.OperatingSystem.WINDOWS) {
+    		plat = "X11"; os = "Linux i686";
+    	}
+    	StringBuilder buf = new StringBuilder(125);
+    	buf.append("Mozilla/5.0 (").append(plat).append("; U; ").append(os);
+    	buf.append("; en-US) AppleWebKit/534.4 (KHTML, like Gecko) Chrome/6.0.481.0 Safari/534.4");
+    	return buf.toString();
     }
 
     public static URLConnection getURLConnection(final URL url, final String referer) throws IOException {
