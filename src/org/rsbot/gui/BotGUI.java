@@ -57,7 +57,7 @@ public class BotGUI extends JFrame implements ActionListener {
         DEBUG_MAP.put("Player Position", TPlayerPosition.class);
         DEBUG_MAP.put("Mouse Position", TMousePosition.class);
         DEBUG_MAP.put("Actual Mouse Position", TActualMousePosition.class);
-        DEBUG_MAP.put("User Input Allowed", TUserInputAllowed.class);
+        DEBUG_MAP.put("Input Allowed", TUserInputAllowed.class);
         DEBUG_MAP.put("Menu Actions", TMenuActions.class);
         DEBUG_MAP.put("FPS", TFPS.class);
 
@@ -104,7 +104,7 @@ public class BotGUI extends JFrame implements ActionListener {
         }
 
         initializeGUI();
-        pauseResumeScript = commandMenuItem.get("Pause Script");
+        pauseResumeScript = commandMenuItem.get("Pause");
         pauseResumeScript.setEnabled(false);
         commandMenuItem.get("Login").setVisible(false);
 
@@ -166,20 +166,20 @@ public class BotGUI extends JFrame implements ActionListener {
         }
         if (command[0].equals("File")) {
             final ScriptHandler sh = bot.getScriptHandler();
-            if ("Run Script".equals(command[1])) {
+            if ("Run".equals(command[1])) {
                 showRunScriptSelector();
                 final Map<Integer, Script> running = sh.getRunningScripts();
                 if (running.size() > 0) {
-                    pauseResumeScript.setText("Pause Script");
+                    pauseResumeScript.setText("Pause");
                     pauseResumeScript.setEnabled(true);
-                    updatePauseButton("Pause Script", GlobalConfiguration.Paths.Resources.ICON_PAUSE, GlobalConfiguration.Paths.ICON_PAUSE);
+                    updatePauseButton("Pause", GlobalConfiguration.Paths.Resources.ICON_PAUSE, GlobalConfiguration.Paths.ICON_PAUSE);
                 } else {
                     pauseResumeScript.setEnabled(false);
-                    updatePauseButton("Run Script", GlobalConfiguration.Paths.Resources.ICON_PLAY, GlobalConfiguration.Paths.ICON_PLAY);
+                    updatePauseButton("Run", GlobalConfiguration.Paths.Resources.ICON_PLAY, GlobalConfiguration.Paths.ICON_PLAY);
                 }
-            } else if ("Stop Script".equals(command[1])) {
+            } else if ("Stop".equals(command[1])) {
                 showStopScriptSelector();
-            } else if ("Pause Script".equals(command[1]) || "Resume Script".equals(command[1])) {
+            } else if ("Pause".equals(command[1]) || "Resume Script".equals(command[1])) {
                      pauseScript();
             } else if ("Screenshot".equals(command[1])) {
                 ScreenshotUtil.takeScreenshot(getBot(), isLoggedIn());
@@ -200,7 +200,7 @@ public class BotGUI extends JFrame implements ActionListener {
         } else if (command[0].equals("Edit")) {
             if ("Accounts".equals(command[1])) {
                 AccountManager.getInstance().showGUI();
-            } else if ("Block User Input".equals(command[1])) {
+            } else if ("Block Input".equals(command[1])) {
                 Listener.blocked = !Listener.blocked;
                 try {
                     userInputButton.setIcon(new ImageIcon(Listener.blocked ? (GlobalConfiguration.RUNNING_FROM_JAR ? getClass().getResource(GlobalConfiguration.Paths.Resources.ICON_DELETE) : new File(GlobalConfiguration.Paths.ICON_DELETE).toURI().toURL()) : GlobalConfiguration.RUNNING_FROM_JAR ? getClass().getResource(GlobalConfiguration.Paths.Resources.ICON_TICK) : new File(GlobalConfiguration.Paths.ICON_TICK).toURI().toURL()));
@@ -335,7 +335,7 @@ public class BotGUI extends JFrame implements ActionListener {
         setTitle();
         bot.getScriptHandler().runScript(script, args);
         if (!Listener.blocked) {
-            commandCheckMap.get("Block User Input").doClick();
+            commandCheckMap.get("Block Input").doClick();
         }
     }
 
@@ -358,8 +358,8 @@ public class BotGUI extends JFrame implements ActionListener {
                 pauseResumeScript.setText("Resume Script");
                 updatePauseButton("Resume Script", GlobalConfiguration.Paths.Resources.ICON_PLAY, GlobalConfiguration.Paths.ICON_PLAY);
             } else {
-                pauseResumeScript.setText("Pause Script");
-                updatePauseButton("Pause Script", GlobalConfiguration.Paths.Resources.ICON_PAUSE, GlobalConfiguration.Paths.ICON_PAUSE);
+                pauseResumeScript.setText("Pause");
+                updatePauseButton("Pause", GlobalConfiguration.Paths.Resources.ICON_PAUSE, GlobalConfiguration.Paths.ICON_PAUSE);
             }
         }
     }
@@ -417,7 +417,7 @@ public class BotGUI extends JFrame implements ActionListener {
     private JMenuBar constructMenuBar() {
         final String[] debugs = constructDebugs();
         final String[] titles = new String[]{"File", "Edit", "View", "Help"};
-        final String[][] elements = new String[][]{{"Run Script", "Stop Script", "Pause Script", "-", "Screenshot", "Screenshot (Uncensored)", "Login", "-", "Exit"}, {"Accounts", "-", "ToggleF Block User Input", "ToggleF Use Less CPU", "-", "ToggleF Disable Randoms", "ToggleF Disable Auto Login", "ToggleF Disable Break Handler"}, debugs, {"Site", "Project", "About"}};
+        final String[][] elements = new String[][]{{"Run", "Stop", "Pause", "-", "Screenshot", "Screenshot (Uncensored)", "Login", "-", "Exit"}, {"Accounts", "-", "ToggleF Block Input", "ToggleF Use Less CPU", "-", "ToggleF Disable Randoms", "ToggleF Disable Auto Login", "ToggleF Disable Break Handler"}, debugs, {"Site", "Project", "About"}};
         final JMenuBar bar = new JMenuBar();
         for (int i = 0; i < titles.length; i++) {
             final String title = titles[i];
@@ -515,19 +515,19 @@ public class BotGUI extends JFrame implements ActionListener {
         setJMenuBar(constructMenuBar());
 
         try {
-            userInputButton = new JButton("User Input", new ImageIcon(GlobalConfiguration.RUNNING_FROM_JAR ? getClass().getResource(GlobalConfiguration.Paths.Resources.ICON_TICK) : new File(GlobalConfiguration.Paths.ICON_TICK).toURI().toURL()));
+            userInputButton = new JButton("Input", new ImageIcon(GlobalConfiguration.RUNNING_FROM_JAR ? getClass().getResource(GlobalConfiguration.Paths.Resources.ICON_TICK) : new File(GlobalConfiguration.Paths.ICON_TICK).toURI().toURL()));
         } catch (final MalformedURLException e1) {
             e1.printStackTrace();
         }
         userInputButton.addActionListener(new ActionListener() {
             public void actionPerformed(final ActionEvent arg0) {
-                commandCheckMap.get("Block User Input").doClick();
+                commandCheckMap.get("Block Input").doClick();
             }
         });
         userInputButton.setFocusable(false);
 
         try {
-            userPauseButton = new JButton("Run Script", new ImageIcon(GlobalConfiguration.RUNNING_FROM_JAR ? getClass().getResource(GlobalConfiguration.Paths.Resources.ICON_PLAY) : new File(GlobalConfiguration.Paths.ICON_PLAY).toURI().toURL()));
+            userPauseButton = new JButton("Run", new ImageIcon(GlobalConfiguration.RUNNING_FROM_JAR ? getClass().getResource(GlobalConfiguration.Paths.Resources.ICON_PLAY) : new File(GlobalConfiguration.Paths.ICON_PLAY).toURI().toURL()));
         } catch (final MalformedURLException e1) {
             e1.printStackTrace();
         }
@@ -539,7 +539,7 @@ public class BotGUI extends JFrame implements ActionListener {
                     pauseResumeScript.doClick();
                 }
                 if (running.size() == 0) {
-                    commandMenuItem.get("Run Script").doClick();
+                    commandMenuItem.get("Run").doClick();
                 }
 
             }
@@ -741,9 +741,9 @@ public class BotGUI extends JFrame implements ActionListener {
             if (result == JOptionPane.OK_OPTION) {
                 sh.stopScript(id);
 
-                pauseResumeScript.setText("Pause Script");
+                pauseResumeScript.setText("Pause");
                 pauseResumeScript.setEnabled(false);
-                updatePauseButton("Run Script", GlobalConfiguration.Paths.Resources.ICON_PLAY, GlobalConfiguration.Paths.ICON_PLAY);
+                updatePauseButton("Run", GlobalConfiguration.Paths.Resources.ICON_PLAY, GlobalConfiguration.Paths.ICON_PLAY);
             }
         }
     }
