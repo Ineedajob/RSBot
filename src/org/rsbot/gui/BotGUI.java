@@ -25,9 +25,7 @@ import java.awt.event.WindowEvent;
 import java.io.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.*;
 import java.util.List;
 import java.util.logging.Logger;
@@ -38,9 +36,6 @@ public class BotGUI extends JFrame implements ActionListener {
     private static final Logger log = Logger.getLogger(BotGUI.class.getName());
 
     private static final Map<String, Class<?>> DEBUG_MAP = new LinkedHashMap<String, Class<?>>();
-
-    private static boolean loggedIn = false;
-    private static String cookies;
 
     private static TrayIcon trayIcon;
     private static MenuItem hideShow;
@@ -106,7 +101,6 @@ public class BotGUI extends JFrame implements ActionListener {
         initializeGUI();
         pauseResumeScript = commandMenuItem.get("Pause");
         pauseResumeScript.setEnabled(false);
-        commandMenuItem.get("Login").setVisible(false);
 
         setTitle();
         setLocationRelativeTo(getOwner());
@@ -185,15 +179,6 @@ public class BotGUI extends JFrame implements ActionListener {
                 ScreenshotUtil.takeScreenshot(getBot(), isLoggedIn());
             } else if ("Screenshot (Uncensored)".equals(command[1])) {
                 ScreenshotUtil.takeScreenshot(getBot(), false);
-            } else if ("Login".equals(command[1])) {
-                if (BotGUI.loggedIn) {
-                    BotGUI.cookies = "";
-                    BotGUI.loggedIn = false;
-                    commandMenuItem.get(command[1]).setText("Login");
-                    BotGUI.log.info("Logged out.");
-                } else {
-                    promptAndLogin();
-                }
             } else if ("Exit".equals(command[1])) {
                 System.exit(0);
             }
@@ -417,7 +402,7 @@ public class BotGUI extends JFrame implements ActionListener {
     private JMenuBar constructMenuBar() {
         final String[] debugs = constructDebugs();
         final String[] titles = new String[]{"File", "Edit", "View", "Help"};
-        final String[][] elements = new String[][]{{"Run", "Stop", "Pause", "-", "Screenshot", "Screenshot (Uncensored)", "Login", "-", "Exit"}, {"Accounts", "-", "ToggleF Block Input", "ToggleF Less CPU", "-", "ToggleF Disable Anti-Randoms", "ToggleF Disable Auto Login", "ToggleF Disable Break Handler"}, debugs, {"Site", "Project", "About"}};
+        final String[][] elements = new String[][]{{"Run", "Stop", "Pause", "-", "Screenshot", "Screenshot (Uncensored)", "-", "Exit"}, {"Accounts", "-", "ToggleF Block Input", "ToggleF Less CPU", "-", "ToggleF Disable Anti-Randoms", "ToggleF Disable Auto Login", "ToggleF Disable Break Handler"}, debugs, {"Site", "Project", "About"}};
         final JMenuBar bar = new JMenuBar();
         for (int i = 0; i < titles.length; i++) {
             final String title = titles[i];
@@ -604,98 +589,6 @@ public class BotGUI extends JFrame implements ActionListener {
             return true;
         }
         return false;
-    }
-
-    /**
-     * Logs into the Forums using the given username and password
-     *
-     * @param username Name of forum account
-     * @param password Password of forum account
-     * @return True if logged in, False otherwise
-     */
-    private boolean login(final String username, final String password) {
-        final String url = /*GlobalConfiguration.Paths.URLs.FORUMS +*/ "login.php";
-        try {
-            final URL login = new URL(url);
-            final HttpURLConnection connect = (HttpURLConnection) login.openConnection();
-            connect.setRequestMethod("POST");
-            connect.setDoOutput(true);
-            connect.setDoInput(true);
-            connect.setUseCaches(false);
-            connect.setAllowUserInteraction(false);
-            final String write = "do=login&vb_login_username=" + username + "&vb_login_password=" + password + "&cookieuser=1";
-            final Writer writer = new OutputStreamWriter(connect.getOutputStream(), "UTF-8");
-            writer.write(write);
-            writer.flush();
-            writer.close();
-            String headerName;
-            for (int i = 1; (headerName = connect.getHeaderFieldKey(i)) != null; i++) {
-                if (headerName.equals("Set-Cookie")) {
-                    String cookie = connect.getHeaderField(i);
-                    cookie = cookie.substring(0, cookie.indexOf(";"));
-                    BotGUI.cookies += cookie + "; ";
-                }
-            }
-            BotGUI.cookies = BotGUI.cookies.substring(0, BotGUI.cookies.length() - 3);
-            final BufferedReader in = new BufferedReader(new InputStreamReader(connect.getInputStream()));
-            String temp;
-            while ((temp = in.readLine()) != null) {
-                if (temp.toLowerCase().contains(username.toLowerCase())) {
-                    connect.disconnect();
-                    in.close();
-                    return true;
-                }
-                if (temp.toLowerCase().contains("register")) {
-                    connect.disconnect();
-                    in.close();
-                    return false;
-                }
-            }
-            in.close();
-            connect.disconnect();
-        } catch (final Exception e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    private void promptAndLogin() {
-        final JDialog frame = new JDialog(this, "Forum Login", true);
-        final JPanel pane = new JPanel(new GridBagLayout());
-        final GridBagConstraints c = new GridBagConstraints();
-        final JButton login = new JButton("Login");
-        final JTextField name = new JTextField(8);
-        final JPasswordField pass = new JPasswordField(8);
-        login.addActionListener(new ActionListener() {
-            public void actionPerformed(final ActionEvent e) {
-                frame.dispose();
-                if (login(name.getText(), new String(pass.getPassword()))) {
-                    BotGUI.loggedIn = true;
-                    commandMenuItem.get("Login").setText("Logout");
-                    BotGUI.log.info("Successfully logged in as " + name.getText() + ".");
-                } else {
-                    BotGUI.loggedIn = false;
-                    BotGUI.log.warning("Could not log in as \"" + name.getText() + "\".");
-                }
-            }
-        });
-        pass.setEchoChar('*');
-        pane.add(new JLabel("Username: "), c);
-        c.gridx = 1;
-        pane.add(name, c);
-        c.gridx = 0;
-        c.gridy = 1;
-        pane.add(new JLabel("Password: "), c);
-        c.gridx = 1;
-        pane.add(pass, c);
-        c.gridy = 2;
-        c.gridx = 0;
-        c.gridwidth = 2;
-        pane.add(login, c);
-        frame.add(pane);
-        frame.pack();
-        frame.setLocationRelativeTo(this);
-        frame.setVisible(true);
     }
 
     private boolean safeClose() {
