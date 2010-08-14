@@ -207,9 +207,9 @@ public class BotGUI extends JFrame implements ActionListener {
                 } catch (final MalformedURLException e1) {
                     e1.printStackTrace();
                 }
-            } else if ("Use Less CPU".equals(command[1])) {
+            } else if ("Less CPU".equals(command[1])) {
                 getBot().disableRendering = ((JCheckBoxMenuItem) e.getSource()).isSelected();
-            } else if ("Disable Randoms".equals(command[1])) {
+            } else if ("Disable Anti-Randoms".equals(command[1])) {
                 getBot().disableRandoms = ((JCheckBoxMenuItem) e.getSource()).isSelected();
             } else if ("Disable Auto Login".equals(command[1])) {
                 getBot().disableAutoLogin = ((JCheckBoxMenuItem) e.getSource()).isSelected();
@@ -417,7 +417,7 @@ public class BotGUI extends JFrame implements ActionListener {
     private JMenuBar constructMenuBar() {
         final String[] debugs = constructDebugs();
         final String[] titles = new String[]{"File", "Edit", "View", "Help"};
-        final String[][] elements = new String[][]{{"Run", "Stop", "Pause", "-", "Screenshot", "Screenshot (Uncensored)", "Login", "-", "Exit"}, {"Accounts", "-", "ToggleF Block Input", "ToggleF Use Less CPU", "-", "ToggleF Disable Randoms", "ToggleF Disable Auto Login", "ToggleF Disable Break Handler"}, debugs, {"Site", "Project", "About"}};
+        final String[][] elements = new String[][]{{"Run", "Stop", "Pause", "-", "Screenshot", "Screenshot (Uncensored)", "Login", "-", "Exit"}, {"Accounts", "-", "ToggleF Block Input", "ToggleF Less CPU", "-", "ToggleF Disable Anti-Randoms", "ToggleF Disable Auto Login", "ToggleF Disable Break Handler"}, debugs, {"Site", "Project", "About"}};
         final JMenuBar bar = new JMenuBar();
         for (int i = 0; i < titles.length; i++) {
             final String title = titles[i];
