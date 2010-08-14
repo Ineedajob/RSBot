@@ -14,6 +14,8 @@ public @interface ScriptManifest {
     String name();
 
     String summary() default "";
+    
+    String website() default "";
 
     double version() default 1.0;
 }
