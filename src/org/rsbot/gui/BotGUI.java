@@ -615,7 +615,7 @@ public class BotGUI extends JFrame implements ActionListener {
             final ScriptHandler sh = bot.getScriptHandler();
             final Map<Integer, Script> running = sh.getRunningScripts();
             if (running.size() > 0) {
-                JOptionPane.showMessageDialog(this, "A script is already running.", "Script", JOptionPane.ERROR_MESSAGE);
+            	log.warning("A script is already running.");
             } else {
                 ScriptSelector.getInstance(this).showSelector();
             }
