@@ -57,7 +57,7 @@ public class RSArea {
 		RSTile[] tiles = new RSTile[width * height];
 		for (int i = 0; i < width; ++i) {
 			for (int j = 0; j < height; ++j) {
-				tiles[i * width + j] = new RSTile(x + i, y + j);
+				tiles[i * height + j] = new RSTile(x + i, y + j);
 			}
 		}
 		return tiles;
