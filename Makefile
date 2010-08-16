@@ -24,7 +24,7 @@ all: Bot Scripts
 	@rm -fv $(LSTF)
 
 Bot:
-	@mkdir $(BINDIR)
+	@if [ ! -d $(BINDIR) ]; then @mkdir $(BINDIR); fi
 	$(CC) $(CFLAGS) -d $(BINDIR) `find $(SRC) -name *.java`
 
 Scripts: mostlyclean
