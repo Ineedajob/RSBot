@@ -37,7 +37,7 @@ public class GlobalConfiguration {
         }
 
         public static class URLs {
-            public static final String UPDATER = "http://rsbot-client.googlecode.com/files/";
+            public static final String UPDATER = "http://updater.powerbot.org/";
             public static final String DOWNLOAD = UPDATER + "RSBot.jar";
             public static final String UPDATE = UPDATER + "info.dat";
             public static final String VERSION = UPDATER + "version.dat";
