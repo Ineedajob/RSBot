@@ -9,16 +9,234 @@ import java.net.URL;
 /**
  * Obtains information on tradeable items from the Grand Exchange website.
  *
- * @author Aelin
+ * @author Arbiter
  */
 public class GrandExchange extends MethodProvider {
 
     GrandExchange() {
     	super(null);
     }
+    
+    /**
+     * Fetches item min price from GE. Faster return than GEItemInfo.
+     *
+     * @param itemID Item to load
+     * @return Min price for itemID.
+     */
+    public int getMinPrice(int itemID) {
+    	 int minPrice = 0;
+    	 try {
+             final URL url = new URL("http://services.runescape.com/m=itemdb_rs/viewitem.ws?obj=" + itemID);
+             final BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
+
+             String line;
+
+             while ((line = reader.readLine()) != null) {
+                 if (line.contains("Minimum price:")) {
+                     line = line.replace("<b>Minimum price:</b> ", "");
+                     line = line.replace(",", "");
+                     if (line.contains("k")) {
+                         line = line.replace(".", "");
+                         line = line.replace("k", "");
+                         line = line.trim();
+                         minPrice = Integer.parseInt(line) * 100;
+                         break;
+                     } else if (line.contains("m")) {
+                         line = line.replace(".", "");
+                         line = line.replace("m", "");
+                         line = line.trim();
+                         minPrice = Integer.parseInt(line) * 100000;
+                         break;
+                     } else {
+                         minPrice = Integer.parseInt(line);
+                         break;
+                     }
+                 }
+             }
+    	 } catch (final Exception ignored) {
+         }
+    	 return minPrice;
+    }
+    
+    /**
+     * Fetches item market price from GE. Faster return than GEItemInfo.
+     *
+     * @param itemID Item to load
+     * @return Market price for itemID.
+     */
+    public int getMarketPrice(int itemID) {
+    	 int marketPrice = 0;
+    	 try {
+             final URL url = new URL("http://services.runescape.com/m=itemdb_rs/viewitem.ws?obj=" + itemID);
+             final BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
+
+             String line;
+
+             while ((line = reader.readLine()) != null) {
+            	 if (line.contains("Market price:")) {
+                     line = line.replace("<b>Market price:</b> ", "");
+                     line = line.replace(",", "");
+                     if (line.contains("k")) {
+                         line = line.replace(".", "");
+                         line = line.replace("k", "");
+                         line = line.trim();
+                         marketPrice = Integer.parseInt(line) * 100;
+                     } else if (line.contains("m")) {
+                         line = line.replace(".", "");
+                         line = line.replace("m", "");
+                         line = line.trim();
+                         marketPrice = Integer.parseInt(line) * 100000;
+                     } else {
+                         marketPrice = Integer.parseInt(line);
+                     }
+                 }
+             }
+    	 } catch (final Exception ignored) {
+         }
+    	 return marketPrice;
+    }
+    
+    public int getMaxPrice(int itemID) {
+   	 int maxPrice = 0;
+   	 try {
+            final URL url = new URL("http://services.runescape.com/m=itemdb_rs/viewitem.ws?obj=" + itemID);
+            final BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
+
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+            	if (line.contains("Maximum price:")) {
+                    line = line.replace("<b>Maximum price:</b> ", "");
+                    line = line.replace(",", "");
+                    if (line.contains("k")) {
+                        line = line.replace(".", "");
+                        line = line.replace("k", "");
+                        line = line.trim();
+                        maxPrice = Integer.parseInt(line) * 100;
+                    } else if (line.contains("m")) {
+                        line = line.replace(".", "");
+                        line = line.replace("m", "");
+                        line = line.trim();
+                        maxPrice = Integer.parseInt(line) * 100000;
+                    } else {
+                        maxPrice = Integer.parseInt(line);
+                    }
+                }
+            }
+   	 } catch (final Exception ignored) {
+        }
+   	 return maxPrice;
+   }
+    
+    public String getChange30Days(int itemID) {
+      	 String change30 = "";
+      	 try {
+               final URL url = new URL("http://services.runescape.com/m=itemdb_rs/viewitem.ws?obj=" + itemID);
+               final BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
+
+               String line;
+
+               while ((line = reader.readLine()) != null) {
+            	   if (line.contains("30 Days:")) {
+                       line = line.replace("<b>30 Days:</b> <span class=\"drop\">", "");
+                       line = line.replace("<b>30 Days:</b> <span class=\"stay\">", "");
+                       line = line.replace("<b>30 Days:</b> <span class=\"rise\">", "");
+                       line = line.replace("</span>", "");
+                       line = line.trim();
+                       change30 = line;
+                   }
+               }
+      	 } catch (final Exception ignored) {
+           }
+      	 return change30;
+      }
+    
+    public String getChange90Days(int itemID) {
+     	 String change90 = "";
+     	 try {
+              final URL url = new URL("http://services.runescape.com/m=itemdb_rs/viewitem.ws?obj=" + itemID);
+              final BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
+
+              String line;
+
+              while ((line = reader.readLine()) != null) {
+            	  if (line.contains("90 Days:")) {
+                      line = line.replace("<b>90 Days:</b> <span class=\"drop\">", "");
+                      line = line.replace("<b>90 Days:</b> <span class=\"stay\">", "");
+                      line = line.replace("<b>90 Days:</b> <span class=\"rise\">", "");
+                      line = line.replace("</span>", "");
+                      line = line.trim();
+                      change90 = line;
+                  }
+              }
+     	 } catch (final Exception ignored) {
+          }
+     	 return change90;
+     }
+    
+    public String getChange180Days(int itemID) {
+    	 String change180 = "";
+    	 try {
+             final URL url = new URL("http://services.runescape.com/m=itemdb_rs/viewitem.ws?obj=" + itemID);
+             final BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
+
+             String line;
+
+             while ((line = reader.readLine()) != null) {
+            	 if (line.contains("180 Days:")) {
+             		line = line.replace("<b>180 Days:</b> <span class=\"drop\">", "");
+             		line = line.replace("<b>180 Days:</b> <span class=\"stay\">", "");
+                     line = line.replace("<b>180 Days:</b> <span class=\"rise\">", "");
+                     line = line.replace("</span>", "");
+                     line = line.trim();
+                     change180 = line;
+                 }
+             }
+    	 } catch (final Exception ignored) {
+         }
+    	 return change180;
+    }
+    
+    public int getLastChange(String itemName) {
+	    int change = 0;
+		String suffix = itemName.replace(" ", "+");
+		try {
+		final URL url = new URL("http://services.runescape.com/m=itemdb_rs/results.ws?query=" + suffix);
+	    final BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
+	    String line;
+	    while ((line = reader.readLine()) != null) {
+	    	if (line.contains("> " + itemName + "</a>"))
+	    	{
+	    		line = reader.readLine();
+	    		line = reader.readLine();
+	        	if (line.contains("<span class=\"drop\">")) {
+	                line = line.replace("<td><span class=\"drop\">", "");
+	                line = line.replace("</span></td>", "");
+	                line = line.replace("+", "");
+	                change = Integer.parseInt(line);
+	            }
+	        	if (line.contains("<span class=\"rise\">")) {
+	                line = line.replace("<td><span class=\"rise\">", "");
+	                line = line.replace("</span></td>", "");
+	                line = line.replace("+", "");
+	                change = Integer.parseInt(line);
+	            }
+	        	if (line.contains("<span class=\"stay\">")) {
+	                line = line.replace("<td><span class=\"stay\">", "");
+	                line = line.replace("</span></td>", "");
+	                line = line.replace("+", "");
+	                change = Integer.parseInt(line);
+	            }
+	    	}
+	    	if (change != 0)
+	    		break;
+	    }
+		} catch (Exception e) {}
+		return change;
+    }
 
     /**
-     * This method loads a item's info from the grand exchange website.
+     * This method loads a item's full info from the Grand Exchange website. Use only when requiring all info.
      *
      * @param itemID Item to load
      * @return GEItemInfo containing item information
@@ -27,8 +245,9 @@ public class GrandExchange extends MethodProvider {
         int minPrice = 0;
         int maxPrice = 0;
         int marketPrice = 0;
-        String changeSeven = "";
-        String changeThirty = "";
+		String change30 = "";
+		String change90 = "";
+		String change180 = "";
 
         try {
             final URL url = new URL("http://services.runescape.com/m=itemdb_rs/viewitem.ws?obj=" + itemID);
@@ -37,6 +256,8 @@ public class GrandExchange extends MethodProvider {
             String line;
 
             while ((line = reader.readLine()) != null) {
+            	if (minPrice != 0 && maxPrice != 0 && marketPrice != 0 && change30 != "" && change90 != "" && change180 != "")
+            		break;
                 if (line.contains("Minimum price:")) {
                     line = line.replace("<b>Minimum price:</b> ", "");
                     line = line.replace(",", "");
@@ -90,39 +311,36 @@ public class GrandExchange extends MethodProvider {
                         maxPrice = Integer.parseInt(line);
                     }
                 }
-
-                if (line.contains("7 Days:")) {
-                    line = line.replace("<b>7 Days:</b> <span class=\"stay\">", "");
-                    line = line.replace("<b>7 Days:</b> <span class=\"stay\">", "");
+            	if (line.contains("30 Days:")) {
+                    line = line.replace("<b>30 Days:</b> <span class=\"drop\">", "");
+                    line = line.replace("<b>30 Days:</b> <span class=\"stay\">", "");
+                    line = line.replace("<b>30 Days:</b> <span class=\"rise\">", "");
                     line = line.replace("</span>", "");
                     line = line.trim();
-                    changeSeven = line;
+                    change30 = line;
                 }
-
-                if (line.contains("30 Days:")) {
-                    line = line.replace("<b>30 Days:</b> <span class=\"stay\">", "");
-                    line = line.replace("<b>30 Days:</b> <span class=\"stay\">", "");
+            	if (line.contains("90 Days:")) {
+                    line = line.replace("<b>90 Days:</b> <span class=\"drop\">", "");
+                    line = line.replace("<b>90 Days:</b> <span class=\"stay\">", "");
+                    line = line.replace("<b>90 Days:</b> <span class=\"rise\">", "");
                     line = line.replace("</span>", "");
                     line = line.trim();
-                    changeThirty = line;
+                    change90 = line;
+                }
+            	if (line.contains("180 Days:")) {
+            		line = line.replace("<b>180 Days:</b> <span class=\"drop\">", "");
+            		line = line.replace("<b>180 Days:</b> <span class=\"stay\">", "");
+                    line = line.replace("<b>180 Days:</b> <span class=\"rise\">", "");
+                    line = line.replace("</span>", "");
+                    line = line.trim();
+                    change180 = line;
                 }
             }
         } catch (final Exception ignored) {
         }
 
-        return new GEItemInfo(itemID, minPrice, maxPrice, marketPrice, changeSeven, changeThirty);
+        return new GEItemInfo(itemID, minPrice, maxPrice, marketPrice, change30, change90, change180);
 	}
-    
-    /**
-     * Retrieves the market price for the given item ID.
-     *
-     * @param id the id of the desired item
-     * @return returns the market price of the given item.
-     */
-    public int getMarketPrice(final int id) {
-        GEItemInfo i = loadItemInfo(id);
-        return i.getMarketPrice();
-    }
 
     /**
      * Gets the item name via the online Runescape item database.
@@ -138,15 +356,11 @@ public class GrandExchange extends MethodProvider {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
 
                 String line;
-                int i = 0;
                 while ((line = reader.readLine()) != null) {
-                    if (line.equals("<div class=" + '"' + "subsectionHeader" + '"' + ">")) {
-                        i++;
-                        continue;
-                    }
-                    if (i == 1) {
-                        reader.close();
-                        return line;
+                    if (line.contains("<div class=\"brown_box main_ge_page vertically_spaced\">")) {
+                    	line = reader.readLine();
+                    	line = reader.readLine();
+                    	return reader.readLine();
                     }
                 }
             }
