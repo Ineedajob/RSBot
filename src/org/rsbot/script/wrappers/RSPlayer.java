@@ -9,9 +9,9 @@ import org.rsbot.script.methods.MethodContext;
  */
 public class RSPlayer extends RSCharacter {
 
-    private org.rsbot.accessors.RSPlayer p;
+    private org.rsbot.client.RSPlayer p;
 
-    public RSPlayer(final MethodContext ctx, final org.rsbot.accessors.RSPlayer p) {
+    public RSPlayer(final MethodContext ctx, final org.rsbot.client.RSPlayer p) {
         super(ctx, p);
         this.p = p;
     }
@@ -41,13 +41,13 @@ public class RSPlayer extends RSCharacter {
                 if (!isValid() || !methods.calc.pointOnScreen(screenLoc)) {
                     return false;
                 }
-                if (methods.mouse.getClientLocation().equals(screenLoc)) {
+                if (methods.mouse.getLocation().equals(screenLoc)) {
                     break;
                 }
                 methods.mouse.move(screenLoc);
             }
             screenLoc = getScreenLocation();
-            if (!methods.mouse.getClientLocation().equals(screenLoc))
+            if (!methods.mouse.getLocation().equals(screenLoc))
                 return false;
             String[] items = methods.menu.getItems();
             if (items.length <= 1)

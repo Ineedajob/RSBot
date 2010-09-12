@@ -21,11 +21,11 @@ public class DrawPlayers implements PaintListener {
     public void onRepaint(final Graphics render) {
         if (!ctx.game.isLoggedIn())
             return;
-        final org.rsbot.accessors.RSPlayer[] players = ctx.client.getRSPlayerArray();
+        final org.rsbot.client.RSPlayer[] players = ctx.client.getRSPlayerArray();
         if (players == null)
             return;
         final FontMetrics metrics = render.getFontMetrics();
-        for (final org.rsbot.accessors.RSPlayer element : players) {
+        for (final org.rsbot.client.RSPlayer element : players) {
             if (element == null) {
                 continue;
             }

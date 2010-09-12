@@ -1,6 +1,6 @@
 package org.rsbot.script.wrappers;
 
-import org.rsbot.accessors.LDModel;
+import org.rsbot.client.LDModel;
 import org.rsbot.script.methods.MethodContext;
 
 class RSStaticModel extends RSModel {

@@ -1,6 +1,6 @@
 package org.rsbot.script.methods;
 
-import org.rsbot.bot.input.Listener;
+import org.rsbot.client.input.Listener;
 import org.rsbot.script.Random;
 import org.rsbot.script.ScriptManifest;
 import org.rsbot.script.wrappers.RSPlayer;

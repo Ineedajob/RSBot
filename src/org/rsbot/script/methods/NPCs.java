@@ -1,7 +1,7 @@
 package org.rsbot.script.methods;
 
-import org.rsbot.accessors.Node;
-import org.rsbot.accessors.RSNPCNode;
+import org.rsbot.client.Node;
+import org.rsbot.client.RSNPCNode;
 import org.rsbot.script.wrappers.RSNPC;
 
 import java.util.ArrayList;

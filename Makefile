@@ -19,12 +19,12 @@ all: Bot Scripts
 	@cp $(MANIFEST) $(LSTF)
 	@echo "Specification-Version: \"$(VERSION)\"" >> $(LSTF)
 	@echo "Implementation-Version: \"$(VERSION)\"" >> $(LSTF)
-	@if [ -e $(DIST) ]; then @rm -fv $(DIST); fi
+	@if [ -e $(DIST) ]; then rm -fv $(DIST); fi
 	jar cfm $(DIST) $(LSTF) -C $(BINDIR) . $(SCRIPTS)/*.class $(IMGDIR)/*.png $(RES)/*.bat $(RES)/*.sh $(RES)/version.dat
 	@rm -fv $(LSTF)
 
 Bot:
-	@if [ ! -d $(BINDIR) ]; then @mkdir $(BINDIR); fi
+	@if [ ! -d $(BINDIR) ]; then mkdir $(BINDIR); fi
 	$(CC) $(CFLAGS) -d $(BINDIR) `find $(SRC) -name *.java`
 
 Scripts: mostlyclean

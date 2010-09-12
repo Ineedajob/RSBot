@@ -1,6 +1,6 @@
 package org.rsbot.script.methods;
 
-import org.rsbot.accessors.TileData;
+import org.rsbot.client.TileData;
 import org.rsbot.script.wrappers.RSCharacter;
 import org.rsbot.script.wrappers.RSComponent;
 import org.rsbot.script.wrappers.RSObject;
@@ -261,7 +261,7 @@ public class Calculations extends MethodProvider {
         final int calculatedY = (int) (y * 4 + 2) - methods.client.getMyRSPlayer().getY() / 128;
 
         try {
-            final org.rsbot.accessors.RSInterface mm = methods.gui.getMinimapInterface();
+            final org.rsbot.client.RSInterface mm = methods.gui.getMinimapInterface();
             if (mm == null)
                 return new Point(-1, -1);
             final RSComponent mm2 = methods.interfaces.getComponent(mm.getID());
@@ -395,7 +395,7 @@ public class Calculations extends MethodProvider {
     /**
      * Updates the rendering data. For internal use only.
      */
-    public void updateRenderInfo(final org.rsbot.accessors.Render r, final org.rsbot.accessors.RenderData rd) {
+    public void updateRenderInfo(final org.rsbot.client.Render r, final org.rsbot.client.RenderData rd) {
         if ((r == null) || (rd == null)) {
             return;
         }

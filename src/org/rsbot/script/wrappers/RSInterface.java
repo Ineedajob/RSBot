@@ -1,6 +1,6 @@
 package org.rsbot.script.wrappers;
 
-import org.rsbot.accessors.Client;
+import org.rsbot.client.Client;
 import org.rsbot.script.methods.MethodContext;
 import org.rsbot.script.methods.MethodProvider;
 
@@ -81,7 +81,7 @@ public class RSInterface extends MethodProvider implements Iterable<RSComponent>
      */
     public RSComponent getComponent(final int id) { // TODO sparseMap
         synchronized (childCache) {
-            final org.rsbot.accessors.RSInterface[] children = getChildrenInternal();
+            final org.rsbot.client.RSInterface[] children = getChildrenInternal();
             final int ensureLen = Math.max(children != null ? children.length : 0, id + 1);
             if (childCache.length < ensureLen) { // extend if necessary
                 final int prevLen = childCache.length;
@@ -100,7 +100,7 @@ public class RSInterface extends MethodProvider implements Iterable<RSComponent>
      * @return the amount of children, or 0 if null
      */
     public int getChildCount() {
-        final org.rsbot.accessors.RSInterface[] children = getChildrenInternal();
+        final org.rsbot.client.RSInterface[] children = getChildrenInternal();
         if (children != null)
             return children.length;
         return 0;
@@ -113,7 +113,7 @@ public class RSInterface extends MethodProvider implements Iterable<RSComponent>
      */
     public RSComponent[] getComponents() {
         synchronized (childLock) {
-            final org.rsbot.accessors.RSInterface[] children = getChildrenInternal();
+            final org.rsbot.client.RSInterface[] children = getChildrenInternal();
             if (children == null)
                 return childCache.clone(); // return as is
             else {
@@ -145,9 +145,9 @@ public class RSInterface extends MethodProvider implements Iterable<RSComponent>
      * interface was null.
      */
     public Point getLocation() {
-        final org.rsbot.accessors.RSInterface[] children = getChildrenInternal();
+        final org.rsbot.client.RSInterface[] children = getChildrenInternal();
         if (children != null) {
-            for (final org.rsbot.accessors.RSInterface child : children) {
+            for (final org.rsbot.client.RSInterface child : children) {
                 if (child != null) {
                     if ((child.getMasterX() != -1) && (child.getMasterY() != -1))
                         return new Point(child.getMasterX(), child.getMasterY());
@@ -164,9 +164,9 @@ public class RSInterface extends MethodProvider implements Iterable<RSComponent>
      */
     public String getText() {
         final StringBuilder sb = new StringBuilder();
-        final org.rsbot.accessors.RSInterface[] children = getChildrenInternal();
+        final org.rsbot.client.RSInterface[] children = getChildrenInternal();
         if (children != null) {
-            for (final org.rsbot.accessors.RSInterface child : children) {
+            for (final org.rsbot.client.RSInterface child : children) {
                 String string;
                 if ((child != null) && ((string = child.getText()) != null)) {
                     sb.append(string);
@@ -223,12 +223,12 @@ public class RSInterface extends MethodProvider implements Iterable<RSComponent>
      *
      * @return The child interfaces of the client.
      */
-    org.rsbot.accessors.RSInterface[] getChildrenInternal() {
+    org.rsbot.client.RSInterface[] getChildrenInternal() {
         final Client c = methods.client;
         if (c == null) {
             return null;
         }
-        final org.rsbot.accessors.RSInterface[][] inters = c.getRSInterfaceCache();
+        final org.rsbot.client.RSInterface[][] inters = c.getRSInterfaceCache();
         if ((inters != null) && (index < inters.length))
             return inters[index];
         return null;

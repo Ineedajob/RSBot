@@ -1,7 +1,7 @@
 package org.rsbot.script.wrappers;
 
-import org.rsbot.accessors.RSInterfaceNode;
-import org.rsbot.script.internal.NodeCache;
+import org.rsbot.client.RSInterfaceNode;
+import org.rsbot.script.internal.wrappers.HashTable;
 import org.rsbot.script.methods.MethodContext;
 import org.rsbot.script.methods.MethodProvider;
 
@@ -108,7 +108,7 @@ public class RSComponent extends MethodProvider {
         Rectangle pos = getArea();
         if (pos.x == -1 || pos.y == -1 || pos.width == -1 || pos.height == -1)
             return false;
-        Point p = methods.mouse.getClientLocation();
+        Point p = methods.mouse.getLocation();
         int px = (int) p.getX();
         int py = (int) p.getY();
         if (px > pos.x && px < pos.x + pos.width && py > pos.y && py < pos.y + pos.height) {
@@ -175,7 +175,7 @@ public class RSComponent extends MethodProvider {
      */
     public int getAbsoluteX() {
         // Get internal Interface
-        final org.rsbot.accessors.RSInterface inter = getInterfaceInternal();
+        final org.rsbot.client.RSInterface inter = getInterfaceInternal();
         if (inter == null)
             return -1;
 
@@ -216,7 +216,7 @@ public class RSComponent extends MethodProvider {
      */
     public int getAbsoluteY() {
         // Get internal Interface
-        final org.rsbot.accessors.RSInterface inter = getInterfaceInternal();
+        final org.rsbot.client.RSInterface inter = getInterfaceInternal();
         if (inter == null)
             return -1;
 
@@ -255,7 +255,7 @@ public class RSComponent extends MethodProvider {
      * @return the actions or an empty array if null
      */
     public String[] getActions() {
-        final org.rsbot.accessors.RSInterface inter = getInterfaceInternal();
+        final org.rsbot.client.RSInterface inter = getInterfaceInternal();
         if (inter != null)
             return inter.getActions();
         return new String[0];
@@ -276,7 +276,7 @@ public class RSComponent extends MethodProvider {
      * @return the background color or -1 if null
      */
     public int getBackgroundColor() {
-        final org.rsbot.accessors.RSInterface inter = getInterfaceInternal();
+        final org.rsbot.client.RSInterface inter = getInterfaceInternal();
         if (inter != null)
             return inter.getTextureID();
         return -1;
@@ -288,7 +288,7 @@ public class RSComponent extends MethodProvider {
      * @return the border thickness or -1 if null
      */
     public int getBorderThickness() {
-        final org.rsbot.accessors.RSInterface inter = getInterfaceInternal();
+        final org.rsbot.client.RSInterface inter = getInterfaceInternal();
         if (inter != null)
             return inter.getBorderThickness();
         return -1;
@@ -300,7 +300,7 @@ public class RSComponent extends MethodProvider {
      * @return the bounds array index or -1 if null
      */
     public int getBoundsArrayIndex() {
-        final org.rsbot.accessors.RSInterface inter = getInterfaceInternal();
+        final org.rsbot.client.RSInterface inter = getInterfaceInternal();
         if (inter != null)
             return inter.getBoundsArrayIndex();
 
@@ -313,7 +313,7 @@ public class RSComponent extends MethodProvider {
      * @return The components or RSInterfaceComponent[0] if null
      */
     public RSComponent[] getComponents() {
-        final org.rsbot.accessors.RSInterface inter = getInterfaceInternal();
+        final org.rsbot.client.RSInterface inter = getInterfaceInternal();
         if ((inter != null) && (inter.getComponents() != null)) {
             final RSComponent[] components = new RSComponent[inter.getComponents().length];
             for (int i = 0; i < components.length; i++) {
@@ -344,7 +344,7 @@ public class RSComponent extends MethodProvider {
      * @return The id of this component, or -1 if component == null
      */
     public int getComponentID() {
-        final org.rsbot.accessors.RSInterface inter = getInterfaceInternal();
+        final org.rsbot.client.RSInterface inter = getInterfaceInternal();
         if (inter != null)
             return inter.getComponentID();
         return -1;
@@ -356,7 +356,7 @@ public class RSComponent extends MethodProvider {
      * @return The index of this component, or -1 if component == null
      */
     public int getComponentIndex() {
-        final org.rsbot.accessors.RSInterface component = getInterfaceInternal();
+        final org.rsbot.client.RSInterface component = getInterfaceInternal();
         if (component != null)
             return component.getComponentIndex();
 
@@ -369,7 +369,7 @@ public class RSComponent extends MethodProvider {
      * @return The stack size of this component, or -1 if component == null
      */
     public int getComponentStackSize() {
-        final org.rsbot.accessors.RSInterface component = getInterfaceInternal();
+        final org.rsbot.client.RSInterface component = getInterfaceInternal();
         if (component != null)
             return component.getComponentStackSize();
 
@@ -382,7 +382,7 @@ public class RSComponent extends MethodProvider {
      * @return The name of this component, or "" if component == null
      */
     public String getComponentName() {
-        final org.rsbot.accessors.RSInterface component = getInterfaceInternal();
+        final org.rsbot.client.RSInterface component = getInterfaceInternal();
         if (component != null)
             return component.getComponentName();
 
@@ -395,14 +395,14 @@ public class RSComponent extends MethodProvider {
      * @return the height of this component or -1 if null
      */
     public int getHeight() {
-        final org.rsbot.accessors.RSInterface childInterface = getInterfaceInternal();
+        final org.rsbot.client.RSInterface childInterface = getInterfaceInternal();
         if (childInterface != null)
             return childInterface.getHeight() - 4;
         return -1;
     }
 
     public int getHorizontalScrollBarSize() {
-        final org.rsbot.accessors.RSInterface inter = getInterfaceInternal();
+        final org.rsbot.client.RSInterface inter = getInterfaceInternal();
         if (inter != null)
             return inter.getHorizontalScrollBarSize();
         return -1;
@@ -410,7 +410,7 @@ public class RSComponent extends MethodProvider {
     }
 
     public int getHorizontalScrollBarThumbPosition() {
-        final org.rsbot.accessors.RSInterface inter = getInterfaceInternal();
+        final org.rsbot.client.RSInterface inter = getInterfaceInternal();
         if (inter != null)
             return inter.getHorizontalScrollBarThumbPosition();
         return -1;
@@ -418,7 +418,7 @@ public class RSComponent extends MethodProvider {
     }
 
     public int getHorizontalScrollBarThumbSize() {
-        final org.rsbot.accessors.RSInterface inter = getInterfaceInternal();
+        final org.rsbot.client.RSInterface inter = getInterfaceInternal();
         if (inter != null)
             return inter.getHorizontalScrollBarThumbSize();
         return -1;
@@ -426,7 +426,7 @@ public class RSComponent extends MethodProvider {
     }
 
     public int getID() {
-        final org.rsbot.accessors.RSInterface inter = getInterfaceInternal();
+        final org.rsbot.client.RSInterface inter = getInterfaceInternal();
         if (inter != null)
             return inter.getID();
         return -1;
@@ -454,7 +454,7 @@ public class RSComponent extends MethodProvider {
      * @return the model ID or -1 if null
      */
     public int getModelID() {
-        final org.rsbot.accessors.RSInterface inter = getInterfaceInternal();
+        final org.rsbot.client.RSInterface inter = getInterfaceInternal();
         if (inter != null)
             return inter.getModelID();
 
@@ -467,7 +467,7 @@ public class RSComponent extends MethodProvider {
      * @return the model type or -1 if null
      */
     public int getModelType() {
-        final org.rsbot.accessors.RSInterface inter = getInterfaceInternal();
+        final org.rsbot.client.RSInterface inter = getInterfaceInternal();
         if (inter != null)
             return inter.getModelType();
 
@@ -475,7 +475,7 @@ public class RSComponent extends MethodProvider {
     }
 
     public int getModelZoom() {
-        final org.rsbot.accessors.RSInterface inter = getInterfaceInternal();
+        final org.rsbot.client.RSInterface inter = getInterfaceInternal();
         if (inter != null)
             return inter.getModelZoom();
         return -1;
@@ -490,7 +490,7 @@ public class RSComponent extends MethodProvider {
      * @return the parentID or -1 if none
      */
     public int getParentID() {
-        final org.rsbot.accessors.RSInterface inter = getInterfaceInternal();
+        final org.rsbot.client.RSInterface inter = getInterfaceInternal();
         if (inter == null)
             return -1;
 
@@ -498,7 +498,7 @@ public class RSComponent extends MethodProvider {
             return inter.getParentID();
 
         final int mainID = getID() >>> 16;
-        final NodeCache ncI = new NodeCache(methods.client.getRSInterfaceNC());
+        final HashTable ncI = new HashTable(methods.client.getRSInterfaceNC());
 
         for (RSInterfaceNode node = (RSInterfaceNode) ncI.getFirst(); node != null; node = (RSInterfaceNode) ncI.getNext()) {
             if (mainID == node.getMainID())
@@ -554,7 +554,7 @@ public class RSComponent extends MethodProvider {
      * @return the relative x position or -1 if null
      */
     public int getRelativeX() {
-        final org.rsbot.accessors.RSInterface childInterface = getInterfaceInternal();
+        final org.rsbot.client.RSInterface childInterface = getInterfaceInternal();
         if (childInterface != null)
             return childInterface.getX();
         return -1;
@@ -567,7 +567,7 @@ public class RSComponent extends MethodProvider {
      * @return the relative y position -1 if null
      */
     public int getRelativeY() {
-        final org.rsbot.accessors.RSInterface childInterface = getInterfaceInternal();
+        final org.rsbot.client.RSInterface childInterface = getInterfaceInternal();
         if (childInterface != null)
             return childInterface.getY();
         return -1;
@@ -579,14 +579,14 @@ public class RSComponent extends MethodProvider {
      * @return the selected action name or "" if null
      */
     public String getSelectedActionName() {
-        final org.rsbot.accessors.RSInterface inter = getInterfaceInternal();
+        final org.rsbot.client.RSInterface inter = getInterfaceInternal();
         if (inter != null)
             return inter.getSelectedActionName();
         return "";
     }
 
     public int getShadowColor() {
-        final org.rsbot.accessors.RSInterface inter = getInterfaceInternal();
+        final org.rsbot.client.RSInterface inter = getInterfaceInternal();
         if (inter != null)
             return inter.getShadowColor();
         return -1;
@@ -594,7 +594,7 @@ public class RSComponent extends MethodProvider {
     }
 
     public int getSpecialType() {
-        final org.rsbot.accessors.RSInterface inter = getInterfaceInternal();
+        final org.rsbot.client.RSInterface inter = getInterfaceInternal();
         if (inter != null)
             return inter.getSpecialType();
 
@@ -607,7 +607,7 @@ public class RSComponent extends MethodProvider {
      * @return the spell name or "" if null
      */
     public String getSpellName() {
-        final org.rsbot.accessors.RSInterface inter = getInterfaceInternal();
+        final org.rsbot.client.RSInterface inter = getInterfaceInternal();
         if (inter != null)
             return inter.getSpellName();
         return "";
@@ -619,7 +619,7 @@ public class RSComponent extends MethodProvider {
      * @return the text or "" if null
      */
     public String getText() {
-        final org.rsbot.accessors.RSInterface inter = getInterfaceInternal();
+        final org.rsbot.client.RSInterface inter = getInterfaceInternal();
         if (inter != null)
             return inter.getText();
         return "";
@@ -631,7 +631,7 @@ public class RSComponent extends MethodProvider {
      * @return the text color or -1 if null
      */
     public int getTextColor() {
-        final org.rsbot.accessors.RSInterface inter = getInterfaceInternal();
+        final org.rsbot.client.RSInterface inter = getInterfaceInternal();
         if (inter != null)
             return inter.getTextColor();
         return -1;
@@ -643,7 +643,7 @@ public class RSComponent extends MethodProvider {
      * @return the tooltip or "" if null
      */
     public String getTooltip() {
-        final org.rsbot.accessors.RSInterface inter = getInterfaceInternal();
+        final org.rsbot.client.RSInterface inter = getInterfaceInternal();
         if (inter != null)
             return inter.getToolTip();
         return "";
@@ -655,7 +655,7 @@ public class RSComponent extends MethodProvider {
      * @return the type or -1 if null
      */
     public int getType() {
-        final org.rsbot.accessors.RSInterface inter = getInterfaceInternal();
+        final org.rsbot.client.RSInterface inter = getInterfaceInternal();
         if (inter != null)
             return inter.getType();
         return -1;
@@ -667,7 +667,7 @@ public class RSComponent extends MethodProvider {
      * @return the value index array or new int[0][0] if null
      */
     public int[][] getValueIndexArray() {
-        final org.rsbot.accessors.RSInterface childInterface = getInterfaceInternal();
+        final org.rsbot.client.RSInterface childInterface = getInterfaceInternal();
         if (childInterface != null) {
             final int[][] vindex = childInterface.getValueIndexArray();
             if (vindex != null) { // clone does NOT deep copy
@@ -691,7 +691,7 @@ public class RSComponent extends MethodProvider {
      * @return the vertical scroll bar position, or -1.
      */
     public int getVerticalScrollBarPosition() {
-        final org.rsbot.accessors.RSInterface inter = getInterfaceInternal();
+        final org.rsbot.client.RSInterface inter = getInterfaceInternal();
         if (inter != null)
             return inter.getVerticalScrollBarPosition();
         return -1;
@@ -704,7 +704,7 @@ public class RSComponent extends MethodProvider {
      * @return the vertical scroll bar size, or -1.
      */
     public int getVerticalScrollBarSize() {
-        final org.rsbot.accessors.RSInterface inter = getInterfaceInternal();
+        final org.rsbot.client.RSInterface inter = getInterfaceInternal();
         if (inter != null)
             return inter.getVerticalScrollBarSize();
         return -1;
@@ -717,7 +717,7 @@ public class RSComponent extends MethodProvider {
      * @return the vertical scroll bar thumb size, or -1.
      */
     public int getVerticalScrollBarThumbSize() {
-        final org.rsbot.accessors.RSInterface inter = getInterfaceInternal();
+        final org.rsbot.client.RSInterface inter = getInterfaceInternal();
         if (inter != null)
             return inter.getVerticalScrollBarThumbSize();
         return -1;
@@ -730,7 +730,7 @@ public class RSComponent extends MethodProvider {
      * @return the width of the component or -1 if null
      */
     public int getWidth() {
-        final org.rsbot.accessors.RSInterface childInterface = getInterfaceInternal();
+        final org.rsbot.client.RSInterface childInterface = getInterfaceInternal();
         if (childInterface != null)
             return childInterface.getWidth() - 4;
         return -1;
@@ -742,7 +742,7 @@ public class RSComponent extends MethodProvider {
      * @return xRotation of this component
      */
     public int getXRotation() {
-        final org.rsbot.accessors.RSInterface inter = getInterfaceInternal();
+        final org.rsbot.client.RSInterface inter = getInterfaceInternal();
         if (inter != null)
             return inter.getXRotation();
         return -1;
@@ -755,7 +755,7 @@ public class RSComponent extends MethodProvider {
      * @return yRotation of this component
      */
     public int getYRotation() {
-        final org.rsbot.accessors.RSInterface inter = getInterfaceInternal();
+        final org.rsbot.client.RSInterface inter = getInterfaceInternal();
         if (inter != null)
             return inter.getYRotation();
         return -1;
@@ -768,7 +768,7 @@ public class RSComponent extends MethodProvider {
      * @return zRotation of this component
      */
     public int getZRotation() {
-        final org.rsbot.accessors.RSInterface inter = getInterfaceInternal();
+        final org.rsbot.client.RSInterface inter = getInterfaceInternal();
         if (inter != null)
             return inter.getZRotation();
         return -1;
@@ -781,7 +781,7 @@ public class RSComponent extends MethodProvider {
      * @return <tt>true</tt> if this component is vertically flipped.
      */
 	public boolean isVerticallyFlipped() {
-		final org.rsbot.accessors.RSInterface inter = getInterfaceInternal();
+		final org.rsbot.client.RSInterface inter = getInterfaceInternal();
 		return (inter != null) && inter.isVerticallyFlipped();
 	}
 
@@ -792,7 +792,7 @@ public class RSComponent extends MethodProvider {
 	 * @return <tt>true</tt> if this component is horizontally flipped.
 	 */
     public boolean isHorizontallyFlipped() {
-        final org.rsbot.accessors.RSInterface inter = getInterfaceInternal();
+        final org.rsbot.client.RSInterface inter = getInterfaceInternal();
         return (inter != null) && inter.isHorizontallyFlipped();
     }
 
@@ -802,7 +802,7 @@ public class RSComponent extends MethodProvider {
      * @return <tt>true</tt> if it's an inventory interface
      */
     public boolean isInventory() {
-        final org.rsbot.accessors.RSInterface inter = getInterfaceInternal();
+        final org.rsbot.client.RSInterface inter = getInterfaceInternal();
         return (inter != null) && inter.isInventoryRSInterface();
     }
 
@@ -834,17 +834,17 @@ public class RSComponent extends MethodProvider {
     /**
      * @return The interface represented by this object.
      */
-    org.rsbot.accessors.RSInterface getInterfaceInternal() {
+    org.rsbot.client.RSInterface getInterfaceInternal() {
     	if (parent != null) {
-    		org.rsbot.accessors.RSInterface p = parent.getInterfaceInternal();
+    		org.rsbot.client.RSInterface p = parent.getInterfaceInternal();
     		if (p != null) {
-                final org.rsbot.accessors.RSInterface[] components = p.getComponents();
+                final org.rsbot.client.RSInterface[] components = p.getComponents();
                 if ((components != null) && (index >= 0) && (index < components.length)) {
                     return components[index];
                 }
             }
     	} else {
-    		final org.rsbot.accessors.RSInterface[] children = parInterface.getChildrenInternal();
+    		final org.rsbot.client.RSInterface[] children = parInterface.getChildrenInternal();
             if ((children != null) && (index < children.length)) {
                 return children[index];
             }

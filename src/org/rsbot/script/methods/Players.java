@@ -30,7 +30,7 @@ public class Players extends MethodProvider {
 	 */
 	public RSPlayer[] getAll() {
 		int[] validPlayers = methods.client.getRSPlayerIndexArray();
-		org.rsbot.accessors.RSPlayer[] array = methods.client.getRSPlayerArray();
+		org.rsbot.client.RSPlayer[] array = methods.client.getRSPlayerArray();
 		List<RSPlayer> players = new LinkedList<RSPlayer>();
 		for (int index : validPlayers) {
 			players.add(new RSPlayer(methods, array[index]));
@@ -51,7 +51,7 @@ public class Players extends MethodProvider {
 		int Dist = 20;
 		RSPlayer closest = null;
 		int[] validPlayers = methods.client.getRSPlayerIndexArray();
-		org.rsbot.accessors.RSPlayer[] players = methods.client
+		org.rsbot.client.RSPlayer[] players = methods.client
 				.getRSPlayerArray();
 
 		for (int element : validPlayers) {
@@ -87,7 +87,7 @@ public class Players extends MethodProvider {
 		int Dist = 20;
 		RSPlayer closest = null;
 		int[] validPlayers = methods.client.getRSPlayerIndexArray();
-		org.rsbot.accessors.RSPlayer[] players = methods.client
+		org.rsbot.client.RSPlayer[] players = methods.client
 				.getRSPlayerArray();
 
 		for (int element : validPlayers) {
@@ -124,7 +124,7 @@ public class Players extends MethodProvider {
 		int Dist = 20;
 		RSPlayer closest = null;
 		int[] validPlayers = methods.client.getRSPlayerIndexArray();
-		org.rsbot.accessors.RSPlayer[] players = methods.client
+		org.rsbot.client.RSPlayer[] players = methods.client
 				.getRSPlayerArray();
 
 		for (int element : validPlayers) {

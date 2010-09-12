@@ -155,11 +155,11 @@ public class ImprovedRewardsBox extends Random {
                 RSComponent[] scrollbar = interfaces.get(boxIF).getComponent(boxScrollbarIF).getComponents();
                 scrollbarBottomLength = (scrollbar[5].getAbsoluteY() - scrollbar[3].getAbsoluteY() + scrollbar[3].getHeight() - 6);
                 mouse.move(scrollbar[1].getCenter().x + random(-4, 4), scrollbar[1].getCenter().y + random(-15, 15));
-                int toDragtoY = (int) mouse.getClientLocation().getY() + (getBoxArea(selection[optionSelected]).y - selection[0].getAbsoluteY());
-                if ((toDragtoY - (int) mouse.getClientLocation().getY()) > (scrollbar[5].getAbsoluteY() - scrollbar[3].getAbsoluteY() + scrollbar[3].getHeight() - 6)) {
-                    toDragtoY = (int) mouse.getClientLocation().getY() + (scrollbar[5].getAbsoluteY() - scrollbar[3].getAbsoluteY() + scrollbar[3].getHeight() - 6);
+                int toDragtoY = (int) mouse.getLocation().getY() + (getBoxArea(selection[optionSelected]).y - selection[0].getAbsoluteY());
+                if ((toDragtoY - (int) mouse.getLocation().getY()) > (scrollbar[5].getAbsoluteY() - scrollbar[3].getAbsoluteY() + scrollbar[3].getHeight() - 6)) {
+                    toDragtoY = (int) mouse.getLocation().getY() + (scrollbar[5].getAbsoluteY() - scrollbar[3].getAbsoluteY() + scrollbar[3].getHeight() - 6);
                 }
-                mouse.drag((int) mouse.getClientLocation().getX(), toDragtoY);
+                mouse.drag((int) mouse.getLocation().getX(), toDragtoY);
             }
 
             /*
@@ -169,14 +169,14 @@ public class ImprovedRewardsBox extends Random {
                 * interfaces.getInterface(boxIF).getChild(boxScrollbarIF).getComponents();
                 * mouse.move(scrollbar[1].getPoint().x + random(-4, 4),
                 * scrollbar[1].getPoint().y + random(-15, 15)); int toDragtoY =
-                * (int) mouse.getClientLocation().getY() +
+                * (int) mouse.getLocation().getY() +
                 * (getBoxArea(selection[optionSelected]).y -
                 * selection[0].getAbsoluteY()); if (((int)
-                * mouse.getClientLocation().getY() - toDragtoY) >
+                * mouse.getLocation().getY() - toDragtoY) >
                 * (scrollbar[1].getAbsoluteY() - scrollbar[0].getAbsoluteY())) {
-                * toDragtoY = (int) mouse.getClientLocation().getY() -
+                * toDragtoY = (int) mouse.getLocation().getY() -
                 * (scrollbar[1].getAbsoluteY() - scrollbar[0].getAbsoluteY()); }
-                * mouse.drag((int) mouse.getClientLocation().getX(), toDragtoY); }
+                * mouse.drag((int) mouse.getLocation().getX(), toDragtoY); }
                 */
             sleep(random(3000, 4000));
             selection = interfaces.get(boxIF).getComponent(boxSelectionIF).getComponents();

@@ -5,7 +5,7 @@ import java.awt.Polygon;
 import java.util.Arrays;
 import java.util.LinkedList;
 
-import org.rsbot.accessors.LDModel;
+import org.rsbot.client.LDModel;
 import org.rsbot.script.methods.MethodContext;
 import org.rsbot.script.methods.MethodProvider;
 

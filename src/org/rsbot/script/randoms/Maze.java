@@ -360,7 +360,7 @@ public class Maze extends Random {
                 final Point location = new Point((int) (xTotal / thePoints.length), (int) (yTotal / thePoints.length) - random(0, 40));
                 if ((location.x == -1) || (location.y == -1))
                     return false;
-                if (Math.sqrt(Math.pow((mouse.getClientLocation().getX() - location.getX()), 2) + Math.pow((mouse.getClientLocation().getY() - location.getY()), 2)) < random(20, 30)) {
+                if (Math.sqrt(Math.pow((mouse.getLocation().getX() - location.getX()), 2) + Math.pow((mouse.getLocation().getY() - location.getY()), 2)) < random(20, 30)) {
                     for (final String command : menu.getItems()) {
                         if (command.contains("Open")) {
                             if (menu.doAction("Open")) {

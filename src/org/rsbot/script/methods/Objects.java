@@ -3,7 +3,7 @@ package org.rsbot.script.methods;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import org.rsbot.accessors.RSAnimableNode;
+import org.rsbot.client.RSAnimableNode;
 import org.rsbot.script.wrappers.RSObject;
 import org.rsbot.script.wrappers.RSObjectDef;
 import org.rsbot.script.wrappers.RSTile;
@@ -167,7 +167,7 @@ public class Objects extends MethodProvider {
     }
 
     private Set<RSObject> getAtLocal(int x, int y, int mask) {
-    	org.rsbot.accessors.Client client = methods.client;
+    	org.rsbot.client.Client client = methods.client;
     	Set<RSObject> objects = new LinkedHashSet<RSObject>();
         if (client.getRSGroundArray() == null) {
             return objects;
@@ -175,11 +175,11 @@ public class Objects extends MethodProvider {
 
         try {
         	int plane = client.getPlane();
-            org.rsbot.accessors.RSGround rsGround = client.getRSGroundArray()[plane][x][y];
+            org.rsbot.client.RSGround rsGround = client.getRSGroundArray()[plane][x][y];
 
             if (rsGround != null) {
-                org.rsbot.accessors.RSObject rsObj;
-                org.rsbot.accessors.RSInteractable obj;
+                org.rsbot.client.RSObject rsObj;
+                org.rsbot.client.RSInteractable obj;
                 
                 x += methods.client.getBaseX();
                 y += methods.client.getBaseY();
@@ -188,8 +188,8 @@ public class Objects extends MethodProvider {
                 if ((mask & TYPE_INTERACTABLE) != 0) {
                 	for (RSAnimableNode node = rsGround.getRSAnimableList(); node != null; node = node.getNext()) {
                         obj = node.getRSAnimable();
-                        if (obj != null && obj instanceof org.rsbot.accessors.RSObject) {
-                            rsObj = (org.rsbot.accessors.RSObject) obj;
+                        if (obj != null && obj instanceof org.rsbot.client.RSObject) {
+                            rsObj = (org.rsbot.client.RSObject) obj;
                             if (rsObj.getID() != -1) {
                                 objects.add(new RSObject(methods, rsObj, RSObject.Type.INTERACTABLE, plane));
                             }
@@ -201,7 +201,7 @@ public class Objects extends MethodProvider {
                 if ((mask & TYPE_FLOOR_DECORATION) != 0) {
                 	obj = rsGround.getRSObject1();
                     if (obj != null) {
-                        rsObj = (org.rsbot.accessors.RSObject) obj;
+                        rsObj = (org.rsbot.client.RSObject) obj;
                         if (rsObj.getID() != -1) {
                         	objects.add(new RSObject(methods, rsObj, RSObject.Type.FLOOR_DECORATION, plane));
                         }
@@ -213,14 +213,14 @@ public class Objects extends MethodProvider {
                 if ((mask & TYPE_BOUNDARY) != 0) {
                     obj = rsGround.getRSObject2_0();
                     if (obj != null) {
-                        rsObj = (org.rsbot.accessors.RSObject) obj;
+                        rsObj = (org.rsbot.client.RSObject) obj;
                         if (rsObj.getID() != -1)
                         	objects.add(new RSObject(methods, rsObj, RSObject.Type.BOUNDARY, plane));
                     }
 
                     obj = rsGround.getRSObject2_1();
                     if (obj != null) {
-                        rsObj = (org.rsbot.accessors.RSObject) obj;
+                        rsObj = (org.rsbot.client.RSObject) obj;
                         if (rsObj.getID() != -1)
                         	objects.add(new RSObject(methods, rsObj, RSObject.Type.BOUNDARY, plane));
                     }
@@ -230,14 +230,14 @@ public class Objects extends MethodProvider {
                 if ((mask & TYPE_WALL_DECORATION) != 0) {
                     obj = rsGround.getRSObject3_0();
                     if (obj != null) {
-                        rsObj = (org.rsbot.accessors.RSObject) obj;
+                        rsObj = (org.rsbot.client.RSObject) obj;
                         if (rsObj.getID() != -1)
                         	objects.add(new RSObject(methods, rsObj, RSObject.Type.WALL_DECORATION, plane));
                     }
 
                     obj = rsGround.getRSObject3_1();
                     if (obj != null) {
-                        rsObj = (org.rsbot.accessors.RSObject) obj;
+                        rsObj = (org.rsbot.client.RSObject) obj;
                         if (rsObj.getID() != -1)
                         	objects.add(new RSObject(methods, rsObj, RSObject.Type.WALL_DECORATION, plane));
                     }

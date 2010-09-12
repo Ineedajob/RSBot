@@ -34,7 +34,7 @@ public class LoginBot extends Random {
 
     public boolean activateCondition() {
         int idx = game.getLoginIndex();
-        return idx == INDEX_LOGGED_OUT || idx == INDEX_LOBBY;
+        return (idx == INDEX_LOGGED_OUT || idx == INDEX_LOBBY) && account.getName() != null;
     }
 
     public int loop() {

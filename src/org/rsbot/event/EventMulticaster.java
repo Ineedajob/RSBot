@@ -16,29 +16,23 @@ import java.util.EventObject;
 import java.util.List;
 
 import org.rsbot.event.events.RSEvent;
-import org.rsbot.event.listeners.AllListener;
 import org.rsbot.event.listeners.CharacterMovedListener;
 import org.rsbot.event.listeners.PaintListener;
 import org.rsbot.event.listeners.ServerMessageListener;
 import org.rsbot.event.listeners.TextPaintListener;
 
-public class EventMulticaster implements AllListener {
+public class EventMulticaster implements EventListener {
 
-    public static final long CHARACTER_MOVED_EVENT = 0x400;
     public static final long FOCUS_EVENT = 0x10;
-    public static final long FOCUS_EVENT_USER = 0x200;
     public static final long KEY_EVENT = 0x08;
-    public static final long KEY_EVENT_USER = 0x100;
 
     public static final long MOUSE_EVENT = 0x01;
-    public static final long MOUSE_EVENT_USER = 0x20;
     public static final long MOUSE_MOTION_EVENT = 0x02;
-    public static final long MOUSE_MOTION_EVENT_USER = 0x40;
     public static final long MOUSE_WHEEL_EVENT = 0x04;
 
-    public static final long MOUSE_WHEEL_EVENT_USER = 0x80;
-    public static final long PAINT_EVENT = 0x1000;
+    public static final long CHARACTER_MOVED_EVENT = 0x400;
     public static final long SERVER_MESSAGE_EVENT = 0x800;
+    public static final long PAINT_EVENT = 0x1000;
     public static final long TEXT_PAINT_EVENT = 0x2000;
 
     private static final Object treeLock = new Object();
@@ -46,9 +40,9 @@ public class EventMulticaster implements AllListener {
     /**
      * Gets the default mask for an event listener.
      */
-    public static long getDefaultMask(final EventListener el) {
+    public static long getDefaultMask(EventListener el) {
         if (el instanceof EventMulticaster) {
-            final EventMulticaster em = (EventMulticaster) el;
+            EventMulticaster em = (EventMulticaster) el;
             return em.enabledMask;
         }
         int mask = 0;
@@ -80,17 +74,14 @@ public class EventMulticaster implements AllListener {
         if (el instanceof TextPaintListener) {
             mask |= EventMulticaster.TEXT_PAINT_EVENT;
         }
-
-        if (el instanceof AllListener) {
-            mask = -1;
-        }
+        
         return mask;
     }
 
     /**
      * Gets the default mask for an event.
      */
-    public static long getDefaultMask(final EventObject e) {
+    public static long getDefaultMask(EventObject e) {
         long mask = 0;
         if (e instanceof MouseEvent) {
             final MouseEvent me = (MouseEvent) e;
@@ -146,7 +137,7 @@ public class EventMulticaster implements AllListener {
     /**
      * Adds the listener to the tree with a default mask.
      */
-    public void addListener(final EventListener el) {
+    public void addListener(EventListener el) {
         long mask = 0;
         if (el instanceof EventMulticaster) {
             final EventMulticaster em = (EventMulticaster) el;
@@ -161,7 +152,7 @@ public class EventMulticaster implements AllListener {
      * Adds the listener with the specified mask. If its an EventMulticaster the
      * specified mask will be ignored.
      */
-    public void addListener(final EventListener el, long mask) {
+    public void addListener(EventListener el, long mask) {
         synchronized (EventMulticaster.treeLock) {
             if (listeners.contains(el))
                 return;
@@ -185,7 +176,7 @@ public class EventMulticaster implements AllListener {
      * <p/>
      * Has to hold tree lock.
      */
-    private void addMulticaster(final EventMulticaster em) {
+    private void addMulticaster(EventMulticaster em) {
         if (em.parent != null)
             throw new IllegalArgumentException("adding multicaster to multiple multicasters");
         for (EventMulticaster cur = this; cur != null; cur = cur.parent) {
@@ -199,7 +190,7 @@ public class EventMulticaster implements AllListener {
     /**
      * Walks up the tree as necessary reseting the masks to the minimum.
      * <p/>
-     * Has to hold treelock.
+     * Has to hold TreeLock.
      */
     private void cleanMasks() {
         for (EventMulticaster cur = this; cur != null; cur = cur.parent) {
@@ -227,34 +218,24 @@ public class EventMulticaster implements AllListener {
     /**
      * Fires an event to all applicable listeners.
      */
-    public void fireEvent(final EventObject e) {
+    public void fireEvent(EventObject e) {
         fireEvent(e, EventMulticaster.getDefaultMask(e));
     }
 
     /**
      * Fires an event to all listeners, restricted by the mask.
      */
-    public void fireEvent(final EventObject e, final long mask) {
+    public void fireEvent(EventObject e, long mask) {
         synchronized (EventMulticaster.treeLock) {
             final int len = listeners.size();
-            // log.info(("L: " + listenerMasks.toString());
             for (int i = 0; i < len; i++) {
-                final long m = listenerMasks.get(i);
-                // if (mask != PAINT_EVENT && mask != TEXT_PAINT_EVENT)
-                // log.info(("" + m + " " + mask);
-                if ((m != 12288) && ((m & mask) == 0)) {
+                long m = listenerMasks.get(i);
+                if (m != 12288 && (m & mask) == 0) {
                     continue;
                 }
-                // if (mask != PAINT_EVENT && mask != TEXT_PAINT_EVENT)
-                // log.info(("HIT");
-                final EventListener el = listeners.get(i);
-                if (el instanceof AllListener) {
-                    final AllListener em = (AllListener) el;
-                    if (em.isEnabled(mask)) {
-                        em.fireEvent(e, mask);
-                    }
-                } else if (e instanceof MouseEvent) {
-                    final MouseEvent me = (MouseEvent) e;
+                EventListener el = listeners.get(i);
+                if (e instanceof MouseEvent) {
+                    MouseEvent me = (MouseEvent) e;
                     switch (me.getID()) {
                         case MouseEvent.MOUSE_PRESSED:
                             ((MouseListener) el).mousePressed(me);
@@ -269,22 +250,20 @@ public class EventMulticaster implements AllListener {
                             ((MouseListener) el).mouseEntered(me);
                             break;
                         case MouseEvent.MOUSE_EXITED:
-                            ((MouseListener) el).mouseEntered(me);
+                            ((MouseListener) el).mouseExited(me);
                             break;
-
                         case MouseEvent.MOUSE_MOVED:
                             ((MouseMotionListener) el).mouseMoved(me);
                             break;
                         case MouseEvent.MOUSE_DRAGGED:
                             ((MouseMotionListener) el).mouseDragged(me);
                             break;
-
                         case MouseEvent.MOUSE_WHEEL:
                             ((MouseWheelListener) el).mouseWheelMoved((MouseWheelEvent) me);
                             break;
                     }
                 } else if (e instanceof FocusEvent) {
-                    final FocusEvent fe = (FocusEvent) e;
+                    FocusEvent fe = (FocusEvent) e;
                     switch (fe.getID()) {
                         case FocusEvent.FOCUS_GAINED:
                             ((FocusListener) el).focusGained(fe);
@@ -294,7 +273,7 @@ public class EventMulticaster implements AllListener {
                             break;
                     }
                 } else if (e instanceof KeyEvent) {
-                    final KeyEvent ke = (KeyEvent) e;
+                    KeyEvent ke = (KeyEvent) e;
                     switch (ke.getID()) {
                         case KeyEvent.KEY_TYPED:
                             ((KeyListener) el).keyTyped(ke);
@@ -307,7 +286,7 @@ public class EventMulticaster implements AllListener {
                             break;
                     }
                 } else if (e instanceof RSEvent) {
-                    final RSEvent rse = (RSEvent) e;
+                    RSEvent rse = (RSEvent) e;
                     rse.dispatch(el);
                 }
             }
@@ -329,9 +308,9 @@ public class EventMulticaster implements AllListener {
     }
 
     /**
-     * Returns if the mask is enabled on this multicaster.
+     * Returns whether the mask is enabled on this multicaster.
      */
-    public final boolean isEnabled(final long mask) {
+    public final boolean isEnabled(long mask) {
         return (enabledMask & mask) != 0;
     }
 

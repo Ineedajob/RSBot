@@ -16,10 +16,14 @@ import org.rsbot.event.EventMulticaster;
 import org.rsbot.event.listeners.TextPaintListener;
 
 /**
- * A paint text event; only valid when it is being dispatched.
+ * An event that specifies a line index and graphics
+ * object on which a TextPaintListener should paint a
+ * line of text.
  */
 public class TextPaintEvent extends RSEvent {
+
     private static final long serialVersionUID = 6634362568916377937L;
+
     public Graphics graphics;
     public int idx;
 
@@ -60,4 +64,5 @@ public class TextPaintEvent extends RSEvent {
     public long getMask() {
         return EventMulticaster.TEXT_PAINT_EVENT;
     }
+
 }

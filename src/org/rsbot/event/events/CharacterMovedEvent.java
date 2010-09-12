@@ -14,11 +14,11 @@ public class CharacterMovedEvent extends RSEvent {
     private static final long serialVersionUID = 8883312847545757405L;
     
     private final MethodContext ctx;
-    private final org.rsbot.accessors.RSCharacter character;
+    private final org.rsbot.client.RSCharacter character;
     private final int direction;
     private org.rsbot.script.wrappers.RSCharacter wrapped;
 
-    public CharacterMovedEvent(final MethodContext ctx, final org.rsbot.accessors.RSCharacter character, final int direction) {
+    public CharacterMovedEvent(final MethodContext ctx, final org.rsbot.client.RSCharacter character, final int direction) {
     	this.ctx = ctx;
         this.character = character;
         this.direction = direction;
@@ -31,11 +31,11 @@ public class CharacterMovedEvent extends RSEvent {
 
     public org.rsbot.script.wrappers.RSCharacter getCharacter() {
         if (wrapped == null) {
-            if (character instanceof org.rsbot.accessors.RSNPC) {
-                final org.rsbot.accessors.RSNPC npc = (org.rsbot.accessors.RSNPC) character;
+            if (character instanceof org.rsbot.client.RSNPC) {
+                final org.rsbot.client.RSNPC npc = (org.rsbot.client.RSNPC) character;
                 wrapped = new org.rsbot.script.wrappers.RSNPC(ctx, npc);
-            } else if (character instanceof org.rsbot.accessors.RSPlayer) {
-                final org.rsbot.accessors.RSPlayer player = (org.rsbot.accessors.RSPlayer) character;
+            } else if (character instanceof org.rsbot.client.RSPlayer) {
+                final org.rsbot.client.RSPlayer player = (org.rsbot.client.RSPlayer) character;
                 wrapped = new org.rsbot.script.wrappers.RSPlayer(ctx, player);
             } else {
                 wrapped = new org.rsbot.script.wrappers.RSCharacter(ctx, character);

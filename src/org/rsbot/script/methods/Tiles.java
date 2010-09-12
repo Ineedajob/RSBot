@@ -76,7 +76,7 @@ public class Tiles extends MethodProvider {
      * if the mouse is not over the viewport.
      */
     public RSTile getTileUnderMouse() {
-        Point p = methods.mouse.getClientLocation();
+        Point p = methods.mouse.getLocation();
         if (!methods.calc.pointOnScreen(p)) {
             return null;
         }

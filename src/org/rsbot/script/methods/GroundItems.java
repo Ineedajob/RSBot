@@ -1,6 +1,6 @@
 package org.rsbot.script.methods;
 
-import org.rsbot.script.internal.NodeList;
+import org.rsbot.script.internal.wrappers.Deque;
 import org.rsbot.script.wrappers.RSArea;
 import org.rsbot.script.wrappers.RSItem;
 import org.rsbot.script.wrappers.RSGroundItem;
@@ -126,16 +126,16 @@ public class GroundItems extends MethodProvider {
 
         List<RSGroundItem> list = new ArrayList<RSGroundItem>();
 
-        org.rsbot.accessors.NodeCache itemNC = methods.client.getRSItemNodeCache();
+        org.rsbot.client.NodeCache itemNC = methods.client.getRSItemNodeCache();
         int id = x | y << 14 | methods.client.getPlane() << 28;
 
-        org.rsbot.accessors.NodeListCache itemNLC = (org.rsbot.accessors.NodeListCache) methods.nodes.lookup(itemNC, id);
+        org.rsbot.client.NodeListCache itemNLC = (org.rsbot.client.NodeListCache) methods.nodes.lookup(itemNC, id);
 
         if (itemNLC == null)
             return new RSGroundItem[0];
 
-        NodeList itemNL = new NodeList(itemNLC.getNodeList());
-        for (org.rsbot.accessors.RSItem item = (org.rsbot.accessors.RSItem) itemNL.getFirst(); item != null; item = (org.rsbot.accessors.RSItem) itemNL.getNext()) {
+        Deque itemNL = new Deque(itemNLC.getNodeList());
+        for (org.rsbot.client.RSItem item = (org.rsbot.client.RSItem) itemNL.getHead(); item != null; item = (org.rsbot.client.RSItem) itemNL.getNext()) {
             list.add(new RSGroundItem(methods, new RSTile(x, y), new RSItem(methods, item)));
         }
 

@@ -1,8 +1,9 @@
 package org.rsbot.script.methods;
 
-import org.rsbot.accessors.ActionDataNode;
+import org.rsbot.client.ActionDataNode;
+import org.rsbot.event.EventMulticaster;
 import org.rsbot.event.listeners.PaintListener;
-import org.rsbot.script.internal.NodeList;
+import org.rsbot.script.internal.wrappers.Deque;
 import org.rsbot.script.wrappers.RSTile;
 
 import java.awt.Graphics;
@@ -104,9 +105,9 @@ public class Menu extends MethodProvider {
      */
     public String[] getActions() {
         ArrayList<String> actionsList = new ArrayList<String>();
-        NodeList menu = new NodeList(methods.client.getActionDataList());
+        Deque menu = new Deque(methods.client.getActionDataList());
 
-        for (ActionDataNode adn = (ActionDataNode) menu.getFirst(); adn != null; adn = (ActionDataNode) menu.getNext()) {
+        for (ActionDataNode adn = (ActionDataNode) menu.getHead(); adn != null; adn = (ActionDataNode) menu.getNext()) {
             actionsList.add(adn.getMenuAction());
         }
 
@@ -114,8 +115,8 @@ public class Menu extends MethodProvider {
         ArrayList<String> output = new ArrayList<String>();
         // Don't remove the commented line, Jagex switches every few updates, so
         // it's there for quick fixes.
-        //for (int i = actions.length - 1; i >= 0; i--) {
-        for (int i = 0; i < actions.length; i++) {
+        //for (int i = actions.length - 1; i >= 0; --i) {
+        for (int i = 0; i < actions.length; ++i) {
             String action = actions[i];
             if (action != null) {
                 String text = stripFomatting(action);
@@ -159,8 +160,8 @@ public class Menu extends MethodProvider {
             actions = menuActionsCache;
         }
         ArrayList<String> output = new ArrayList<String>();
-        for (int i = Math.min(options.length, actions.length) - 1; i >= 0; i--) {
-        	//for (int i = 0; i < Math.min(options.length, actions.length); i++) {
+        for (int i = Math.min(options.length, actions.length) - 1; i >= 0; --i) {
+        	//for (int i = 0; i < Math.min(options.length, actions.length); ++i) {
             String option = options[i];
             String action = actions[i];
             if (option != null && action != null) {
@@ -194,18 +195,17 @@ public class Menu extends MethodProvider {
      */
     public String[] getOptions() {
         ArrayList<String> optionsList = new ArrayList<String>();
-        NodeList menu = new NodeList(methods.client.getActionDataList());
+        Deque menu = new Deque(methods.client.getActionDataList());
 
-        for (ActionDataNode adn = (ActionDataNode) menu.getFirst(); adn != null; adn = (ActionDataNode) menu.getNext()) {
+        for (ActionDataNode adn = (ActionDataNode) menu.getHead(); adn != null; adn = (ActionDataNode) menu.getNext()) {
             optionsList.add(adn.getMenuOption());
         }
 
         String[] options = optionsList.toArray(new String[optionsList.size()]);
         ArrayList<String> output = new ArrayList<String>();
         // Don't remove the commented line, Jagex switches every few updates, so
-        // it's there for quick fixes.
-        //for (int i = options.length - 1; i >= 0; i--) {
-        for (int i = 0; i < options.length; i++) {
+        // it's there for quick fixes. for (int i = options.length - 1; i >= 0; --i) {
+        for (int i = 0; i < options.length; ++i) {
             String option = options[i];
             if (option != null) {
                 String text = stripFomatting(option);
@@ -214,7 +214,6 @@ public class Menu extends MethodProvider {
                 output.add("");
             }
         }
-
         return output.toArray(new String[output.size()]);
     }
 
@@ -235,14 +234,14 @@ public class Menu extends MethodProvider {
             return;
         
         menuListenerStarted = true;
-        methods.bot.getEventManager().registerListener(new PaintListener() {
+        methods.bot.getEventManager().addListener(new PaintListener() {
             public void onRepaint(Graphics g) {
                 synchronized (menuCacheLock) {
                     menuOptionsCache = getOptions();
                     menuActionsCache = getActions();
                 }
             }
-        });
+        }, EventMulticaster.PAINT_EVENT);
     }
     
     /**

@@ -1,7 +1,7 @@
 package org.rsbot.script.wrappers;
 
-import org.rsbot.accessors.HardReference;
-import org.rsbot.accessors.SoftReference;
+import org.rsbot.client.HardReference;
+import org.rsbot.client.SoftReference;
 import org.rsbot.script.methods.*;
 
 /**
@@ -20,7 +20,7 @@ public class RSItem extends MethodProvider {
         this.stack = stack;
     }
 
-    public RSItem(final MethodContext ctx, final org.rsbot.accessors.RSItem item) {
+    public RSItem(final MethodContext ctx, final org.rsbot.client.RSItem item) {
     	super(ctx);
         id = item.getID();
         stack = item.getStackSize();
@@ -40,16 +40,16 @@ public class RSItem extends MethodProvider {
      */
     public RSItemDef getDefinition() {
         try {
-            org.rsbot.accessors.Node ref = methods.nodes.lookup(methods.client.getRSItemDefFactory(), id);
+            org.rsbot.client.Node ref = methods.nodes.lookup(methods.client.getRSItemDefFactory(), id);
 
             if(ref != null) {
                 if(ref instanceof HardReference) {
-                    return new RSItemDef((org.rsbot.accessors.RSItemDef)(((HardReference)ref).get()));
+                    return new RSItemDef((org.rsbot.client.RSItemDef)(((HardReference)ref).get()));
                 } else if(ref instanceof SoftReference)  {
                     Object def = ((SoftReference) ref).getReference().get();
 
                     if(def != null)
-                        return new RSItemDef((org.rsbot.accessors.RSItemDef)def);
+                        return new RSItemDef((org.rsbot.client.RSItemDef)def);
                 }
             }
             return null;

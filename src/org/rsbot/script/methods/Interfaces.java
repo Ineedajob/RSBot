@@ -29,7 +29,7 @@ public class Interfaces extends MethodProvider {
 	 */
 	public synchronized RSInterface[] getAll() {
 		enlargeCache();
-		final org.rsbot.accessors.RSInterface[][] inters = methods.client.getRSInterfaceCache();
+		final org.rsbot.client.RSInterface[][] inters = methods.client.getRSInterfaceCache();
 		if (inters == null)
 			return new RSInterface[0];
 		final List<RSInterface> out = new ArrayList<RSInterface>();
@@ -156,7 +156,7 @@ public class Interfaces extends MethodProvider {
 	 * Enlarges the cache if there are more interfaces than the cache size.
 	 */
 	private synchronized void enlargeCache() {
-		final org.rsbot.accessors.RSInterface[][] inters = methods.client.getRSInterfaceCache();
+		final org.rsbot.client.RSInterface[][] inters = methods.client.getRSInterfaceCache();
 		if ((inters != null) && (mainCache.length < inters.length)) { // enlarge cache
 			mainCache = Arrays.copyOf(mainCache, inters.length);
 			for (int i = mainCache.length; i < mainCache.length; i++) {

@@ -3,6 +3,9 @@ package org.rsbot.util;
 import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
@@ -87,6 +90,16 @@ public class StringUtil {
             render.drawString(t, xIdx, y);
             xIdx += metrics.stringWidth(t);
         }
+    }
+
+	public static String throwableToString(Throwable t) {
+        if (t != null) {
+            Writer exception = new StringWriter();
+        	PrintWriter printWriter = new PrintWriter(exception);
+        	t.printStackTrace(printWriter);
+        	return exception.toString();
+		}
+		return "";
     }
     
 }

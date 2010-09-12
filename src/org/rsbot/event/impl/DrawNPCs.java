@@ -5,8 +5,8 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Point;
 
-import org.rsbot.accessors.Node;
-import org.rsbot.accessors.RSNPCNode;
+import org.rsbot.client.Node;
+import org.rsbot.client.RSNPCNode;
 import org.rsbot.bot.Bot;
 import org.rsbot.event.listeners.PaintListener;
 import org.rsbot.script.methods.MethodContext;

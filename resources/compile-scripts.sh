@@ -2,8 +2,8 @@
 
 cc=javac
 cflags=
-scripts=Scripts
-scriptspre=$scripts/Precompiled
+scripts=Scripts/Sources
+scriptspre=Scripts/Precompiled
 jarpathfile=Settings/path.txt
 
 if [ ! -e "$jarpathfile" ]; then

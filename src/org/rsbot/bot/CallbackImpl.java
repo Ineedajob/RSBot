@@ -1,20 +1,17 @@
 package org.rsbot.bot;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import org.rsbot.accessors.Callback;
-import org.rsbot.accessors.Render;
-import org.rsbot.accessors.RenderData;
+import org.rsbot.client.Callback;
+import org.rsbot.client.Render;
+import org.rsbot.client.RenderData;
 import org.rsbot.event.events.CharacterMovedEvent;
 import org.rsbot.event.events.ServerMessageEvent;
 import org.rsbot.script.methods.MethodContext;
 
 public class CallbackImpl implements Callback {
+	
     private final Bot bot;
-    private final Logger log = Logger.getLogger(CallbackImpl.class.getName());
 
-    public CallbackImpl(final Bot bot) {
+    public CallbackImpl(Bot bot) {
         this.bot = bot;
     }
 
@@ -23,21 +20,13 @@ public class CallbackImpl implements Callback {
     }
 
     public void notifyServerMessage(final String s) {
-        try {
-            final ServerMessageEvent e = new ServerMessageEvent(s);
-            bot.getEventManager().addToQueue(e);
-        } catch (final Throwable e) { // protect rs
-            log.log(Level.SEVERE, "", e);
-        }
+    	ServerMessageEvent e = new ServerMessageEvent(s);
+        bot.getEventManager().dispatchEvent(e);
     }
 
-    public void rsCharacterMoved(final org.rsbot.accessors.RSCharacter c, final int i) {
-        try {
-            final CharacterMovedEvent e = new CharacterMovedEvent(bot.getMethodContext(), c, i);
-            bot.getEventManager().addToQueue(e);
-        } catch (final Throwable e) { // protect rs
-            log.log(Level.SEVERE, "", e);
-        }
+    public void rsCharacterMoved(final org.rsbot.client.RSCharacter c, final int i) {
+    	CharacterMovedEvent e = new CharacterMovedEvent(bot.getMethodContext(), c, i);
+        bot.getEventManager().dispatchEvent(e);
     }
 
     public void updateRenderInfo(final Render r, final RenderData rd) {

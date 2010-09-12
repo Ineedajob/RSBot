@@ -111,7 +111,7 @@ public class Inventory extends MethodProvider {
 		if (getItems()[col + row * 4].getID() == -1)
 			return;
 		Point p;
-		p = methods.mouse.getClientLocation();
+		p = methods.mouse.getLocation();
 		if (p.x < 563 + col * 42 || p.x >= 563 + col * 42 + 32
 				|| p.y < 213 + row * 36 || p.y >= 213 + row * 36 + 32) {
 			methods.mouse.move(getInterface()
@@ -322,7 +322,12 @@ public class Inventory extends MethodProvider {
 				RSItem[] inv = new RSItem[len];
 				for (int i = 0; i < len; i++) {
 					RSComponent item = invIface.getComponents()[i];
-					inv[item.getComponentIndex()] = new RSItem(methods, item);
+					int idx = item.getComponentIndex();
+					if (idx >= 0) {
+						inv[idx] = new RSItem(methods, item);
+					} else {
+						return new RSItem[0];
+					}
 				}
 
 				return inv;
@@ -353,7 +358,12 @@ public class Inventory extends MethodProvider {
 				RSItem[] inv = new RSItem[len];
 				for (int i = 0; i < len; i++) {
 					RSComponent item = invIface.getComponents()[i];
-					inv[item.getComponentIndex()] = new RSItem(methods, item);
+					int idx = item.getComponentIndex();
+					if (idx >= 0) {
+						inv[idx] = new RSItem(methods, item);
+					} else {
+						return new RSItem[0];
+					}
 				}
 
 				return inv;

@@ -8,25 +8,37 @@ import java.util.EventListener;
 import java.util.Map;
 import java.util.logging.Level;
 
-public abstract class Script extends Methods implements EventListener {
+public abstract class Script extends Methods implements EventListener, Runnable {
 
-    public int ID = -1;
     public volatile boolean isActive = false;
     public volatile boolean isPaused = false;
-    
+
+	private int id = -1;
     private MethodContext ctx;
 
     /**
-     * The start method. Called before loop() is first called, but after canStart()
-     * is returned true. If <tt>false</tt>
-     * is returned, the script will not start and loop() will never be called.
+     * Deprecated. Use {@link #onStart()} instead. Finalized to
+	 * cause errors intentionally to avoid confusion (yea I
+	 * know how to deal with these script writers ;)).
      *
+	 * @deprecated Use {@link #onStart()} instead.
      * @param map The arguments passed in from the description.
      * @return <tt>true</tt> if the script can start.
      */
-    public boolean onStart(final Map<String, String> map) {
+	@Deprecated
+    public final boolean onStart(Map<String, String> map) {
     	return true;
     }
+
+	/**
+	 * Called before loop() is first called, after this script has
+	 * been initialized with all method providers.
+	 *
+	 * @return <tt>true</tt> if the script can start.
+	 */
+	public boolean onStart() {
+		return true;
+	}
 
     /**
      * The main loop. Called if you return true from main. Called until you
@@ -56,13 +68,20 @@ public abstract class Script extends Methods implements EventListener {
     	this.ctx = ctx;
     }
 
-    public final void run(final Map<String, String> map) {
-        ctx.bot.getEventManager().registerListener(this);
+	public final void setID(int id) {
+		if (this.id != -1) {
+			throw new IllegalStateException("Already added to pool!");
+		}
+		this.id = id;
+	}
+
+    public final void run() {
+        ctx.bot.getEventManager().addListener(this);
         menu.setupListener();
         log.info("Script started.");
         boolean start = false;
         try {
-            start = onStart(map);
+            start = onStart();
         } catch (final ThreadDeath ignored) {
         } catch (final Throwable ex) {
             log.log(Level.SEVERE, "Error starting script: ", ex);
@@ -125,11 +144,11 @@ public abstract class Script extends Methods implements EventListener {
         }
         mouse.moveOffScreen();
         ctx.bot.getEventManager().removeListener(this);
-        ctx.bot.getScriptHandler().removeScript(ID);
+        ctx.bot.getScriptHandler().removeScript(id);
+		id = -1;
     }
 
     private boolean checkForRandoms() {
-
         if(ctx.bot.disableRandoms)
             return false;
             

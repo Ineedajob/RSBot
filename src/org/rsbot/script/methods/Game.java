@@ -172,7 +172,7 @@ public class Game extends MethodProvider {
         if (tab == getCurrentTab()) {
             return;
         }
-        org.rsbot.accessors.RSInterface iTab = methods.gui.getTab(tab);
+        org.rsbot.client.RSInterface iTab = methods.gui.getTab(tab);
         if (iTab == null) {
             return;
         }
@@ -205,7 +205,7 @@ public class Game extends MethodProvider {
         for (int i = 0; i < TAB_NAMES.length; i++) {
 
             // Get tab
-            org.rsbot.accessors.RSInterface tab = methods.gui.getTab(i);
+            org.rsbot.client.RSInterface tab = methods.gui.getTab(i);
             if (tab == null) {
                 continue;
             }
@@ -296,7 +296,7 @@ public class Game extends MethodProvider {
      */
     public boolean isOnLogoutTab() {
         for (int i = 0; i < Game.TAB_NAMES.length; i++) {
-            org.rsbot.accessors.RSInterface tab = methods.gui.getTab(i);
+            org.rsbot.client.RSInterface tab = methods.gui.getTab(i);
             if (tab == null)
                 continue;
             int id = tab.getTextureID();
@@ -334,7 +334,7 @@ public class Game extends MethodProvider {
             } while (methods.client.isSpellSelected() || methods.inventory.isItemSelected());
         }
         while (!isOnLogoutTab()) {
-            methods.interfaces.getComponent(548, 175).doClick();
+            methods.interfaces.getComponent(548, 178).doClick();
             //Logout button in the top right hand corner
             int timesToWait = 0;
             while (!isOnLogoutTab() && timesToWait < 5) {
@@ -360,7 +360,7 @@ public class Game extends MethodProvider {
      * @return <tt>true</tt> if logged in; otherwise <tt>false</tt>.
      */
     public boolean isLoggedIn() {
-        org.rsbot.accessors.Client client = methods.client;
+        org.rsbot.client.Client client = methods.client;
         int index = client == null ? -1 : client.getLoginIndex();
         return index == 10 || index == 11;
     }
@@ -429,7 +429,7 @@ public class Game extends MethodProvider {
      * @return The canvas' width.
      */
 	public int getWidth() {
-		return methods.bot.getCanvas().getGameWidth();
+		return methods.bot.getCanvas().getWidth();
 	}
 
 	/**
@@ -438,7 +438,7 @@ public class Game extends MethodProvider {
      * @return The canvas' height.
      */
 	public int getHeight() {
-		return methods.bot.getCanvas().getGameHeight();
+		return methods.bot.getCanvas().getHeight();
 	}
 
 }

@@ -1,7 +1,7 @@
 package org.rsbot.script.methods;
 
-import org.rsbot.accessors.DefFactory;
-import org.rsbot.accessors.Node;
+import org.rsbot.client.DefFactory;
+import org.rsbot.client.Node;
 
 /**
  * For internal use to reference data stored in the engine's
@@ -19,7 +19,7 @@ public class Nodes extends MethodProvider {
 	 * @param id The id of the node
 	 * @return A <tt>Node</tt> object corresponding to the ID in the nodecache.
 	 */
-	public Node lookup(final org.rsbot.accessors.NodeCache nc, final long id) {
+	public Node lookup(final org.rsbot.client.NodeCache nc, final long id) {
 		try {
 			if ((nc == null) || (nc.getCache() == null) || (id < 0))
 				return null;

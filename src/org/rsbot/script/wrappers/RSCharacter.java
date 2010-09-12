@@ -1,9 +1,9 @@
 package org.rsbot.script.wrappers;
 
-import org.rsbot.accessors.LDModel;
-import org.rsbot.accessors.Model;
-import org.rsbot.accessors.Node;
-import org.rsbot.accessors.RSNPCNode;
+import org.rsbot.client.LDModel;
+import org.rsbot.client.Model;
+import org.rsbot.client.Node;
+import org.rsbot.client.RSNPCNode;
 import org.rsbot.script.methods.MethodContext;
 import org.rsbot.script.methods.MethodProvider;
 
@@ -14,9 +14,9 @@ import java.awt.Point;
  */
 public class RSCharacter extends MethodProvider {
 
-    protected org.rsbot.accessors.RSCharacter c;
+    protected org.rsbot.client.RSCharacter c;
 
-    public RSCharacter(final MethodContext ctx, final org.rsbot.accessors.RSCharacter c) {
+    public RSCharacter(final MethodContext ctx, final org.rsbot.client.RSCharacter c) {
     	super(ctx);
         this.c = c;
     }

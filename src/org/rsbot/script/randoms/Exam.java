@@ -377,7 +377,7 @@ public class Exam extends Random {
             X = (int) calc.tileToScreen(c.getLocation()).getX();
             Y = (int) calc.tileToScreen(c.getLocation()).getY();
             screenLoc = new Point(X, Y);
-            if (!mouse.getClientLocation().equals(screenLoc))
+            if (!mouse.getLocation().equals(screenLoc))
                 return false;
 
             final String[] items = menu.getItems();
