@@ -3,21 +3,10 @@ package org.rsbot.script.methods;
 /**
  * This class is for all the skill calculations.
  * <p/>
- * Use Skills.getMaxExp() with the stat name to get the index. Then use the
- * index to perform basic operations. <br>
- * <br>
- * private static int WOODCUTTING_SKILL = Skills.getMaxExp("woodcutting"); <br>
- * Then somewhere later in code: <br>
- * skills.getXPToNextLevel(WOODCUTTING_SKILL) <br>
- * <br>
- * Possible skill names: "attack", "defence", "strength", "hitpoints", "range",
- * "prayer", "magic", "cooking", "woodcutting", "fletching", "fishing",
- * "firemaking", "crafting", "smithing", "mining", "herblore", "agility",
- * "thieving", "slayer", "farming", "runecrafting", "hunter", "construction",
- * "summoning", "-unused-"
+ * Example usage: skills.getRealLevel(Skills.ATTACK);
  */
 public class Skills extends MethodProvider {
-
+	
 	public static final String[] SKILL_NAMES = { "attack", "defence",
 			"strength", "constitution", "range", "prayer", "magic", "cooking",
 			"woodcutting", "fletching", "fishing", "firemaking", "crafting",
@@ -25,6 +14,9 @@ public class Skills extends MethodProvider {
 			"farming", "runecrafting", "hunter", "construction", "summoning",
 			"dungeoneering", "-unused-" };
 
+	/**
+	 * A table containing the experiences that begin each level.
+	 */
 	public static final int[] XP_TABLE = { 0, 0, 83, 174, 276, 388, 512, 650,
 			801, 969, 1154, 1358, 1584, 1833, 2107, 2411, 2746, 3115, 3523,
 			3973, 4470, 5018, 5624, 6291, 7028, 7842, 8740, 9730, 10824, 12031,

@@ -1,10 +1,11 @@
 package org.rsbot.util;
 
-import org.rsbot.util.logging.ConsoleLogger;
-import org.rsbot.util.logging.LogFormatter;
-import org.rsbot.util.logging.TextAreaLogHandler;
+import org.rsbot.log.SystemConsoleHandler;
+import org.rsbot.log.LogFormatter;
+import org.rsbot.log.TextAreaLogHandler;
 
 import javax.swing.filechooser.FileSystemView;
+import java.awt.*;
 import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
@@ -30,8 +31,19 @@ public class GlobalConfiguration {
             public static final String ICON_DELETE = Resources.ROOT_IMG + "/delete.png";
             public static final String ICON_PLAY = Resources.ROOT_IMG + "/control_play_blue.png";
             public static final String ICON_PAUSE = Resources.ROOT_IMG + "/control_pause.png";
+            public static final String ICON_ADD = Resources.ROOT_IMG + "/add.png";
+            public static final String ICON_ADD_OVER = Resources.ROOT_IMG + "/add_over.png";
+            public static final String ICON_ADD_DOWN = Resources.ROOT_IMG + "/add_down.png";
+            public static final String ICON_HOME = Resources.ROOT_IMG + "/home.png";
+            public static final String ICON_BOT = Resources.ROOT_IMG + "/bot.png";
             public static final String ICON_TICK = Resources.ROOT_IMG + "/tick.png";
-            public static final String ICON_SCRIPT = Resources.ROOT_IMG + "/script_gear.png";
+            public static final String ICON_CONNECT = Resources.ROOT_IMG + "/connect.png";
+            public static final String ICON_DISCONNECT = Resources.ROOT_IMG + "/disconnect.png";
+            public static final String ICON_START = Resources.ROOT_IMG + "/control_play.png";
+			public static final String ICON_SCRIPT_BDL = Resources.ROOT_IMG + "/script_bdl.png";
+            public static final String ICON_SCRIPT_DRM = Resources.ROOT_IMG + "/script_drm.png";
+            public static final String ICON_SCRIPT_PRE = Resources.ROOT_IMG + "/script_pre.png";
+            public static final String ICON_SCRIPT_SRC = Resources.ROOT_IMG + "/script_src.png";
 
             public static final String VERSION = Resources.ROOT + "/version.dat";
         }
@@ -47,18 +59,28 @@ public class GlobalConfiguration {
 
         public static final String ROOT = "." + File.separator + "resources";
 
-        public static final String RSJAR = "lib" + File.separator + "rs.jar";
         public static final String COMPILE_SCRIPTS_BAT = "Compile-Scripts.bat";
         public static final String COMPILE_SCRIPTS_SH = "compile-scripts.sh";
+        public static final String COMPILE_FIND_JDK = "FindJDK.bat";
 
-        public static final String COMPILE_FINDJDK = "FindJDK.bat";
-        private static final String ROOT_IMG = Paths.ROOT + File.separator + "images";
+        public static final String ROOT_IMG = Paths.ROOT + File.separator + "images";
         public static final String ICON = Paths.ROOT_IMG + File.separator + "icon.png";
         public static final String ICON_DELETE = Paths.ROOT_IMG + File.separator + "delete.png";
         public static final String ICON_PLAY = Paths.ROOT_IMG + File.separator + "control_play_blue.png";
         public static final String ICON_PAUSE = Paths.ROOT_IMG + File.separator + "control_pause.png";
+        public static final String ICON_ADD = Paths.ROOT_IMG + File.separator + "add.png";
+        public static final String ICON_ADD_OVER = Paths.ROOT_IMG + File.separator + "add_over.png";
+        public static final String ICON_ADD_DOWN = Paths.ROOT_IMG + File.separator + "add_down.png";
+        public static final String ICON_HOME = Paths.ROOT_IMG + File.separator + "home.png";
+        public static final String ICON_BOT = Paths.ROOT_IMG + File.separator + "bot.png";
         public static final String ICON_TICK = Paths.ROOT_IMG + File.separator + "tick.png";
-        public static final String ICON_SCRIPT = Paths.ROOT_IMG + File.separator + "script_gear.png";
+        public static final String ICON_CONNECT = Paths.ROOT_IMG + File.separator + "connect.png";
+        public static final String ICON_DISCONNECT = Paths.ROOT_IMG + File.separator + "disconnect.png";
+        public static final String ICON_START = Paths.ROOT_IMG + File.separator + "control_play.png";
+		public static final String ICON_SCRIPT_BDL = Paths.ROOT_IMG + File.separator + "script_bdl.png";
+        public static final String ICON_SCRIPT_DRM = Paths.ROOT_IMG + File.separator + "script_drm.png";
+        public static final String ICON_SCRIPT_PRE = Paths.ROOT_IMG + File.separator + "script_pre.png";
+        public static final String ICON_SCRIPT_SRC = Paths.ROOT_IMG + File.separator + "script_src.png";
 
         public static final String VERSION = Paths.ROOT + File.separator + "version.dat";
 
@@ -95,6 +117,10 @@ public class GlobalConfiguration {
             return Paths.getSettingsDirectory() + File.separator + "path.txt";
         }
 
+		public static String getBootCache() {
+			return Paths.getSettingsDirectory() + File.separator + "boot.txt";
+		}
+
         public static String getVersionCache() {
             return Paths.getCacheDirectory() + File.separator + "info.dat";
         }
@@ -115,16 +141,16 @@ public class GlobalConfiguration {
             return Paths.getScriptsDirectory() + File.separator + "Precompiled";
         }
 
+		public static String getScriptsSourcesDirectory() {
+            return Paths.getScriptsDirectory() + File.separator + "Sources";
+        }
+
         public static String getCacheDirectory() {
             return Paths.getHomeDirectory() + File.separator + "Cache";
         }
 
         public static String getSettingsDirectory() {
             return Paths.getHomeDirectory() + File.separator + "Settings";
-        }
-
-        public static String getBreaksDirectory() {
-            return Paths.getSettingsDirectory() + File.separator + "Breaks.txt";
         }
 
         public static String getUnixHome() {
@@ -165,6 +191,7 @@ public class GlobalConfiguration {
         dirs.add(Paths.getSettingsDirectory());
         if (GlobalConfiguration.RUNNING_FROM_JAR) {
             dirs.add(Paths.getScriptsDirectory());
+			dirs.add(Paths.getScriptsSourcesDirectory());
             dirs.add(Paths.getScriptsPrecompiledDirectory());
         }
 
@@ -175,28 +202,28 @@ public class GlobalConfiguration {
             }
         }
 
-        final Properties logging = new Properties();
-        final String logformatter = LogFormatter.class.getCanonicalName();
-        final String filehandler = FileHandler.class.getCanonicalName();
-        logging.setProperty("handlers", TextAreaLogHandler.class.getCanonicalName() + "," + filehandler);
+        Properties logging = new Properties();
+        String logFormatter = LogFormatter.class.getCanonicalName();
+        String fileHandler = FileHandler.class.getCanonicalName();
+        logging.setProperty("handlers", TextAreaLogHandler.class.getCanonicalName() + "," + fileHandler);
         logging.setProperty(".level", "INFO");
-        logging.setProperty(ConsoleLogger.class.getCanonicalName() + ".formatter", logformatter);
-        logging.setProperty(filehandler + ".formatter", logformatter);
-        logging.setProperty(TextAreaLogHandler.class.getCanonicalName() + ".formatter", logformatter);
-        logging.setProperty(filehandler + ".pattern", Paths.getLogsDirectory() + File.separator + "%u.%g.log");
-        logging.setProperty(filehandler + ".count", "10");
+        logging.setProperty(SystemConsoleHandler.class.getCanonicalName() + ".formatter", logFormatter);
+        logging.setProperty(fileHandler + ".formatter", logFormatter);
+        logging.setProperty(TextAreaLogHandler.class.getCanonicalName() + ".formatter", logFormatter);
+        logging.setProperty(fileHandler + ".pattern", Paths.getLogsDirectory() + File.separator + "%u.%g.log");
+        logging.setProperty(fileHandler + ".count", "10");
         final ByteArrayOutputStream logout = new ByteArrayOutputStream();
         try {
             logging.store(logout, "");
             LogManager.getLogManager().readConfiguration(new ByteArrayInputStream(logout.toByteArray()));
-        } catch (final Exception e) {
+        } catch (final Exception ignored) {
         }
 
         if (GlobalConfiguration.RUNNING_FROM_JAR) {
             String path = resource.toString();
             try {
                 path = URLDecoder.decode(path, "UTF-8");
-            } catch (final UnsupportedEncodingException e1) {
+            } catch (final UnsupportedEncodingException ignored) {
             }
             final String prefix = "jar:file:/";
             if (path.indexOf(prefix) == 0) {
@@ -211,7 +238,7 @@ public class GlobalConfiguration {
                         pathfile.delete();
                     }
                     pathfile.createNewFile();
-                    final Writer out = new BufferedWriter(new FileWriter(Paths.getPathCache()));
+                    Writer out = new BufferedWriter(new FileWriter(Paths.getPathCache()));
                     out.write(path);
                     out.close();
                 } catch (final Exception e) {
@@ -220,6 +247,15 @@ public class GlobalConfiguration {
             }
         }
     }
+
+	public static Image getImage(String resource, String path) {
+		try {
+			return Toolkit.getDefaultToolkit().getImage(GlobalConfiguration.RUNNING_FROM_JAR ?
+					GlobalConfiguration.class.getResource(resource) : new File(path).toURI().toURL());
+		} catch (Exception ignored) {
+		}
+		return null;
+	}
 
     public static OperatingSystem getCurrentOperatingSystem() {
         return GlobalConfiguration.CURRENT_OS;
@@ -256,14 +292,15 @@ public class GlobalConfiguration {
 
     public static int getVersion() {
         try {
-            final InputStream is = RUNNING_FROM_JAR ? GlobalConfiguration.class.getClassLoader().getResourceAsStream(Paths.Resources.VERSION) : new FileInputStream(Paths.VERSION);
+            InputStream is = RUNNING_FROM_JAR ? GlobalConfiguration.class.getClassLoader().getResourceAsStream(Paths.Resources.VERSION) : new FileInputStream(Paths.VERSION);
 
             int off = 0;
             byte[] b = new byte[2];
-            while ((off += is.read(b, off, 2 - off)) != 2) ;
+            while ((off += is.read(b, off, 2 - off)) != 2) {
+			}
 
             return ((0xFF & b[0]) << 8) + (0xFF & b[1]);
-        } catch (final Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return -1;

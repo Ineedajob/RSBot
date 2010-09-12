@@ -5,17 +5,17 @@ import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ScriptManifest {
-    String[] authors();
-
-    String category() default "Other";
-
-    String description() default "";
 
     String name();
 
-    String summary() default "";
+    double version() default 1.0;
+
+    String description() default "";
+
+    String[] authors();
+
+	String[] keywords() default {};
     
     String website() default "";
 
-    double version() default 1.0;
 }

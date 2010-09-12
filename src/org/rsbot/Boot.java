@@ -9,13 +9,14 @@ public class Boot {
 		String location = Boot.class.getProtectionDomain().getCodeSource().getLocation().getPath();
 		location = URLDecoder.decode(location, "UTF-8").replaceAll("\\\\", "/");
 		String os = System.getProperty("os.name").toLowerCase();
+		String memory = "-Xmx512m";
 		
 		if (os.contains("windows")) {
-			Runtime.getRuntime().exec("javaw -Xmx512m -classpath \"" +
+			Runtime.getRuntime().exec("javaw " + memory + " -classpath \"" +
 					location + "\" org.rsbot.Application");
 		} else {
 			Runtime.getRuntime().exec(new String[] { "/bin/sh",
-					"-c", "java -Xmx512m -classpath \"" +
+					"-c", "java " + memory + " -classpath \"" +
 					location + "\" org.rsbot.Application"});
 		}
 	}

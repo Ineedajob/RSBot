@@ -2,7 +2,7 @@ package org.rsbot.event.impl;
 
 import java.awt.Graphics;
 
-import org.rsbot.bot.input.Listener;
+import org.rsbot.client.input.Listener;
 import org.rsbot.event.listeners.TextPaintListener;
 import org.rsbot.util.StringUtil;
 

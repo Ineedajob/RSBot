@@ -13,7 +13,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.PropertyPermission;
 
-import org.rsbot.util.Injector;
+import org.rsbot.bot.injector.Injector;
 
 /**
  * @author Alex

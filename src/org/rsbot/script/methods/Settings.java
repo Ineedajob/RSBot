@@ -35,7 +35,7 @@ public class Settings extends MethodProvider {
 	 * otherwise <tt>new int[0]</tt>.
 	 */
 	public int[] getSettingArray() {
-		org.rsbot.accessors.Settings settingArray = methods.client
+		org.rsbot.client.Settings settingArray = methods.client
 				.getSettingArray();
 		if (settingArray == null || settingArray.getData() == null)
 			return new int[0];

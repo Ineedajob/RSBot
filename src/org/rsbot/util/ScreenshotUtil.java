@@ -30,7 +30,7 @@ public class ScreenshotUtil {
 
     public static void takeScreenshot(final Bot bot, final File file, final String type, final boolean hideUsername) {
         try {
-            final BufferedImage source = bot.getCanvas().getBotBuffer();
+            final BufferedImage source = bot.getImage();
             final WritableRaster raster = source.copyData(null);
 
             final BufferedImage bufferedImage = new BufferedImage(source.getColorModel(), raster, source.isAlphaPremultiplied(), null);

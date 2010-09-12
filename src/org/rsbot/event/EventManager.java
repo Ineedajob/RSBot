@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 import org.rsbot.event.events.RSEvent;
 
 public class EventManager implements Runnable {
+
     public static class KillEvent extends RSEvent {
         private static final long serialVersionUID = 3426050317048250049L;
 
@@ -23,23 +24,23 @@ public class EventManager implements Runnable {
     }
 
     private final Logger log = Logger.getLogger(EventManager.class.getName());
-    private Thread eventThread;
 
     private final EventMulticaster multicaster = new EventMulticaster();
     private final Map<Integer, EventObject> queue = new HashMap<Integer, EventObject>();
 
     private final Object threadLock = new Object();
+    
+    private Thread eventThread;
 
     /**
      * Adds the event to the queue for the EventManager to process.
      * <p/>
      * Events are processed with the default mask.
      */
-    public void addToQueue(final EventObject e) {
-        // System.out.println(("addToQueue - " + EventManager.queue.size());
+    public void dispatchEvent(EventObject e) {
         synchronized (queue) {
             boolean added = false;
-            for (int off = 0; off < queue.size(); off++) {
+            for (int off = 0; off < queue.size(); ++off) {
                 if (!queue.containsKey(off)) {
                     queue.put(off, e);
                     added = true;
@@ -54,10 +55,11 @@ public class EventManager implements Runnable {
     }
 
     /**
-     * Returns the multicaster that all the events get sent to.
+     * Dispatches the given event. Calling this avoids the use
+     * of the event queue.
      */
-    public EventMulticaster getMulticaster() {
-        return multicaster;
+    public void processEvent(EventObject event) {
+        multicaster.fireEvent(event);
     }
 
     /**
@@ -79,54 +81,53 @@ public class EventManager implements Runnable {
     }
 
     /**
-     * If clear then we clear the queue then kill. If not then we finish
-     * processing then kill. If sleep then when return the event thread is dead
-     * or we have been interupted. Either way the thread will eventually die.
+     * Kills the event manager thread.
+     * 
+     * @param wait <tt>true</tt> to wait for the kill
+     * event to be processed before returning; otherwise
+     * <tt>false</tt> to submit the kill event and return
+     * immediately.
      */
-    public void killThread(final boolean clear, final boolean wait) {
-        final EventObject event = new KillEvent();
+    public void killThread(boolean wait) {
+        EventObject event = new KillEvent();
         synchronized (event) {
-            addToQueue(event);
+            dispatchEvent(event);
             if (wait) {
                 try {
                     event.wait();
-                } catch (final Exception e) {
-                    log.info("Event Queue: " + e.toString());
+                } catch (InterruptedException e) {
+                    log.info("wait for kill event interrupted!");
                 }
             }
         }
     }
 
     /**
-     * Process the event. This dispatches the event.
+     * Registers a listener.
+     *
+     * @param listener the listener to add.
      */
-    public void processEvent(final EventObject event) {
-        multicaster.fireEvent(event);
+    public void addListener(EventListener listener) {
+        multicaster.addListener(listener);
     }
-
+    
     /**
      * Registers a listener.
      *
-     * @param listener the listener to add
+     * @param listener the listener to add.
+     * @param mask the event type mask.
      */
-    public void registerListener(final EventListener listener) {
-        multicaster.addListener(listener);
+    public void addListener(EventListener listener, long mask) {
+    	multicaster.addListener(listener, mask);
     }
-
+    
     /**
-     * Removes the listener from the list. Use removeListener(T) instead.
+     * Removes a listener.
+     * 
+     * @param listener the listener to remove.
      */
-    public <T extends EventListener> void removeListener(final Class<T> c, final T el) { // TODO
-        // remove me
-        multicaster.removeListener(el);
-    }
-
-    /**
-     * Removes the listener from the list.
-     */
-    public <T extends EventListener> void removeListener(final T el) { // TODO
-        // remove me
-        multicaster.removeListener(el);
+    public void removeListener(EventListener listener) {
+    	multicaster.removeListener(listener);
     }
 
     /**
@@ -147,7 +148,7 @@ public class EventManager implements Runnable {
                         }
                     }
                     int emptySpots = 0;
-                    for (int off = 0; off < queue.size() + emptySpots; off++) {
+                    for (int off = 0; off < queue.size() + emptySpots; ++off) {
                         if (!queue.containsKey(off)) {
                             emptySpots++;
                             continue;
@@ -158,7 +159,9 @@ public class EventManager implements Runnable {
                 }
                 if (event instanceof KillEvent) {
                     eventThread = null;
-                    event.notifyAll();
+                    synchronized (event) {
+                    	event.notifyAll();
+                    }
                     return;
                 }
                 try {
@@ -175,6 +178,7 @@ public class EventManager implements Runnable {
                 }
             } catch (final Exception e) {
                 log.info("Event Queue: " + e.toString());
+                e.printStackTrace();
             }
         }
     }
@@ -185,8 +189,9 @@ public class EventManager implements Runnable {
      */
     public void start() {
         synchronized (threadLock) {
-            if (eventThread != null)
+            if (eventThread != null) {
                 throw new IllegalThreadStateException();
+            }
             eventThread = new Thread(this, "EventQueue");
             eventThread.setDaemon(true);
 			eventThread.start();

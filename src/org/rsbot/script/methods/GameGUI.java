@@ -1,6 +1,6 @@
 package org.rsbot.script.methods;
 
-import org.rsbot.accessors.RSInterface;
+import org.rsbot.client.RSInterface;
 
 /**
  * For internal use to find GUI components.

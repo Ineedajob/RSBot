@@ -9,10 +9,12 @@ import org.rsbot.event.listeners.ServerMessageListener;
  * A server message event.
  */
 public class ServerMessageEvent extends RSEvent {
+
     private static final long serialVersionUID = -2786472026976811201L;
+
     private final String message;
 
-    public ServerMessageEvent(final String message) {
+    public ServerMessageEvent(String message) {
         this.message = message;
     }
 
@@ -29,4 +31,5 @@ public class ServerMessageEvent extends RSEvent {
     public String getMessage() {
         return message;
     }
+
 }

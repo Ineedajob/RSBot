@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 
-@ScriptManifest(authors = { "joku.rules" }, category = "Development", name = "Interface Explorer", version = 0.2, description = "<html>\n<head></head>\n<body style=\"font-family: Arial;\">\n<center><h2>Interface Explorer</h2></center>\n<p\n<b>Author:</b> joku.rules<p>\n <b>Version:</b> 0.2<p>\nThis script is used to fetch various interface data.\n</body>\n</html>")
+@ScriptManifest(authors = { "joku.rules" }, keywords = "Development", name = "Interface Explorer", version = 0.2, description = "Fetches various interface data for developers.")
 public class InterfaceExplorer extends Script implements PaintListener {
 	
 	private class InterfaceTreeModel implements TreeModel {
@@ -207,7 +207,7 @@ public class InterfaceExplorer extends Script implements PaintListener {
         return false;
     }
 
-    public boolean onStart(Map<String, String> map) {
+    public boolean onStart() {
         window = new JFrame("Interface Explorer");
 
         treeModel = new InterfaceTreeModel();

@@ -1,7 +1,7 @@
 package org.rsbot.script.wrappers;
 
-import org.rsbot.accessors.LDModel;
-import org.rsbot.accessors.RSCharacter;
+import org.rsbot.client.LDModel;
+import org.rsbot.client.RSCharacter;
 import org.rsbot.script.methods.MethodContext;
 
 class RSCharacterModel extends RSModel {

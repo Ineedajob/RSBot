@@ -4,9 +4,9 @@ package org.rsbot.script.wrappers;
  * An object definition.
  */
 public class RSObjectDef {
-    org.rsbot.accessors.RSObjectDef od;
+    org.rsbot.client.RSObjectDef od;
 
-    public RSObjectDef(final org.rsbot.accessors.RSObjectDef od) {
+    public RSObjectDef(final org.rsbot.client.RSObjectDef od) {
         this.od = od;
     }
 

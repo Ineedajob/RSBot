@@ -1,8 +1,8 @@
 package org.rsbot.script.methods;
 
-import org.rsbot.accessors.Client;
+import org.rsbot.client.Client;
 import org.rsbot.bot.Bot;
-import org.rsbot.script.InputManager;
+import org.rsbot.script.internal.InputManager;
 
 /**
  * For internal use to link MethodProviders.

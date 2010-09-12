@@ -4,8 +4,8 @@ TITLE RSBot Scripts
 
 SET cc=javac
 SET cflags=
-SET scripts=Scripts
-SET scriptspre=%scripts%\Precompiled
+SET scripts=Scripts\Sources
+SET scriptspre=Scripts\Precompiled
 SET jarpathfile=Settings\path.txt
 
 IF NOT EXIST "%jarpathfile%" (
