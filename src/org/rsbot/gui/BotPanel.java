@@ -139,8 +139,11 @@ public class BotPanel extends JPanel {
 			e.translatePoint(-offX, 0);
 			// fire human mouse event for scripts
 			dispatchHuman(c, e);
+			if (bot.disableInput) {
+				return;
+			}
 			if (e.getX() > 0 && e.getX() < c.getWidth() && e.getY() < c.getHeight() // account for edges
-					&& !bot.disableInput && e.getID() != MouseEvent.MOUSE_EXITED) {
+					&& e.getID() != MouseEvent.MOUSE_EXITED) {
 				if (present) {
 					if (e instanceof MouseWheelEvent) {
 						MouseWheelEvent mwe = (MouseWheelEvent) e;
