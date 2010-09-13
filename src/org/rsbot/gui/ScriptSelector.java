@@ -1,7 +1,6 @@
 package org.rsbot.gui;
 
 import org.rsbot.bot.Bot;
-import org.rsbot.log.TextAreaLogHandler;
 import org.rsbot.script.Script;
 import org.rsbot.script.internal.ScriptHandler;
 import org.rsbot.script.internal.event.ScriptListener;
@@ -44,7 +43,6 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 	private static final ScriptSource SRC_SOURCES;
 	private static final ScriptSource SRC_PRECOMPILED;
 	private static final ScriptSource SRC_BUNDLED;
-
 
 	static {
 		SRC_SOURCES = new FileScriptSource(new GlobalFile(GlobalConfiguration.Paths.getScriptsSourcesDirectory()));
@@ -215,6 +213,8 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 	}
 
 	private static class ScriptTableModel extends AbstractTableModel {
+
+		private static final long serialVersionUID = 1L;
 
 		public static final ImageIcon ICON_SCRIPT_SRC = new ImageIcon(
 				GlobalConfiguration.getImage(
