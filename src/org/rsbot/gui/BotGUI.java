@@ -7,6 +7,7 @@ import org.rsbot.script.Script;
 import org.rsbot.script.internal.ScriptHandler;
 import org.rsbot.script.ScriptManifest;
 import org.rsbot.script.internal.event.ScriptListener;
+import org.rsbot.script.util.WindowUtil;
 import org.rsbot.util.GlobalConfiguration;
 import org.rsbot.util.ScreenshotUtil;
 import org.rsbot.util.UpdateUtil;
@@ -335,6 +336,13 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 
         JPopupMenu.setDefaultLightWeightPopupEnabled(false);
 
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (final Exception ignored) {
+		}
+
+		WindowUtil.setFrame(this);
+
         panel = new BotPanel();
         toolBar = new BotToolBar(this);
 		menuBar = new BotMenuBar(this);
@@ -385,32 +393,40 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 	}
 
 	public void scriptStarted(ScriptHandler handler, Script script) {
-        toolBar.setScriptButton(BotToolBar.PAUSE_SCRIPT);
-		toolBar.setInputSelected(true);
-		menuBar.setBlockInput(true);
 		Bot bot = handler.getBot();
+		if (bot == getCurrentBot()) {
+			toolBar.setScriptButton(BotToolBar.PAUSE_SCRIPT);
+			toolBar.setInputSelected(true);
+			menuBar.setBlockInput(true);
+			String acct = bot.getAccountName();
+			toolBar.setTabLabel(bots.indexOf(bot) + 1,
+					acct == null ? "RuneScape" : acct);
+			setTitle(acct);
+		}
 		bot.disableInput = true;
-		String acct = bot.getAccountName();
-		toolBar.setTabLabel(bots.indexOf(bot) + 1,
-				acct == null ? "RuneScape" : acct);
-		setTitle(acct);
 	}
 
 	public void scriptStopped(ScriptHandler handler, Script script) {
-		toolBar.setScriptButton(BotToolBar.RUN_SCRIPT);
-		menuBar.setPauseScript(false);
 		Bot bot = handler.getBot();
-		toolBar.setTabLabel(bots.indexOf(bot) + 1, "RuneScape");
-		setTitle(null);
+		if (bot == getCurrentBot()) {
+			toolBar.setScriptButton(BotToolBar.RUN_SCRIPT);
+			menuBar.setPauseScript(false);
+			toolBar.setTabLabel(bots.indexOf(bot) + 1, "RuneScape");
+			setTitle(null);
+		}
 	}
 
 	public void scriptResumed(ScriptHandler handler, Script script) {
-		toolBar.setScriptButton(BotToolBar.PAUSE_SCRIPT);
-		menuBar.setPauseScript(false);
+		if (handler.getBot() == getCurrentBot()) {
+			toolBar.setScriptButton(BotToolBar.PAUSE_SCRIPT);
+			menuBar.setPauseScript(false);
+		}
 	}
 
 	public void scriptPaused(ScriptHandler handler, Script script) {
-		toolBar.setScriptButton(BotToolBar.RESUME_SCRIPT);
-		menuBar.setPauseScript(true);
+		if (handler.getBot() == getCurrentBot()) {
+			toolBar.setScriptButton(BotToolBar.RESUME_SCRIPT);
+			menuBar.setPauseScript(true);
+		}
 	}
 }

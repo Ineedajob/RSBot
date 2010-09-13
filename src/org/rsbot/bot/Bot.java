@@ -35,6 +35,7 @@ public class Bot {
     private TextPaintEvent textPaintEvent;
     private EventManager eventManager;
     private BufferedImage backBuffer;
+    private BufferedImage frontBuffer;
     private BufferedImage image;
     private InputManager im;
     private RSLoader loader;
@@ -60,8 +61,9 @@ public class Bot {
         });
         sh = new ScriptHandler(this);
         bh = new BreakHandler();
-        image = new BufferedImage(size.width, size.height, BufferedImage.TYPE_INT_RGB);
+        frontBuffer = new BufferedImage(size.width, size.height, BufferedImage.TYPE_INT_RGB);
         backBuffer = new BufferedImage(size.width, size.height, BufferedImage.TYPE_INT_RGB);
+		image = new BufferedImage(size.width, size.height, BufferedImage.TYPE_INT_RGB);
         paintEvent = new PaintEvent();
         textPaintEvent = new TextPaintEvent();
         paintLoading();
@@ -70,7 +72,7 @@ public class Bot {
     }
     
     private void paintLoading() {
-    	Graphics graphics = image.getGraphics();
+    	Graphics graphics = frontBuffer.getGraphics();
     	Font font = new Font("Helvetica", 1,13);
 		FontMetrics fontMetrics = loader.getFontMetrics(font);
 		graphics.setColor(Color.black);
@@ -103,8 +105,9 @@ public class Bot {
     }
     
     public void resize(int width, int height) {
-    	image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+    	frontBuffer = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		backBuffer = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+		image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		// client reads size of loader applet for drawing
 		loader.setSize(width, height);
 		// simulate loader repaint awt event dispatch
@@ -163,13 +166,15 @@ public class Bot {
     }
     
     public Graphics getBufferGraphics() {
-    	Graphics front = image.getGraphics();
+    	Graphics front = frontBuffer.getGraphics();
     	front.drawImage(backBuffer, 0, 0, null);
     	paintEvent.graphics = front;
     	textPaintEvent.graphics = front;
     	textPaintEvent.idx = 0;
     	eventManager.processEvent(paintEvent);
     	eventManager.processEvent(textPaintEvent);
+		front.dispose();
+		image.getGraphics().drawImage(frontBuffer, 0, 0, null);
     	if (panel != null) {
     		panel.repaint();
     	}
