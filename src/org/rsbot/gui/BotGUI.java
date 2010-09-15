@@ -310,7 +310,7 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
         }
     }
 
-	private void toggleViewState(final Component component, final boolean visible) {
+	private void toggleViewState(Component component, boolean visible) {
         Dimension size = getSize();
         size.height += component.getSize().height * (visible ? -1 : 1);
         component.setVisible(!visible);

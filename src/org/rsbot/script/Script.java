@@ -100,9 +100,9 @@ public abstract class Script extends Methods implements EventListener, Runnable 
                     	} else {
                     		try {
                             	timeOut = loop();
-                            } catch (final ThreadDeath td) {
+                            } catch (ThreadDeath td) {
                                 break;
-                            } catch (final Exception ex) {
+                            } catch (Exception ex) {
                                 log.log(Level.WARNING, "Uncaught exception from script: ", ex);
                             }
                     	}
@@ -111,18 +111,18 @@ public abstract class Script extends Methods implements EventListener, Runnable 
                         }
                         try {
                             sleep(timeOut);
-                        } catch (final ThreadDeath td) {
+                        } catch (ThreadDeath td) {
                             break;
-                        } catch (final RuntimeException e) {
+                        } catch (RuntimeException e) {
                             e.printStackTrace();
                             break;
                         }
                     } else {
                         try {
                             sleep(1000);
-                        } catch (final ThreadDeath td) {
+                        } catch (ThreadDeath td) {
                             break;
-                        } catch (final RuntimeException e) {
+                        } catch (RuntimeException e) {
                             e.printStackTrace();
                             break;
                         }
@@ -130,11 +130,11 @@ public abstract class Script extends Methods implements EventListener, Runnable 
                 }
                 try {
                     onFinish();
-                } catch (final ThreadDeath ignored) {
-                } catch (final RuntimeException e) {
+                } catch (ThreadDeath ignored) {
+                } catch (RuntimeException e) {
                     e.printStackTrace();
                 }
-            } catch (final ThreadDeath td) {
+            } catch (ThreadDeath td) {
                 onFinish();
             }
             isActive = false;
@@ -152,7 +152,7 @@ public abstract class Script extends Methods implements EventListener, Runnable 
         if(ctx.bot.disableRandoms)
             return false;
             
-        for (final Random random : ctx.bot.getScriptHandler().getRandoms()) {
+        for (Random random : ctx.bot.getScriptHandler().getRandoms()) {
             if (random instanceof LoginBot) {
                 if (ctx.bot.disableAutoLogin) {
                     continue;

@@ -20,9 +20,9 @@ public class Interfaces extends MethodProvider {
 	}
 
 	// A cache of all the interfaces. Only as big as the maximum size of the client's cache.
-	private static RSInterface[] mainCache = new RSInterface[0];
+	private RSInterface[] mainCache = new RSInterface[0];
 	// If it doesn't fit in the above cache.
-	private static Map<Integer, RSInterface> sparseMap = new HashMap<Integer, RSInterface>();
+	private Map<Integer, RSInterface> sparseMap = new HashMap<Integer, RSInterface>();
 
 	/**
 	 * @return <code>RSInterface</code> array containing all valid interfaces.

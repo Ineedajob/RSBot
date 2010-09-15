@@ -82,8 +82,8 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 
 	public void update() {
 		boolean available = bot.getScriptHandler().getRunningScripts().size() == 0;
+		submit.setEnabled(available && table.getSelectedRow() != -1);
 		table.setEnabled(available);
-		submit.setEnabled(available);
 		search.setEnabled(available);
 		connect.setEnabled(available);
 		accounts.setEnabled(available);
@@ -141,6 +141,7 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 				new ImageIcon(GlobalConfiguration.getImage(
 						GlobalConfiguration.Paths.Resources.ICON_DISCONNECT,
 						GlobalConfiguration.Paths.ICON_DISCONNECT)));
+		connect.setEnabled(false);
 		submit.setEnabled(false);
 		submit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
