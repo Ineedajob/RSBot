@@ -10,6 +10,7 @@ import java.awt.event.*;
 import javax.swing.JPanel;
 
 import org.rsbot.bot.Bot;
+import org.rsbot.event.EventManager;
 import org.rsbot.script.methods.Mouse;
 
 
@@ -166,11 +167,15 @@ public class BotPanel extends JPanel {
 	}
 
 	private void redispatch(AWTEvent e) {
-		bot.getEventManager().dispatchEvent(e);
-		if (bot != null && !bot.disableInput &&
-				bot.getLoader().getComponentCount() > 0) {
-			Component c = bot.getLoader().getComponent(0);
-			c.dispatchEvent(e);
+		if (bot != null) {
+			EventManager m = bot.getEventManager();
+			if (m != null) {
+				m.dispatchEvent(e);
+			}
+			if (!bot.disableInput && bot.getLoader().getComponentCount() > 0) {
+				Component c = bot.getLoader().getComponent(0);
+				c.dispatchEvent(e);
+			}
 		}
 	}
 
