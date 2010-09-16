@@ -327,29 +327,37 @@ public class Calculations extends MethodProvider {
      * Returns the height of the ground at the given location in
      * the game world.
      * 
-     * @param X x value based on the game plane.
-     * @param Z z value based on the game plane.
+     * @param x x value based on the game plane.
+     * @param z z value based on the game plane.
      * @return The ground height at the given location; otherwise <code>0</code>.
      */
-    public int tileHeight(final int X, final int Z) {
-        int p = methods.client.getPlane();
-        final int x = X >> 9;
-        final int z = Z >> 9;
+	public int tileHeight(final int x, final int z) {
+		int p = methods.client.getPlane();
 
-        if ((x < 0) || (x >= 104) || (z < 0) || (z >= 104))
-            return 0;
+		int x1 = x >> 9;
+		int y1 = z >> 9;
 
-        if ((p <= 3) && ((methods.client.getGroundByteArray()[1][x][z] & 2) != 0)) {
-            p++;
-        }
+		if ((x1 >= 0) && (x1 < 104) && (y1 >= 0) && (y1 < 104)) {
+			if ((p <= 3) && ((methods.client.getGroundByteArray()[1][x1][y1] & 2) != 0)) {
+				++p;
+			}
 
-        final TileData[] dataArray = methods.client.getTileData();
+			TileData[] planes = methods.client.getTileData();
 
-        if ((dataArray.length > p) && (dataArray[p] != null)) {
-            return dataArray[p].getHeight(X, Z);
-        }
-        return 0;
-    }
+			if (p < planes.length && planes[p] != null) {
+				int[][] heights = planes[p].getHeights();
+				if (heights != null) {
+					int x2 = x & 512 - 1;
+					int y2 = z & 512 - 1;
+					int start_h = (heights[x1][y1] * (512 - x2) + heights[x1 + 1][y1] * x2) >> 9;
+					int end_h = (heights[x1][1 + y1] * (512 - x2) + heights[x1 + 1][y1 + 1] * x2) >> 9;
+					return start_h * (512 - y2) + end_h * y2 >> 9;
+				}
+			}
+		}
+
+		return 0;
+	}
     
     /**
      * Returns the screen location of a given 3D point in the game world.
@@ -360,32 +368,18 @@ public class Calculations extends MethodProvider {
      * @return <code>Point</code> based on screen; otherwise <code>new Point(-1, -1)</code>.
      */
     public Point worldToScreen(int x, int y, int z) {
-        if (methods.client.getDetailInfo() == null)
-            return new Point(-1, -1);
+		// perspective projection: hooked viewport values are calculated in client based on camera state
+		// (so no need to project using camera values and sin/cos)
+        float _z = (renderData.zOff + ((int) (renderData.zX * x + renderData.zY * y + renderData.zZ * z)));
 
-        int detail_lvl = methods.client.getDetailInfo().getDetailLevel();
+		if ((_z >= render.zNear) && (_z <= render.zFar)) {
+			int _x = (int) (render.xMultiplier * ((int) renderData.xOff + ((int) (renderData.xX * x + renderData.xY * y + renderData.xZ * z))) / _z);
+            int _y = (int) (render.yMultiplier * ((int) renderData.yOff + ((int) (renderData.yX * x + renderData.yY * y + renderData.yZ * z))) / _z);
 
-        if (detail_lvl == 0 || detail_lvl == 2) {
-            int _z = (int) (renderData.zOff + ((int) (renderData.zX * x + renderData.zY * y + renderData.zZ * z) >> 14));
-            if ((_z < render.zNear) || (_z > render.zFar))
-                return new Point(-1, -1);
-
-            int _x = render.xMultiplier * ((int) renderData.xOff + ((int) (renderData.xX * x + renderData.xY * y + renderData.xZ * z) >> 14)) / _z;
-            int _y = render.yMultiplier * ((int) renderData.yOff + ((int) (renderData.yX * x + renderData.yY * y + renderData.yZ * z) >> 14)) / _z;
-
-            if ((_x >= render.absoluteX1) && (_x <= render.absoluteX2) && (_y >= render.absoluteY1) && (_y <= render.absoluteY2))
+            if ((_x >= render.absoluteX1) && (_x <= render.absoluteX2) && (_y >= render.absoluteY1) && (_y <= render.absoluteY2)) {
                 return new Point((int) (_x - render.absoluteX1), (int) (_y - render.absoluteY1));
-        } else if (detail_lvl == 1) {
-            float _z = renderData.zX * x + renderData.zY * y + renderData.zZ * z + renderData.zOff;
-            if ((_z < render.zNear) || (_z > render.zFar))
-                return new Point(-1, -1);
-
-            final int _x = (int) (render.xMultiplier * (renderData.xX * x + renderData.xY * y + renderData.xZ * z + renderData.xOff) / _z);
-            final int _y = (int) (render.yMultiplier * (renderData.yX * x + renderData.yY * y + renderData.yZ * z + renderData.yOff) / _z);
-
-            if ((_x >= render.absoluteX1) && (_x <= render.absoluteX2) && (_y >= render.absoluteY1) && (_y <= render.absoluteY2))
-                return new Point((int) (_x - render.absoluteX1), (int) (_y - render.absoluteY1));
-        }
+			}
+		}
 
         return new Point(-1, -1);
     }

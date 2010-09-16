@@ -214,7 +214,6 @@ public class Injector {
 
 				//Interface and TileData ClassGen
 				ClassGen cgInterface = null;
-				ClassGen cgTileData = null;
 
 				//Inject interfaces
 				ClassData[] classes = hd.classes.toArray(new ClassData[hd.classes.size()]);
@@ -223,8 +222,6 @@ public class Injector {
 						if (cg.getClassName().equals(cd.official_name)) {
 							if (cd.injected_name.equals("RSInterface"))
 								cgInterface = cg;
-							else if (cd.injected_name.equals("TileData"))
-								cgTileData = cg;
 
 							cg.addInterface(ACCESSOR_PACKAGE + cd.injected_name);
 							break;
@@ -368,36 +365,6 @@ public class Injector {
 				mgn.setMaxStack();
 				mgn.update();
 				c_rd.replaceMethod(m_rd, mgn.getMethod());
-
-				//Tile height
-				il = new InstructionList();
-				fac = new InstructionFactory(cgTileData, cgTileData.getConstantPool());
-
-				il.append(new ALOAD(0));
-				il.append(new ILOAD(1));
-				il.append(new ILOAD(2));
-				il.append(fac.createInvoke(
-						cgTileData.getClassName(),
-						hd.tileHeight.method_name,
-						Type.getReturnType(hd.tileHeight.method_signature),
-						Type.getArgumentTypes(hd.tileHeight.method_signature),
-						Constants.INVOKEVIRTUAL));
-				il.append(new IRETURN());
-
-				MethodGen mg = new MethodGen(
-						Constants.ACC_PUBLIC | Constants.ACC_FINAL, // access_flags
-						Type.INT, // return_type
-						new Type[]{Type.INT, Type.INT}, // arguement_types
-						new String[]{"x", "z"}, // arguement_names
-						"getHeight", // method_name
-						cgTileData.getClassName(), // class_name;
-						il, // instruction_list;
-						cgTileData.getConstantPool() // constant_pool_gen
-				);
-				mg.setMaxLocals();
-				mg.setMaxStack();
-
-				cgTileData.addMethod(mg.getMethod());
 
 				//Hack mouse/keyboard/canvas/signlink
 				hackMouse();
