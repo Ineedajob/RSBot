@@ -1,6 +1,5 @@
 package org.rsbot.script.methods;
 
-import org.rsbot.client.input.Listener;
 import org.rsbot.script.Random;
 import org.rsbot.script.ScriptManifest;
 import org.rsbot.script.wrappers.RSPlayer;
@@ -143,6 +142,11 @@ public class Methods {
      */
     protected Summoning summoning;
 
+	/**
+	 * The singleton of Environment
+	 */
+	protected Environment env;
+
     private MethodContext ctx;
 
     /**
@@ -176,6 +180,7 @@ public class Methods {
         this.groundItems = ctx.groundItems;
         this.account = ctx.account;
         this.summoning = ctx.summoning;
+		this.env = ctx.env;
         this.ctx = ctx;
     }
 
@@ -256,18 +261,18 @@ public class Methods {
     }
 
     /**
-     * Halts the current script without logging out.
-     */
-    public void stopScript() {
-        stopScript(false);
-    }
-
-    /**
      * You may override this in a subclass of Script in order
      * to execute code whenever the script is stopped.
      */
     public void onFinish() {
 
+    }
+
+    /**
+     * Halts the current script without logging out.
+     */
+    public void stopScript() {
+        stopScript(false);
     }
 
     /**
@@ -286,67 +291,6 @@ public class Methods {
             game.logout(false);
         }
         ctx.bot.getScriptHandler().stopScript();
-    }
-
-    /**
-     * Controls user input.
-     *
-     * @param enable <tt>true</tt> to enable user input.
-     */
-    public void setUserInput(boolean enable) {
-        Listener.blocked = !enable;
-    }
-
-    /**
-     * Takes and saves a screenshot.
-     *
-     * @param hideUsername <tt>true</tt> to cover the player's
-     *                     username; otherwise <tt>false</tt>.
-     */
-    public void takeScreenshot(boolean hideUsername) {
-        ScreenshotUtil.takeScreenshot(ctx.bot, hideUsername);
-    }
-
-    /**
-     * Enables a random to be allowed to execute
-     *
-     * @param name the random's class name or it's Manifest name
-     * @return <tt>true</tt> if random was found and set to enabled; otherwise <tt>false</tt>
-     */
-    public boolean enableRandom(String name) {
-        for (final Random random : ctx.bot.getScriptHandler().getRandoms()) {
-            if (random.getClass().getName().toLowerCase().equals(name.toLowerCase())
-                || random.getClass().getAnnotation(ScriptManifest.class).name().toLowerCase().equals(name.toLowerCase())) {
-                if (random.isEnabled())
-                    return true;
-                else {
-                    random.setEnabled(true);
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Disables a random to not be allowed to execute
-     *
-     * @param name the random's class name or it's Manifest name
-     * @return <tt>true</tt> if random was found and set to disabled; otherwise <tt>false</tt>
-     */
-    public boolean disableRandom(String name) {
-        for (final Random random : ctx.bot.getScriptHandler().getRandoms()) {
-            if (random.getClass().getName().toLowerCase().equals(name.toLowerCase())
-                || random.getClass().getAnnotation(ScriptManifest.class).name().toLowerCase().equals(name.toLowerCase())) {
-                if (!random.isEnabled())
-                    return true;
-                else {
-                    random.setEnabled(false);
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
 }

@@ -3,7 +3,7 @@ package org.rsbot.client.input;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
-public abstract class Focus extends Listener implements FocusListener {
+public abstract class Focus implements FocusListener {
     public abstract void _focusGained(FocusEvent e);
 
     public abstract void _focusLost(FocusEvent e);

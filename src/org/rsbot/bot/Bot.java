@@ -22,6 +22,7 @@ import org.rsbot.gui.AccountManager;
 import org.rsbot.script.internal.BreakHandler;
 import org.rsbot.script.internal.InputManager;
 import org.rsbot.script.internal.ScriptHandler;
+import org.rsbot.script.methods.Environment;
 import org.rsbot.script.methods.MethodContext;
 
 public class Bot {
@@ -43,11 +44,36 @@ public class Bot {
     private BreakHandler bh;
 	private Map<String, EventListener> listeners;
 
+	/**
+	 * Whether or not user input is allowed.
+	 */
     public volatile boolean disableInput = false;
-    public volatile boolean disableRandoms = false;
+
+	/**
+	 * Whether or not all anti-randoms are enabled.
+	 */
+	public volatile boolean disableRandoms = false;
+
+	/**
+	 * Whether or not the login screen anti-random is enabled.
+	 */
     public volatile boolean disableAutoLogin = false;
+
+	/**
+	 * Whether or not the break handler is enabled.
+	 */
     public volatile boolean disableBreakHandler = false;
+
+	/**
+	 * Whether or not rendering is enabled.
+	 */
     public volatile boolean disableRendering = false;
+
+	/**
+	 * Defines what types of input are disabled when disableInput is true.
+	 * Defaults to 'keyboard only' whenever a script is started.
+	 */
+	public volatile int inputMask = Environment.INPUT_KEYBOARD;
 
     public Bot() {
         im = new InputManager(this);

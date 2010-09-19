@@ -1,6 +1,5 @@
 package org.rsbot.gui;
 
-import java.awt.AWTEvent;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -13,6 +12,8 @@ import org.rsbot.bot.Bot;
 import org.rsbot.event.EventManager;
 import org.rsbot.script.methods.Mouse;
 
+import static org.rsbot.script.methods.Environment.INPUT_KEYBOARD;
+import static org.rsbot.script.methods.Environment.INPUT_MOUSE;
 
 public class BotPanel extends JPanel {
 
@@ -140,7 +141,7 @@ public class BotPanel extends JPanel {
 			e.translatePoint(-offX, 0);
 			// fire human mouse event for scripts
 			dispatchHuman(c, e);
-			if (bot.disableInput) {
+			if (bot.disableInput && (bot.inputMask & INPUT_MOUSE) == 0) {
 				return;
 			}
 			if (e.getX() > 0 && e.getX() < c.getWidth() && e.getY() < c.getHeight() // account for edges
@@ -166,13 +167,14 @@ public class BotPanel extends JPanel {
 		}
 	}
 
-	private void redispatch(AWTEvent e) {
+	private void redispatch(KeyEvent e) {
 		if (bot != null) {
 			EventManager m = bot.getEventManager();
 			if (m != null) {
 				m.dispatchEvent(e);
 			}
-			if (!bot.disableInput && bot.getLoader().getComponentCount() > 0) {
+			if (!(bot.disableInput && (bot.inputMask & INPUT_KEYBOARD) == 0) &
+					bot.getLoader().getComponentCount() > 0) {
 				Component c = bot.getLoader().getComponent(0);
 				c.dispatchEvent(e);
 			}

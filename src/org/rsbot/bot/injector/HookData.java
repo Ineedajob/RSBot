@@ -38,7 +38,6 @@ class HookData {
 		String[] object_class_names;
 	}
 
-
 	static class MasterXYData {
 		String class_name;
 		String method_name;
@@ -48,12 +47,6 @@ class HookData {
 		int iload_x;
 		int iload_y;
 	}
-
-	static class TileHeightData {
-		String method_name;
-		String method_signature;
-	}
-
 
 	static class RenderData {
 		int append_index;
@@ -114,7 +107,6 @@ class HookData {
     ServerMessageListenerData serverMessageListener = new ServerMessageListenerData();
     RSObjectsData rsObjects = new RSObjectsData();
     RenderData render = new RenderData();
-    TileHeightData tileHeight = new TileHeightData();
     CharData charData = new CharData();
 
     int version;
@@ -198,9 +190,9 @@ class HookData {
         render.renderData_field_name = s_data.readString();
         render.renderData_field_signature = s_data.readString();
 
-        //Read tiles height info
-        tileHeight.method_name = s_data.readString();
-        tileHeight.method_signature = s_data.readString();
+        //Read tiles height info (deprecated)
+        s_data.readString();
+        s_data.readString();
 
         //Read char data
         int c_length = s_data.readByte();
