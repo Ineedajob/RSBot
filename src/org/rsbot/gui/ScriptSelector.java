@@ -9,7 +9,6 @@ import org.rsbot.service.ScriptDefinition;
 import org.rsbot.service.ScriptSource;
 import org.rsbot.service.ServiceException;
 import org.rsbot.util.GlobalConfiguration;
-import org.rsbot.util.GlobalFile;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -45,20 +44,12 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 	private static final ScriptSource SRC_BUNDLED;
 
 	static {
-		SRC_SOURCES = new FileScriptSource(new GlobalFile(GlobalConfiguration.Paths.getScriptsSourcesDirectory()));
-		SRC_PRECOMPILED = new FileScriptSource(new GlobalFile(GlobalConfiguration.Paths.getScriptsPrecompiledDirectory()));
+		SRC_SOURCES = new FileScriptSource(new File(GlobalConfiguration.Paths.getScriptsSourcesDirectory()));
+		SRC_PRECOMPILED = new FileScriptSource(new File(GlobalConfiguration.Paths.getScriptsPrecompiledDirectory()));
 		if (GlobalConfiguration.RUNNING_FROM_JAR) {
-			URL version = GlobalConfiguration.class.getClassLoader().getResource(
-					GlobalConfiguration.Paths.Resources.VERSION);
-			String p = version.toString().replace("jar:file:", "").replace(
-					GlobalConfiguration.Paths.Resources.VERSION, GlobalConfiguration.Paths.Resources.SCRIPTS);
-			try {
-				p = URLDecoder.decode(p, "UTF-8");
-			} catch (final UnsupportedEncodingException ignored) {
-			}
-			SRC_BUNDLED = new FileScriptSource(new GlobalFile(p));
+			SRC_BUNDLED = new FileScriptSource(new File(GlobalConfiguration.Paths.getScriptsExtractedCache()));
 		} else {
-			SRC_BUNDLED = new FileScriptSource(new GlobalFile("." + File.separator + GlobalConfiguration.Paths.SCRIPTS_NAME_SRC));
+			SRC_BUNDLED = new FileScriptSource(new File("." + File.separator + GlobalConfiguration.Paths.SCRIPTS_NAME_SRC));
 		}
 	}
 

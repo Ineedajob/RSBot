@@ -645,43 +645,47 @@ public class Injector {
             }
         }
     }
-    
-    private void hackRender() {
-    	String modelName = findClass("LDModel").getClassName();
-    	
-    	for (ClassGen cg : loaded) {
-    		if (cg.getClassName().equals(modelName)) {
-				ConstantPoolGen cpg = cg.getConstantPool();
-    			for (Method m : cg.getMethods()) {
-    				if (!m.isStatic() && !m.isAbstract() && m.getReturnType().equals(Type.VOID) && m.getCode().getLength() > 300) {
-    					QIS searcher = new QIS(cg, m);
-    					INVOKEVIRTUAL invoke;
-    					while ((invoke = searcher.next(INVOKEVIRTUAL.class)) != null) {
-    						if (invoke.getMethodName(cpg).equals("notifyAll")) {
-    							MethodGen mg = new MethodGen(m, cg.getClassName(), cg.getConstantPool());
-    							InstructionFactory fac = new InstructionFactory(cg);
-    							InstructionList il = new InstructionList();
-    							il.append(fac.createGetStatic("client", "callback",
-    								Type.getType(org.rsbot.client.Callback.class)));
-    							il.append(fac.createInvoke(ACCESSOR_DESC + "Callback", "getBot",
-    								Type.getType(org.rsbot.bot.Bot.class),
-    									new Type[0], Constants.INVOKEINTERFACE));
-    							il.append(fac.createGetField("org/rsbot/bot/Bot", "disableRendering", Type.BOOLEAN));
-    							il.append(new IFEQ(mg.getInstructionList().getStart()));
-    							il.append(new RETURN());
 
-    							mg.getInstructionList().insert(il);
-    							mg.setMaxLocals();
-    							mg.setMaxStack();
-    							cg.replaceMethod(m, mg.getMethod());
-    							return;
+	private void hackRender() {
+		String modelName = findClass("LDModel").getClassName();
+
+		for (ClassGen cg : loaded) {
+			if (cg.getClassName().equals(modelName)) {
+				ConstantPoolGen cpg = cg.getConstantPool();
+				for (Method m : cg.getMethods()) {
+					if (!m.isStatic() && !m.isAbstract() && m.getReturnType().equals(Type.VOID)) {
+						QIS searcher = new QIS(cg, m);
+						SIPUSH push;
+						int count = 0;
+						while ((push = searcher.next(SIPUSH.class)) != null) {
+							if (push.getValue().equals(-5000)) {
+								++count;
 							}
 						}
-    				}
-    			}
-    		}
-    	}
-    }
+						if (count == 3) {
+							MethodGen mg = new MethodGen(m, cg.getClassName(), cg.getConstantPool());
+							InstructionFactory fac = new InstructionFactory(cg);
+							InstructionList il = new InstructionList();
+							il.append(fac.createGetStatic("client", "callback",
+									Type.getType(org.rsbot.client.Callback.class)));
+							il.append(fac.createInvoke(ACCESSOR_DESC + "Callback", "getBot",
+									Type.getType(org.rsbot.bot.Bot.class),
+									new Type[0], Constants.INVOKEINTERFACE));
+							il.append(fac.createGetField("org/rsbot/bot/Bot", "disableRendering", Type.BOOLEAN));
+							il.append(new IFEQ(mg.getInstructionList().getStart()));
+							il.append(new RETURN());
+
+							mg.getInstructionList().insert(il);
+							mg.setMaxLocals();
+							mg.setMaxStack();
+							cg.replaceMethod(m, mg.getMethod());
+							return;
+						}
+					}
+				}
+			}
+		}
+	}
 
     private boolean hackSignUID(String[] username) {
         ClassGen CacheIOMaster = null;

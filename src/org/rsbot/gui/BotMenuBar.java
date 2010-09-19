@@ -31,7 +31,7 @@ public class BotMenuBar extends JMenuBar {
 	static {
 
         // Text
-        DEBUG_MAP.put("Login Index", TLoginIndex.class);
+        DEBUG_MAP.put("Game State", TLoginIndex.class);
         DEBUG_MAP.put("Current Tab", TTab.class);
         DEBUG_MAP.put("Camera", TCamera.class);
         DEBUG_MAP.put("Animation", TAnimation.class);

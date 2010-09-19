@@ -33,7 +33,8 @@ public abstract class Script extends Methods implements EventListener, Runnable 
 
 	/**
 	 * Called before loop() is first called, after this script has
-	 * been initialized with all method providers.
+	 * been initialized with all method providers. Override to
+	 * perform any initialization or prevent script start.
 	 *
 	 * @return <tt>true</tt> if the script can start.
 	 */
@@ -48,33 +49,56 @@ public abstract class Script extends Methods implements EventListener, Runnable 
      * sleep. This ensures that pausing and anti-randoms perform normally.
      *
      * @return The number of milliseconds that the manager should sleep before
-     * calling it again. Returning a negative number will stop the script.
+     * calling it again. Returning a negative number will deactivate the script.
      */
     public abstract int loop();
 
     /**
-     * Perform any clean up such as unregistering any event listeners.
+     * Override to perform any clean up on script stopScript.
      */
-    @Override
     public void onFinish() {
+
     }
-    
+
+	/**
+	 * Initializes this script with another script's
+	 * context. Can be used to load this script as a
+	 * delegate from a script loader.
+	 *
+	 * @param script The context providing Script.
+	 */
     public final void init(Script script) {
     	init(script.ctx);
     }
-    
+
+	/**
+	 * Initializes this script with a given context.
+	 *
+	 * @param ctx The MethodContext.
+	 */
     public final void init(MethodContext ctx) {
     	super.init(ctx);
     	this.ctx = ctx;
     }
 
-	public final void stop(int id) {
+	/**
+	 * For internal use only. Deactivates this script if
+	 * the appropriate id is provided.
+	 *
+	 * @param id The id from ScriptHandler.
+	 */
+	public final void deactivate(int id) {
 		if (id != this.id) {
 			throw new IllegalStateException("Invalid id!");
 		}
 		this.active = false;
 	}
 
+	/**
+	 * For internal use only. Sets the pool id of this script.
+	 *
+	 * @param id The id from ScriptHandler.
+	 */
 	public final void setID(int id) {
 		if (this.id != -1) {
 			throw new IllegalStateException("Already added to pool!");
@@ -82,17 +106,57 @@ public abstract class Script extends Methods implements EventListener, Runnable 
 		this.id = id;
 	}
 
+	/**
+	 * Pauses/resumes this script.
+	 *
+	 * @param paused <tt>true</tt> to pause; <tt>false</tt> to resume.
+	 */
 	public final void setPaused(boolean paused) {
 		this.paused = paused;
 	}
 
+	/**
+	 * Returns whether or not this script is running.
+	 *
+	 * @return <tt>true</tt> if active; otherwise <tt>false</tt>.
+	 */
 	public final boolean isActive() {
 		return active;
 	}
 
+	/**
+	 * Returns whether or not this script is paused.
+	 *
+	 * @return <tt>true</tt> if paused; otherwise <tt>false</tt>.
+	 */
 	public final boolean isPaused() {
 		return paused;
 	}
+
+    /**
+     * Stops the current script without logging out.
+     */
+    public void stopScript() {
+        stopScript(false);
+    }
+
+    /**
+     * Stops the current script; player can be logged out before
+     * the script is stopped.
+     *
+     * @param logout <tt>true</tt> if the player should be logged
+     * out before the script is stopped.
+     */
+    public void stopScript(boolean logout) {
+        log.info("Script stopped.");
+        if (bank.isOpen()) {
+            bank.close();
+        }
+        if (game.isLoggedIn() && logout) {
+            game.logout(false);
+        }
+        ctx.bot.getScriptHandler().stopScript();
+    }
 
     public final void run() {
         ctx.bot.getEventManager().addListener(this);
@@ -173,11 +237,7 @@ public abstract class Script extends Methods implements EventListener, Runnable 
             return false;
             
         for (Random random : ctx.bot.getScriptHandler().getRandoms()) {
-            if (random instanceof LoginBot) {
-                if (ctx.bot.disableAutoLogin) {
-                    continue;
-                }
-            } else if (!random.isEnabled()) {
+            if (!random.isEnabled() || (random instanceof LoginBot && ctx.bot.disableAutoLogin)) {
                 continue;
             }
             if (random.run(this)) {

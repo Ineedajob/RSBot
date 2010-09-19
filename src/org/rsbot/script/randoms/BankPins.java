@@ -15,7 +15,7 @@ public class BankPins extends Random {
         if (interfaces.get(13).isValid()) {
             if ((pin == null) || (pin.length() != 4)) {
                 log.severe("You must add a bank pin to your account.");
-                stopScript();
+                stopScript(false);
             } else {
                 return true;
             }

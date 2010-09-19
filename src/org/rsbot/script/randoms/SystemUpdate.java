@@ -39,7 +39,7 @@ public class SystemUpdate extends Random {
 
     private boolean checkForLogout() {
         if ((getMinutes() < logoutMinutes) && (getSeconds() < logoutSeconds)) {
-            stopScript();
+            stopScript(false);
             return true;
         } else
             return false;

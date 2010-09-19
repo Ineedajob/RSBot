@@ -26,11 +26,17 @@ public class Account extends MethodProvider {
 	}
 	
 	/**
-	 * @return The currently selected account's pin,
-	 * or <code>null</code>.
+	 * @return The currently selected account's pin, or <code>null</code>.
 	 */
 	public String getPin() {
 		return getName() == null ? null : AccountManager.getPin(getName());
+	}
+
+	/**
+	 * @return The currently selected account's membership status.
+	 */
+	public boolean isMember() {
+		return AccountManager.isMember(getName());
 	}
 	
 }

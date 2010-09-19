@@ -108,7 +108,7 @@ public class ScriptHandler {
     public void removeScript(int id) {
 		Script script = scripts.get(id);
         if (script != null) {
-			script.stop(id);
+			script.deactivate(id);
         	scripts.remove(id);
         	scriptThreads.remove(id);
 		}
@@ -154,7 +154,7 @@ public class ScriptHandler {
 
     public void stopScript(int id) {
 		Script script = scripts.get(id);
-        script.stop(id);
+        script.deactivate(id);
         scripts.remove(id);
         scriptThreads.remove(id);
 		for (ScriptListener l : listeners) {

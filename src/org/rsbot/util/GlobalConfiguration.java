@@ -121,14 +121,6 @@ public class GlobalConfiguration {
 			return Paths.getSettingsDirectory() + File.separator + "boot.txt";
 		}
 
-        public static String getVersionCache() {
-            return Paths.getCacheDirectory() + File.separator + "info.dat";
-        }
-
-        public static String getClientCache() {
-            return Paths.getCacheDirectory() + File.separator + "client.dat";
-        }
-
         public static String getScreenshotsDirectory() {
             return Paths.getHomeDirectory() + File.separator + "Screenshots";
         }
@@ -137,16 +129,28 @@ public class GlobalConfiguration {
             return Paths.getHomeDirectory() + File.separator + Paths.SCRIPTS_NAME_OUT;
         }
 
-        public static String getScriptsPrecompiledDirectory() {
-            return Paths.getScriptsDirectory() + File.separator + "Precompiled";
-        }
-
 		public static String getScriptsSourcesDirectory() {
             return Paths.getScriptsDirectory() + File.separator + "Sources";
         }
 
+        public static String getScriptsPrecompiledDirectory() {
+            return Paths.getScriptsDirectory() + File.separator + "Precompiled";
+        }
+
         public static String getCacheDirectory() {
             return Paths.getHomeDirectory() + File.separator + "Cache";
+        }
+
+		public static String getScriptsExtractedCache() {
+            return Paths.getCacheDirectory() + File.separator + "script.dat";
+        }
+
+        public static String getVersionCache() {
+            return Paths.getCacheDirectory() + File.separator + "info.dat";
+        }
+
+        public static String getClientCache() {
+            return Paths.getCacheDirectory() + File.separator + "client.dat";
         }
 
         public static String getSettingsDirectory() {

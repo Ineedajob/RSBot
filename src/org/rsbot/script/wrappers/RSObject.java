@@ -51,7 +51,6 @@ public class RSObject extends MethodProvider {
 	 * this object can be found.
 	 */
 	public RSArea getArea() {
-		// TODO: hook X1, X2, Y1, Y2 for all objects
 		if (obj instanceof RSAnimable) {
 			RSAnimable a = (RSAnimable) obj;
 			RSTile sw = new RSTile(methods.client.getBaseX() + a.getX1(), methods.client.getBaseY() + a.getY1());

@@ -111,7 +111,7 @@ public class RSLoader extends Applet implements Runnable, Loader {
 	}
 
 	/**
-	 * Overridden void stop()
+	 * Overridden void deactivate()
 	 */
 	@Override
 	public final synchronized void stop() {
