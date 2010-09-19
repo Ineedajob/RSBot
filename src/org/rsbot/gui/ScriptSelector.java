@@ -20,9 +20,6 @@ import java.awt.Frame;
 import java.awt.Insets;
 import java.awt.event.*;
 import java.io.File;
-import java.io.UnsupportedEncodingException;
-import java.net.URL;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 

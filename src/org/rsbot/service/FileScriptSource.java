@@ -36,7 +36,7 @@ public class FileScriptSource implements ScriptSource {
 					ClassLoader ldr = new URLClassLoader(new URL[] {file.toURI().toURL()});
 					for (File f : file.listFiles()) {
 						if (isJar(f)) {
-							load(ldr, defs, new JarFile(f));
+							load(new URLClassLoader(new URL[] {f.toURI().toURL()}), defs, new JarFile(f));
 						} else {
 							load(ldr, defs, f, "");
 						}

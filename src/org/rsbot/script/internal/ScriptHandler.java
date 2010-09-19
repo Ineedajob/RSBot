@@ -93,7 +93,7 @@ public class ScriptHandler {
 
     public void pauseScript(int id) {
         Script s = scripts.get(id);
-        s.setPaused(s.isPaused());
+        s.setPaused(!s.isPaused());
 		if (s.isPaused()) {
 			for (ScriptListener l : listeners) {
 				l.scriptPaused(this, s);
@@ -111,6 +111,9 @@ public class ScriptHandler {
 			script.deactivate(id);
         	scripts.remove(id);
         	scriptThreads.remove(id);
+			for (ScriptListener l : listeners) {
+				l.scriptStopped(this, script);
+			}
 		}
     }
 
@@ -157,8 +160,5 @@ public class ScriptHandler {
         script.deactivate(id);
         scripts.remove(id);
         scriptThreads.remove(id);
-		for (ScriptListener l : listeners) {
-			l.scriptStopped(this, script);
-		}
     }
 }
