@@ -332,7 +332,7 @@ public class Maze extends Random {
         }
         if (tryCount > 100) {
             log("Problems finding wall....");
-            stopScript();
+            stopScript(false);
         }
         if (!calc.tileOnScreen(a) || !calc.tileOnScreen(b) || (calc.distanceTo(a) > random(4, 7))) {
             if (calc.tileOnMap(a)) {

@@ -2,12 +2,17 @@ package org.rsbot.service;
 
 import org.rsbot.script.Script;
 import org.rsbot.script.ScriptManifest;
-import org.rsbot.util.GlobalFile;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import java.util.logging.Logger;
 
 /**
@@ -19,21 +24,30 @@ public class FileScriptSource implements ScriptSource {
 
 	private File file;
 
-	public FileScriptSource(GlobalFile file) {
+	public FileScriptSource(File file) {
 		this.file = file;
 	}
 
 	public List<ScriptDefinition> list() {
 		LinkedList<ScriptDefinition> defs = new LinkedList<ScriptDefinition>();
-		if (file != null && file.isDirectory()) {
-			ScriptClassLoader ldr = new ScriptClassLoader(file, ScriptClassLoader.class.getClassLoader());
-			for (File f : file.listFiles()) {
-				if (f.getName().endsWith(".jar!")) {
-					for (File g : f.listFiles()) {
-						load(new ScriptClassLoader(f, ScriptClassLoader.class.getClassLoader()), defs, g, "");
+		if (file != null) {
+			if (file.isDirectory()) {
+				try {
+					ClassLoader ldr = new URLClassLoader(new URL[] {file.toURI().toURL()});
+					for (File f : file.listFiles()) {
+						if (isJar(f)) {
+							load(ldr, defs, new JarFile(f));
+						} else {
+							load(ldr, defs, f, "");
+						}
 					}
-				} else {
-					load(ldr, defs, f, "");
+				} catch (IOException ignored) {
+				}
+			} else if (isJar(file)) {
+				try {
+					ClassLoader ldr = new URLClassLoader(new URL[] {file.toURI().toURL()});
+					load(ldr, defs, new JarFile(file));
+				} catch (IOException ignored) {
 				}
 			}
 		}
@@ -52,48 +66,65 @@ public class FileScriptSource implements ScriptSource {
 		}
 	}
 
-	private void load(ScriptClassLoader loader, LinkedList<ScriptDefinition> scripts, File file, String prefix) {
-    	if (file.isDirectory()) {
-    		if (!file.getName().endsWith(".jar!") && !file.getName().startsWith(".")) {
+	private void load(ClassLoader loader, LinkedList<ScriptDefinition> scripts, JarFile jar) {
+		Enumeration<JarEntry> entries = jar.entries();
+		while (entries.hasMoreElements()) {
+			JarEntry e = entries.nextElement();
+			String name = e.getName();
+			String ext = ".class";
+			if (name.endsWith(ext) && !name.contains("$")) {
+				load(loader, scripts, name.substring(0, name.length() - ext.length()));
+			}
+		}
+	}
+
+	private void load(ClassLoader loader, LinkedList<ScriptDefinition> scripts, File file, String prefix) {
+		if (file.isDirectory()) {
+			if (!file.getName().startsWith(".")) {
 				for (File f : file.listFiles()) {
 					load(loader, scripts, f, prefix + file.getName() + ".");
-	    		}
+				}
 			}
-    	} else {
-    		String name = prefix + file.getName();
-	        String ext = ".class";
-	        if (name.endsWith(ext) && !name.startsWith(".") && !name.contains("!") && !name.contains("$")) {
-	            try {
-	                name = name.substring(0, name.length() - ext.length());
-	                Class<?> clazz;
-					try {
-						clazz = loader.loadClass(name);
-					} catch (Exception e) {
-						log.warning(name + " is not a valid script and was ignored!");
-						return;
-					} catch (VerifyError e) {
-						log.warning(name + " is not a valid script and was ignored!");
-						return;
-					}
-	                if (clazz.isAnnotationPresent(ScriptManifest.class)) {
-						FileScriptDefinition def = new FileScriptDefinition();
-						ScriptManifest manifest = clazz.getAnnotation(ScriptManifest.class);
-						def.id = 0;
-						def.name = manifest.name();
-						def.authors = manifest.authors();
-						def.version = manifest.version();
-						def.keywords = manifest.keywords();
-						def.description = manifest.description();
-						def.clazz = clazz;
-						def.source = this;
-	                    scripts.add(def);
-	                }
-	            } catch (Exception e) {
-	                e.printStackTrace();
-	            }
-	        }
-    	}
-    }
+		} else {
+			String name = prefix + file.getName();
+			String ext = ".class";
+			if (name.endsWith(ext) && !name.startsWith(".") && !name.contains("!") && !name.contains("$")) {
+				name = name.substring(0, name.length() - ext.length());
+				load(loader, scripts, name);
+			}
+		}
+	}
+
+	private void load(ClassLoader loader, LinkedList<ScriptDefinition> scripts, String name) {
+		Class<?> clazz;
+		try {
+			clazz = loader.loadClass(name);
+		} catch (Exception e) {
+			log.warning(name + " is not a valid script and was ignored!");
+			e.printStackTrace();
+			return;
+		} catch (VerifyError e) {
+			log.warning(name + " is not a valid script and was ignored!");
+			return;
+		}
+		if (clazz.isAnnotationPresent(ScriptManifest.class)) {
+			FileScriptDefinition def = new FileScriptDefinition();
+			ScriptManifest manifest = clazz.getAnnotation(ScriptManifest.class);
+			def.id = 0;
+			def.name = manifest.name();
+			def.authors = manifest.authors();
+			def.version = manifest.version();
+			def.keywords = manifest.keywords();
+			def.description = manifest.description();
+			def.clazz = clazz;
+			def.source = this;
+			scripts.add(def);
+		}
+	}
+
+	private boolean isJar(File file) {
+		return file.getName().endsWith(".jar") || file.getName().endsWith(".dat");
+	}
 
 	private static class FileScriptDefinition extends ScriptDefinition {
 

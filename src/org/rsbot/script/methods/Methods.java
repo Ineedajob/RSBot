@@ -260,37 +260,4 @@ public class Methods {
         log.info(message.toString());
     }
 
-    /**
-     * You may override this in a subclass of Script in order
-     * to execute code whenever the script is stopped.
-     */
-    public void onFinish() {
-
-    }
-
-    /**
-     * Halts the current script without logging out.
-     */
-    public void stopScript() {
-        stopScript(false);
-    }
-
-    /**
-     * Stops the current script; player can be logged out before
-     * the script is stopped.
-     *
-     * @param logout <tt>true</tt> if the player should be logged
-     *               out before the script is stopped.
-     */
-    public void stopScript(boolean logout) {
-        log.info("Script stopped.");
-        if (bank.isOpen()) {
-            bank.close();
-        }
-        if (game.isLoggedIn() && logout) {
-            game.logout(false);
-        }
-        ctx.bot.getScriptHandler().stopScript();
-    }
-
 }

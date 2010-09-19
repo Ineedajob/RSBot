@@ -75,7 +75,7 @@ public class Certer extends Random {
                 log("The object couldn't be identified! ID: " + modelID);
                 failCount++;
                 if (failCount > 10) {
-                    stopScript();
+                    stopScript(false);
                     return -1;
                 }
                 return random(1000, 2000);
@@ -109,7 +109,7 @@ public class Certer extends Random {
 
         failCount++;
         if (failCount > 10) {
-            stopScript();
+            stopScript(false);
             return -1;
         }
         return random(1000, 2000);
