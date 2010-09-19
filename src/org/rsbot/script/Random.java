@@ -14,8 +14,8 @@ public abstract class Random extends Methods {
      * activate.
      *
      * @return <tt>true</tt> if the current script
-     *         should be paused and control passed to this
-     *         anti-random's loop.
+     * should be paused and control passed to this
+     * anti-random's loop.
      */
     public abstract boolean activateCondition();
 
@@ -57,11 +57,11 @@ public abstract class Random extends Methods {
         return enabled;
     }
 
-    public void setEnabled(boolean enabled) {
-        this.enabled =  enabled;
+    public final void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
-    public final boolean runRandom() {
+    public final boolean run(Script ctx) {
         if (!activateCondition()) {
             return false;
         }
@@ -73,21 +73,20 @@ public abstract class Random extends Methods {
             timeout *= 1000;
             timeout += System.currentTimeMillis();
         }
-        while (active) {
+        while (active && ctx.isActive()) {
+			log.info("tick!");
             try {
-                final int wait = loop();
+                int wait = loop();
                 if (wait == -1) {
                     break;
-                }
-                if (timeout > 0 && System.currentTimeMillis() >= timeout) {
+                } else if (timeout > 0 && System.currentTimeMillis() >= timeout) {
                     log.warning("Time limit reached for " + name + ".");
                     stopScript();
-                }
-                if(name.contains("BreakHandler"))
-                    log("Breaking for: " + wait);
-                sleep(wait);
-            } catch (final Exception ex) {
-                log.severe("" + ex);
+                } else {
+					sleep(wait);
+				}
+            } catch (Exception ex) {
+                log.severe(ex.toString());
                 break;
             }
         }

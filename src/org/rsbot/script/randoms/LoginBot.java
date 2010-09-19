@@ -33,7 +33,7 @@ public class LoginBot extends Random {
     private int invalidCount, worldFullCount;
 
     public boolean activateCondition() {
-        int idx = game.getLoginIndex();
+        int idx = game.getClientState();
         return (idx == INDEX_LOGGED_OUT || idx == INDEX_LOBBY) && account.getName() != null;
     }
 
@@ -42,11 +42,11 @@ public class LoginBot extends Random {
         String returnText = interfaces.get(INTERFACE_LOGIN_SCREEN).
                 getComponent(INTERFACE_TEXT_RETURN).getText().toLowerCase();
         int textlength;
-        if (game.getLoginIndex() != INDEX_LOGGED_OUT) {
+        if (game.getClientState() != INDEX_LOGGED_OUT) {
             if (!game.isWelcomeScreen()) {
                 sleep(random(1000, 2000));
             }
-            if (game.getLoginIndex() == INDEX_LOBBY) {
+            if (game.getClientState() == INDEX_LOBBY) {
                 RSInterface welcome_screen = interfaces.get(INTERFACE_WELCOME_SCREEN);
                 RSComponent welcome_screen_button_play_1 = welcome_screen.getComponent(INTERFACE_WELCOME_SCREEN_BUTTON_PLAY_1);
                 RSComponent welcome_screen_button_play_2 = welcome_screen.getComponent(INTERFACE_WELCOME_SCREEN_BUTTON_PLAY_2);
@@ -59,7 +59,7 @@ public class LoginBot extends Random {
                         true
                 );
 
-                for (int i = 0; i < 4 && game.getLoginIndex() == 6; i++)
+                for (int i = 0; i < 4 && game.getClientState() == 6; i++)
                     sleep(500);
             }
             return -1;
@@ -107,7 +107,7 @@ public class LoginBot extends Random {
                 return random(1000, 1200);
             }
         }
-        if (game.getLoginIndex() == INDEX_LOGGED_OUT) {
+        if (game.getClientState() == INDEX_LOGGED_OUT) {
             if (!atLoginScreen()) {
                 interfaces.getComponent(INTERFACE_MAIN, INTERFACE_MAIN_CHILD).getComponent(INTERFACE_MAIN_CHILD_COMPONENT_ID).doAction("");
                 return random(500, 600);
@@ -127,6 +127,7 @@ public class LoginBot extends Random {
                     }
                 }
                 keyboard.sendText(username, false);
+				return random(500, 600);
             }
             if (isUsernameFilled() && !isPasswordFilled()) {
                 atLoginInterface(interfaces.get(INTERFACE_LOGIN_SCREEN).getComponent(INTERFACE_PASSWORD_WINDOW));
@@ -145,7 +146,6 @@ public class LoginBot extends Random {
     }
 
     // Clicks past all of the letters
-
     private boolean atLoginInterface(RSComponent i) {
         if (!i.isValid())
             return false;

@@ -386,11 +386,11 @@ public class Game extends MethodProvider {
     }
 
     /**
-     * Gets the login state.
+     * Gets the game state.
      *
-     * @return The login index.
+     * @return The game state.
      */
-    public int getLoginIndex() {
+    public int getClientState() {
         return methods.client.getLoginIndex();
     }
 

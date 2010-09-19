@@ -1,22 +1,20 @@
 package org.rsbot.service;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import org.rsbot.util.GlobalFile;
+
+import java.io.*;
 import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.Map;
 
 public class ScriptClassLoader extends ClassLoader {
 	
-	private String url;
+	private File file;
 	private Map<String, Class<?>> loaded = new HashMap<String, Class<?>>();
 	
-	public ScriptClassLoader(String url, ClassLoader parent) {
+	public ScriptClassLoader(File file, ClassLoader parent) {
 		super(parent);
-		this.url = url;
+		this.file = file;
 	}
 
 	@Override
@@ -25,9 +23,8 @@ public class ScriptClassLoader extends ClassLoader {
 			if (loaded.containsKey(name)) {
 				return loaded.get(name);
 			}
-			URL myUrl = new URL(url + name.replace('.', '/') + ".class");
-			URLConnection connection = myUrl.openConnection();
-			InputStream input = connection.getInputStream();
+			GlobalFile f = new GlobalFile(file, name.replace('.', '/') + ".class");
+			InputStream input = new FileInputStream(f);
 			ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 			int data = input.read();
 
@@ -43,8 +40,8 @@ public class ScriptClassLoader extends ClassLoader {
 			loaded.put(name, clazz);
 
 			return clazz;
-		} catch (final MalformedURLException ignored) {
-		} catch (final IOException ignored) {
+		} catch (MalformedURLException ignored) {
+		} catch (IOException ignored) {
 		}
 		return super.loadClass(name);
 	}

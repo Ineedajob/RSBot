@@ -93,8 +93,8 @@ public class ScriptHandler {
 
     public void pauseScript(int id) {
         Script s = scripts.get(id);
-        s.isPaused = !s.isPaused;
-		if (s.isPaused) {
+        s.setPaused(s.isPaused());
+		if (s.isPaused()) {
 			for (ScriptListener l : listeners) {
 				l.scriptPaused(this, s);
 			}
@@ -108,7 +108,7 @@ public class ScriptHandler {
     public void removeScript(int id) {
 		Script script = scripts.get(id);
         if (script != null) {
-			script.isActive = false;
+			script.stop(id);
         	scripts.remove(id);
         	scriptThreads.remove(id);
 		}
@@ -135,7 +135,7 @@ public class ScriptHandler {
         Thread curThread = Thread.currentThread();
         for (int i = 0; i < scripts.size(); i++) {
 			Script script = scripts.get(i);
-            if (script != null && script.isActive) {
+            if (script != null && script.isActive()) {
                 if (scriptThreads.get(i) == curThread) {
                     removeScript(i);
                     curThread = null;
@@ -154,7 +154,7 @@ public class ScriptHandler {
 
     public void stopScript(int id) {
 		Script script = scripts.get(id);
-        script.isActive = false;
+        script.stop(id);
         scripts.remove(id);
         scriptThreads.remove(id);
 		for (ScriptListener l : listeners) {
