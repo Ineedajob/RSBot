@@ -1,5 +1,6 @@
 package org.rsbot.script;
 
+import org.rsbot.script.methods.Environment;
 import org.rsbot.script.methods.MethodContext;
 import org.rsbot.script.methods.Methods;
 import org.rsbot.script.randoms.LoginBot;
@@ -47,8 +48,7 @@ public abstract class Script extends Methods implements EventListener, Runnable 
      * sleep. This ensures that pausing and anti-randoms perform normally.
      *
      * @return The number of milliseconds that the manager should sleep before
-     *         calling it again. Returning a negative number will stop the
-     *         script.
+     * calling it again. Returning a negative number will stop the script.
      */
     public abstract int loop();
 
@@ -145,6 +145,7 @@ public abstract class Script extends Methods implements EventListener, Runnable 
         mouse.moveOffScreen();
         ctx.bot.getEventManager().removeListener(this);
         ctx.bot.getScriptHandler().removeScript(id);
+		ctx.bot.inputMask = Environment.INPUT_KEYBOARD;
 		id = -1;
     }
 

@@ -1,7 +1,7 @@
 package org.rsbot.script.methods;
 
-import org.rsbot.client.Client;
 import org.rsbot.bot.Bot;
+import org.rsbot.client.Client;
 import org.rsbot.script.internal.InputManager;
 
 /**
@@ -145,12 +145,17 @@ public class MethodContext {
      * The singleton of Summoning
      */
     public final Summoning summoning = new Summoning(this);
+
+	/**
+	 * The singleton of Environment
+	 */
+	public final Environment env = new Environment(this);
     
     /**
      * The Bot's input manager
      */
     public final InputManager inputManager;
-    
+
     /**
      * The client
      */
