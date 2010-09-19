@@ -11,8 +11,8 @@ import java.util.logging.Level;
 
 public abstract class Script extends Methods implements EventListener, Runnable {
 
-    public volatile boolean isActive = false;
-    public volatile boolean isPaused = false;
+    private volatile boolean active = false;
+    private volatile boolean paused = false;
 
 	private int id = -1;
     private MethodContext ctx;
@@ -68,11 +68,30 @@ public abstract class Script extends Methods implements EventListener, Runnable 
     	this.ctx = ctx;
     }
 
+	public final void stop(int id) {
+		if (id != this.id) {
+			throw new IllegalStateException("Invalid id!");
+		}
+		this.active = false;
+	}
+
 	public final void setID(int id) {
 		if (this.id != -1) {
 			throw new IllegalStateException("Already added to pool!");
 		}
 		this.id = id;
+	}
+
+	public final void setPaused(boolean paused) {
+		this.paused = paused;
+	}
+
+	public final boolean isActive() {
+		return active;
+	}
+
+	public final boolean isPaused() {
+		return paused;
 	}
 
     public final void run() {
@@ -82,15 +101,15 @@ public abstract class Script extends Methods implements EventListener, Runnable 
         boolean start = false;
         try {
             start = onStart();
-        } catch (final ThreadDeath ignored) {
-        } catch (final Throwable ex) {
+        } catch (ThreadDeath ignored) {
+        } catch (Throwable ex) {
             log.log(Level.SEVERE, "Error starting script: ", ex);
         }
         if (start) {
-            isActive = true;
+            active = true;
             try {
-                while (isActive) {
-                    if (!isPaused) {
+                while (active) {
+                    if (!paused) {
                         if (checkForRandoms()) {
                             continue;
                         }
@@ -137,7 +156,7 @@ public abstract class Script extends Methods implements EventListener, Runnable 
             } catch (ThreadDeath td) {
                 onFinish();
             }
-            isActive = false;
+            active = false;
             log.info("Script stopped.");
         } else {
             log.severe("Failed to start up.");
@@ -161,7 +180,7 @@ public abstract class Script extends Methods implements EventListener, Runnable 
             } else if (!random.isEnabled()) {
                 continue;
             }
-            if (random.runRandom()) {
+            if (random.run(this)) {
                 return true;
             }
         }

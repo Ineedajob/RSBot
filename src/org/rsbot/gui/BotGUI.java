@@ -134,13 +134,13 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
         	}
 		} else if (menu.equals("View")) {
 			Bot current = getCurrentBot();
-			if (current != null) {
-				boolean selected = ((JCheckBoxMenuItem) evt.getSource()).isSelected();
-				if (option.equals("Hide Toolbar")) {
-					toggleViewState(toolBar, selected);
-				} else if (option.equals("Hide Log Window")) {
-					toggleViewState(textScroll, selected);
-				} else if (option.equals("All Debugging")) {
+			boolean selected = ((JCheckBoxMenuItem) evt.getSource()).isSelected();
+			if (option.equals("Hide Toolbar")) {
+				toggleViewState(toolBar, selected);
+			} else if (option.equals("Hide Log Window")) {
+				toggleViewState(textScroll, selected);
+			} else if (current != null) {
+				if (option.equals("All Debugging")) {
 					for (String key : BotMenuBar.DEBUG_MAP.keySet()) {
 						Class<?> el = BotMenuBar.DEBUG_MAP.get(key);
 						boolean wasSelected = menuBar.getCheckBox(key).isSelected();
@@ -190,7 +190,7 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 				setTitle(curr.getAccountName());
 				Map<Integer, Script> scriptMap = curr.getScriptHandler().getRunningScripts();
 				if (scriptMap.size() > 0) {
-					if (scriptMap.values().iterator().next().isPaused) {
+					if (scriptMap.values().iterator().next().isPaused()) {
 						toolBar.setScriptButton(BotToolBar.RESUME_SCRIPT);
 					} else {
 						toolBar.setScriptButton(BotToolBar.PAUSE_SCRIPT);

@@ -16,7 +16,7 @@ public class TLoginIndex implements TextPaintListener {
     }
 
     public int drawLine(final Graphics render, int idx) {
-        StringUtil.drawLine(render, idx++, "Login Index: " + game.getLoginIndex());
+        StringUtil.drawLine(render, idx++, "Login Index: " + game.getClientState());
         return idx;
     }
     
