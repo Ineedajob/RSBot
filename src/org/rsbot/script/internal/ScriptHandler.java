@@ -141,10 +141,6 @@ public class ScriptHandler {
             if (script != null && script.isActive()) {
                 if (scriptThreads.get(i) == curThread) {
                     removeScript(i);
-                    curThread = null;
-					for (ScriptListener l : listeners) {
-						l.scriptStopped(this, script);
-					}
                 } else {
                     stopScript(i);
                 }
