@@ -31,8 +31,8 @@ public class RSArea {
 	}
 
 	/**
-	 * @param sw	The south west <b>RSTile</b> of the <b>RSArea</b>
-	 * @param ne	The north east <b>RSTile</b> of the <b>RSArea</b>
+	 * @param sw	The <i>South West</i> <b>RSTile</b> of the <b>RSArea</b>
+	 * @param ne	The <i>North East</i> <b>RSTile</b> of the <b>RSArea</b>
 	 * @param plane The plane of the <b>RSArea</b>.
 	 */
 	public RSArea(RSTile sw, RSTile ne, int plane) {
@@ -42,11 +42,25 @@ public class RSArea {
 	}
 
 	/**
-	 * @param sw The south west <b>RSTile</b> of the <b>RSArea</b>
-	 * @param ne The north east <b>RSTile</b> of the <b>RSArea</b>
+	 * @param sw The <i>South West</i> <b>RSTile</b> of the <b>RSArea</b>
+	 * @param ne The <i>North East</i> <b>RSTile</b> of the <b>RSArea</b>
 	 */
 	public RSArea(RSTile sw, RSTile ne) {
 		this(sw, ne, 0);
+	}
+
+	/**
+	 * @param swX The X axle of the <i>South West</i> <b>RSTile</b> of the
+	 *            <b>RSArea</b>
+	 * @param swY The Y axle of the <i>South West</i> <b>RSTile</b> of the
+	 *            <b>RSArea</b>
+	 * @param neX The X axle of the <i>North East</i> <b>RSTile</b> of the
+	 *            <b>RSArea</b>
+	 * @param neY The Y axle of the <i>North East</i> <b>RSTile</b> of the
+	 *            <b>RSArea</b>
+	 */
+	public RSArea(int swX, int swY, int neX, int neY) {
+		this(new RSTile(swX, swY), new RSTile(neX, neY), 0);
 	}
 
 	/**
@@ -75,8 +89,23 @@ public class RSArea {
 	}
 
 	/**
-	 * @return The nearest <b>RSTile</b> in the <b>RSArea</b> to the
-	 * given <b>RSTile</b>.
+	 * @return The central <b>RSTile</b> of the <b>RSArea</b>.
+	 */
+	public RSTile getCentralTile() {
+		if (area.npoints < 1)
+			return null;
+		int totalX = 0, totalY = 0;
+		for (int i = 0; i < area.npoints; i++) {
+			totalX += area.xpoints[i];
+			totalY += area.ypoints[i];
+		}
+		return new RSTile(Math.round(totalX / area.npoints),
+				Math.round(totalY / area.npoints));
+	}
+
+	/**
+	 * @return The nearest <b>RSTile</b> in the <b>RSArea</b>
+	 * to the given <b>RSTile</b>.
 	 */
 	public RSTile getNearestTile(RSTile base) {
 		RSTile[] tiles = this.getTileArray();
@@ -129,30 +158,30 @@ public class RSArea {
 	}
 
 	/**
-	 * @return The distance between the the <b>RSTile</b> that's most East and
-	 *         the <b>RSTile</b> that's most West.
+	 * @return The distance between the the <b>RSTile</b> that's most
+	 *         <i>East</i> and the <b>RSTile</b> that's most <i>West</i>.
 	 */
 	public int getWidth() {
 		return this.area.getBounds().width;
 	}
 
 	/**
-	 * @return The distance between the the <b>RSTile</b> that's most South and
-	 *         the <b>RSTile</b that's most North.
+	 * @return The distance between the the <b>RSTile</b> that's most
+	 *         <i>South</i> and the <b>RSTile</b> that's most <i>North</i>.
 	 */
 	public int getHeight() {
 		return this.area.getBounds().height;
 	}
 
 	/**
-	 * @return The X axle of the <b>RSTile</b> that's most West.
+	 * @return The X axle of the <b>RSTile</b> that's most <i>West</i>.
 	 */
 	public int getX() {
 		return this.area.getBounds().x;
 	}
 
 	/**
-	 * @return The Y axle of the <b>RSTile</b> that's most South.
+	 * @return The Y axle of the <b>RSTile</b> that's most <i>South</i>.
 	 */
 	public int getY() {
 		return this.area.getBounds().y;

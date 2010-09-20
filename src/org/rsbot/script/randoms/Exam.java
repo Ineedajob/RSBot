@@ -10,8 +10,9 @@ import java.awt.Point;
  * Updated by Iscream Feb 04,10
  * Updated by Iscream Feb 20,10
  * Updated by Iscream Mar 01,10
+ * Updated by Arbiter Sep 20,10
  */
-@ScriptManifest(authors = {"PwnZ", "Megaalgos", "Taha", "Fred", "Poxer", "Iscream"}, name = "Exam", version = 2.1)
+@ScriptManifest(authors = {"Arbiter", "PwnZ", "Megaalgos", "Taha", "Fred", "Poxer", "Iscream"}, name = "Exam", version = 2.1)
 public class Exam extends Random {
     public class NextObjectQuestion {
         int One = -1;
@@ -38,8 +39,8 @@ public class Exam extends Random {
                 return false;
 
             for (int i = 10; i <= 13; i++) {
-                if (arrayContains(Answers, interfaces.get(nextObjectInterface).getComponent(i)
-                        .getComponentID()))
+                if (arrayContains(Answers, interfaces.get(nextObjectInterface).
+						getComponent(i).getComponentID()))
                     return interfaces.get(nextObjectInterface).getComponent(i).doClick();
             }
 
@@ -91,19 +92,19 @@ public class Exam extends Random {
                 count[i] = 0;
             }
             // Will verify that all IDs are IDs which we currently have
-            for (int i = 0; i < items.length; i++) {
-                for (int j = 0; j < items[i].length; j++) {
-                    if (items[i][j] == One) {
-                        firstcard = 1;
-                    }
-                    if (items[i][j] == Two) {
-                        secondcard = 1;
-                    }
-                    if (items[i][j] == Three) {
-                        thirdcard = 1;
-                    }
-                }
-            }
+			for (int[] item : items) {
+				for (int anItem : item) {
+					if (anItem == One) {
+						firstcard = 1;
+					}
+					if (anItem == Two) {
+						secondcard = 1;
+					}
+					if (anItem == Three) {
+						thirdcard = 1;
+					}
+				}
+			}
             if (firstcard == 0) {
                 log.severe("The first object is a new Object");
                 log.severe("The Missing Object ID is :" + Integer.toString(One));
@@ -237,18 +238,18 @@ public class Exam extends Random {
     public int[][] items = {Ranged, Cooking, Fishing, Combat, Farming, Magic,
             Firemaking, Hats, Drinks, Woodcutting, Boots, Crafting, Mining,
             Smithing};
-    public int Key = 11589;
+    //public int Key = 11589;
     public int Book = 11590;
-    public int Bones = 11617; // Combat?
-    public int Feather = 11624; // Cooking?
-    public int Hook = 11626; // Added to hats for pirate stuff.
-    public int Cape = 11627; // Added to combat (legends cape)
+    //public int Bones = 11617; // Combat?
+    //public int Feather = 11624; // Cooking?
+    //public int Hook = 11626; // Added to hats for pirate stuff.
+    //public int Cape = 11627; // Added to combat (legends cape)
     // Missing 11640
-    public int Talisman = 11643; // Added to crafting
+    //public int Talisman = 11643; // Added to crafting
 
-    public int Candle = 11646; // WTF? (Firemaking)
+    //public int Candle = 11646; // WTF? (Firemaking)
 
-    public int Vial = 11653; // Crafting?
+    //public int Vial = 11653; // Crafting?
 
     public SimilarObjectQuestion[] simObjects = {
             new SimilarObjectQuestion("I never leave the house without some sort of jewellery.", Jewellery),
@@ -325,13 +326,12 @@ public class Exam extends Random {
     }
 
     /*
-      * Don't use this with any other monster.I edited for this script only cause
-      * Mr. Mordaunt doesn't move
-      */
-
+     * Don't use this with any other monster.I edited for this script only cause
+     * Mr. Mordaunt doesn't move
+     */
     public boolean clickCharacter(final RSCharacter c, final String action) {
         try {
-            Point screenLoc = null;
+            Point screenLoc;
             screenLoc = c.getScreenLocation();
 
             if (!c.isValid() || !calc.pointOnScreen(screenLoc)) {
@@ -361,7 +361,7 @@ public class Exam extends Random {
     // My clickObject, like clickCharacter, and faster than atObject.
     public boolean clickObject(final RSObject c, final String action) {
         try {
-            Point screenLoc = null;
+            Point screenLoc;
             int X = (int) calc.tileToScreen(c.getLocation()).getX();
             int Y = (int) calc.tileToScreen(c.getLocation()).getY();
 
@@ -405,9 +405,50 @@ public class Exam extends Random {
         if (getMyPlayer().isMoving() || (getMyPlayer().getAnimation() != -1)) {
             return random(800, 1200);
         }
+
+        if (door != null) {
+            if (calc.distanceTo(door) > 3) {
+                walking.walkPathMM(walking.findPath(door.getLocation()));
+                sleep(random(1400, 2500));
+            }
+            if (!calc.tileOnScreen(door.getLocation())) {
+                walking.walkTileMM(door.getLocation());
+                sleep(random(1400, 2500));
+            }
+            if (door.getID() == 2188) {
+                camera.setCompass('w');
+            }
+            if (door.getID() == 2193) {
+                camera.setCompass('e');
+            }
+            if (door.getID() == 2189) {
+                camera.setCompass('w');
+            }
+            if (door.getID() == 2192) {
+                camera.setCompass('n');
+            }
+            clickObject(door, "Open");
+            return random(500, 1000);
+        }
+        final RSComponent inter = searchInterfacesText("To exit,");
+        if (inter != null) {
+            if (inter.getText().toLowerCase().contains("red")) {
+                door = objects.getNearest(2188);
+            }
+            if (inter.getText().toLowerCase().contains("green")) {
+                door = objects.getNearest(2193);
+            }
+            if (inter.getText().toLowerCase().contains("blue")) {
+                door = objects.getNearest(2189);
+            }
+            if (inter.getText().toLowerCase().contains("purple")) {
+                door = objects.getNearest(2192);
+            }
+            return random(500, 1000);
+        }
         if (!interfaces.get(nextObjectInterface).isValid() && !getMyPlayer().isMoving()
                 && !interfaces.get(nextObjectInterface).isValid() && !interfaces.canContinue()
-                && mordaut != null && door == null) {
+                && door == null) {
             if (calc.distanceTo(mordaut) > 4) {
                 walking.walkPathMM(walking.findPath(mordaut.getLocation()));
             }
@@ -450,50 +491,8 @@ public class Exam extends Random {
                 log.severe("Please post this on the forums.");
                 log.severe("The Missing Question is :");
                 log(interfaces.get(nextObjectInterface).getComponent(25).getText().toLowerCase());
-                z = 1;
             }
             return random(800, 1200);
-        }
-
-        if (door != null) {
-            if (calc.distanceTo(door) > 3) {
-                walking.walkPathMM(walking.findPath(door.getLocation()));
-                sleep(random(1400, 2500));
-            }
-            if (!calc.tileOnScreen(door.getLocation())) {
-                walking.walkTileMM(door.getLocation());
-                sleep(random(1400, 2500));
-            }
-            if (door.getID() == 2188) {
-                camera.setCompass('w');
-            }
-            if (door.getID() == 2193) {
-                camera.setCompass('e');
-            }
-            if (door.getID() == 2189) {
-                camera.setCompass('w');
-            }
-            if (door.getID() == 2192) {
-                camera.setCompass('n');
-            }
-            clickObject(door, "Open");
-            return random(500, 1000);
-        }
-
-        final RSComponent inter = searchInterfacesText("door");
-        if (inter != null) {
-            if (inter.getText().toLowerCase().contains("red")) {
-                door = objects.getNearest(2188);
-            }
-            if (inter.getText().toLowerCase().contains("green")) {
-                door = objects.getNearest(2193);
-            }
-            if (inter.getText().toLowerCase().contains("blue")) {
-                door = objects.getNearest(2189);
-            }
-            if (inter.getText().toLowerCase().contains("purple")) {
-                door = objects.getNearest(2192);
-            }
         }
 
         if (interfaces.clickContinue()) {
@@ -506,7 +505,7 @@ public class Exam extends Random {
     public RSComponent searchInterfacesText(final String string) {
         final RSInterface[] inters = interfaces.getAll();
         for (final RSInterface inter : inters) {
-            for (final RSComponent interfaceChild : inter) {
+            for (final RSComponent interfaceChild : inter.getComponents()) {
                 if (interfaceChild.getText().toLowerCase().contains(
                         string.toLowerCase()))
                     return interfaceChild;
