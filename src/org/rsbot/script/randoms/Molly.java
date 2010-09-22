@@ -98,7 +98,6 @@ public class Molly extends Random {
         }
         if (finished && inControlRoom()) {
             if (!openDoor()) {
-                walktodoor();
                 return (random(400, 500));
             }
             return (random(400, 600));
@@ -139,15 +138,6 @@ public class Molly extends Random {
             }
         }
         return random(200, 400);
-    }
-
-    private void walktodoor() {
-        final RSObject door = objects.getNearest(Molly.DOOR_ID);
-        if (door == null)
-            return;
-        final RSTile loc = door.getLocation();
-        final RSTile counter = new RSTile(loc.getX() + 1, loc.getY());
-        walking.walkTileOnScreen(counter);
     }
 
     private void navigateClaw() {
@@ -200,29 +190,13 @@ public class Molly extends Random {
         final RSObject door = objects.getNearest(Molly.DOOR_ID);
         if (door == null)
             return false;
-        final RSTile loc = door.getLocation();
-        final RSTile counter = new RSTile(loc.getX() + 1, loc.getY());
-        int i = 0;
-        while (i < 20) {
-            i++;
-            if (i % 5 == 0) {
-                camera.setAngle(random(0, 359));
-            }
-            final Point midpoint = new Point((int) ((calc.tileToScreen(loc).getX() + calc.tileToScreen(counter).getX()) / 2), (int) ((calc.tileToScreen(loc).getY() + calc.tileToScreen(counter).getY()) / 2));
-            mouse.move(midpoint, (int) (midpoint.getX() - calc.tileToScreen(loc).getX()), 5);
-            sleep(random(300, 500));
-            try {
-                for (final String s : menu.getActions()) {
-                    if (s.contains("pen")) {
-                        final boolean b = menu.doAction("Open");
-                        sleep(random(600, 1200));
-                        return b;
-                    }
-                }
-            } catch (final NullPointerException noMenuActions) {
-                return false;
-            }
+        if (!calc.tileOnScreen(door.getLocation()))
+        {
+        	walking.walkTileOnScreen(door.getLocation());
+        	sleep(1000,2000);
+        	return false;
         }
+        door.doAction("Open");
         return false;
     }
 
