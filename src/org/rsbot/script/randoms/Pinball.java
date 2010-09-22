@@ -10,8 +10,9 @@ import org.rsbot.script.wrappers.RSObject;
 * Updated by Twistedmind(Feb 4, 10) Small camera turning issue...
 * Updated by Iscream(Feb 5, 10)
 * Updated by TwistedMind(Feb 7, '10) "What have you guys been smoking??? I cleaned the code and it worked again... Why atTile if there's atObject?"
+* Updated by Arbiter(Sep 21, '10) Switched back to atTile. Obvious spread out model is obvious. Also fixed the fail returning. >.>
 */
-@ScriptManifest(authors = {"Aelin", "LM3", "IceCandle", "Taha", "Twistedmind", "Iscream"}, name = "Pinball", version = 2.7)
+@ScriptManifest(authors = {"Arbiter", "Aelin", "LM3", "IceCandle", "Taha", "Twistedmind", "Iscream"}, name = "Pinball", version = 2.7)
 
 public class Pinball extends Random {
 
@@ -28,7 +29,8 @@ public class Pinball extends Random {
     }
 
     private int getScore() {
-        int IFACE_PINBALL=263;RSComponent score = interfaces.getComponent(IFACE_PINBALL, 1);
+        int IFACE_PINBALL=263;
+        RSComponent score = interfaces.get(IFACE_PINBALL).getComponent(1);
         try {
             return Integer.parseInt(score.getText().split(" ")[1]);
         } catch (java.lang.ArrayIndexOutOfBoundsException t) {
@@ -49,7 +51,8 @@ public class Pinball extends Random {
             return random(1000, 1600);
         }
         if (getScore() >= 10) {
-            int OBJ_EXIT=15010;RSObject exit = objects.getNearest(OBJ_EXIT);
+            int OBJ_EXIT=15010;
+            RSObject exit = objects.getNearest(OBJ_EXIT);
             if (exit != null) {
                 if (calc.tileOnScreen(exit.getLocation()) && tiles.doAction(exit.getLocation(), "Exit")) {
                     sleep(random(2000, 2200));
@@ -68,12 +71,15 @@ public class Pinball extends Random {
                 return random(500, 600);
             }
             sleep(random(400, 500));
-            objects.getNearest(OBJ_PILLARS).doAction("Tag");
-            for (int i = 0; i < 2; i++) {
-                if (getMyPlayer().getInteracting() != null) {
-                    i = 0;
-                }
-                sleep(random(936, 1259));//Randomness ftw, I was bored :P
+            if (!tiles.doAction(objects.getNearest(OBJ_PILLARS).getLocation(), "Tag"))
+            	return 1;
+            else
+            	sleep(500,1000);
+            int before = getScore();
+            for (int i = 0; i < 100; i++) {
+                if (getScore() > before)
+                	return random(50,100);
+                sleep(25,75);
             }
             return random(1000, 1300);
         }

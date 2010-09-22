@@ -55,9 +55,7 @@ public class QuizSolver extends Random {
                     count++;
                 }
                 if (arrayContains(items[j], ID_Three)) {
-                    log.info("Slot 3: " + names
-
-                            [j]);
+                    log.info("Slot 3: " + names[j]);
                     count++;
                 }
 
@@ -96,10 +94,10 @@ public class QuizSolver extends Random {
     }
 
     public int quizInterface = 191;
-    public int[] Fish = {1715, 1414, 1753, 1383};
-    public int[] Jewelry = {640, 1062, 793, 856};
-    public int[] Weapons = {1510, 1218, 1331, 1996};
-    public int[] Farming = {908, 1280};
+    public int[] Fish = { 6190, 6189 };
+    public int[] Jewelry = { 6198, 6197 };
+    public int[] Weapons = { 6192, 6194 };
+    public int[] Farming = { 6195, 6196 };
     public int[][] items = {Fish, Jewelry, Weapons, Farming};
 
     public String[] names = {"Fish", "Jewelry", "Weapons", "Farming"};
@@ -164,11 +162,14 @@ public class QuizSolver extends Random {
     public int Slot_to_ID(final int slot) {
         switch (slot) {
             case 1:
-                return interfaces.getComponent(quizInterface, 6).getModelZoom();
+            	//System.out.println(interfaces.get(quizInterface).getComponent(6).getComponentID());
+                return interfaces.get(quizInterface).getComponent(6).getComponentID();
             case 2:
-                return interfaces.getComponent(quizInterface, 7).getModelZoom();
+            	//System.out.println(interfaces.get(quizInterface).getComponent(7).getComponentID());
+                return interfaces.get(quizInterface).getComponent(7).getComponentID();
             case 3:
-                return interfaces.getComponent(quizInterface, 8).getModelZoom();
+            	//System.out.println(interfaces.get(quizInterface).getComponent(8).getComponentID());
+                return interfaces.get(quizInterface).getComponent(8).getComponentID();
             default:
                 return -1;
         }
