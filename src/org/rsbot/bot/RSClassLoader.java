@@ -13,7 +13,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.PropertyPermission;
 
-import org.rsbot.bot.injector.Injector;
+import org.rsbot.injector.Injector;
 
 /**
  * @author Alex
@@ -21,15 +21,14 @@ import org.rsbot.bot.injector.Injector;
 public final class RSClassLoader extends ClassLoader {
     public final HashMap<String, byte[]> classes = new HashMap<String, byte[]>();
 
-    private CodeSource codeSource;
-    private ProtectionDomain domain;
+	private ProtectionDomain domain;
 
     private Injector injector;
 
     public RSClassLoader(Injector injector) {
         try {
             this.injector = injector;
-            codeSource = new CodeSource(new URL("http://" + injector.generateTargetName() + ".com/"), (CodeSigner[]) null);
+			CodeSource codeSource = new CodeSource(new URL("http://" + injector.generateTargetName() + ".com/"), (CodeSigner[]) null);
             domain = new ProtectionDomain(codeSource, getPermissions());
             classes.putAll(injector.getClasses());
         } catch (final Exception e) {

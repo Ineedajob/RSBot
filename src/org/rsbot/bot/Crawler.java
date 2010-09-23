@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.rsbot.bot.injector.Injector;
+import org.rsbot.injector.Injector;
 import org.rsbot.util.GlobalConfiguration;
 
 public class Crawler {

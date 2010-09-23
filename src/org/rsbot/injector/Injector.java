@@ -1,4 +1,4 @@
-package org.rsbot.bot.injector;
+package org.rsbot.injector;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -34,7 +34,7 @@ import com.sun.org.apache.bcel.internal.classfile.Method;
 import com.sun.org.apache.bcel.internal.generic.*;
 import org.rsbot.util.GlobalConfiguration;
 
-import static org.rsbot.bot.injector.HookData.*;
+import static org.rsbot.injector.HookData.*;
 
 public class Injector {
 
