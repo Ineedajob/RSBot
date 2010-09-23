@@ -1,4 +1,4 @@
-package org.rsbot.bot.injector;
+package org.rsbot.injector;
 
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -1,6 +1,6 @@
 package org.rsbot.bot;
 
-import org.rsbot.bot.injector.Injector;
+import org.rsbot.injector.Injector;
 import org.rsbot.client.Loader;
 import org.rsbot.util.GlobalConfiguration;
 

@@ -5,9 +5,7 @@ import org.rsbot.script.ScriptManifest;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
@@ -33,10 +31,10 @@ public class FileScriptSource implements ScriptSource {
 		if (file != null) {
 			if (file.isDirectory()) {
 				try {
-					ClassLoader ldr = new URLClassLoader(new URL[] {file.toURI().toURL()});
+					ClassLoader ldr = new ScriptClassLoader(new URL[] {file.toURI().toURL()});
 					for (File f : file.listFiles()) {
 						if (isJar(f)) {
-							load(new URLClassLoader(new URL[] {f.toURI().toURL()}), defs, new JarFile(f));
+							load(new ScriptClassLoader(new URL[] {f.toURI().toURL()}), defs, new JarFile(f));
 						} else {
 							load(ldr, defs, f, "");
 						}
@@ -45,7 +43,7 @@ public class FileScriptSource implements ScriptSource {
 				}
 			} else if (isJar(file)) {
 				try {
-					ClassLoader ldr = new URLClassLoader(new URL[] {file.toURI().toURL()});
+					ClassLoader ldr = new ScriptClassLoader(new URL[] {file.toURI().toURL()});
 					load(ldr, defs, new JarFile(file));
 				} catch (IOException ignored) {
 				}
