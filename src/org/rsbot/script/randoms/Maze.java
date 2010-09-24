@@ -7,11 +7,11 @@ import org.rsbot.script.wrappers.RSTile;
 import java.awt.*;
 import java.util.ArrayList;
 
-/*
-* Updated by Iscream Feb 05,10
-* Updated by Iscream Feb 06,10
-* Updated by Iscream Feb 09,10
-*/
+/**
+ * Updated by Iscream Feb 05,10
+ * Updated by Iscream Feb 06,10
+ * Updated by Iscream Feb 09,10
+ */
 @ScriptManifest(authors = {"Zenzie", "Iscream"}, name = "Maze", version = 1.5)
 public class Maze extends Random {
 

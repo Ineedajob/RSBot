@@ -4,9 +4,9 @@ import org.rsbot.script.Random;
 import org.rsbot.script.ScriptManifest;
 import org.rsbot.script.wrappers.RSNPC;
 
-/*
-* Updated by Iscream Feb 22,10
-*/
+/**
+ * Updated by Iscream Feb 22,10
+ */
 @ScriptManifest(authors = {"Nightmares18", "joku.rules", "Taha", "Fred"}, name = "FrogCave", version = 2.3)
 public class FrogCave extends Random {
     private RSNPC frog;

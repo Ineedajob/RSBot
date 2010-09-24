@@ -10,11 +10,12 @@ import org.rsbot.script.wrappers.RSTile;
 import java.awt.*;
 
 /**
- * @author Illusion + Pwnaz0r
- * 
  * Last Updated 9-23-10 Arbiter
+ *
+ * @author Illusion
+ * @author Pwnaz0r
  */
-@ScriptManifest(authors = {"Arbiter", "illusion", "Pwnaz0r"}, name = "Pillory", version = 3.8)
+@ScriptManifest(authors = {"illusion", "Pwnaz0r"}, name = "Pillory", version = 3.8)
 public class Pillory extends Random implements ServerMessageListener {
 
     public int fail = 0;

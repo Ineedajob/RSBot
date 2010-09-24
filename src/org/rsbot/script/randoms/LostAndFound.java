@@ -9,7 +9,7 @@ import org.rsbot.script.wrappers.RSTile;
 /**
  *  Updated by Arbiter 9/22/10: Replaced tile clicking with model clicking. :)
  */
-@ScriptManifest(authors = {"Arbiter", "Garrett"}, name = "LostAndFound", version = 1.0)
+@ScriptManifest(authors = {"Garrett"}, name = "LostAndFound", version = 1.0)
 public class LostAndFound extends Random {
 
     final int appendN = 8995;
@@ -26,10 +26,8 @@ public class LostAndFound extends Random {
 
     @Override
     public boolean activateCondition() {
-        if (!game.isLoggedIn())
-            return false;
-        return objects.getNearest(appendN) != null;
-        }
+		return game.isLoggedIn() && objects.getNearest(appendN) != null;
+	}
 
     public RSObject getFarthestObjectByID(final int... ids) {
         RSObject cur = null;
