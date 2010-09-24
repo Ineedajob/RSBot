@@ -60,20 +60,6 @@ public class Bank extends MethodProvider {
 	}
 
 	/**
-	 * Performs a given action on the specified item ID within the bank.
-	 *
-	 * @param itemID The ID of the item.
-	 * @param txt The action to perform.
-	 * @return <tt>true</tt> if successful; otherwise <tt>false</tt>.
-	 */
-	public boolean atItem(final int itemID, final String txt) {
-		if (!methods.game.isLoggedIn() || !isOpen())
-			return false;
-		final RSItem item = getItem(itemID);
-		return (item != null) && item.isComponentValid() && item.doAction(txt);
-	}
-
-	/**
 	 * Closes the bank interface. Supports deposit boxes.
 	 *
 	 * @return <tt>true</tt> if the bank interface is no longer open.
@@ -178,13 +164,12 @@ public class Bank extends MethodProvider {
 	 * @return <tt>true</tt> on success.
 	 */
 	public boolean depositAll() {
-		if (isOpen())
+		if (isOpen()) {
 			return methods.interfaces.getComponent(INTERFACE_BANK,
 					INTERFACE_BANK_BUTTON_DEPOSIT_CARRIED_ITEMS).doClick();
-		if (isDepositOpen())
-			return methods.interfaces.getComponent(INTERFACE_DEPOSIT_BOX,
-					INTERFACE_DEPOSIT_BUTTON_DEPOSIT_CARRIED_ITEMS).doClick();
-		return false;
+		}
+		return isDepositOpen() && methods.interfaces.getComponent(INTERFACE_DEPOSIT_BOX,
+				INTERFACE_DEPOSIT_BUTTON_DEPOSIT_CARRIED_ITEMS).doClick();
 	}
 
 	/**
@@ -194,13 +179,12 @@ public class Bank extends MethodProvider {
 	 * @since 6 March 2009.
 	 */
 	public boolean depositAllEquipped() {
-		if (isOpen())
+		if (isOpen()) {
 			return methods.interfaces.getComponent(INTERFACE_BANK,
 					INTERFACE_BANK_BUTTON_DEPOSIT_WORN_ITEMS).doClick();
-		if (isDepositOpen())
-			return methods.interfaces.getComponent(INTERFACE_DEPOSIT_BOX,
-					INTERFACE_DEPOSIT_BUTTON_DEPOSIT_WORN_ITEMS).doClick();
-		return false;
+		}
+		return isDepositOpen() && methods.interfaces.getComponent(INTERFACE_DEPOSIT_BOX,
+				INTERFACE_DEPOSIT_BUTTON_DEPOSIT_WORN_ITEMS).doClick();
 	}
 
 	/**
@@ -213,28 +197,25 @@ public class Bank extends MethodProvider {
 		if (isOpen()) {
 			int inventoryCount = methods.inventory.getCount();
 			RSItem[] inventoryArray = methods.inventory.getItems();
-			outer: for (int off = 0; off < inventoryArray.length; off++) {
-				if (inventoryArray[off].getID() == -1) {
+			outer:
+			for (RSItem anInventoryArray : inventoryArray) {
+				if (anInventoryArray.getID() == -1) {
 					continue;
 				}
 				for (final int item : items) {
-					if (inventoryArray[off].getID() == item) {
+					if (anInventoryArray.getID() == item) {
 						continue outer;
 					}
 				}
 
 				for (int tries = 0; tries < 5; tries++) {
-					inventoryArray[off].doAction("Deposit-All");
+					anInventoryArray.doAction("Deposit-All");
 					sleep(random(500, 700));
 					if (methods.inventory.getCount() < inventoryCount) {
 						break;
 					}
 				}
-				if (methods.inventory.getCount() >= inventoryCount)
-					return false;
-				inventoryArray = methods.inventory.getItems();
-				inventoryCount = methods.inventory.getCount();
-				return true;
+				return methods.inventory.getCount() < inventoryCount;
 			}
 		}
 		else if (isDepositOpen()) {
@@ -721,17 +702,17 @@ public class Bank extends MethodProvider {
 	 * @param ids the item IDs to include
 	 * @return The count.
 	 */
-	public int getBoxCount(int... ids)
-	{
-		if (!isDepositOpen())
+	public int getBoxCount(int... ids) {
+		if (!isDepositOpen()) {
 			return -1;
+		}
 		int count = 0;
-		for (int i = 0; i < 28; i++)
-		{
-			for (int j = 0; j < ids.length; j++)
-			{
-				if (methods.interfaces.get(11).getComponent(17).isValid() && methods.interfaces.get(11).getComponent(17).getComponent(i).getComponentID() == ids[j])
+		for (int i = 0; i < 28; ++i) {
+			for (int id : ids) {
+				if (methods.interfaces.get(11).getComponent(17).isValid() &&
+						methods.interfaces.get(11).getComponent(17).getComponent(i).getComponentID() == id) {
 					count++;
+				}
 			}
 		}
 		return count;
@@ -743,15 +724,16 @@ public class Bank extends MethodProvider {
 	 *
 	 * @return The count.
 	 */
-	public int getBoxCount()
-	{
-		if (!isDepositOpen())
+	public int getBoxCount() {
+		if (!isDepositOpen()) {
 			return -1;
+		}
 		int count = 0;
-		for (int i = 0; i < 28; i++)
-		{
-			if (methods.interfaces.get(11).getComponent(17).isValid() && methods.interfaces.get(11).getComponent(17).getComponent(i).getComponentID() != -1)
+		for (int i = 0; i < 28; i++) {
+			if (methods.interfaces.get(11).getComponent(17).isValid() &&
+					methods.interfaces.get(11).getComponent(17).getComponent(i).getComponentID() != -1) {
 				count++;
+			}
 		}
 		return count;
 	}

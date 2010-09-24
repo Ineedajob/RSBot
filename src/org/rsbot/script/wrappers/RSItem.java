@@ -146,10 +146,7 @@ public class RSItem extends MethodProvider {
      * successfully; otherwise <tt>false</tt>.
      */
     public boolean doClick(boolean left) {
-        if (component != null) {
-        	return component.doClick();
-        }
-        return false;
-    }
+		return component != null && component.doClick(left);
+	}
 
 }

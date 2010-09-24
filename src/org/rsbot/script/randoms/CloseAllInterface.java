@@ -9,9 +9,9 @@ import java.util.List;
 /**
  * Closes interfaces that scripts may open by mistake.
  * <p/>
- * Last updated 16/05/10.
+ * Last updated 23/09/10.
  */
-@ScriptManifest(authors = {"Jacmob", "HeyyamaN"}, name = "InterfaceCloser", version = 1.7)
+@ScriptManifest(authors = {"Arbiter", "Jacmob", "HeyyamaN"}, name = "InterfaceCloser", version = 1.7)
 public class CloseAllInterface extends Random {
 	
 	static class ComponentDef {
@@ -49,7 +49,7 @@ public class CloseAllInterface extends Random {
 
     public boolean activateCondition() {
         if (game.isLoggedIn()) {
-            if (interfaces.get(755).getComponent(45).isValid()) { // World map
+            if (interfaces.get(755).getComponent(44).isValid()) { // World map
                 if (interfaces.getComponent(755, 0).getComponents().length > 0) {
                     return true;
                 }
@@ -67,7 +67,7 @@ public class CloseAllInterface extends Random {
         sleep(random(500, 900));
 
         if (interfaces.get(755).isValid() && (interfaces.getComponent(755, 0).getComponents().length > 0)) {
-            interfaces.getComponent(755, 47).doClick();
+            interfaces.getComponent(755, 44).doClick();
             return random(500, 900);
         }
         for (ComponentDef c : components) {

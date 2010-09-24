@@ -4,7 +4,10 @@ import org.rsbot.script.Random;
 import org.rsbot.script.ScriptManifest;
 import org.rsbot.script.wrappers.RSNPC;
 
-@ScriptManifest(authors = {"PwnZ"}, name = "Quiz", version = 1.0)
+/**
+ * Updated by Arbiter Sep 20, 10: Replaced getModelZoom with getComponentID() and new sets of possible IDs as solutions
+ */
+@ScriptManifest(authors = {"Arbiter", "PwnZ"}, name = "Quiz", version = 1.0)
 public class QuizSolver extends Random {
 
     public class QuizQuestion {

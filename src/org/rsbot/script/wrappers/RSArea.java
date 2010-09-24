@@ -73,6 +73,15 @@ public class RSArea {
 	}
 
 	/**
+	 * @param plane The plane to check.
+	 * @param tiles The <b>RSTile(s)</b> that will be checked.
+	 * @return True if the <b>RSArea</b> contains the given <b>RSTile(s)</b>.
+	 */
+	public boolean contains(int plane, RSTile... tiles) {
+		return this.plane == plane && this.contains(tiles);
+	}
+
+	/**
 	 * @param tiles The <b>RSTile(s)</b> that will be checked.
 	 * @return True if the <b>RSArea</b> contains the given <b>RSTile(s)</b>.
 	 */

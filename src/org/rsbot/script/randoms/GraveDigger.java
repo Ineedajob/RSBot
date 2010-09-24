@@ -225,7 +225,7 @@ public class GraveDigger extends Random {
                     //    inventory.atItem(GraveDigger.coffinIDs[g.coffinID], "Cancel");
                     //}
 
-                    useItem2(inventory.getItem(GraveDigger.coffinIDs[g.coffinID]), obj);
+                    inventory.useItem(inventory.getItem(GraveDigger.coffinIDs[g.coffinID]), obj);
 
                     // Wait for about 10s to finish
                     final long cTime = System.currentTimeMillis();
@@ -387,18 +387,5 @@ public class GraveDigger extends Random {
         }
 
         return true;
-    }
-
-    public boolean useItem2(final RSItem item, final RSObject targetObject) {
-        if (game.getCurrentTab() != Game.TAB_INVENTORY) {
-            game.openTab(Game.TAB_INVENTORY);
-        }
-
-        if (atInventoryItem2(item.getID(), "Use")) {
-            return targetObject.doAction("Use");
-        } else {
-            atInventoryItem2(item.getID(), "Use");
-            return targetObject.doAction("Use");
-        }
     }
 }

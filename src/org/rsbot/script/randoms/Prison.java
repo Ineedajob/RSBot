@@ -132,6 +132,18 @@ public class Prison extends Random {
 
             case 1:
                 // Figures out the balloon
+            	if (interfaces.get(273).getComponent(3).isValid()) {
+            		if (atLever()) {
+            			System.out.println("levering");
+                        if (balloonToPop != null) {
+                            state = 2;
+                            return random(800, 900);
+                        }
+                        return random(500, 700);
+                    }
+            		else
+            			System.out.println("not levering");
+            	}
                 final RSObject lever = objects.getNearest(LEVER_ID);
                 if ((lever != null) && talkedtopete) {
                     if (!calc.tileOnScreen(lever.getLocation())) {
@@ -140,7 +152,8 @@ public class Prison extends Random {
                     }
                     if (!getMyPlayer().isMoving()
                             && calc.tileOnScreen(lever.getLocation())) {
-                        if (tiles.doAction(lever.getLocation(), 0.5, 0.5, 170, "Pull")) {
+                        //if (tiles.doAction(lever.getLocation(), 0.5, 0.5, 170, "Pull")) {
+                    	if (lever.doAction("Pull")) {
                             sleep(random(1400, 1600));
                             if (atLever()) {
                                 if (balloonToPop != null) {
