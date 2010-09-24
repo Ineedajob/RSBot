@@ -2,10 +2,14 @@ package org.rsbot.script.randoms;
 
 import org.rsbot.script.Random;
 import org.rsbot.script.ScriptManifest;
+import org.rsbot.script.methods.Game;
 import org.rsbot.script.wrappers.RSObject;
 import org.rsbot.script.wrappers.RSTile;
 
-@ScriptManifest(authors = {"Garrett"}, name = "LostAndFound", version = 1.0)
+/**
+ *  Updated by Arbiter 9/22/10: Replaced tile clicking with model clicking. :)
+ */
+@ScriptManifest(authors = {"Arbiter", "Garrett"}, name = "LostAndFound", version = 1.0)
 public class LostAndFound extends Random {
 
     final int appendN = 8995;
@@ -90,7 +94,8 @@ public class LostAndFound extends Random {
         final int appendage = getOddAppendage();
 
         try {
-            final RSTile tile = getFarthestObjectByID(appendage).getLocation();
+        	final RSObject obj = getFarthestObjectByID(appendage);
+            final RSTile tile = obj.getLocation();
             if (!calc.tileOnScreen(tile)) {
                 walking.walkPathMM(walking.findPath(tile));
                 sleep(random(700, 900));
@@ -98,7 +103,7 @@ public class LostAndFound extends Random {
                     sleep(100);
                 }
             }
-            if (tiles.doAction(tile, "Operate")) {
+            if (obj.doAction("Operate")) {
                 sleep(random(1000, 1500));
                 while (getMyPlayer().isMoving()) {
                     sleep(100);

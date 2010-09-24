@@ -10,16 +10,17 @@ import org.rsbot.script.wrappers.RSTile;
 import java.awt.*;
 
 /**
- * @author Illusion + Pwnaz0r & Fix by Lowbird
- * @version 3.7 - 08/02/10 Update by Iscream
+ * @author Illusion + Pwnaz0r
+ * 
+ * Last Updated 9-23-10 Arbiter
  */
-@ScriptManifest(authors = {"illusion", "Pwnaz0r"}, name = "Pillory", version = 3.7)
+@ScriptManifest(authors = {"Arbiter", "illusion", "Pwnaz0r"}, name = "Pillory", version = 3.8)
 public class Pillory extends Random implements ServerMessageListener {
 
     public int fail = 0;
     private final int GameInterface = 189;
     public boolean inCage = false;
-    public int[] myLoc;
+    public RSTile myLoc;
     private String pilloryMessage = "Solve the Pillory";
 
     public RSTile South = new RSTile(2606, 3105);
@@ -121,25 +122,25 @@ public class Pillory extends Random implements ServerMessageListener {
             camera.setAngle(360);
         }
         if (fail > 20) {
-            log.info("Failed Wayyy to many Times..");
-            log.info("Report this to illusion so He can Fix the Pillory.");
+            //log.info("Failed Wayyy to many Times..");
+            //log.info("Report this to illusion so He can Fix the Pillory.");
             shutdown();
         }
         if (myLoc == null) {
-            log.info("getting Location..");
-            myLoc = new int[]{getMyPlayer().getLocation().getX(), getMyPlayer().getLocation().getY()};
-            log.info(myLoc[0] + "," + myLoc[1]);
+            //log.info("getting Location..");
+            myLoc = getMyPlayer().getLocation();
+            //log.info(myLoc.getX() + "," + myLoc.getY());
             return random(1000, 2000);
         }
-        if ((getMyPlayer().getLocation().getX() != myLoc[0]) || (getMyPlayer().getLocation().getY() != myLoc[1])) {
-            log.info(getMyPlayer().getLocation().toString());
-            log.info("Solved It..");
+        if (!getMyPlayer().getLocation().equals(myLoc)) {
+            //log.info(getMyPlayer().getLocation().toString());
+            log.info("Solved It.");
             pilloryMessage = null;
             inCage = false;
             return -1;
         }
         if (!interfaces.get(GameInterface).isValid()) {
-            final Point ObjectPoint = new Point(calc.tileToScreen(new RSTile(myLoc[0], myLoc[1])));
+            final Point ObjectPoint = new Point(calc.tileToScreen(myLoc));
             final Point Lock = new Point((int) ObjectPoint.getX() + 10, (int) ObjectPoint.getY() - 30);
             mouse.click(Lock.x, Lock.y + random(0, 15), false);
             sleep(random(600, 800));

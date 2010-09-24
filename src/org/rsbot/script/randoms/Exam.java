@@ -11,6 +11,7 @@ import java.awt.Point;
  * Updated by Iscream Feb 20,10
  * Updated by Iscream Mar 01,10
  * Updated by Arbiter Sep 20,10
+ * Updated by Arbiter Sep 23,10
  */
 @ScriptManifest(authors = {"Arbiter", "PwnZ", "Megaalgos", "Taha", "Fred", "Poxer", "Iscream"}, name = "Exam", version = 2.1)
 public class Exam extends Random {
@@ -447,7 +448,7 @@ public class Exam extends Random {
             return random(500, 1000);
         }
         if (!interfaces.get(nextObjectInterface).isValid() && !getMyPlayer().isMoving()
-                && !interfaces.get(nextObjectInterface).isValid() && !interfaces.canContinue()
+                && !interfaces.get(relatedCardsInterface).isValid() && !interfaces.canContinue()
                 && door == null) {
             if (calc.distanceTo(mordaut) > 4) {
                 walking.walkPathMM(walking.findPath(mordaut.getLocation()));
@@ -475,7 +476,7 @@ public class Exam extends Random {
             }
         }
 
-        if (interfaces.get(nextObjectInterface).isValid()) {
+        if (interfaces.get(relatedCardsInterface).isValid()) {
             log.info("Question Type: Similar Objects");
             int z = 0;
             for (final SimilarObjectQuestion obj : simObjects) {
