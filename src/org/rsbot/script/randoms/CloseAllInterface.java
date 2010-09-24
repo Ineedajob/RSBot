@@ -9,9 +9,9 @@ import java.util.List;
 /**
  * Closes interfaces that scripts may open by mistake.
  * <p/>
- * Last updated 23/09/10.
+ * Updated 23/09/10 by Aribter.
  */
-@ScriptManifest(authors = {"Arbiter", "Jacmob", "HeyyamaN"}, name = "InterfaceCloser", version = 1.7)
+@ScriptManifest(authors = {"Jacmob", "HeyyamaN"}, name = "InterfaceCloser", version = 1.7)
 public class CloseAllInterface extends Random {
 	
 	static class ComponentDef {

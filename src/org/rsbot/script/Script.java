@@ -6,7 +6,9 @@ import org.rsbot.script.methods.Methods;
 import org.rsbot.script.randoms.LoginBot;
 
 import java.util.EventListener;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 
 public abstract class Script extends Methods implements EventListener, Runnable {
@@ -16,11 +18,11 @@ public abstract class Script extends Methods implements EventListener, Runnable 
 
 	private int id = -1;
     private MethodContext ctx;
+	private Set<Script> delegates = new HashSet<Script>();
 
     /**
-     * Deprecated. Use {@link #onStart()} instead. Finalized to
-	 * cause errors intentionally to avoid confusion (yea I
-	 * know how to deal with these script writers ;)).
+     * Finalized to cause errors intentionally to avoid confusion
+	 * (yea I know how to deal with these script writers ;)).
      *
 	 * @deprecated Use {@link #onStart()} instead.
      * @param map The arguments passed in from the description.
@@ -62,10 +64,10 @@ public abstract class Script extends Methods implements EventListener, Runnable 
 
 	/**
 	 * Initializes this script with another script's
-	 * context. Can be used to load this script as a
-	 * delegate from a script loader.
+	 * context.
 	 *
 	 * @param script The context providing Script.
+	 * @see #delegateTo(Script)
 	 */
     public final void init(Script script) {
     	init(script.ctx);
@@ -80,6 +82,24 @@ public abstract class Script extends Methods implements EventListener, Runnable 
     	super.init(ctx);
     	this.ctx = ctx;
     }
+
+	/**
+	 * Initializes the provided script with this script's
+	 * method context and adds the delegate as a listener
+	 * to the event manager, allowing it to receive client
+	 * events. The script will be stored as a delegate of
+	 * this script and removed from the event manager when
+	 * this script is stopped. The onStart(), loop() and
+	 * onFinish() methods are not automatically called on
+	 * the delegate.
+	 *
+	 * @param script The script to delegate to.
+	 */
+	public final void delegateTo(Script script) {
+		script.init(ctx);
+		ctx.bot.getEventManager().addListener(script);
+		delegates.add(script);
+	}
 
 	/**
 	 * For internal use only. Deactivates this script if
@@ -226,6 +246,10 @@ public abstract class Script extends Methods implements EventListener, Runnable 
             log.severe("Failed to start up.");
         }
         mouse.moveOffScreen();
+		for (Script s : delegates) {
+			ctx.bot.getEventManager().removeListener(s);
+		}
+		delegates.clear();
         ctx.bot.getEventManager().removeListener(this);
         ctx.bot.getScriptHandler().removeScript(id);
 		ctx.bot.inputMask = Environment.INPUT_KEYBOARD;
@@ -233,9 +257,9 @@ public abstract class Script extends Methods implements EventListener, Runnable 
     }
 
     private boolean checkForRandoms() {
-        if(ctx.bot.disableRandoms)
+        if (ctx.bot.disableRandoms) {
             return false;
-            
+		}
         for (Random random : ctx.bot.getScriptHandler().getRandoms()) {
             if (!random.isEnabled() || (random instanceof LoginBot && ctx.bot.disableAutoLogin)) {
                 continue;

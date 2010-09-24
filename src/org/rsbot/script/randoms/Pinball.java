@@ -12,7 +12,7 @@ import org.rsbot.script.wrappers.RSObject;
 * Updated by TwistedMind(Feb 7, '10) "What have you guys been smoking??? I cleaned the code and it worked again... Why atTile if there's atObject?"
 * Updated by Arbiter(Sep 21, '10) Switched back to atTile. Obvious spread out model is obvious. Also fixed the fail returning. >.>
 */
-@ScriptManifest(authors = {"Arbiter", "Aelin", "LM3", "IceCandle", "Taha", "Twistedmind", "Iscream"}, name = "Pinball", version = 2.7)
+@ScriptManifest(authors = {"Aelin", "LM3", "IceCandle", "Taha"}, name = "Pinball", version = 2.7)
 
 public class Pinball extends Random {
 
