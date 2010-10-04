@@ -20,6 +20,7 @@ public class Application {
 		new Extractor(args).run();
 		gui = new BotGUI();
 		gui.setVisible(true);
+		gui.addBot();
 	}
 	
 	/**

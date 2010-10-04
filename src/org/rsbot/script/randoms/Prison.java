@@ -46,13 +46,20 @@ public class Prison extends Random {
         switch (state) {
             case 0:
                 pete = npcs.getNearest("Prison Pete");
-                if (interfaces.get(ISgetIface("Lucky you!")).isValid()
-                        && interfaces.get(ISgetIface("Lucky you!")).containsText("Lucky you!")) {
+                if (interfaceContains("Lucky you!")) {
                     if (IScanContinue()) {
                         interfaces.clickContinue();
                     }
                     state = 4;
                     lucky = true;
+                    return random(500, 600);
+                }
+                if (interfaceContains("should leave")) {
+                    if (IScanContinue()) {
+                        interfaces.clickContinue();
+                    }
+                    state = 4;
+                    unlocked = 10;
                     return random(500, 600);
                 }
                 if ((inventory.getCount(false) == 28)
@@ -89,7 +96,7 @@ public class Prison extends Random {
                 if (getMyPlayer().isMoving()) {
                     return random(250, 500);
                 }
-                if (interfaces.get(ISgetIface("minutes")).isValid() && interfaces.get(ISgetIface("minutes")).containsText("minutes")) {
+                if (interfaceContains("minute")) {
                     talkedtopete = true;
                     if (IScanContinue()) {
                         interfaces.clickContinue();
@@ -132,17 +139,30 @@ public class Prison extends Random {
 
             case 1:
                 // Figures out the balloon
+            	if (interfaceContains("Lucky you!")) {
+                    if (IScanContinue()) {
+                        interfaces.clickContinue();
+                    }
+                    state = 4;
+                    lucky = true;
+                    return random(500, 600);
+                }
+                if (interfaceContains("should leave")) {
+                    if (IScanContinue()) {
+                        interfaces.clickContinue();
+                    }
+                    state = 4;
+                    unlocked = 10;
+                    return random(500, 600);
+                }
             	if (interfaces.get(273).getComponent(3).isValid()) {
             		if (atLever()) {
-            			System.out.println("levering");
-                        if (balloonToPop != null) {
+            			if (balloonToPop != null && interfaces.get(273).getComponent(4).doAction("Close")) {
                             state = 2;
                             return random(800, 900);
                         }
                         return random(500, 700);
                     }
-            		else
-            			System.out.println("not levering");
             	}
                 final RSObject lever = objects.getNearest(LEVER_ID);
                 if ((lever != null) && talkedtopete) {
@@ -156,7 +176,7 @@ public class Prison extends Random {
                     	if (lever.doAction("Pull")) {
                             sleep(random(1400, 1600));
                             if (atLever()) {
-                                if (balloonToPop != null) {
+                                if (balloonToPop != null && interfaces.get(273).getComponent(4).doAction("Close")) {
                                     state = 2;
                                     return random(800, 900);
                                 }
@@ -176,14 +196,20 @@ public class Prison extends Random {
                 return random(500, 600);
             case 2:
                 // Finds animal and pops it
-                if (interfaces.get(242).isValid()
-                        && interfaces.get(242).getComponent(5).getText().contains(
-                        "Lucky you!")) {
+            	if (interfaceContains("Lucky you!")) {
                     if (IScanContinue()) {
                         interfaces.clickContinue();
                     }
                     state = 4;
                     lucky = true;
+                    return random(500, 600);
+                }
+                if (interfaceContains("should leave")) {
+                    if (IScanContinue()) {
+                        interfaces.clickContinue();
+                    }
+                    state = 4;
+                    unlocked = 10;
                     return random(500, 600);
                 }
                 if (getMyPlayer().isMoving()) {
@@ -223,8 +249,23 @@ public class Prison extends Random {
                 if (getMyPlayer().isMoving()) {
                     return random(250, 500);
                 }
-                if (interfaces.get(ISgetIface("you got all the keys")).isValid()
-                        && interfaces.get(ISgetIface("you got all the keys")).containsText("you got all the keys")) {
+                if (interfaceContains("Lucky you!")) {
+                    if (IScanContinue()) {
+                        interfaces.clickContinue();
+                    }
+                    state = 4;
+                    lucky = true;
+                    return random(500, 600);
+                }
+                if (interfaceContains("should leave")) {
+                    if (IScanContinue()) {
+                        interfaces.clickContinue();
+                    }
+                    state = 4;
+                    unlocked = 10;
+                    return random(500, 600);
+                }
+                if (interfaceContains("you got all the keys")) {
                     key = true;
                     unlocked = 5;
                     state = 4;
@@ -235,31 +276,20 @@ public class Prison extends Random {
                     }
                     return random(250, 500);
                 }
-                if (interfaces.get(ISgetIface("Hooray")).isValid()
-                        && interfaces.get(ISgetIface("Hooray")).containsText("Hooray")) {
+                if (interfaceContains("Hooray")) {
                     key = true;
                     if (IScanContinue()) {
                         interfaces.clickContinue();
                         return random(500, 600);
                     }
                 }
-                if (pete != null && !calc.tileOnScreen(pete.getLocation()) && !(interfaces.get(242).isValid())) {
-                    walking.walkTileMM(pete.getLocation());
-                    return random(400, 600);
-                }
-                if (IScanContinue() && !(interfaces.get(ISgetIface("Hooray")).containsText("Hooray"))) {
-                    if (interfaces.get(242).isValid()
-                            && interfaces.get(242).getComponent(5).getText().contains(
-                            "Lucky you!")) {
-                        if (IScanContinue()) {
-                            interfaces.clickContinue();
-                        }
-                        lucky = true;
-                        state = 4;
-                        return random(500, 600);
-                    }
+                if (IScanContinue()) {
                     interfaces.clickContinue();
                     return random(500, 600);
+                }
+                if (pete != null && !calc.tileOnScreen(pete.getLocation()) && !(interfaces.get(243).isValid())) {
+                    walking.walkTileMM(pete.getLocation());
+                    return random(400, 600);
                 }
                 if (!inventory.containsAll(DOOR_KEY)
                         && (npcs.getNearest(PRISON_MATE) != null)
@@ -295,7 +325,10 @@ public class Prison extends Random {
                     return random(400, 500);
                 }
                 if (calc.tileOnScreen(doorTile)) {
-                    tiles.doAction(new RSTile(2085, 4459), 1, 0, 30, "Open");
+                	RSObject gate = objects.getNearest(11177,11178);
+                	if (gate != null)
+                		gate.doAction("Open");
+                    //tiles.doAction(new RSTile(2085, 4459), 1, 0, 30, "Open");
                     return random(500, 600);
                 }
                 return random(200, 400);
@@ -305,6 +338,11 @@ public class Prison extends Random {
 
     @Override
     public void onFinish() {
+    	if (lucky) {
+    		log.info("Failed to complete Prison Pete. Stopping now.");
+    		sleep(5000,10000);
+    		stopScript(false);
+    	}
     }
 
     public int setItemIDs(final int b2p) {
@@ -350,6 +388,24 @@ public class Prison extends Random {
             }
         }
         return 0;
+    }
+    
+    public boolean interfaceContains(String s) {
+    	RSInterface[] all = interfaces.getAll();
+    	for (int a = 0; a < all.length; a++) {
+	    	RSInterface iface = all[a];
+	    	if (iface != null) {
+		    	int count = iface.getComponents().length;
+		    	for (int i = 0; i < count; i++) {
+		    		if (iface.getComponent(i).getText() != null && iface.getComponent(i).getText().contains(s))
+		    		{
+		    			//System.out.println("Return true");
+		    			return true;
+		    		}
+		    	}
+	    	}
+    	}
+    	return false;
     }
 
     public boolean atLever() {

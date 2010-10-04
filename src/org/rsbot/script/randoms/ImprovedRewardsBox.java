@@ -62,7 +62,7 @@ public class ImprovedRewardsBox extends Random {
     int endofselection = 0;
 
     public boolean activateCondition() {
-        return game.isLoggedIn() && !getMyPlayer().isInCombat() && (cachedInventoryContainedOneOf(boxID, bookKnowledgeID, LampID, mysteryBoxID));
+        return game.isLoggedIn() && !getMyPlayer().isInCombat() && !bank.isOpen() && !bank.isDepositOpen() && (cachedInventoryContainedOneOf(boxID, bookKnowledgeID, LampID, mysteryBoxID));
     }
 
     private boolean cachedInventoryContainedOneOf(int... ids) {

@@ -47,7 +47,7 @@ public class ScapeRuneIsland extends Random {
         if (finished) {
             final RSObject exit = objects.getNearest(8987);
             if (exit != null) {
-                if (calc.distanceTo(exit.getLocation()) > 4) {
+                if (calc.tileOnScreen(exit.getLocation())) {
                     walking.walkTo(exit.getLocation());
                     return random(400, 800);
                 }
@@ -62,7 +62,7 @@ public class ScapeRuneIsland extends Random {
         if (inventory.getCount(6202) > 0) {
             final RSObject pot = objects.getNearest(8985);
             if (pot != null) {
-                if (calc.distanceTo(pot.getLocation()) > 4) {
+                if (calc.tileOnScreen(pot.getLocation())) {
                     walking.walkTo(pot.getLocation());
                     return random(400, 800);
                 }
@@ -98,7 +98,7 @@ public class ScapeRuneIsland extends Random {
         if (inventory.getCount(6209) == 0) {
             final RSGroundItem net = groundItems.get(6209);
             if (net != null) {
-                if (calc.distanceTo(net.getLocation()) > 5) {
+                if (calc.tileOnScreen(net.getLocation())) {
                     walking.walkTo(net.getLocation());
                     return random(800, 1000);
                 } else {
@@ -133,7 +133,7 @@ public class ScapeRuneIsland extends Random {
             // (cooked) anim
             // 620
             sleep(1200);
-            if (calc.distanceTo(direction.getLocation()) > 4) {
+            if (calc.tileOnScreen(direction.getLocation())) {
                 walking.walkTo(direction.getLocation());
                 return random(400, 600);
             }

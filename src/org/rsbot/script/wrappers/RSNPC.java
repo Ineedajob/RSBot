@@ -6,6 +6,7 @@ import org.rsbot.script.methods.MethodContext;
  * Represents a non-player character.
  */
 public class RSNPC extends RSCharacter {
+
     private final org.rsbot.client.RSNPC npc;
 
     public RSNPC(final MethodContext ctx, final org.rsbot.client.RSNPC npc) {

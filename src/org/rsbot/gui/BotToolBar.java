@@ -72,6 +72,8 @@ public class BotToolBar extends JToolBar {
         
 
         JButton home = new BotButton("Home", ICON_HOME);
+
+		home.setVisible(false);
         
         setFloatable(false);
         add(home);

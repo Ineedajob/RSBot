@@ -164,7 +164,7 @@ public class Camera extends MethodProvider {
             methods.inputManager.pressKey((char) vertical);
         if (random(0, 10) < 8)
             methods.inputManager.pressKey((char) horizontal);
-        while (timeToHold.isNotUp() && methods.client.getCamPosZ() >= lowestCamAltPossible) {
+        while (timeToHold.isRunning() && methods.client.getCamPosZ() >= lowestCamAltPossible) {
             sleep(10);
         }
         methods.inputManager.releaseKey((char) vertical);

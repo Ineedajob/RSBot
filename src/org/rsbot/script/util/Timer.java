@@ -5,9 +5,9 @@ package org.rsbot.script.util;
  */
 public class Timer {
 
-	private long endTime;
-	private long startTime;
-	private long timeLimit;
+	private long end;
+	private long start;
+	private long period;
 
 	/**
 	 * Instantiates a new Timer with a given time
@@ -16,9 +16,9 @@ public class Timer {
 	 * @param period Time period in milliseconds.
 	 */
 	public Timer(long period) {
-		this.timeLimit = period;
-		this.startTime = System.currentTimeMillis();
-		this.endTime = startTime + period;
+		this.period = period;
+		this.start = System.currentTimeMillis();
+		this.end = start + period;
 	}
 
 	/**
@@ -28,7 +28,7 @@ public class Timer {
 	 * @return The elapsed time in milliseconds.
 	 */
 	public long getElapsed() {
-		return (System.currentTimeMillis() - startTime);
+		return (System.currentTimeMillis() - start);
 	}
 
 	/**
@@ -38,20 +38,10 @@ public class Timer {
 	 * @return The remaining time in milliseconds.
 	 */
 	public long getRemaining() {
-		if (isNotUp()) {
-			return (endTime - System.currentTimeMillis());
+		if (isRunning()) {
+			return (end - System.currentTimeMillis());
 		}
 		return 0;
-	}
-
-	/**
-	 * Returns <tt>true</tt> if this timer's time period
-	 * has elapsed.
-	 * 
-	 * @return <tt>true</tt> if the time period has passed.
-	 */
-	public boolean isUp() {
-		return (System.currentTimeMillis() >= endTime);
 	}
 
 	/**
@@ -60,15 +50,15 @@ public class Timer {
 	 * 
 	 * @return <tt>true</tt> if the time period has not yet passed.
 	 */
-	public boolean isNotUp() {
-		return (System.currentTimeMillis() < endTime);
+	public boolean isRunning() {
+		return (System.currentTimeMillis() < end);
 	}
 
 	/**
-	 * Restarts this timer using the same period.
+	 * Restarts this timer using its period.
 	 */
 	public void reset() {
-		this.endTime = System.currentTimeMillis() + timeLimit;
+		this.end = System.currentTimeMillis() + period;
 	}
 
 	/**
@@ -78,59 +68,59 @@ public class Timer {
 	 * operation after reset).
 	 * 
 	 * @param ms The number of milliseconds before the timer
-	 * should go up.
+	 * should stop running.
 	 * @return The new end time.
 	 */
-	public long setTimerToEndIn(long ms) {
-		this.endTime = System.currentTimeMillis() + ms;
-		return endTime;
+	public long setEndIn(long ms) {
+		this.end = System.currentTimeMillis() + ms;
+		return this.end;
 	}
 
 	/**
 	 * Returns a formatted String of the time elapsed.
 	 * @return The elapsed time formatted hh:mm:ss.
 	 */
-	public String toStringElapsed() {
-		return timeToString(getElapsed());
+	public String toElapsedString() {
+		return format(getElapsed());
 	}
 
 	/**
 	 * Returns a formatted String of the time remaining.
 	 * @return The remaining time formatted hh:mm:ss.
 	 */
-	public String toStringRemaining() {
-		return timeToString(getRemaining());
+	public String toRemainingString() {
+		return format(getRemaining());
 	}
 
 	/**
 	 * Converts milliseconds to a String in the format
 	 * hh:mm:ss.
-	 * 
+	 *
 	 * @param time The number of milliseconds.
 	 * @return The formatted String.
 	 */
-	public static String timeToString(long time) {
-		final StringBuilder t = new StringBuilder();
-		final long TotalSec = time / 1000;
-		final long TotalMin = TotalSec / 60;
-		final long TotalHour = TotalMin / 60;
-		final int second = (int) TotalSec % 60;
-		final int minute = (int) TotalMin % 60;
-		final int hour = (int) TotalHour % 60;
-		if (hour < 10) {
+	public static String format(long time) {
+		StringBuilder t = new StringBuilder();
+		long total_secs = time / 1000;
+		long total_mins = total_secs / 60;
+		long total_hrs = total_mins / 60;
+		int secs = (int) total_secs % 60;
+		int mins = (int) total_mins % 60;
+		int hrs = (int) total_hrs % 60;
+		if (hrs < 10) {
 			t.append("0");
 		}
-		t.append(hour);
+		t.append(hrs);
 		t.append(":");
-		if (minute < 10) {
+		if (mins < 10) {
 			t.append("0");
 		}
-		t.append(minute);
+		t.append(mins);
 		t.append(":");
-		if (second < 10) {
+		if (secs < 10) {
 			t.append("0");
 		}
-		t.append(second);
+		t.append(secs);
 		return t.toString();
 	}
 }
