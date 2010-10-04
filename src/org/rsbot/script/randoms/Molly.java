@@ -70,6 +70,10 @@ public class Molly extends Random {
         while (getMyPlayer().isMoving() || (getMyPlayer().getAnimation() != -1)) {
             sleep(random(800, 1300));
         }
+        if (interfaces.canContinue()) {
+            interfaces.clickContinue();
+            return random(250,750);
+        }
         if (mollyID == -1) {
             mollyID = molly.getID();
             log("Molly ID: " + Integer.toString(mollyID));
@@ -81,7 +85,7 @@ public class Molly extends Random {
             return random(500, 800);
         }
         final RSComponent noThanksInterface = interfaces.get(Molly.MOLLY_CHATBOX_INTERFACEGROUP).getComponent(Molly.MOLLY_CHATBOX_NOTHANKS);
-        if ((noThanksInterface != null) && noThanksInterface.isValid()) {
+        if ((noThanksInterface != null) && noThanksInterface.isValid() && noThanksInterface.getAbsoluteY() > 5) {
             setCamera();
             sleep(random(800, 1200));
             noThanksInterface.doClick();
@@ -93,6 +97,10 @@ public class Molly extends Random {
             return (random(300, 500));
         }
         if (finished && !inControlRoom()) {
+        	if (!calc.tileOnScreen(molly.getLocation())) {
+        		walking.walkTileOnScreen(molly.getLocation());
+        		return random(1000,2000);
+        	}
            	molly.doAction("Talk");
             return (random(1000, 1200));
         }
@@ -103,7 +111,7 @@ public class Molly extends Random {
             return (random(400, 600));
         }
         if (!inControlRoom()) {
-            if (talkedToMolly && !finished && !interfaces.get(Molly.MOLLY_CHATBOX_INTERFACEGROUP).isValid() && !interfaces.get(Molly.MOLLY_CHATBOX_NOTHANKS).isValid()) {
+            if (talkedToMolly && !finished && (interfaces.get(Molly.MOLLY_CHATBOX_INTERFACEGROUP) == null || interfaces.get(Molly.MOLLY_CHATBOX_INTERFACEGROUP).getComponent(0).getAbsoluteY() < 2) && (interfaces.get(Molly.MOLLY_CHATBOX_NOTHANKS) == null || interfaces.get(Molly.MOLLY_CHATBOX_NOTHANKS).getComponent(0).getAbsoluteY() < 2)) {
                 openDoor();
                 sleep(random(800, 1200));
             } else {

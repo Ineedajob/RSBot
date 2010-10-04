@@ -69,7 +69,7 @@ public class CapnArnav extends Random {
             Chest.doAction("Open");
             return random(800, 1200);
         }
-        if (interfaces.get(241).isValid()) {
+        if (interfaces.get(241).isValid() && interfaces.get(241).getComponent(0).getAbsoluteY() > 2) {
             if (interfaces.get(241).containsText("haul") || interfaces.get(241).containsText("Just hop")) {
                 done = true;
                 log("Finished CapnArnav Random ~ Exiting");
@@ -252,7 +252,7 @@ public class CapnArnav extends Random {
             }
         }
 
-        if (interfaces.get(228).isValid()) {
+        if (interfaces.get(228).isValid() && interfaces.get(228).getComponent(0).getAbsoluteY() > 2) {
             final int x = random(220, 310), y = random(427, 437);
             mouse.click(x, y, true);
         }
@@ -273,6 +273,8 @@ public class CapnArnav extends Random {
 
     public boolean myClickContinue() {
         sleep(random(800, 1000));
+        if ((interfaces.getComponent(243, 7).isValid() && interfaces.getComponent(243, 7).getAbsoluteY() < 5) || (interfaces.getComponent(241, 5).isValid() && interfaces.getComponent(241, 5).getAbsoluteY() < 5) || (interfaces.getComponent(242, 6).isValid() && interfaces.getComponent(242, 6).getAbsoluteY() < 5) || (interfaces.getComponent(244, 8).isValid() && interfaces.getComponent(244, 8).getAbsoluteY() < 5) || (interfaces.getComponent(64, 5).isValid() && interfaces.getComponent(64, 5).getAbsoluteY() < 5) || (interfaces.getComponent(236, 1).isValid() && interfaces.getComponent(236, 1).getAbsoluteY() < 5) || (interfaces.getComponent(230, 4).isValid() && interfaces.getComponent(230, 4).getAbsoluteY() < 5) || (interfaces.getComponent(228, 3).isValid() && interfaces.getComponent(228, 3).getAbsoluteY() < 5))
+        	return false;
         return interfaces.getComponent(243, 7).doClick() || interfaces.getComponent(241, 5).doClick() || interfaces.getComponent(242, 6).doClick() || interfaces.getComponent(244, 8).doClick() || interfaces.getComponent(64, 5).doClick() || interfaces.getComponent(236, 1).doClick() || interfaces.getComponent(230, 4).doClick() || interfaces.getComponent(228, 3).doClick();
     }
 

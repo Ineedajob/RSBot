@@ -63,8 +63,14 @@ public class Calculations extends MethodProvider {
      * @return <tt>true</tt> if the RSTile is on the screen; otherwise <tt>false</tt>.
      */
     public boolean tileOnScreen(RSTile t) {
-        Point p = tileToScreen(t, 0);
-        return p.getX() > 0 && p.getY() > 0;
+        Point p1 = tileToScreen(t, 0, 0, 0);
+		if (p1.getX() >= 0) {
+			Point p2 = tileToScreen(t, 0, 1, 0);
+			Point p3 = tileToScreen(t, 1, 0, 0);
+			Point p4 = tileToScreen(t, 1, 1, 0);
+			return p2.getX() >= 0 && p3.getX() >= 0 && p4.getX() >= 0;
+		}
+        return false;
     }
     
     /**

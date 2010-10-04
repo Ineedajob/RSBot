@@ -34,8 +34,6 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 
     private static final long serialVersionUID = -5411033752001988794L;
 
-    private final Logger log = Logger.getLogger(getClass().getName());
-
     private BotPanel panel;
     private BotToolBar toolBar;
     private BotMenuBar menuBar;
@@ -236,6 +234,34 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 		return null;
 	}
 
+	public void addBot() {
+		final Bot bot = new Bot();
+		bots.add(bot);
+		toolBar.addTab();
+		bot.getScriptHandler().addScriptListener(this);
+		new Thread(new Runnable() {
+			public void run() {
+				bot.start();
+			}
+		}).start();
+	}
+
+	public void removeBot(final Bot bot) {
+		int idx = bots.indexOf(bot);
+		if (idx >= 0) {
+			toolBar.removeTab(idx + 1);
+		}
+		bots.remove(idx);
+		bot.getScriptHandler().stopAllScripts();
+		bot.getScriptHandler().removeScriptListener(this);
+		new Thread(new Runnable() {
+			public void run() {
+				bot.stop();
+				System.gc();
+			}
+		}).start();
+	}
+
 	void pauseScript(Bot bot) {
         ScriptHandler sh = bot.getScriptHandler();
         Map<Integer, Script> running = sh.getRunningScripts();
@@ -251,34 +277,6 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 			return bots.get(idx);
 		}
 		return null;
-	}
-
-	private void addBot() {
-		final Bot bot = new Bot();
-		bots.add(bot);
-		toolBar.addTab();
-		bot.getScriptHandler().addScriptListener(this);
-		new Thread(new Runnable() {
-			public void run() {
-				bot.start();
-			}
-		}).start();
-	}
-
-	private void removeBot(final Bot bot) {
-		int idx = bots.indexOf(bot);
-		if (idx >= 0) {
-			toolBar.removeTab(idx + 1);
-		}
-		bots.remove(idx);
-		bot.getScriptHandler().stopAllScripts();
-		bot.getScriptHandler().removeScriptListener(this);
-		new Thread(new Runnable() {
-			public void run() {
-				bot.stop();
-				System.gc();
-			}
-		}).start();
 	}
 
 	private void showScriptSelector(Bot bot) {

@@ -156,11 +156,9 @@ public class RSCharacter extends MethodProvider {
     }
 
     @Override
-    public boolean equals(final Object obj) {
-        if (obj == this)
-            return true;
-        if (obj instanceof org.rsbot.script.wrappers.RSCharacter) {
-            final org.rsbot.script.wrappers.RSCharacter cha = (org.rsbot.script.wrappers.RSCharacter) obj;
+    public boolean equals(Object obj) {
+        if (obj instanceof RSCharacter) {
+            RSCharacter cha = (org.rsbot.script.wrappers.RSCharacter) obj;
             return cha.c == c;
         }
         return false;

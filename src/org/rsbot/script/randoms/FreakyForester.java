@@ -47,7 +47,7 @@ public class FreakyForester extends Random implements ServerMessageListener {
             return 1;
         else if (phe == -1)
             return 0;
-        else if (inventory.containsAll(6178))
+        else if (inventory.contains(6178))
             return 0;
         else if (phe != -1)
             return 2;
@@ -70,7 +70,7 @@ public class FreakyForester extends Random implements ServerMessageListener {
             done = searchText(241, "Thank you") || interfaces.getComponent(242, 4).containsText("leave");
         }
 
-        if (inventory.containsAll(6179)) {
+        if (inventory.contains(6179)) {
             phe = -1;
             inventory.getItem(6179).doAction("rop");
             return random(500, 900);
@@ -132,7 +132,7 @@ public class FreakyForester extends Random implements ServerMessageListener {
             case 2: // Kill pheasant
                 if (phe == -1)
                     return random(200, 500);
-                final RSNPC Pheasant = npcs.getNearestFree(phe);
+                final RSNPC Pheasant = npcs.getNearest(phe);
                 final RSGroundItem tile = groundItems.get(6178);
                 if (tile != null) {
                     tiles.doAction(tile.getLocation(), "Take");

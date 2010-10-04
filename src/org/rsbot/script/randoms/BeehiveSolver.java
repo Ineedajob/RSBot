@@ -11,6 +11,7 @@ import java.awt.*;
 /**
  * Update by Iscream (Apr 24,2010)
  * Update by Iscream (Apr 15,2010)
+ * Update by Arbiter (Sep 25,2010)
  *
  * @author Pwnaz0r & Velocity
  * @version 2.3 - 04/03/09
@@ -37,8 +38,13 @@ public class BeehiveSolver extends Random {
     public boolean activateCondition() {
         if (!game.isLoggedIn())
             return false;
+        
+        if (npcs.getNearest(BEEHIVE_KEEPER_ID) != null && objects.getNearest(16168) != null) {
+        	solved = false;
+        	return true;
+        }
 
-        BeehiveKeeper = npcs.getNearest(BEEHIVE_KEEPER_ID);
+        /*BeehiveKeeper = npcs.getNearest(BEEHIVE_KEEPER_ID);
         if ((BeehiveKeeper != null) || getBeehiveInterface().isValid()) {
             sleep(random(1000, 1500));
             BeehiveKeeper = npcs.getNearest(BEEHIVE_KEEPER_ID);
@@ -47,8 +53,7 @@ public class BeehiveSolver extends Random {
                 sleep(random(1000, 1500));
                 return true;
             }
-        }
-
+        }*/
         return false;
     }
 
@@ -69,7 +74,7 @@ public class BeehiveSolver extends Random {
     public int loop() {
         BeehiveKeeper = npcs.getNearest(BEEHIVE_KEEPER_ID);
         if (BeehiveKeeper == null) {
-            log.severe("Beekeeper Random Finished Succesfully");
+            //log.severe("Beekeeper Random Finished Succesfully");
             return -1;
         }
 
