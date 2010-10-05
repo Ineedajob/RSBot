@@ -1,33 +1,36 @@
 package org.rsbot.gui;
 
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+
 import java.net.InetAddress;
 import java.net.NetworkInterface;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.HashMap;
+
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.logging.Logger;
 
-import javax.naming.NamingException;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -36,599 +39,650 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.SwingConstants;
 
+import org.rsbot.script.methods.Skills;
 import org.rsbot.util.GlobalConfiguration;
 
 /**
- * This will handle the management of Accounts for the Bot.<br>
- * Information will be stored in a file specified by FILE_NAME.<br>
- * Format for accounts should be:<br>
- * &nbsp;&nbsp; [AccountName]<br>
- * &nbsp;&nbsp; key=value <br>
- * Each key=value combination should be stored on its own line.
  *
  * @author Fusion89k
- * @author Speed
+ * @author Aion
  */
 public class AccountManager extends JDialog implements ActionListener {
 
-	private static final long serialVersionUID = -7579368430870181795L;
-	private static final String SEP_CHAR = "=";
-	private static final String PASSWORD = "Password" + SEP_CHAR;
-	private static final String PIN = "Pin" + SEP_CHAR;
-	private static final String MEMBERS = "Member" + SEP_CHAR;
+    private static final String EMPTY = "No accounts were found!";
+    private static final String FILE_NAME = GlobalConfiguration.Paths.getAccountsFile();
 
-	private static final String FILE_NAME = GlobalConfiguration.Paths
-			.getAccountsFile();
-	private static final Logger log = Logger.getLogger(AccountManager.class
-			.getName());
-	private static Map<String, Account> account = new HashMap<String, Account>();
-	private static AccountManager instance;
+    private static Map<String, Map<String, String>> accounts;
 
-	private final String emptyName = "No Accounts Found";
+    private static AccountManager instance;
 
-	private JList names;
-	private GridBagConstraints c;
+    private static final Logger log = Logger.getLogger(AccountManager.class.getName());
 
-	static String key;
+	private JList nameList;
 
-	static {
-		try {
-			final InetAddress address = InetAddress.getLocalHost();
-			final NetworkInterface ni = NetworkInterface
-					.getByInetAddress(address);
-			AccountManager.key = new String(ni.getHardwareAddress());
-		} catch (final Exception e) {
-			AccountManager.key = System.getProperty("user.name")
-					+ System.getProperty("user.language");
-		}
-		try {
-			AccountManager.loadAccounts();
-		} catch (final Exception e) {
-			e.printStackTrace();
-			log.warning("There was an error loading account data.");
-			if (new File(FILE_NAME).delete()) {
-				log.warning("Corrupt account file deleted.");
-			} else {
-				log.warning("Unable to delete corrupt account file.");
+    static String key;
+
+    static {
+        try {
+            final InetAddress address = InetAddress.getLocalHost();
+            final NetworkInterface ni = NetworkInterface.getByInetAddress(address);
+            AccountManager.key = new String(ni.getHardwareAddress());
+        } catch (final Exception e) {
+            AccountManager.key = System.getProperty("user.name") + System.getProperty("user.language");
+        }
+        AccountManager.accounts = AccountManager.loadAccounts();
+    }
+
+    private AccountManager() {
+        super(Frame.getFrames()[0], "Account Manager", true);
+        if (AccountManager.accounts.keySet().size() < 1) {
+            AccountManager.accounts.put(EMPTY, null);
+        }
+    }
+
+    public void actionPerformed(ActionEvent e) {
+        JDialog parentFrame;
+        Component comp = ((Component) e.getSource()).getParent();
+        while (!(comp instanceof JDialog)) {
+            comp = comp.getParent();
+        }
+        parentFrame = (JDialog) comp;
+
+        if (e.getSource() instanceof JButton) {
+            switch (((JButton) e.getSource()).getText().charAt(0)) {
+                case 'A':
+                    if (parentFrame.getName().equals("dialog0")) {
+                        AddAccountGUI gui = new AddAccountGUI();
+                        gui.initComponents();
+
+                        final JDialog frame = new JDialog(this, "New", true);
+                        frame.add(gui.getContentPane());
+                        frame.pack();
+                        frame.setLocationRelativeTo(this);
+                        frame.setVisible(true);
+                    } else {
+                        final JTabbedPane tab = (JTabbedPane) ((JButton) e.getSource()).getParent().getComponent(0);
+                        String name = null, pass = null, member = null, lamp = null, reward = null, pin = "";
+                        for (Component compa : tab.getComponents()) {
+                            final JPanel panel = (JPanel) compa;
+                            for (Component c : panel.getComponents()) {
+                                if (c instanceof JPasswordField) {
+                                    pass = ((JTextField) c).getText();
+                                } else if (c instanceof JTextField) {
+                                    name = ((JTextField) c).getText();
+                                } else if (c instanceof JSpinner) {
+                                    pin += ((JSpinner) c).getValue();
+                                } else if (c instanceof JCheckBox) {
+                                    if (((JCheckBox) c).getText().equals("Member")) {
+                                        member = ((JCheckBox) c).isSelected() ? "true" : "false";
+                                    }
+                                } else if (c instanceof JComboBox) {
+                                    final String selItem = ((JComboBox) c).getSelectedItem().toString();
+                                    if (lamp == null) {
+                                        lamp = selItem;
+                                    } else {
+                                        reward = selItem;
+                                    }
+                                }
+                            }
+                        }
+                        if (name.isEmpty() || pass.isEmpty()) {
+                            JOptionPane.showMessageDialog(null, "Empty Fields");
+                            return;
+                        }
+                        refreshList(name, pass, member, pin, reward, lamp);
+                        nameList.validate();
+                        parentFrame.dispose();
+                    }
+                    break;
+                case 'D':
+                    if (nameList.isSelectionEmpty()) {
+                        break;
+                    }
+                    final String selName = nameList.getSelectedValue().toString();
+                    if (!AccountManager.accounts.containsKey(selName)
+                            || selName.endsWith(AccountManager.EMPTY)) {
+                        break;
+                    }
+                    final int yes = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete " + selName + "?", "Delete", JOptionPane.YES_NO_OPTION);
+                    if (yes == 0) {
+                        AccountManager.accounts.remove(selName);
+                        refreshList();
+                        nameList.validate();
+                    }
+                    break;
+                case 'S':
+                    AccountManager.saveAccounts();
+                    break;
+            }
+        } else if (e.getSource() instanceof JCheckBox) {
+            final JCheckBox jcb = (JCheckBox) e.getSource();
+            final boolean enable = jcb.isSelected();
+            final Container con = jcb.getParent();
+            for (Component c : con.getComponents()) {
+                if (c instanceof JSpinner) {
+                    c.setEnabled(enable);
+                }
+            }
+        }
+    }
+
+    /**
+     * Encrypts/Decrypts a string using a SHA1 hash of <code>key</code>
+     * - Jacmob
+     *
+     * @param start The input String
+     * @param en    <tt>true</tt> to encrypt; <tt>false</tt> to decrypt
+     * @return The crypted String
+     */
+    private static String crypt(final String start, final boolean en) {
+        final String delim = "a";
+        if (start == null) {
+            return null;
+        }
+        int i;
+        byte[] hashedKey, password;
+        try {
+            hashedKey = AccountManager.SHA1(AccountManager.key);
+        } catch (final NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            return start;
+        } catch (final UnsupportedEncodingException e) {
+            e.printStackTrace();
+            return start;
+        }
+        if (en) {
+            String end = "";
+            password = start.getBytes();
+            for (i = 0; i < hashedKey.length; i++) {
+                if (i < start.length()) {
+                    end += hashedKey[i] + password[i] + delim;
+                } else {
+                    end += hashedKey[i] + delim;
+                }
+            }
+            return end.substring(0, end.length() - delim.length());
+        }
+        final String[] temp = start.split(delim);
+        password = new byte[temp.length];
+        for (i = 0; i < hashedKey.length; i++) {
+            final int temp2 = Integer.parseInt(temp[i]);
+            if (hashedKey[i] == temp2) {
+                break;
+            }
+            password[i] = (byte) (temp2 - hashedKey[i]);
+        }
+        return new String(password, 0, i);
+    }
+
+    /**
+     * Capitalizes the first character and replaces spaces with underscores
+     * Purely aesthetic
+     *
+     * @param name The name of the account
+     * @return Fixed name
+     */
+    private static String fixName(String name) {
+        if (name.charAt(0) > 91) {
+            name = (char) (name.charAt(0) - 32) + name.substring(1);
+        }
+        return name.replaceAll("\\s", "_");
+    }
+
+    /**
+     * Access the list of names for loaded accounts
+     *
+     * @return Array of the names
+     */
+    public static String[] getAccountNames() {
+        return AccountManager.accounts.keySet().toArray(
+                new String[AccountManager.accounts.size()]);
+    }
+
+    /**
+     * Enables AccountManager to be a Singleton
+     *
+     * @return The instance of the AccountManager
+     */
+    public static AccountManager getInstance() {
+        if (AccountManager.instance == null) {
+            AccountManager.instance = new AccountManager();
+        }
+        return AccountManager.instance;
+    }
+
+    /**
+     * Access the account password of the given name
+     *
+     * @param name The name of the account
+     * @return Unencrypted password
+     */
+    public static String getPassword(final String name) {
+        Map<String, String> values = AccountManager.accounts.get(name);
+        String password = values.get("password");
+        if (password == null) {
+            return "";
+        }
+        return AccountManager.crypt(password, false);
+    }
+
+    /**
+     * Access the account pin of the given string
+     *
+     * @param name The name of the account
+     * @return Pin or an empty string
+     */
+    public static String getPin(final String name) {
+        Map<String, String> values = AccountManager.accounts.get(name);
+        String pin = values.get("pin");
+        if (pin == null) {
+            pin = "-1";
+        }
+        return pin;
+    }
+
+    /**
+     * Access the account desired reward of the given string
+     *
+     * @param name The name of the account
+     * @return The desired reward
+     */
+    public static String getReward(final String name) {
+        Map<String, String> values = AccountManager.accounts.get(name);
+        String reward = values.get("reward");
+        if (reward == null) {
+            return "Cash";
+        }
+        return reward;
+    }
+
+    /**
+     * Access the account skill to use a lamp on
+     *
+     * @param name The name of the account
+     * @return The skill to use a lamp on
+     */
+    public static String getSkillLamp(final String name) {
+        Map<String, String> values = AccountManager.accounts.get(name);
+        String skill = values.get("lamp");
+        if (skill == null) {
+            return "attack";
+        }
+        return skill.toLowerCase();
+    }
+
+    /**
+     * Access the account state of the given string
+     *
+     * @param name Name of the account
+     * @return true if the account is member, false if it isn't
+     */
+    public static boolean isMember(final String name) {
+        Map<String, String> values = AccountManager.accounts.get(name);
+        String member = values.get("member");
+        if (member == null) {
+            member = "false";
+        }
+        return member.equalsIgnoreCase("true");
+    }
+
+    /**
+     * Check if the string is a valid key
+     *
+     * @param key The key
+     * @return true if the object is supported, false if it isn't
+     */
+    private static boolean isValidKey(final String key) {
+        return key.matches("^(member|pin|password|(default)?reward|lamp)$");
+    }
+
+    /**
+     * Checks if the given string is a valid pin
+     *
+     * @param pin The pin
+     * @return true if the pin is valid, false if it isn't
+     */
+    private static boolean isValidPin(final String pin) {
+        if (pin.length() == 4) {
+            for (int i = 0; i < pin.length(); i++) {
+                final char charAt = pin.charAt(i);
+                if (charAt < '0' || charAt > '9') {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Loads the account from the account file
+     *
+     * @return A map of the accounts' information
+     */
+    private static Map<String, Map<String, String>> loadAccounts() {
+        final TreeMap<String, Map<String, String>> names = new TreeMap<String, Map<String, String>>();
+        TreeMap<String, String> keys = null;
+
+        final File accountFile = new File(AccountManager.FILE_NAME);
+        if (accountFile.exists()) {
+            try {
+                final BufferedReader br = new BufferedReader(new FileReader(accountFile));
+                String line;
+                String name = "";
+                while ((line = br.readLine()) != null) {
+                    if (line.startsWith("[") && line.endsWith("]")) {
+                        if (!name.isEmpty()) {
+                            names.put(AccountManager.fixName(name), keys);
+                        }
+                        name = line.trim().substring(1).substring(0, line.length() - 2);
+                        keys = new TreeMap<String, String>();
+                        continue;
+                    }
+
+                    if (keys != null && line.matches("^\\w+=.+$")) {
+                        if (name.isEmpty()) {
+                            continue;
+                        }
+                        final String[] split = line.trim().toLowerCase().split("=");
+                        if (isValidKey(split[0])) {
+                            String key2 = split[1];
+                            if (split[0].equals("pin")) {
+                                if (!isValidPin(key2)) {
+                                    log.severe("Invalid Pin: " + key2 + " On account: " + name + "(pin was ignored)");
+                                    key2 = "";
+                                }
+                            }
+                            keys.put(split[0], key2);
+                        }
+                    }
+                }
+                if (!name.isEmpty()) {
+                    names.put(AccountManager.fixName(name), keys);
+                }
+                br.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return names;
+    }
+
+    private void refreshList(String name, String pass, String member, String pin, String reward, String lamp) {
+        final TreeMap<String, String> keys = new TreeMap<String, String>();
+        keys.put("member", member);
+        keys.put("password", AccountManager.crypt(pass, true));
+        keys.put("pin", pin);
+        keys.put("reward", reward);
+        keys.put("lamp", lamp);
+        accounts.put(name, keys);
+
+        refreshList();
+    }
+
+    private void refreshList() {
+        if (AccountManager.accounts.keySet().size() < 1) {
+            AccountManager.accounts.put(EMPTY, null);
+        } else {
+            AccountManager.accounts.remove(EMPTY);
+        }
+        nameList.setListData(AccountManager.accounts.keySet().toArray(new String[AccountManager.accounts.size()]));
+        nameList.getParent().validate();
+    }
+
+    /**
+     * Saves the account to the account file
+     */
+    private static void saveAccounts() {
+        final File accountFile = new File(FILE_NAME);
+        try {
+            final BufferedWriter bw = new BufferedWriter(new FileWriter(accountFile));
+            for (final String name : AccountManager.accounts.keySet()) {
+                if (name.isEmpty()) {
+                    continue;
+                }
+                bw.append("[").append(name).append("]");
+                bw.newLine();
+                for (final String param : AccountManager.accounts.get(name).keySet()) {
+                    if (param.isEmpty()) {
+                        continue;
+                    }
+                    final String value = AccountManager.accounts.get(name).get(param);
+                    bw.append(param).append("=").append(value);
+                    bw.newLine();
+                }
+            }
+            bw.close();
+        } catch (Exception ignored) {
+        }
+    }
+
+    /**
+     * Creates and displays the main GUI
+     * This GUI has the list and the main buttons
+     */
+    public void showGUI() {
+        getContentPane().removeAll();
+		GridBagConstraints gbc = new GridBagConstraints();
+
+        final JPanel panel = new JPanel(new GridBagLayout());
+
+        nameList = new JList(AccountManager.accounts.keySet().toArray(
+                new String[AccountManager.accounts.size()]));
+        nameList.setSelectedIndex(0);
+        nameList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        nameList.addMouseListener(new MouseClick());
+
+        final JScrollPane scroll = new JScrollPane(nameList);
+
+        final JButton add = new JButton("Add");
+        final JButton del = new JButton("Del");
+        final JButton save = new JButton("Save");
+
+        add.addActionListener(this);
+        del.addActionListener(this);
+        save.addActionListener(this);
+
+        gbc.gridy = 0;
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        gbc.fill = GridBagConstraints.BOTH;
+        panel.add(scroll, gbc);
+
+        gbc.gridwidth = 1;
+        gbc.gridy = 1;
+        gbc.gridx = 0;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.anchor = GridBagConstraints.CENTER;
+        panel.add(add, gbc);
+
+        gbc.gridx = GridBagConstraints.RELATIVE;
+        panel.add(del, gbc);
+        panel.add(save, gbc);
+
+        add(panel);
+        pack();
+
+        setLocationRelativeTo(getOwner());
+        setVisible(true);
+        setResizable(false);
+    }
+
+    private static byte[] SHA1(final String in) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+        MessageDigest md = MessageDigest.getInstance("SHA-1");
+        md.update(in.getBytes("iso-8859-1"), 0, in.length());
+        return md.digest();
+    }
+
+    /**
+     * This class is a custom mouse listener
+     */
+    class MouseClick extends MouseAdapter {
+
+        @Override
+        public void mouseClicked(final MouseEvent e) {
+            if (e.getClickCount() > 1 || e.getButton() == MouseEvent.BUTTON3) {
+                final Object obj = ((JList) e.getComponent()).getSelectedValue();
+                if (obj == null) {
+                    return;
+                }
+
+                final String clickedName = obj.toString();
+                if (clickedName.isEmpty()
+                        || clickedName.equals(AccountManager.EMPTY)) {
+                    return;
+                }
+
+                final String password = AccountManager.getPassword(clickedName);
+                final String pin = AccountManager.getPin(clickedName);
+                final boolean member = AccountManager.isMember(clickedName);
+                final String reward = AccountManager.getReward(clickedName);
+                final String lamp = fixName(AccountManager.getSkillLamp(clickedName));
+
+                JOptionPane.showMessageDialog(null, "Password: " + password
+                        + "\nPin: " + (pin.equals("-1") ? "None" : pin)
+						+ "\nMember: " + (member ? "Yes" : "No")
+                        + "\nReward: " + (reward.equals("XP Item") ? lamp : reward));
+            }
+        }
+    }
+
+    class AddAccountGUI extends JDialog {
+
+        private final String[] REWARDS = {"Cash", "XP Item", "Runes", "Coal", "Essence", "Ore", "Bars", "Gems", "Herbs", "Seeds", "Charms", "Surprise", "Emote", "Costume"};
+
+        private JTabbedPane tabbedPane1;
+        private JPanel panel1;
+        private JLabel label1;
+        private JTextField textField1;
+        private JCheckBox checkBox2;
+        private JLabel label2;
+        private JPasswordField passwordField1;
+        private JCheckBox checkBox1;
+        private JPanel panel2;
+        private JLabel label3;
+        private JComboBox comboBox1;
+        private JLabel label4;
+        private JComboBox comboBox2;
+        private JButton button1;
+
+        private void initComponents() {
+            tabbedPane1 = new JTabbedPane();
+            panel1 = new JPanel();
+            label1 = new JLabel();
+            textField1 = new JTextField();
+            checkBox2 = new JCheckBox();
+            label2 = new JLabel();
+            passwordField1 = new JPasswordField();
+            checkBox1 = new JCheckBox();
+            panel2 = new JPanel();
+            label3 = new JLabel();
+            comboBox1 = new JComboBox();
+            label4 = new JLabel();
+            comboBox2 = new JComboBox();
+            button1 = new JButton();
+
+            Container contentPane = getContentPane();
+            contentPane.setLayout(new GridBagLayout());
+            ((GridBagLayout) contentPane.getLayout()).columnWidths = new int[]{87, 0};
+            ((GridBagLayout) contentPane.getLayout()).rowHeights = new int[]{0, 0, 0, 0};
+            ((GridBagLayout) contentPane.getLayout()).columnWeights = new double[]{0.0, 1.0E-4};
+            ((GridBagLayout) contentPane.getLayout()).rowWeights = new double[]{0.0, 0.0, 0.0, 1.0E-4};
+
+            panel1.setLayout(new GridBagLayout());
+            ((GridBagLayout) panel1.getLayout()).columnWidths = new int[]{0, 0, 0, 0, 0, 39, 0};
+            ((GridBagLayout) panel1.getLayout()).rowHeights = new int[]{0, 0, 0, 0};
+            ((GridBagLayout) panel1.getLayout()).columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0E-4};
+            ((GridBagLayout) panel1.getLayout()).rowWeights = new double[]{0.0, 0.0, 0.0, 1.0E-4};
+
+            label1.setText("Username:");
+            panel1.add(label1, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
+                    GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                    new Insets(0, 0, 5, 5), 0, 0));
+            panel1.add(textField1, new GridBagConstraints(1, 0, 4, 1, 0.0, 0.0,
+                    GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
+                    new Insets(0, 0, 5, 5), 0, 0));
+
+            checkBox2.setText("Member");
+            panel1.add(checkBox2, new GridBagConstraints(5, 0, 1, 1, 0.0, 0.0,
+                    GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                    new Insets(0, 0, 5, 0), 0, 0));
+
+            label2.setText("Password:");
+            panel1.add(label2, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
+                    GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                    new Insets(0, 0, 5, 5), 0, 0));
+            panel1.add(passwordField1, new GridBagConstraints(1, 1, 4, 1, 0.0, 0.0,
+                    GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
+                    new Insets(0, 0, 5, 5), 0, 0));
+
+            checkBox1.setText("Pin");
+            checkBox1.addActionListener(AccountManager.this);
+            panel1.add(checkBox1, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0,
+                    GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                    new Insets(0, 0, 0, 5), 0, 0));
+
+            final JSpinner[] spins = new JSpinner[5];
+            for (int i = 1; i < spins.length; i++) {
+                spins[i] = new JSpinner(new SpinnerNumberModel(0, 0, 9, 1));
+                spins[i].setEnabled(false);
+                panel1.add(spins[i],
+                        new GridBagConstraints(i, 2, 1, 1, 0.0, 0.0,
+                        GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                        new Insets(0, 0, 0, 5), 0, 0));
+            }
+
+            tabbedPane1.addTab("Account", panel1);
+
+            panel2.setLayout(new GridBagLayout());
+            ((GridBagLayout) panel2.getLayout()).columnWidths = new int[]{0, 120, 0};
+            ((GridBagLayout) panel2.getLayout()).rowHeights = new int[]{0, 0, 0, 0, 0};
+            ((GridBagLayout) panel2.getLayout()).columnWeights = new double[]{0.0, 0.0, 1.0E-4};
+            ((GridBagLayout) panel2.getLayout()).rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 1.0E-4};
+
+            label4.setText("Reward:");
+            panel2.add(label4, new GridBagConstraints(0, 0, 1, 2, 0.0, 0.0,
+                    GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                    new Insets(0, 0, 5, 5), 0, 0));
+            panel2.add(comboBox2, new GridBagConstraints(1, 0, 1, 2, 0.0, 0.0,
+                    GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
+                    new Insets(0, 0, 5, 0), 0, 0));
+
+			for (String choice : REWARDS) {
+				comboBox2.addItem(choice);
 			}
-		}
-	}
 
-	/**
-	 * Encrypts/Decrypts a string using a SHA1 hash of <code>key</code> - Jacmob
-	 *
-	 * @param start
-	 *            The input String
-	 * @param en
-	 *            <tt>true</tt> to encrypt; <tt>false</tt> to decrypt
-	 * @return The crypted String
-	 */
-	private static String crypt(final String start, final boolean en) {
-		final String delim = "a";
-		if (start == null)
-			return null;
-		byte[] hashedkey;
-		byte[] password;
-		int i;
-		try {
-			hashedkey = AccountManager.SHA1(AccountManager.key);
-		} catch (final NoSuchAlgorithmException e) {
-			e.printStackTrace();
-			return start;
-		} catch (final UnsupportedEncodingException e) {
-			e.printStackTrace();
-			return start;
-		}
-		if (en) {
-			String end = "";
-			password = start.getBytes();
-			for (i = 0; i < hashedkey.length; i++) {
-				if (i < start.length()) {
-					end += hashedkey[i] + password[i] + delim;
-				} else {
-					end += hashedkey[i] + delim;
-				}
-			}
-			return end.substring(0, end.length() - delim.length());
-		} else {
-			final String[] temp = start.split(delim);
-			password = new byte[temp.length];
-			for (i = 0; i < hashedkey.length; i++) {
-				final int temp2 = Integer.parseInt(temp[i]);
-				if (hashedkey[i] == temp2) {
-					break;
-				} else {
-					password[i] = (byte) (temp2 - hashedkey[i]);
-				}
-			}
-			return new String(password, 0, i);
-		}
-	}
+            label3.setText("XP Lamp:");
+            panel2.add(label3, new GridBagConstraints(0, 2, 1, 2, 0.0, 0.0,
+                    GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                    new Insets(0, 0, 0, 5), 0, 0));
+            panel2.add(comboBox1, new GridBagConstraints(1, 2, 1, 2, 0.0, 0.0,
+                    GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
+                    new Insets(0, 0, 0, 0), 0, 0));
 
-	/**
-	 * Capitalizes the first character and replaces spaces with underscores
-	 * Purely aesthetic
-	 *
-	 * @param name
-	 *            Name to fix
-	 * @return Fixed name
-	 */
-	private static String fixName(String name) {
-		if (name.charAt(0) > 91) {
-			name = (char) (name.charAt(0) - 32) + name.substring(1);
-		}
-		while (name.contains(" ")) {
-			name = name.substring(0, name.indexOf(" ")) + "_"
-					+ name.substring(name.indexOf(" ") + 1);
-		}
-		return name;
-	}
+            final String[] ss = Skills.SKILL_NAMES;
+            for (int i = 0; i < ss.length - 1; i++) {
+                comboBox1.addItem(fixName(ss[i]));
+            }
 
-	/**
-	 * Access the list of names for loaded accounts
-	 *
-	 * @return Array of the Names
-	 */
-	public static String[] getAccountNames() {
-		return AccountManager.account.keySet().toArray(
-				new String[AccountManager.account.size()]);
-	}
+            tabbedPane1.addTab("Reward", panel2);
 
-	/**
-	 * Enables AccountManager to be a Singleton
-	 *
-	 * @return The instance of the AccountManager
-	 */
-	public static AccountManager getInstance() {
-		if (AccountManager.instance == null)
-			return AccountManager.instance = new AccountManager();
-		else
-			return AccountManager.instance;
-	}
+            contentPane.add(tabbedPane1, new GridBagConstraints(0, 0, 1, 2, 0.0, 0.0,
+                    GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                    new Insets(0, 0, 5, 0), 0, 0));
 
-	/**
-	 * Access the password of the given account
-	 *
-	 * @param name
-	 *            Name of account to access password of
-	 * @return Unencrypted Password
-	 */
-	public static String getPassword(final String name) {
-		String password = AccountManager.account.get(name).getPassword();
-		if ((password != null) && password.contains(AccountManager.SEP_CHAR)) {
-			password = password.split(AccountManager.SEP_CHAR, 2)[0];
-		}
-		return AccountManager.crypt(password, false);
-	}
-
-	/**
-	 * Access the pin for the given account
-	 *
-	 * @param name
-	 *            Name of the account
-	 * @return Pin or -1 if no pin
-	 */
-	public static String getPin(final String name) {
-		return AccountManager.account.get(name).getPin();
-	}
-
-	/**
-	 * Access the membership status for the given account
-	 *
-	 * @param name
-	 *            Name of the account
-	 * @return <tt>true</tt> if p2p; <tt>false</tt> if f2p
-	 */
-	public static boolean isMember(final String name) {
-		return AccountManager.account.get(name).isMember();
-	}
-
-	/**
-	 * Loads the accounts from the file
-	 *
-	 * @throws javax.naming.NamingException Invalid key storage.
-	 */
-	private static void loadAccounts() throws NamingException {
-
-		final File accountFile = new File(AccountManager.FILE_NAME);
-		if (accountFile.exists()) {
-			try {
-				BufferedReader in = new BufferedReader(new FileReader(accountFile));
-				boolean oldFormat = false;
-				String line;
-				String user = null, pass = null, pin = null;
-				boolean members = false;
-				while ((line = in.readLine()) != null) {
-					if (line.contains(":")) {// check if it is the old format
-						oldFormat = true;
-						String[] parts = line.split(":", 2);
-						for (final String s : parts) {
-							if (s.isEmpty())
-								throw new NamingException(
-										"Invalid Storage of: " + line);
-						}
-						parts[0] = AccountManager.fixName(parts[0]);
-						try {
-							if ((parts.length > 2) && ((parts[2].length() != 4)
-									|| (Integer.parseInt(parts[2]) >= 0)))
-								throw new NamingException("Invalid Pin: "
-										+ parts[2] + " On Account: " + parts[0]);
-						} catch (final NumberFormatException e) {
-							throw new NamingException("Invalid Pin: "
-									+ parts[2] + " On Account: " + parts[0]);
-						}
-						if (parts.length > 2) {
-							account.put(
-									parts[0],
-									new Account(parts[0], parts[1], parts[2], false));
-						} else {
-							account.put(parts[0], new Account(parts[0],
-									parts[1], null, false));
-						}
-						continue;
-					}
-					if (line.startsWith("[")) {
-						if (user != null && pass != null) {
-							account.put(user, new Account(user, pass, pin, members));
-							pass = null;
-							pin = null;
-							members = false;
-						}
-						user = line.replace("[", "").replace("]", "");
-					} else if (line.startsWith(PASSWORD)) {
-						pass = line.replace(PASSWORD, "");
-					} else if (line.startsWith(PIN)) {
-						pin = line.replace(PIN, "");
-						if (pin.length() != 4) {
-							pin = null;
-						}
-					} else if (line.startsWith(MEMBERS)) {
-						members = Boolean.parseBoolean(line.replace(MEMBERS, ""));
-					}
-				}
-				if (user != null && pass != null) {
-					account.put(user, new Account(user, pass, pin, members));
-				}
-				in.close();
-				if (oldFormat && !accountFile.delete()) {
-					log.warning("Failed to delete old/corrupted account file.");
-				}
-			} catch (final FileNotFoundException e) {
-				e.printStackTrace();
-			} catch (final IOException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
-	/**
-	 * Writes the accounts to the file
-	 */
-	private static void saveAccounts() {
-		final File accountFile = new File(AccountManager.FILE_NAME);
-		try {
-			final BufferedWriter out = new BufferedWriter(new FileWriter(
-					accountFile));
-			for (final Account a : AccountManager.account.values()) {
-				if (a.getPassword().isEmpty()) {
-					continue;
-				}
-				out.append("[").append(a.getUsername()).append("]").append("\n").
-						append(PASSWORD).append(a.getPassword());
-				if (a.getPin() != null) {
-					out.append("\n").append(PIN).append(a.getPin());
-				}
-				out.append("\n").append(MEMBERS).append(String.valueOf(a.isMember()));
-				out.newLine();
-			}
-			out.close();
-		} catch (final IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * Returns ths SHA1 hash of a String
-	 *
-	 * @param in
-	 *            The String to hash
-	 * @throws NoSuchAlgorithmException
-	 *             SHA-1 unavailable
-	 * @throws UnsupportedEncodingException
-	 *             iso-8859-1 unavailable
-	 * @return SHA1 hash
-	 */
-	private static byte[] SHA1(final String in)
-			throws NoSuchAlgorithmException, UnsupportedEncodingException {
-		MessageDigest md = MessageDigest.getInstance("SHA-1");
-		md.update(in.getBytes("iso-8859-1"), 0, in.length());
-		return md.digest();
-	}
-
-	private AccountManager() {
-		super(Frame.getFrames()[0], "Account Manager", true);
-		if (AccountManager.account.size() < 1) {
-			AccountManager.account.put(emptyName, new Account(emptyName, "",
-					null, false));
-		}
-	}
-
-	/**
-	 * Controls all of the button and checkBox actions of the program
-	 */
-	public void actionPerformed(final ActionEvent event) {
-		JDialog parentFrame;
-		Component comp = ((Component) event.getSource()).getParent();
-		while (!(comp instanceof JDialog)) {
-			comp = comp.getParent();
-		}
-		parentFrame = (JDialog) comp;
-		if (event.getSource() instanceof JButton) {
-			switch (((JButton) event.getSource()).getText().charAt(0)) {
-			case 'A':// Add Accounts
-				if (event.getActionCommand().contains("dd")) {
-					addAccount();
-				} else {// Update the List with the new Account
-					final JPanel pane = (JPanel) ((JButton) event.getSource())
-							.getParent();
-					String name = null, pass = null, pin = "";
-					boolean members = false;
-					for (final Component c : pane.getComponents()) {
-						if (c instanceof JPasswordField) {
-							pass = ((JTextField) c).getText();
-						} else if (c instanceof JTextField) {
-							name = ((JTextField) c).getText();
-						} else if (c instanceof JSpinner) {
-							pin += ((JSpinner) c).getValue();
-						} else if (c instanceof JCheckBox
-								&& ((JCheckBox) c).getText().startsWith("M")) {
-							members = ((JCheckBox) c).isSelected();
-						}
-					}
-					if (name.isEmpty() || pass.isEmpty()) {
-						JOptionPane.showMessageDialog(null, "Empty Fields");
-						return;
-					}
-					AccountManager.account.put(
-							AccountManager.fixName(name),
-							new Account(name, AccountManager.crypt(pass, true),
-									pin.isEmpty() ? null : pin.trim(), members));
-
-					refreshList();
-					names.validate();
-					parentFrame.dispose();
-				}
-				break;
-			case 'D':// Delete Accounts
-				if (AccountManager.account.get(names.getSelectedValue())
-						.getPassword().isEmpty())
-					return;
-				final int yes = JOptionPane.showConfirmDialog(
-						this,
-						"Are you sure you want to delete "
-								+ names.getSelectedValue() + "?", "Delete",
-						JOptionPane.YES_NO_OPTION);
-				if (yes == 0) {
-					AccountManager.account.remove(names.getSelectedValue());
-					refreshList();
-					names.validate();
-				}
-				break;
-			case 'S':// Save Accounts
-				AccountManager.saveAccounts();
-				break;
-			}
-		} else if (event.getSource() instanceof JCheckBox
-				&& event.getActionCommand().contains("P")) {
-			// CheckBox for Pins add and remove JSpinners
-			final JCheckBox jcb = (JCheckBox) event.getSource();
-			if (jcb.isSelected()) {
-				// Add Spinners
-				c = new GridBagConstraints();
-				c.gridy = 2;
-				c.gridx = 1;
-				c.weightx = 1;
-				c.insets = new Insets(0, 0, 5, 5);
-				final JSpinner[] spins = new JSpinner[4];
-				for (int i = 0; i < spins.length; i++) {
-					spins[i] = new JSpinner(new SpinnerNumberModel(0, 0, 9, 1));
-					jcb.getParent().add(spins[i], c);
-					c.gridx = GridBagConstraints.RELATIVE;
-				}
-				parentFrame.pack();
-			} else {
-				// Remove Spinners
-				for (final Component c : jcb.getParent().getComponents()) {
-					if (c instanceof JSpinner) {
-						jcb.getParent().remove(c);
-					}
-				}
-				parentFrame.validate();
-			}
-		}
-	}
-
-	/**
-	 * Gets the necessary information from the user to make a new account
-	 */
-	private void addAccount() {
-		final JDialog addFrame = new JDialog(this, "New", true);
-		final JPanel pane = new JPanel(new GridBagLayout());
-		c = new GridBagConstraints();
-		final JTextField userName = new JTextField(8);
-		final JPasswordField userPass = new JPasswordField(8);
-		userPass.setEchoChar('*');
-		c.gridwidth = 2;
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.insets = new Insets(5, 5, 0, 7);
-		pane.add(new JLabel("User Name: ", SwingConstants.CENTER), c);
-		c.gridx = GridBagConstraints.RELATIVE;
-		c.gridwidth = 3;
-		c.insets = new Insets(5, 0, 0, 5);
-		pane.add(userName, c);
-		c.insets = new Insets(5, 5, 5, 7);
-		c.gridwidth = 2;
-		c.gridx = 0;
-		c.gridy = 1;
-		pane.add(new JLabel("Password: ", SwingConstants.CENTER), c);
-		c.insets = new Insets(5, 0, 5, 5);
-		c.gridwidth = 3;
-		c.gridx = GridBagConstraints.RELATIVE;
-		pane.add(userPass, c);
-		final JCheckBox pinCheck = new JCheckBox("Pin");
-		pinCheck.addActionListener(this);
-		c = new GridBagConstraints();
-		c.gridy = 2;
-		c.insets = new Insets(0, 5, 5, 5);
-		c.gridx = GridBagConstraints.RELATIVE;
-		pane.add(pinCheck, c);
-		c.gridy = 3;
-		pane.add(new JCheckBox("Members"), c);
-		final JButton save = new JButton("Add");
-		save.setActionCommand("Update");
-		save.addActionListener(this);
-		c.gridy = 4;
-		c.gridwidth = GridBagConstraints.REMAINDER;
-		pane.add(save, c);
-
-		addFrame.setResizable(false);
-		addFrame.add(pane);
-		addFrame.pack();
-		addFrame.setLocationRelativeTo(this);
-		addFrame.setVisible(true);
-	}
-
-	/**
-	 * Resets the Model for the List to reflect changes made to the accounts Map
-	 */
-	private void refreshList() {
-		if ((AccountManager.account.keySet().size() > 1)
-				&& AccountManager.account.keySet().contains(emptyName)) {
-			AccountManager.account.remove(emptyName);
-		} else if (AccountManager.account.keySet().size() < 1) {
-			AccountManager.account.put(emptyName, new Account(emptyName, "",
-					null, false));
-		}
-		names.setListData(AccountManager.account.keySet().toArray(
-				new String[AccountManager.account.size()]));
-		names.getParent().validate();
-	}
-
-	/**
-	 * Creates and Displays the main GUI
-	 * <p/>
-	 * This GUI has the list and the main buttons
-	 */
-	public void showGUI() {
-		getContentPane().removeAll();
-		c = new GridBagConstraints();
-		// Main Panel with everything
-		final JPanel pane = new JPanel(new GridBagLayout());
-		// Makes the List
-		names = new JList(AccountManager.account.keySet().toArray(
-				new String[AccountManager.account.size()]));
-		// Only one selection at a time
-		names.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		// Will display the password and pin when double clicked or right
-		// clicked
-		names.addMouseListener(new MouseListener() {
-			public void mouseClicked(final MouseEvent click) {
-				if ((click.getClickCount() > 1)
-						|| (click.getButton() == MouseEvent.BUTTON3)) {
-					final Account clicked = AccountManager.account
-							.get(((JList) click.getComponent())
-									.getSelectedValue());
-					if (clicked.getPassword().isEmpty())
-						return;
-					String pass = AccountManager.crypt(clicked.getPassword(),
-							false);
-					String info = "Password: " + pass;
-					info += "\nMembers: " + clicked.isMember();
-					if (clicked.getPin() != null) {
-						info += "\nPin: " + clicked.getPin();
-					}
-					JOptionPane.showMessageDialog(null, info);
-				}
-			}
-
-			public void mouseEntered(final MouseEvent click) {
-			}
-
-			public void mouseExited(final MouseEvent click) {
-			}
-
-			public void mousePressed(final MouseEvent click) {
-			}
-
-			public void mouseReleased(final MouseEvent click) {
-			}
-		});
-
-		// Enables scrolling through the List
-		final JScrollPane scroll = new JScrollPane(names);
-
-		final JButton add = new JButton("Add");// Button 1
-		final JButton del = new JButton("Delete");// Button 2
-		final JButton save = new JButton("Save");// Button 3
-
-		add.addActionListener(this);
-		del.addActionListener(this);
-		save.addActionListener(this);
-		// Positions Everything Correctly on the panel
-		c.gridy = 0;
-		c.gridwidth = GridBagConstraints.REMAINDER;
-		c.fill = GridBagConstraints.BOTH;
-		pane.add(scroll, c);
-		c.gridwidth = 1;
-		c.gridy = 1;
-		c.gridx = 0;
-		c.fill = GridBagConstraints.NONE;
-		c.insets = new Insets(5, 5, 5, 5);
-		c.anchor = GridBagConstraints.CENTER;
-		pane.add(add, c);
-		c.gridx = GridBagConstraints.RELATIVE;
-		pane.add(del, c);
-		pane.add(save, c);
-		names.setSelectedIndex(0);
-		add(pane);
-		pack();
-		setLocationRelativeTo(getOwner());
-		setVisible(true);
-		setResizable(false);
-	}
-
-	static class Account {
-		private String user, pass;
-		private String pin;
-		private boolean member;
-
-		public Account(String user, String pass, String pin, boolean member) {
-			this.user = user;
-			this.pass = pass;
-			this.pin = pin;
-			this.member = member;
-		}
-
-		public String getPin() {
-			return pin;
-		}
-
-		public String getUsername() {
-			return user;
-		}
-
-		public String getPassword() {
-			return pass;
-		}
-
-		public boolean isMember() {
-			return member;
-		}
-	}
-
+            button1.setText("Add");
+            button1.addActionListener(AccountManager.this);
+            contentPane.add(button1, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0,
+                    GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                    new Insets(0, 0, 0, 0), 0, 0));
+            pack();
+            setLocationRelativeTo(getOwner());
+        }
+    }
 }

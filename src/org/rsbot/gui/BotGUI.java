@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 /**
  * @author Jacmob
@@ -104,7 +103,7 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
         	} else if (option.equals("Save Screenshot")) {
         		Bot current = getCurrentBot();
         		if (current != null) {
-        			ScreenshotUtil.takeScreenshot(current, current.getMethodContext().game.isLoggedIn());
+        			ScreenshotUtil.saveScreenshot(current, current.getMethodContext().game.isLoggedIn());
         		}
         	} else if (option.equals("Exit")) {
         		System.exit(0);
