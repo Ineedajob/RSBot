@@ -1,104 +1,61 @@
 package org.rsbot.service;
 
-import org.rsbot.injector.asm.*;
-
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLClassLoader;
 
 /**
  * @author Jacmob
  */
-public class ScriptClassLoader extends URLClassLoader {
+public class ScriptClassLoader extends ClassLoader {
 
-	public ScriptClassLoader(URL... urls) {
-		super(urls);
+	private final URL base;
+
+	public ScriptClassLoader(URL url) {
+		this.base = url;
 	}
 
-	public Class<?> loadClass(String name) throws ClassNotFoundException {
-		Class<?> clazz = super.loadClass(name);
+	public Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
+		Class clazz = findLoadedClass(name);
 
-		if (clazz != null) {
-			ClassLoader loader = clazz.getClassLoader();
-			if (loader != null) {
-				InputStream stream = loader.getResourceAsStream(name.replace('.', '/') + ".class");
-				try {
-					ClassReader r = new ClassReader(stream);
-					r.accept(new ClassVerifier(), 0);
-				} catch (IOException ex) {
-					throw new RuntimeException("Class verification failed!");
+		if (clazz == null) {
+			try {
+				InputStream in = getResourceAsStream(name.replace('.', '/') + ".class");
+				byte[] buffer = new byte[4096];
+				ByteArrayOutputStream out = new ByteArrayOutputStream();
+				int n;
+				while ((n = in.read(buffer, 0, 4096)) != -1) {
+					out.write(buffer, 0, n);
 				}
+				byte[] bytes = out.toByteArray();
+				clazz = defineClass(name, bytes, 0, bytes.length);
+				if (resolve) {
+					resolveClass(clazz);
+				}
+			} catch (Exception e) {
+				clazz = super.loadClass(name, resolve);
 			}
 		}
 
 		return clazz;
 	}
 
-	private static class ClassVerifier implements ClassVisitor {
-
-		public void visit(
-				final int version,
-				final int access,
-				final String name,
-				final String signature,
-				final String superName,
-				final String[] interfaces) {
-
-		}
-
-		public void visitSource(final String source, final String debug) {
-
-		}
-
-		public void visitOuterClass(
-				final String owner,
-				final String name,
-				final String desc) {
-
-		}
-
-		public AnnotationVisitor visitAnnotation(
-				final String desc,
-				final boolean visible) {
+	public URL getResource(String name) {
+		try {
+			return new URL(base, name);
+		} catch (MalformedURLException e) {
 			return null;
 		}
+	}
 
-		public void visitAttribute(final Attribute attr) {
-
-		}
-
-		public void visitInnerClass(
-				final String name,
-				final String outerName,
-				final String innerName,
-				final int access) {
-
-		}
-
-		public FieldVisitor visitField(
-				final int access,
-				final String name,
-				final String desc,
-				final String signature,
-				final Object value) {
+	public InputStream getResourceAsStream(String name) {
+		try {
+			return new URL(base, name).openStream();
+		} catch (IOException e) {
 			return null;
 		}
-
-		public MethodVisitor visitMethod(
-				final int access,
-				final String name,
-				final String desc,
-				final String signature,
-				final String[] exceptions) {
-			// TODO
-			return null;
-		}
-
-		public void visitEnd() {
-
-		}
-
 	}
 
 }

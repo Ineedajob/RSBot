@@ -4,6 +4,8 @@ import org.rsbot.script.Random;
 import org.rsbot.script.ScriptManifest;
 import org.rsbot.util.ScreenshotUtil;
 
+import java.awt.image.BufferedImage;
+
 /**
  * Bot environment related operations.
  *
@@ -42,8 +44,19 @@ public class Environment extends MethodProvider {
      * username; otherwise <tt>false</tt>
      */
     public void saveScreenshot(boolean hideUsername) {
-        ScreenshotUtil.takeScreenshot(methods.bot, hideUsername);
+        ScreenshotUtil.saveScreenshot(methods.bot, hideUsername);
     }
+
+	/**
+	 * Takes a screenshot.
+	 *
+	 * @param hideUsername <tt>true</tt> to cover the player's
+     * username; otherwise <tt>false</tt>
+	 * @return The screen capture image.
+	 */
+	public BufferedImage takeScreenshot(boolean hideUsername) {
+		return ScreenshotUtil.takeScreenshot(methods.bot, hideUsername);
+	}
 
     /**
      * Enables a random event solver.
