@@ -11,7 +11,7 @@ import org.rsbot.script.wrappers.RSPlayer;
 public class Players extends MethodProvider {
 
 	/**
-	 * Used to filter the NPCs found by methods in the NPCs class.
+	 * Used to filter the players found by methods in the Players class.
 	 */
 	public static interface Qualifier {
 		public boolean qualifies(RSPlayer player);
@@ -102,8 +102,8 @@ public class Players extends MethodProvider {
 	/**
 	 * Returns the <tt>RSPlayer</tt> that is nearest, out of all of the Players
 	 * with the provided name. Can return null.
-	 * 
-	 * @param name The name of the <tt>RSPlayer</tt> that you are searching.
+	 *
+	 * @param name The name of the <tt>RSPlayer</tt> that you are searching for.
 	 * @return An <tt>RSPlayer</tt> object representing the nearest player with
 	 * the provided name; or null if there are no matching players in
 	 * the current region.
@@ -112,6 +112,23 @@ public class Players extends MethodProvider {
 		return getNearest(new Qualifier() {
 			public boolean qualifies(RSPlayer player) {
 				return player.getName().equals(name);
+			}
+		});
+	}
+
+	/**
+	 * Returns the <tt>RSPlayer</tt> that is nearest, out of all of the Players
+	 * with the provided combat level. Can return null.
+	 *
+	 * @param level The combat level of the <tt>RSPlayer</tt> that you are searching for.
+	 * @return An <tt>RSPlayer</tt> object representing the nearest player with
+	 * the provided combat evel; or null if there are no matching players in
+	 * the current region.
+	 */
+	public RSPlayer getNearest(final int level) {
+		return getNearest(new Qualifier() {
+			public boolean qualifies(RSPlayer player) {
+				return player.getCombatLevel() == level;
 			}
 		});
 	}
