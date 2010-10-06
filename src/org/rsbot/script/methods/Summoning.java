@@ -1,12 +1,15 @@
 package org.rsbot.script.methods;
 
+import org.rsbot.client.Node;
+import org.rsbot.client.RSNPCNode;
 import org.rsbot.script.wrappers.RSComponent;
 import org.rsbot.script.wrappers.RSInterface;
+import org.rsbot.script.wrappers.RSNPC;
 
 /**
  * Summoning related operations.
  * 
- * @author Unknown5000
+ * @author Unknown5000/illusion
  */
 public class Summoning extends MethodProvider {
 
@@ -109,6 +112,7 @@ public class Summoning extends MethodProvider {
 		private int requiredSpecialPoints;
 		private String scrollName;
 		private int bobSpace;
+        private RSNPC npcObject;
 
 		Familiar(String name, int requiredLevel, int time, int sp,
 				String scrollName, int space) {
@@ -148,6 +152,15 @@ public class Summoning extends MethodProvider {
 			return bobSpace != 0;
 		}
 
+        public void setNPCObject(RSNPC npc) {
+            this.npcObject = npc;
+        }
+
+        public RSNPC getNPC() {
+            return npcObject;
+        }
+
+
 	}
 
     public Summoning(final MethodContext ctx) {
@@ -178,7 +191,7 @@ public class Summoning extends MethodProvider {
 	 * @return <tt>true</tt> if you have a familiar.
 	 */
 	public boolean isFamiliarSummoned() {
-		return methods.interfaces.get(INTERFACE_DETAILS).isValid();
+		return getFamiliar() != null;
 	}
 
 	/**
@@ -196,6 +209,13 @@ public class Summoning extends MethodProvider {
 	 * @return <tt>true</tt> if the action was performed.
 	 */
 	public boolean doCast() {
+
+        if(!isFamiliarSummoned())
+            return false;
+
+        if(methods.inventory.getItemID(getFamiliar().getScrollName()) == -1)
+            return false;
+
 		return methods.interfaces.getComponent(INTERFACE_TAB_SUMMONING, INTERFACE_TAB_SUMMONING_CHILD).doAction("Cast");
 	}
 
@@ -213,7 +233,18 @@ public class Summoning extends MethodProvider {
 	 * @return <tt>true</tt> if the action was performed.
 	 */
 	public boolean doRenewFamiliar() {
-		return methods.interfaces.getComponent(INTERFACE_TAB_SUMMONING, INTERFACE_TAB_SUMMONING_CHILD).doAction("Renew Familiar");
+
+        if(!isFamiliarSummoned())
+            return false;
+        else {
+
+            if(methods.inventory.getItemID(getFamiliar().getName() + " pouch") != -1)
+               return methods.interfaces.getComponent(INTERFACE_TAB_SUMMONING, INTERFACE_TAB_SUMMONING_CHILD).doAction("Renew Familiar");
+            else
+                return false;
+
+        }
+        
 	}
 
 	/**
@@ -313,6 +344,39 @@ public class Summoning extends MethodProvider {
 		return methods.interfaces.getComponent(INTERFACE_OPTIONS, option).doClick() &&
 				methods.interfaces.getComponent(INTERFACE_OPTIONS, 5).doClick();
 	}
+
+    /**
+     * Finds your current summoned Familiar.
+     * 
+     * @return your current Familiar
+     */
+    public Familiar getFamiliar() {
+
+        for (int element : methods.client.getRSNPCIndexArray()) {
+            Node node = methods.nodes.lookup(methods.client.getRSNPCNC(), element);
+            if (node == null || !(node instanceof RSNPCNode)) {
+                continue;
+            }
+
+            RSNPC npc = new RSNPC(methods, ((RSNPCNode) node).getRSNPC());
+
+            if(npc.getInteracting() != null && npc.getInteracting().equals(methods.players.getMyPlayer())) {
+
+                for(Familiar f : Familiar.values())
+                    if(f != null && npc.getName().equals(f.getName())) {
+                        f.setNPCObject(npc);
+                        return f;
+                    }
+
+            }
+
+
+        }
+
+        return null;
+
+    }
+
 
 
 }
