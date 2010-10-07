@@ -96,7 +96,8 @@ public class AccountManager extends JDialog implements ActionListener {
         if (e.getSource() instanceof JButton) {
             switch (((JButton) e.getSource()).getText().charAt(0)) {
                 case 'A':
-                    if (parentFrame.getName().equals("dialog0")) {
+					final Component source = ((JButton) e.getSource()).getParent().getComponent(0);
+                    if (!(source instanceof JTabbedPane)) {
                         AddAccountGUI gui = new AddAccountGUI();
                         gui.initComponents();
 
@@ -106,7 +107,7 @@ public class AccountManager extends JDialog implements ActionListener {
                         frame.setLocationRelativeTo(this);
                         frame.setVisible(true);
                     } else {
-                        final JTabbedPane tab = (JTabbedPane) ((JButton) e.getSource()).getParent().getComponent(0);
+						final JTabbedPane tab = (JTabbedPane) source;
                         String name = null, pass = null, member = null, lamp = null, reward = null, pin = "";
                         for (Component compa : tab.getComponents()) {
                             final JPanel panel = (JPanel) compa;
