@@ -2,7 +2,6 @@ package org.rsbot.script.randoms;
 
 import org.rsbot.script.Random;
 import org.rsbot.script.ScriptManifest;
-import org.rsbot.script.methods.Game;
 import org.rsbot.script.wrappers.RSObject;
 import org.rsbot.script.wrappers.RSTile;
 
@@ -24,7 +23,6 @@ public class LostAndFound extends Random {
 
     final int setting = 531;
 
-    @Override
     public boolean activateCondition() {
 		return game.isLoggedIn() && objects.getNearest(appendN) != null;
 	}
@@ -79,12 +77,11 @@ public class LostAndFound extends Random {
                 if (settings[setting] == element)
                     return appendW;
             }
-        } catch (final Exception e) {
+        } catch (final Exception ignored) {
         }
         return random(8994, 8998);
     }
 
-    @Override
     public int loop() {
         if (objects.getNearest(appendN) == null)
             return -1;

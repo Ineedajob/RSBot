@@ -24,7 +24,6 @@ public class FreakyForester extends Random implements ServerMessageListener {
 
     boolean done = false;
 
-    @Override
     public boolean activateCondition() {
         if (!game.isLoggedIn())
             return false;
@@ -133,7 +132,7 @@ public class FreakyForester extends Random implements ServerMessageListener {
                 if (phe == -1)
                     return random(200, 500);
                 final RSNPC Pheasant = npcs.getNearest(phe);
-                final RSGroundItem tile = groundItems.get(6178);
+                final RSGroundItem tile = groundItems.getNearest(6178);
                 if (tile != null) {
                     tiles.doAction(tile.getLocation(), "Take");
                     return random(600, 900);

@@ -19,18 +19,17 @@ import org.rsbot.injector.Injector;
  * @author Alex
  */
 public final class RSClassLoader extends ClassLoader {
-    public final HashMap<String, byte[]> classes = new HashMap<String, byte[]>();
 
+    private HashMap<String, byte[]> classes;
 	private ProtectionDomain domain;
-
-    private Injector injector;
+	private String signlink;
 
     public RSClassLoader(Injector injector) {
         try {
-            this.injector = injector;
 			CodeSource codeSource = new CodeSource(new URL("http://" + injector.generateTargetName() + ".com/"), (CodeSigner[]) null);
             domain = new ProtectionDomain(codeSource, getPermissions());
-            classes.putAll(injector.getClasses());
+            classes = injector.getClasses();
+			signlink = injector.findClass("Signlink").getClassName();
         } catch (final Exception e) {
             e.printStackTrace();
         }
@@ -77,7 +76,7 @@ public final class RSClassLoader extends ClassLoader {
     @Override
     public final Class<?> loadClass(String name) throws ClassNotFoundException {
         if (name.equals("SignLink")) {
-            name = injector.findClass("Signlink").getClassName();
+            name = signlink;
         }
         if (classes.containsKey(name)) {
             final byte buffer[] = classes.remove(name);

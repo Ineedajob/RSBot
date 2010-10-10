@@ -4,6 +4,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.rsbot.client.RSAnimableNode;
+import org.rsbot.script.util.Filter;
 import org.rsbot.script.wrappers.RSObject;
 import org.rsbot.script.wrappers.RSObjectDef;
 import org.rsbot.script.wrappers.RSTile;
@@ -18,104 +19,128 @@ public class Objects extends MethodProvider {
 	public static final int TYPE_BOUNDARY = 4;
 	public static final int TYPE_WALL_DECORATION = 8;
 
+	/**
+	 * A filter that accepts all matches.
+	 */
+	public static final Filter<RSObject> ALL_FILTER = new Filter<RSObject>() {
+		public boolean accept(RSObject npc) {
+			return true;
+		}
+	};
+
     Objects(final MethodContext ctx) {
         super(ctx);
     }
     
     /**
      * Returns all the <tt>RSObject</tt>s in the local region.
-     * 
+     *
      * @return An <tt>RSObject[]</tt> of all objects in the loaded region.
      */
     public RSObject[] getAll() {
-    	Set<RSObject> objects = new LinkedHashSet<RSObject>();
+    	return getAll(Objects.ALL_FILTER);
+    }
+
+	/**
+     * Returns all the <tt>RSObject</tt>s in the local region
+	 * accepted by the provided Filter.
+     *
+	 * @param filter Filters out unwanted objects.
+     * @return An <tt>RSObject[]</tt> of all the accepted objects
+	 * in the loaded region.
+     */
+	public RSObject[] getAll(Filter<RSObject> filter) {
+		Set<RSObject> objects = new LinkedHashSet<RSObject>();
     	for (int x = 0; x < 104; x++) {
             for (int y = 0; y < 104; y++) {
-            	objects.addAll(getAtLocal(x, y, -1));
+				for (RSObject o : getAtLocal(x, y, -1)) {
+					if (filter.accept(o)) {
+						objects.add(o);
+					}
+				}
             }
     	}
     	return objects.toArray(new RSObject[objects.size()]);
-    }
+	}
 
     /**
+     * Returns the <tt>RSObject</tt> that is nearest out of all
+	 * objects that are accepted by the provided Filter.
+     *
+     * @param filter Filters out unwanted objects.
+     * @return An <tt>RSObject</tt> representing the nearest object
+	 * that was accepted by the filter; or null if there are no
+	 * matching objects in the current region.
+     */
+    public RSObject getNearest(Filter<RSObject> filter) {
+        RSObject cur = null;
+        double dist = -1;
+        for (int x = 0; x < 104; x++) {
+            for (int y = 0; y < 104; y++) {
+                Set<RSObject> objs = getAtLocal(x, y, -1);
+                for (RSObject o : objs) {
+                    if (filter.accept(o)) {
+                        double distTmp = methods.calc.distanceBetween(methods.players.getMyPlayer().getLocation(), o.getLocation());
+                        if (cur == null) {
+                            dist = distTmp;
+                            cur = o;
+                        } else if (distTmp < dist) {
+                            cur = o;
+                            dist = distTmp;
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+        return cur;
+    }
+
+	/**
      * Returns the <tt>RSObject</tt> that is nearest, out of all of the
-     * RSObjects with the provided ID(s). Can return null.
+     * RSObjects with the provided ID(s).
      *
      * @param ids The ID(s) of the RSObject that you are searching.
-     * @return An <tt>RSObject</tt> representing the nearest object with one of the
-     *         provided IDs; or null if there are no
-     *         matching objects in the current region.
+     * @return An <tt>RSObject</tt> representing the nearest object
+	 * with one of the provided IDs; or null if there are no matching
+	 * objects in the current region.
      */
-    public RSObject getNearest(int... ids) {
-        RSObject cur = null;
-        double dist = -1;
-        for (int x = 0; x < 104; x++) {
-            for (int y = 0; y < 104; y++) {
-                Set<RSObject> objs = getAtLocal(x, y, -1);
-                for (RSObject o : objs) {
-                    boolean isObject = false;
-                    for (int id : ids) {
-                        if (o.getID() == id) {
-                            isObject = true;
-                            break;
-                        }
-                    }
-                    if (isObject) {
-                        double distTmp = methods.calc.distanceBetween(methods.players.getMyPlayer().getLocation(), o.getLocation());
-                        if (cur == null) {
-                            dist = distTmp;
-                            cur = o;
-                        } else if (distTmp < dist) {
-                            cur = o;
-                            dist = distTmp;
-                        }
-                        break;
-                    }
-                }
-            }
-        }
-        return cur;
-    }
+	public RSObject getNearest(final int... ids) {
+		return getNearest(new Filter<RSObject>() {
+			public boolean accept(RSObject o) {
+				for (int id : ids) {
+					if (o.getID() == id) {
+						return true;
+					}
+				}
+				return false;
+			}
+		});
+	}
 
     /**
      * Returns the <tt>RSObject</tt> that is nearest, out of all of the
-     * RSObjects with the provided name(s). Can return null.
+     * RSObjects with the provided name(s).
      *
      * @param names The name(s) of the RSObject that you are searching.
-     * @return An <tt>RSObject</tt> representing the nearest object with one of the
-     *         provided names; or null if there are no
-     *         matching objects in the current region.
+     * @return An <tt>RSObject</tt> representing the nearest object with
+	 * one of the provided names; or null if there are no matching objects
+	 * in the current region.
      */
-    public RSObject getNearest(String... names) {
-        RSObject cur = null;
-        double dist = -1;
-        for (int x = 0; x < 104; x++) {
-            for (int y = 0; y < 104; y++) {
-                Set<RSObject> objs = getAtLocal(x, y, -1);
-                for (RSObject o : objs) {
-                    boolean isObject = false;
-                    for (String name : names) {
-                    	RSObjectDef def = o.getDef();
-                        if (def != null && def.getName().toLowerCase().contains(name.toLowerCase())) {
-                            isObject = true;
-                            break;
-                        }
-                    }
-                    if (isObject) {
-                        double distTmp = methods.calc.distanceBetween(methods.players.getMyPlayer().getLocation(), o.getLocation());
-                        if (cur == null) {
-                            dist = distTmp;
-                            cur = o;
-                        } else if (distTmp < dist) {
-                            cur = o;
-                            dist = distTmp;
-                        }
-                        break;
-                    }
-                }
-            }
-        }
-        return cur;
+    public RSObject getNearest(final String... names) {
+		return getNearest(new Filter<RSObject>() {
+			public boolean accept(RSObject o) {
+				RSObjectDef def = o.getDef();
+				if (def != null) {
+					for (String name : names) {
+						if (name.equals(def.getName())) {
+							return true;
+						}
+					}
+				}
+				return false;
+			}
+		});
     }
     
     /**

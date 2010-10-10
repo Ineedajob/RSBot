@@ -26,32 +26,24 @@ import javax.swing.JOptionPane;
 import org.rsbot.util.GlobalConfiguration;
 
 public class BotStub implements AppletStub, AppletContext {
-    private static final Map<URL, WeakReference<Image>> imageCache;
 
-    static {
-        imageCache = new HashMap<URL, WeakReference<Image>>();
-    }
-
-    public static void clearImageCache() {
-        BotStub.imageCache.clear();
-    }
+    private final Map<URL, WeakReference<Image>> IMAGE_CACHE = new HashMap<URL, WeakReference<Image>>();
+    private final Map<String, InputStream> INPUT_CACHE = Collections.synchronizedMap(new HashMap<String, InputStream>(2));
 
     private final Logger log = Logger.getLogger(BotStub.class.getName());
     private final Applet applet;
     private final URL codeBase;
     private final URL documentBase;
-    private final Map<String, InputStream> inputCache;
     private boolean isActive;
     private final Map<String, String> parameters;
 
-    public BotStub(final Applet applet) {
+    public BotStub(final RSLoader applet) {
         this.applet = applet;
-        parameters = new Crawler(((RSLoader) applet).injector).getParameters();
+        parameters = new Crawler("http://www." + applet.getTargetName() + ".com/").getParameters();
         final String world = parameters.get("worldid");
-        inputCache = Collections.synchronizedMap(new HashMap<String, InputStream>(2));
         try {
-            codeBase = new URL("http://world" + world + "." + ((RSLoader) applet).injector.generateTargetName() + ".com");
-            documentBase = new URL("http://world" + world + "." + ((RSLoader) applet).injector.generateTargetName() + ".com/m0");
+            codeBase = new URL("http://world" + world + "." + applet.getTargetName() + ".com");
+            documentBase = new URL("http://world" + world + "." + applet.getTargetName() + ".com/m0");
         } catch (final MalformedURLException e) {
             throw new RuntimeException(e);
         }
@@ -61,10 +53,6 @@ public class BotStub implements AppletStub, AppletContext {
         final Dimension size = new Dimension(x, y);
         applet.setSize(size);
         applet.setPreferredSize(size);
-    }
-
-    public void clearInputCache() {
-        inputCache.clear();
     }
 
     public Applet getApplet(final String name) {
@@ -98,13 +86,13 @@ public class BotStub implements AppletStub, AppletContext {
     }
 
     public Image getImage(final URL url) {
-        synchronized (BotStub.imageCache) {
-            WeakReference<Image> ref = BotStub.imageCache.get(url);
+        synchronized (IMAGE_CACHE) {
+            WeakReference<Image> ref = IMAGE_CACHE.get(url);
             Image img;
             if ((ref == null) || ((img = ref.get()) == null)) {
                 img = Toolkit.getDefaultToolkit().createImage(url);
                 ref = new WeakReference<Image>(img);
-                BotStub.imageCache.put(url, ref);
+                IMAGE_CACHE.put(url, ref);
             }
             return img;
         }
@@ -118,11 +106,11 @@ public class BotStub implements AppletStub, AppletContext {
     }
 
     public InputStream getStream(final String key) {
-        return inputCache.get(key);
+        return INPUT_CACHE.get(key);
     }
 
     public Iterator<String> getStreamKeys() {
-        return Collections.unmodifiableSet(inputCache.keySet()).iterator();
+        return Collections.unmodifiableSet(INPUT_CACHE.keySet()).iterator();
     }
 
     public boolean isActive() {
@@ -134,7 +122,7 @@ public class BotStub implements AppletStub, AppletContext {
     }
 
     public void setStream(final String key, final InputStream stream) throws IOException {
-        inputCache.put(key, stream);
+        INPUT_CACHE.put(key, stream);
     }
 
     public void showDocument(final URL url) {
@@ -147,8 +135,8 @@ public class BotStub implements AppletStub, AppletContext {
             log.severe(message);
             JOptionPane.showMessageDialog(null, message, "Outdated", JOptionPane.WARNING_MESSAGE);
             File versionFile = new File(GlobalConfiguration.Paths.getVersionCache());
-            if (versionFile.exists()) {
-                versionFile.delete();
+            if (versionFile.exists() && !versionFile.delete()) {
+                log.warning("Unable to clear cache.");
             }
         } else {
             log.info("Attempting to show: " + url.toString() + " [" + target + "]");

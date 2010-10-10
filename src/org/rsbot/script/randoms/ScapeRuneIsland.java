@@ -17,7 +17,6 @@ public class ScapeRuneIsland extends Random {
     public int[] statueid = {8992, 8993, 8990, 8991};
     public RSNPC servant;
     public boolean finished;
-    RSObject a;
 
     public boolean activateCondition() {
         return (servant = npcs.getNearest(2481)) != null;
@@ -96,7 +95,7 @@ public class ScapeRuneIsland extends Random {
             return random(400, 1200);
         }
         if (inventory.getCount(6209) == 0) {
-            final RSGroundItem net = groundItems.get(6209);
+            final RSGroundItem net = groundItems.getNearest(6209);
             if (net != null) {
                 if (calc.tileOnScreen(net.getLocation())) {
                     walking.walkTo(net.getLocation());

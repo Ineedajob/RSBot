@@ -26,9 +26,13 @@ public class Prison extends Random {
 
     @Override
     public boolean activateCondition() {
-        pete = npcs.getNearest("Prison Pete");
-        RSObject lever = objects.getNearest(LEVER_ID);
-        return game.isLoggedIn() && lever != null && pete != null;
+		if (game.isLoggedIn()) {
+			pete = npcs.getNearest("Prison Pete");
+			if (pete != null) {
+				return objects.getNearest(LEVER_ID) != null;
+			}
+		}
+        return false;
     }
 
     @Override

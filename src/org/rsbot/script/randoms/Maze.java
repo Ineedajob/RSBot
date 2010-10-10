@@ -133,7 +133,7 @@ public class Maze extends Random {
 
     @Override
     public boolean activateCondition() {
-        if (game.isLoggedIn() && ((objects.getNearest(3626) != null) || (objects.getNearest(3649) != null))) {
+        if (game.isLoggedIn() && ((objects.getNearest(3626, 3649) != null))) {
             camera.setAltitude(true);
             return true;
         }
