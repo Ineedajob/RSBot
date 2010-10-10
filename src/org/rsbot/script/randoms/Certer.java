@@ -14,13 +14,9 @@ import org.rsbot.script.wrappers.RSTile;
  */
 @ScriptManifest(authors = {"joku.rules"}, name = "Certer", version = 1.0)
 public class Certer extends Random {
+
     private final int[] MODEL_IDS = {2807, 8828, 8829, 8832, 8833, 8834, 8835, 8836, 8837};
     private final int[] bookPiles = {42352, 42354};
-    /*
-      * private final RSTile certerLocation() { int myX =
-      * getMyPlayer().getLocation().getX(); int centY = 9494; RSTile theLoc = new
-      * RSTile(myX, centY); return theLoc; }
-      */
     private final String[] ITEM_NAMES = {"bowl", "battleaxe", "fish", "shield", "helmet", "ring", "shears", "sword", "spade"};
 
     private boolean readyToLeave = false;
@@ -28,7 +24,7 @@ public class Certer extends Random {
 
     @Override
     public boolean activateCondition() {
-        return game.isLoggedIn() && (objects.getNearest(bookPiles) != null);
+        return game.isLoggedIn() && objects.getNearest(bookPiles) != null;
     }
 
     @Override

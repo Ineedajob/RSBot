@@ -8,7 +8,6 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.rsbot.injector.Injector;
 import org.rsbot.util.GlobalConfiguration;
 
 public class Crawler {
@@ -16,9 +15,7 @@ public class Crawler {
 
     private static HashMap<String, String> parameters;
 
-    public Crawler(Injector i) {
-        String root = "http://www." + i.generateTargetName() + ".com/";
-
+    public Crawler(String root) {
         final String index = firstMatch("<a id=\"continue\" class=\"barItem\" href=\"([^\"]+)\"\\s+onclick=\"[^\"]+\">Continue to Full Site for News and Game Help", downloadPage(root, null));
 
         final String frame = root + "game.ws";

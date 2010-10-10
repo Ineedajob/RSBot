@@ -7,7 +7,6 @@ import org.rsbot.util.GlobalConfiguration;
 import java.applet.Applet;
 import java.awt.*;
 import java.io.File;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -23,12 +22,10 @@ public class RSLoader extends Applet implements Runnable, Loader {
 	 * The applet of the client
 	 */
 	private Applet client;
+
 	private Runnable loadedCallback;
 
-	/**
-	 * The injector
-	 */
-	Injector injector;
+	private String targetName;
 
 	/**
 	 * The game class loader
@@ -81,23 +78,30 @@ public class RSLoader extends Applet implements Runnable, Loader {
 			Class<?> c = classLoader.loadClass("client");
 			client = (Applet) c.newInstance();
 			loadedCallback.run();
-			c.getMethod("provideLoaderApplet", new Class[] { java.applet.Applet.class }).invoke(null, new Object[] { this });
+			c.getMethod("provideLoaderApplet", new Class[] { java.applet.Applet.class }).invoke(null, this);
 			client.init();
 			client.start();
 		} catch (final Exception e) {
-			log.log(Level.SEVERE, "Unable to load client, please check your firewall and internet connection.");
+			log.severe("Unable to load client, please check your firewall and internet connection.");
 			File versionFile = new File(GlobalConfiguration.Paths.getVersionCache());
-			versionFile.delete();
+			if (versionFile.exists() && !versionFile.delete()) {
+				log.warning("Unable to clear cache.");
+			}
 		}
 	}
 
 	public void loadClasses() {
-		injector = new Injector();
-		classLoader = new RSClassLoader(injector);
+		Injector i = new Injector();
+		targetName = i.generateTargetName();
+		classLoader = new RSClassLoader(i);
 	}
 	
 	public void setCallback(final Runnable r) {
 		loadedCallback = r;
+	}
+
+	public String getTargetName() {
+		return targetName;
 	}
 
 	/**

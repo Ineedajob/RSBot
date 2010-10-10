@@ -6,30 +6,26 @@ import org.rsbot.script.wrappers.RSComponent;
 import org.rsbot.script.wrappers.RSObject;
 
 /*
-* Updated by Iscream(Feb 3, 10)
-* Updated by Twistedmind(Feb 4, 10) Small camera turning issue...
-* Updated by Iscream(Feb 5, 10)
-* Updated by TwistedMind(Feb 7, '10) "What have you guys been smoking??? I cleaned the code and it worked again... Why atTile if there's atObject?"
-* Updated by Arbiter(Sep 21, '10) Switched back to atTile. Obvious spread out model is obvious. Also fixed the fail returning. >.>
+* Updated by Iscream (Feb 3, 10)
+* Updated by Twistedmind (Feb 4, 10) Small camera turning issue...
+* Updated by Iscream (Feb 5, 10)
+* Updated by TwistedMind (Feb 7, 10) "What have you guys been smoking??? I cleaned the code and it worked again... Why atTile if there's atObject?"
+* Updated by Arbiter (Sep 21, 10) Switched back to atTile. Obvious spread out model is obvious. Also fixed the fail returning. >.>
+* Updated by Jacmob (Oct 10, 10) Cleaned up disgraceful activateCondition()
 */
 @ScriptManifest(authors = {"Aelin", "LM3", "IceCandle", "Taha"}, name = "Pinball", version = 2.7)
-
 public class Pinball extends Random {
 
-    private final int[] OBJ_PILLARS = {15000, 15002, 15004, 15006, 15008};
+    private static final int[] OBJ_PILLARS = {15000, 15002, 15004, 15006, 15008};
 
-    @Override
+	private static final int[] OBJ_ACTIVATE = {15000, 15002, 15004, 15006, 15007, 15008};
+
     public boolean activateCondition() {
-        return (game.isLoggedIn() && (getPillar() != null)) || (objects.getNearest(OBJ_PILLARS) != null) || (objects.getNearest(15007) != null);
-    }
-
-
-    private RSObject getPillar() {
-        return objects.getNearest(OBJ_PILLARS);
+        return game.isLoggedIn() && (objects.getNearest(OBJ_ACTIVATE) != null);
     }
 
     private int getScore() {
-        int IFACE_PINBALL=263;
+        int IFACE_PINBALL = 263;
         RSComponent score = interfaces.get(IFACE_PINBALL).getComponent(1);
         try {
             return Integer.parseInt(score.getText().split(" ")[1]);
@@ -38,7 +34,6 @@ public class Pinball extends Random {
         }
     }
 
-    @Override
     public int loop() {
         if (!activateCondition()) {
             return -1;

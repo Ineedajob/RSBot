@@ -3,6 +3,7 @@ package org.rsbot.script.methods;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.rsbot.script.util.Filter;
 import org.rsbot.script.wrappers.RSPlayer;
 
 /**
@@ -11,17 +12,10 @@ import org.rsbot.script.wrappers.RSPlayer;
 public class Players extends MethodProvider {
 
 	/**
-	 * Used to filter the players found by methods in the Players class.
+	 * A filter that accepts all matches.
 	 */
-	public static interface Qualifier {
-		public boolean qualifies(RSPlayer player);
-	}
-
-	/**
-	 * A qualifier that accepts all matches.
-	 */
-	public static final Qualifier PREDICATE_QUALIFIER = new Qualifier() {
-		public boolean qualifies(RSPlayer player) {
+	public static final Filter<RSPlayer> ALL_FILTER = new Filter<RSPlayer>() {
+		public boolean accept(RSPlayer player) {
 			return true;
 		}
 	};
@@ -45,23 +39,23 @@ public class Players extends MethodProvider {
 	 * @return All valid RSPlayers.
 	 */
 	public RSPlayer[] getAll() {
-		return getAll(Players.PREDICATE_QUALIFIER);
+		return getAll(Players.ALL_FILTER);
 	}
 
 	/**
 	 * Returns an array of all valid <tt>RSPlayer</tt>s.
 	 *
-	 * @param qualifier Filters unwanted matches.
+	 * @param filter Filters out unwanted matches.
 	 * @return All valid RSPlayers.
 	 */
-	public RSPlayer[] getAll(Qualifier qualifier) {
+	public RSPlayer[] getAll(Filter<RSPlayer> filter) {
 		int[] indices = methods.client.getRSPlayerIndexArray();
 		org.rsbot.client.RSPlayer[] array = methods.client.getRSPlayerArray();
 		Set<RSPlayer> players = new HashSet<RSPlayer>();
 		for (int index : indices) {
 			if (index != 0) {
 				RSPlayer player = new RSPlayer(methods, array[index]);
-				if (qualifier.qualifies(player)) {
+				if (filter.accept(player)) {
 					players.add(player);
 				}
 			}
@@ -71,14 +65,14 @@ public class Players extends MethodProvider {
 
 	/**
 	 * Returns the <tt>RSPlayer</tt> that is nearest, out of all of the Players
-	 * with the provided name. Can return null.
+	 * accepted by the provided filter.
 	 *
-	 * @param qualifier Filters unwanted matches.
-	 * @return An <tt>RSPlayer</tt> object representing the nearest player with
-	 * the provided name; or null if there are no matching players in
-	 * the current region.
+	 * @param filter Filters unwanted matches.
+	 * @return An <tt>RSPlayer</tt> object representing the nearest player that
+	 * was accepted by the provided Filter; or null if there are no matching
+	 * players in the current region.
 	 */
-	public RSPlayer getNearest(Qualifier qualifier) {
+	public RSPlayer getNearest(Filter<RSPlayer> filter) {
 		int min = 20;
 		RSPlayer closest = null;
 		org.rsbot.client.RSPlayer[] players = methods.client.getRSPlayerArray();
@@ -88,7 +82,7 @@ public class Players extends MethodProvider {
 				continue;
 			}
 			RSPlayer player = new RSPlayer(methods, players[index]);
-			if (qualifier.qualifies(player)) {
+			if (filter.accept(player)) {
 				int distance = methods.calc.distanceTo(player);
 				if (distance < min) {
 					min = distance;
@@ -101,7 +95,7 @@ public class Players extends MethodProvider {
 
 	/**
 	 * Returns the <tt>RSPlayer</tt> that is nearest, out of all of the Players
-	 * with the provided name. Can return null.
+	 * with the provided name.
 	 *
 	 * @param name The name of the <tt>RSPlayer</tt> that you are searching for.
 	 * @return An <tt>RSPlayer</tt> object representing the nearest player with
@@ -109,8 +103,8 @@ public class Players extends MethodProvider {
 	 * the current region.
 	 */
 	public RSPlayer getNearest(final String name) {
-		return getNearest(new Qualifier() {
-			public boolean qualifies(RSPlayer player) {
+		return getNearest(new Filter<RSPlayer>() {
+			public boolean accept(RSPlayer player) {
 				return player.getName().equals(name);
 			}
 		});
@@ -118,16 +112,16 @@ public class Players extends MethodProvider {
 
 	/**
 	 * Returns the <tt>RSPlayer</tt> that is nearest, out of all of the Players
-	 * with the provided combat level. Can return null.
+	 * with the provided combat level.
 	 *
 	 * @param level The combat level of the <tt>RSPlayer</tt> that you are searching for.
 	 * @return An <tt>RSPlayer</tt> object representing the nearest player with
-	 * the provided combat evel; or null if there are no matching players in
+	 * the provided combat level; or null if there are no matching players in
 	 * the current region.
 	 */
 	public RSPlayer getNearest(final int level) {
-		return getNearest(new Qualifier() {
-			public boolean qualifies(RSPlayer player) {
+		return getNearest(new Filter<RSPlayer>() {
+			public boolean accept(RSPlayer player) {
 				return player.getCombatLevel() == level;
 			}
 		});

@@ -46,7 +46,7 @@ public class Molly extends Random {
 
     public boolean canRun() {
         molly = npcs.getNearest("Molly");
-        controlPanel = objects.getNearest(Molly.CONTROL_PANEL_ID);
+		controlPanel = objects.getNearest(Molly.CONTROL_PANEL_ID);
         return (molly != null && molly.isInteractingWithLocalPlayer()) || (controlPanel != null);
     }
 

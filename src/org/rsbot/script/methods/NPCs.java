@@ -2,6 +2,7 @@ package org.rsbot.script.methods;
 
 import org.rsbot.client.Node;
 import org.rsbot.client.RSNPCNode;
+import org.rsbot.script.util.Filter;
 import org.rsbot.script.wrappers.RSNPC;
 
 import java.util.HashSet;
@@ -13,17 +14,10 @@ import java.util.Set;
 public class NPCs extends MethodProvider {
 
 	/**
-	 * Used to filter the NPCs found by methods in the NPCs class.
+	 * A filter that accepts all matches.
 	 */
-	public static interface Qualifier {
-		public boolean qualifies(RSNPC npc);
-	}
-
-	/**
-	 * A qualifier that accepts all matches.
-	 */
-	public static final Qualifier PREDICATE_QUALIFIER = new Qualifier() {
-		public boolean qualifies(RSNPC npc) {
+	public static final Filter<RSNPC> ALL_FILTER = new Filter<RSNPC>() {
+		public boolean accept(RSNPC npc) {
 			return true;
 		}
 	};
@@ -38,24 +32,24 @@ public class NPCs extends MethodProvider {
 	 * @return An array of the loaded RSNPCs.
 	 */
 	public RSNPC[] getAll() {
-		return getAll(NPCs.PREDICATE_QUALIFIER);
+		return getAll(NPCs.ALL_FILTER);
 	}
 
 	/**
-	 * Returns an array of all loaded RSNPCs that are qualified
-	 * by the provided Qualifier.
+	 * Returns an array of all loaded RSNPCs that are accepted
+	 * by the provided Filter
 	 *
-	 * @param qualifier Filters unwanted matches.
+	 * @param filter Filters out unwanted matches.
 	 * @return An array of the loaded RSNPCs.
 	 */
-	public RSNPC[] getAll(Qualifier qualifier) {
+	public RSNPC[] getAll(Filter<RSNPC> filter) {
 		int[] indices = methods.client.getRSNPCIndexArray();
 		Set<RSNPC> npcs = new HashSet<RSNPC>();
 		for (int index : indices) {
 			Node node = methods.nodes.lookup(methods.client.getRSNPCNC(), index);
 			if (node instanceof RSNPCNode) {
 				RSNPC npc = new RSNPC(methods, ((RSNPCNode) node).getRSNPC());
-				if (qualifier.qualifies(npc)) {
+				if (filter.accept(npc)) {
 					npcs.add(npc);
 				}
 			}
@@ -64,14 +58,14 @@ public class NPCs extends MethodProvider {
 	}
 
 	/**
-	 * Returns the RSNPC that is nearest out of all of loaded RSPNCs qualified
-	 * by the provided Qualifier. Can return null.
+	 * Returns the RSNPC that is nearest out of all of loaded RSPNCs accepted
+	 * by the provided Filter.
 	 *
-	 * @param qualifier Filters unwanted matches.
-	 * @return An RSNPC object representing the nearest RSNPC qualified by the
-	 * provided Qualifier; or null if there are no matching NPCs in the current region.
+	 * @param filter Filters out unwanted matches.
+	 * @return An RSNPC object representing the nearest RSNPC accepted by the
+	 * provided Filter; or null if there are no matching NPCs in the current region.
 	 */
-	public RSNPC getNearest(Qualifier qualifier) {
+	public RSNPC getNearest(Filter<RSNPC> filter) {
 		int min = 20;
 		RSNPC closest = null;
 		int[] indices = methods.client.getRSNPCIndexArray();
@@ -80,7 +74,7 @@ public class NPCs extends MethodProvider {
 			Node node = methods.nodes.lookup(methods.client.getRSNPCNC(), index);
 			if (node instanceof RSNPCNode) {
 				RSNPC npc = new RSNPC(methods, ((RSNPCNode) node).getRSNPC());
-				if (qualifier.qualifies(npc)) {
+				if (filter.accept(npc)) {
 					int distance = methods.calc.distanceTo(npc);
 					if (distance < min) {
 						min = distance;
@@ -101,8 +95,8 @@ public class NPCs extends MethodProvider {
 	 * provided IDs; or null if there are no matching NPCs in the current region.
 	 */
 	public RSNPC getNearest(final int... ids) {
-		return getNearest(new Qualifier() {
-			public boolean qualifies(RSNPC npc) {
+		return getNearest(new Filter<RSNPC>() {
+			public boolean accept(RSNPC npc) {
 				for (int id : ids) {
 					if (npc.getID() == id) {
 						return true;
@@ -122,8 +116,8 @@ public class NPCs extends MethodProvider {
 	 * provided IDs; or null if there are no matching NPCs in the current region.
 	 */
 	public RSNPC getNearest(final String... names) {
-		return getNearest(new Qualifier() {
-			public boolean qualifies(RSNPC npc) {
+		return getNearest(new Filter<RSNPC>() {
+			public boolean accept(RSNPC npc) {
 				for (String name : names) {
 					if (npc.getName().equals(name)) {
 						return true;

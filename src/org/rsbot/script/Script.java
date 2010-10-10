@@ -261,11 +261,10 @@ public abstract class Script extends Methods implements EventListener, Runnable 
             return false;
 		}
         for (Random random : ctx.bot.getScriptHandler().getRandoms()) {
-            if (!random.isEnabled() || (random instanceof LoginBot && ctx.bot.disableAutoLogin)) {
-                continue;
-            }
-            if (random.run(this)) {
-                return true;
+            if (random.isEnabled() || !(ctx.bot.disableAutoLogin && random instanceof LoginBot)) {
+                if (random.run(this)) {
+                	return true;
+            	}
             }
         }
         return false;
