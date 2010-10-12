@@ -135,19 +135,6 @@ public class Game extends MethodProvider {
     }
 
     /**
-     * Activates/deactivates a prayer via interfaces.
-     *
-     * @param pray     The integer that represents the prayer by counting from left
-     *                 to right.
-     * @param activate <tt>true</tt> to activate; <tt>false</tt> to deactivate.
-     * @return <tt>true</tt> if the interface was clicked; otherwise <tt>false</tt>.
-     */
-    public boolean setPrayer(int pray, boolean activate) {
-        return methods.interfaces.getComponent(271, 7).getComponents()[pray].getBackgroundColor() == -1 &&
-                methods.interfaces.getComponent(271, 7).getComponents()[pray].doAction(activate ? "Activate" : "Deactivate");
-    }
-
-    /**
      * Access the last message spoken by a player.
      *
      * @return The last message spoken by a player or "" if none
@@ -220,29 +207,14 @@ public class Game extends MethodProvider {
 
     /**
      * Gets the current run energy.
+     * 
+     * Deprecated : use walking.getEnergy()
      *
      * @return An <tt>int</tt> representation of the players current energy.
      */
+    @Deprecated
     public int getEnergy() {
         return methods.walking.getEnergy();
-    }
-
-    /**
-     * Returns an array of RSComponents representing the prayers that
-     * are selected.
-     *
-     * @return An <code>RSComponent</code> array containing all the
-     *         components that represent selected prayers.
-     */
-    public RSComponent[] getSelectedPrayers() {
-        ArrayList<RSComponent> selected = new ArrayList<RSComponent>();
-        RSComponent[] prayers = methods.interfaces.getComponent(271, 7).getComponents();
-        for (RSComponent prayer : prayers) {
-            if (prayer.getBackgroundColor() != -1) {
-                selected.add(prayer);
-            }
-        }
-        return selected.toArray(new RSComponent[selected.size()]);
     }
 
     /**

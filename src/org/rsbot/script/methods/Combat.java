@@ -2,6 +2,8 @@ package org.rsbot.script.methods;
 
 import org.rsbot.script.wrappers.RSComponent;
 
+import java.util.ArrayList;
+
 /**
  * Combat related operations.
  */
@@ -106,6 +108,78 @@ public class Combat extends MethodProvider {
 				return true;
 		}
 		return false;
+	}
+
+    /**
+     * Activates/deactivates a prayer via interfaces.
+     *
+     * @param pray     The integer that represents the prayer by counting from left
+     *                 to right.
+     * @param activate <tt>true</tt> to activate; <tt>false</tt> to deactivate.
+     * @return <tt>true</tt> if the interface was clicked; otherwise <tt>false</tt>.
+     */
+    public boolean setPrayer(int pray, boolean activate) {
+        return methods.interfaces.getComponent(271, 7).getComponents()[pray].getBackgroundColor() == -1 &&
+                methods.interfaces.getComponent(271, 7).getComponents()[pray].doAction(activate ? "Activate" : "Deactivate");
+    }
+
+    /**
+     * Returns an array of RSComponents representing the prayers that
+     * are selected.
+     *
+     * @return An <code>RSComponent</code> array containing all the
+     *         components that represent selected prayers.
+     */
+    public RSComponent[] getSelectedPrayers() {
+        ArrayList<RSComponent> selected = new ArrayList<RSComponent>();
+        RSComponent[] prayers = methods.interfaces.getComponent(271, 7).getComponents();
+        for (RSComponent prayer : prayers) {
+            if (prayer.getBackgroundColor() != -1) {
+                selected.add(prayer);
+            }
+        }
+        return selected.toArray(new RSComponent[selected.size()]);
+    }
+
+    /**
+	 * Returns whether or not we're poisoned.
+	 *
+	 * @return <tt>true</tt> if poisoned; otherwise <tt>false</tt>.
+	 */
+	public boolean isPoisoned() {
+		return methods.settings.getSetting(102) > 0;
+	}
+
+	/**
+	 * Returns whether or not the special-attack option is enabled.
+	 *
+	 * @return <tt>true</tt> if special is enabled; otherwise <tt>false</tt>.
+	 */
+	public boolean isSpecialEnabled() {
+		return methods.settings.getSetting(Settings.SETTING_SPECIAL_ATTACK_ENABLED) == 1;
+	}
+
+	/**
+	 * Gets the special bar energy amount.
+	 *
+	 * @return The current spec energy.
+	 */
+	public int getSpecialBarEnergy() {
+		return methods.settings.getSetting(300);
+	}
+
+	/**
+	 * Gets the current player's prayer points.
+	 *
+	 * @return The current prayer points if the interface
+	 * is valid; otherwise 0.
+	 */
+	public int getPrayerPoints() {
+		try {
+			return Integer.parseInt(methods.interfaces.get(749).getComponent(4).getText().trim());
+		} catch (NumberFormatException ex) {
+			return 0;
+		}
 	}
 
 }
