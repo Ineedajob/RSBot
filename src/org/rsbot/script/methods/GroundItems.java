@@ -80,12 +80,10 @@ public class GroundItems extends MethodProvider {
 	}
 
 	/**
-	 * Returns an RSItemTile representing the nearest item on the ground that
-	 * is accepted by the provided Filter.
+	 * Returns the nearest ground item that is accepted by the provided Filter.
 	 *
 	 * @param filter Filters out unwanted matches.
-	 * @return RSItemTile of the nearest item with the an ID that matches any in
-	 * the array of IDs provided; or null if no matching ground items were found.
+	 * @return The nearest item that is accepted by the provided Filter; or null.
 	 */
 	public RSGroundItem getNearest(Filter<RSGroundItem> filter) {
 		int dist = 9999999;
