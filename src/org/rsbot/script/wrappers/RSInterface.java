@@ -28,11 +28,6 @@ public class RSInterface extends MethodProvider implements Iterable<RSComponent>
      */
     private int index;
 
-    /**
-     * The constructor. For internal use only.
-     *
-     * @param iface The id of the interface, e.g. 149.
-     */
     public RSInterface(final MethodContext ctx, final int iface) {
     	super(ctx);
         index = iface;
@@ -181,17 +176,21 @@ public class RSInterface extends MethodProvider implements Iterable<RSComponent>
     }
 
     /**
-     * Checks whether or not the interface is valid
+     * Checks whether or not this interface is valid
      *
      * @return <tt>true</tt> if it's valid
      */
     public boolean isValid() {
-        // everything is thread hot so make sure you copy pointers to it
-        if (getChildrenInternal() == null)
+        if (getChildrenInternal() == null) {
             return false;
-        final int idx = getIndex();
-        final boolean[] validArray = methods.client.getValidRSInterfaceArray();
-        return (validArray != null) && (idx < validArray.length) && validArray[idx];
+		}
+        int idx = getIndex();
+        boolean[] validArray = methods.client.getValidRSInterfaceArray();
+        if (idx >= 0 && validArray != null && idx < validArray.length && validArray[idx]) {
+			org.rsbot.client.RSInterface[][] inters = methods.client.getRSInterfaceCache();
+			return idx < inters.length && inters[idx] != null;
+		}
+		return false;
     }
 
     /**
