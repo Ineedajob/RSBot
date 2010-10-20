@@ -36,6 +36,8 @@ public class GlobalConfiguration {
             public static final String ICON_ADD_DOWN = Resources.ROOT_IMG + "/add_down.png";
             public static final String ICON_HOME = Resources.ROOT_IMG + "/home.png";
             public static final String ICON_BOT = Resources.ROOT_IMG + "/bot.png";
+            public static final String ICON_CLOSE = Resources.ROOT_IMG + "/close.png";
+            public static final String ICON_CLOSE_OVER = Resources.ROOT_IMG + "/close_over.png";
             public static final String ICON_TICK = Resources.ROOT_IMG + "/tick.png";
             public static final String ICON_CONNECT = Resources.ROOT_IMG + "/connect.png";
             public static final String ICON_DISCONNECT = Resources.ROOT_IMG + "/disconnect.png";
@@ -73,6 +75,8 @@ public class GlobalConfiguration {
         public static final String ICON_ADD_DOWN = Paths.ROOT_IMG + File.separator + "add_down.png";
         public static final String ICON_HOME = Paths.ROOT_IMG + File.separator + "home.png";
         public static final String ICON_BOT = Paths.ROOT_IMG + File.separator + "bot.png";
+        public static final String ICON_CLOSE = Paths.ROOT_IMG + File.separator + "close.png";
+        public static final String ICON_CLOSE_OVER = Paths.ROOT_IMG + File.separator + "close_over.png";
         public static final String ICON_TICK = Paths.ROOT_IMG + File.separator + "tick.png";
         public static final String ICON_CONNECT = Paths.ROOT_IMG + File.separator + "connect.png";
         public static final String ICON_DISCONNECT = Paths.ROOT_IMG + File.separator + "disconnect.png";
@@ -90,9 +94,9 @@ public class GlobalConfiguration {
         public static String getAccountsFile() {
             final String path;
             if (GlobalConfiguration.getCurrentOperatingSystem() == OperatingSystem.WINDOWS) {
-                path = System.getenv("APPDATA") + File.separator + GlobalConfiguration.NAME + " Accounts.ini";
+                path = System.getenv("APPDATA") + File.separator + GlobalConfiguration.NAME + "_Accounts.ini";
             } else {
-                path = Paths.getUnixHome() + File.separator + "." + GlobalConfiguration.NAME_LOWERCASE + "pw";
+                path = Paths.getUnixHome() + File.separator + "." + GlobalConfiguration.NAME_LOWERCASE + "acct";
             }
             return path;
         }

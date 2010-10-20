@@ -1,6 +1,6 @@
 package org.rsbot.script.wrappers;
 
-import org.rsbot.client.LDModel;
+import org.rsbot.client.Model;
 import org.rsbot.client.RSObject;
 import org.rsbot.script.methods.MethodContext;
 
@@ -8,9 +8,13 @@ class RSObjectModel extends RSModel {
 	
 	protected RSObject object;
 	
-	RSObjectModel(MethodContext ctx, LDModel model, RSObject object) {
+	RSObjectModel(MethodContext ctx, Model model, RSObject object) {
 		super(ctx, model);
 		this.object = object;
+	}
+
+	protected void update() {
+		
 	}
 
 	@Override

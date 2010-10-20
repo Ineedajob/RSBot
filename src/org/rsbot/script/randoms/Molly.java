@@ -4,7 +4,6 @@ import org.rsbot.script.Random;
 import org.rsbot.script.ScriptManifest;
 import org.rsbot.script.wrappers.*;
 
-import java.awt.*;
 import java.util.ArrayList;
 
 /**
@@ -92,7 +91,7 @@ public class Molly extends Random {
             return random(600, 1000);
         }
         if (!cameraSet) {
-            camera.setAltitude(true);
+            camera.setPitch(true);
             cameraSet = true;
             return (random(300, 500));
         }
@@ -130,7 +129,7 @@ public class Molly extends Random {
                         sleep(random(1200, 2000));
                     } else {
                         walking.walkTileOnScreen(controlPanel.getLocation());
-                        camera.setAltitude(true);
+                        camera.setPitch(true);
                         camera.turnToObject(controlPanel);
                     }
                 } else {
@@ -210,7 +209,7 @@ public class Molly extends Random {
 
     private void setCamera() {
         if ((random(0, 6) == 3) && !cameraSet) {
-            camera.setAltitude(true);
+            camera.setPitch(true);
             cameraSet = true;
         }
     }

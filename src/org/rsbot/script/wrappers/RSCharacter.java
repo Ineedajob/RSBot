@@ -1,6 +1,5 @@
 package org.rsbot.script.wrappers;
 
-import org.rsbot.client.LDModel;
 import org.rsbot.client.Model;
 import org.rsbot.client.Node;
 import org.rsbot.client.RSNPCNode;
@@ -32,7 +31,7 @@ public class RSCharacter extends MethodProvider {
             if (c == null || !methods.calc.pointOnScreen(getScreenLocation()) || !methods.calc.tileOnScreen(getLocation()))
                 return false;
             methods.mouse.move(new Point((int) Math.round(getScreenLocation().getX()) + random(-5, 5), (int) Math.round(getScreenLocation().getY()) + random(-5, 5)));
-            if (methods.menu.getItems()[0].toLowerCase().contains(action.toLowerCase())) {
+            if (methods.menu.getItems()[0].toLowerCase().startsWith(action.toLowerCase())) {
                 methods.mouse.click(true);
                 return true;
             } else {
@@ -52,7 +51,7 @@ public class RSCharacter extends MethodProvider {
     	if (c != null) {
     		Model model = c.getModel();
     		if (model != null) {
-    			return new RSCharacterModel(methods, (LDModel) model, c);
+    			return new RSCharacterModel(methods, model, c);
     		}
     	}
 		return null;

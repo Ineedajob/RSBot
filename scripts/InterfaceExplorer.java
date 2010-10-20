@@ -19,9 +19,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 
-@ScriptManifest(authors = { "joku.rules" }, keywords = "Development", name = "Interface Explorer", version = 0.2, description = "Fetches various interface data for developers.")
+@ScriptManifest(authors = {"joku.rules"}, keywords = "Development", name = "Interface Explorer", version = 0.2, description = "Fetches various interface data for developers.")
 public class InterfaceExplorer extends Script implements PaintListener {
-	
+
 	private class InterfaceTreeModel implements TreeModel {
 		private final Object root = new Object();
 		private final ArrayList<TreeModelListener> treeModelListeners = new ArrayList<TreeModelListener>();
@@ -37,7 +37,7 @@ public class InterfaceExplorer extends Script implements PaintListener {
 		private void fireTreeStructureChanged(final Object oldRoot) {
 			treeModelListeners.size();
 			final TreeModelEvent e = new TreeModelEvent(this,
-					new Object[] { oldRoot });
+					new Object[]{oldRoot});
 			for (final TreeModelListener tml : treeModelListeners) {
 				tml.treeStructureChanged(e);
 			}
@@ -100,7 +100,7 @@ public class InterfaceExplorer extends Script implements PaintListener {
 		}
 
 		public boolean searchMatches(final RSComponent iface,
-				final String contains) {
+									 final String contains) {
 			return iface.getText().toLowerCase().contains(
 					contains.toLowerCase());
 		}
@@ -109,7 +109,8 @@ public class InterfaceExplorer extends Script implements PaintListener {
 			interfaceWraps.clear();
 
 			for (final RSInterface iface : interfaces.getAll()) {
-				toBreak: for (final RSComponent child : iface
+				toBreak:
+				for (final RSComponent child : iface
 						.getComponents()) {
 					if (searchMatches(child, search)) {
 						interfaceWraps.add(new RSInterfaceWrap(iface));
@@ -128,7 +129,7 @@ public class InterfaceExplorer extends Script implements PaintListener {
 		}
 
 		public void valueForPathChanged(final TreePath path,
-				final Object newValue) {
+										final Object newValue) {
 			// tree represented by this model isn't editable
 		}
 	}
@@ -203,115 +204,115 @@ public class InterfaceExplorer extends Script implements PaintListener {
 		return true;
 	}
 
-    public boolean useBreakhandler() {
-        return false;
-    }
+	public boolean useBreakhandler() {
+		return false;
+	}
 
-    public boolean onStart() {
-        window = new JFrame("Interface Explorer");
+	public boolean onStart() {
+		window = new JFrame("Interface Explorer");
 
-        treeModel = new InterfaceTreeModel();
-        treeModel.update("");
-        tree = new JTree(treeModel);
-        tree.setRootVisible(false);
-        tree.setEditable(false);
-        tree.getSelectionModel().setSelectionMode(
-                TreeSelectionModel.SINGLE_TREE_SELECTION);
-        tree.addTreeSelectionListener(new TreeSelectionListener() {
-            private void addInfo(final String key, final String value) {
-                final JPanel row = new JPanel();
-                row.setAlignmentX(Component.LEFT_ALIGNMENT);
-                row.setLayout(new BoxLayout(row, BoxLayout.X_AXIS));
+		treeModel = new InterfaceTreeModel();
+		treeModel.update("");
+		tree = new JTree(treeModel);
+		tree.setRootVisible(false);
+		tree.setEditable(false);
+		tree.getSelectionModel().setSelectionMode(
+				TreeSelectionModel.SINGLE_TREE_SELECTION);
+		tree.addTreeSelectionListener(new TreeSelectionListener() {
+			private void addInfo(final String key, final String value) {
+				final JPanel row = new JPanel();
+				row.setAlignmentX(Component.LEFT_ALIGNMENT);
+				row.setLayout(new BoxLayout(row, BoxLayout.X_AXIS));
 
-                for (final String data : new String[]{key, value}) {
-                    final JLabel label = new JLabel(data);
-                    label.setAlignmentY(Component.TOP_ALIGNMENT);
-                    row.add(label);
-                }
-                infoArea.add(row);
-            }
+				for (final String data : new String[]{key, value}) {
+					final JLabel label = new JLabel(data);
+					label.setAlignmentY(Component.TOP_ALIGNMENT);
+					row.add(label);
+				}
+				infoArea.add(row);
+			}
 
-            public void valueChanged(final TreeSelectionEvent e) {
-                final Object node = tree.getLastSelectedPathComponent();
-                if (node == null || node instanceof RSInterfaceWrap) {
-                    return;
-                }
-                // at this point the node can only be an instace of
-                // RSInterfaceChildWrap
-                // or of RSInterfaceComponentWrap
+			public void valueChanged(final TreeSelectionEvent e) {
+				final Object node = tree.getLastSelectedPathComponent();
+				if (node == null || node instanceof RSInterfaceWrap) {
+					return;
+				}
+				// at this point the node can only be an instace of
+				// RSInterfaceChildWrap
+				// or of RSInterfaceComponentWrap
 
-                infoArea.removeAll();
-                RSComponent iface = null;
-                if (node instanceof RSComponentWrap) {
-                    highlightArea = ((RSComponentWrap) node).wrapped
-                            .getArea();
-                    iface = ((RSComponentWrap) node).wrapped;
-                } else if (node instanceof RSComponentWrap) {
-                    highlightArea = ((RSComponentWrap) node).wrapped
-                            .getArea();
-                    iface = ((RSComponentWrap) node).wrapped;
-                }
-                addInfo("Action type: ", "-1" /* + iface.getActionType() */);
-                addInfo("Type: ", "" + iface.getType());
-                addInfo("SpecialType: ", "" + iface.getSpecialType());
-                addInfo("Bounds Index: ", "" + iface.getBoundsArrayIndex());
-                addInfo("Model ID: ", "" + iface.getModelID());
-                addInfo("Texture ID: ", "" + iface.getBackgroundColor());
-                addInfo("Text: ", "" + iface.getText());
-                addInfo("Tooltip: ", "" + iface.getTooltip());
-                addInfo("SelActionName: ", "" + iface.getSelectedActionName());
-                if (iface.getActions() != null) {
-                    String actions = "";
-                    for (final String action : iface.getActions()) {
-                        if (!actions.equals("")) {
-                            actions += "\n";
-                        }
-                        actions += action;
-                    }
-                    addInfo("Actions: ", actions);
-                }
-                addInfo("Component ID: ", "" + iface.getComponentID());
-                addInfo("Component Stack Size: ", "" + iface.getComponentStackSize());
+				infoArea.removeAll();
+				RSComponent iface = null;
+				if (node instanceof RSComponentWrap) {
+					highlightArea = ((RSComponentWrap) node).wrapped
+							.getArea();
+					iface = ((RSComponentWrap) node).wrapped;
+				} else if (node instanceof RSComponentWrap) {
+					highlightArea = ((RSComponentWrap) node).wrapped
+							.getArea();
+					iface = ((RSComponentWrap) node).wrapped;
+				}
+				addInfo("Action type: ", "-1" /* + iface.getActionType() */);
+				addInfo("Type: ", "" + iface.getType());
+				addInfo("SpecialType: ", "" + iface.getSpecialType());
+				addInfo("Bounds Index: ", "" + iface.getBoundsArrayIndex());
+				addInfo("Model ID: ", "" + iface.getModelID());
+				addInfo("Texture ID: ", "" + iface.getBackgroundColor());
+				addInfo("Text: ", "" + iface.getText());
+				addInfo("Tooltip: ", "" + iface.getTooltip());
+				addInfo("SelActionName: ", "" + iface.getSelectedActionName());
+				if (iface.getActions() != null) {
+					String actions = "";
+					for (final String action : iface.getActions()) {
+						if (!actions.equals("")) {
+							actions += "\n";
+						}
+						actions += action;
+					}
+					addInfo("Actions: ", actions);
+				}
+				addInfo("Component ID: ", "" + iface.getComponentID());
+				addInfo("Component Stack Size: ", "" + iface.getComponentStackSize());
 
-                infoArea.validate();
-                infoArea.repaint();
-            }
-        });
+				infoArea.validate();
+				infoArea.repaint();
+			}
+		});
 
-        JScrollPane scrollPane = new JScrollPane(tree);
-        scrollPane.setPreferredSize(new Dimension(250, 500));
-        window.add(scrollPane, BorderLayout.WEST);
+		JScrollPane scrollPane = new JScrollPane(tree);
+		scrollPane.setPreferredSize(new Dimension(250, 500));
+		window.add(scrollPane, BorderLayout.WEST);
 
-        infoArea = new JPanel();
-        infoArea.setLayout(new BoxLayout(infoArea, BoxLayout.Y_AXIS));
-        scrollPane = new JScrollPane(infoArea);
-        scrollPane.setPreferredSize(new Dimension(250, 500));
-        window.add(scrollPane, BorderLayout.CENTER);
+		infoArea = new JPanel();
+		infoArea.setLayout(new BoxLayout(infoArea, BoxLayout.Y_AXIS));
+		scrollPane = new JScrollPane(infoArea);
+		scrollPane.setPreferredSize(new Dimension(250, 500));
+		window.add(scrollPane, BorderLayout.CENTER);
 
-        final ActionListener actionListener = new ActionListener() {
-            public void actionPerformed(final ActionEvent e) {
-                treeModel.update(searchBox.getText());
-                infoArea.removeAll();
-                infoArea.validate();
-                infoArea.repaint();
-            }
-        };
+		final ActionListener actionListener = new ActionListener() {
+			public void actionPerformed(final ActionEvent e) {
+				treeModel.update(searchBox.getText());
+				infoArea.removeAll();
+				infoArea.validate();
+				infoArea.repaint();
+			}
+		};
 
-        final JPanel toolArea = new JPanel();
-        toolArea.setLayout(new FlowLayout(FlowLayout.LEFT));
-        toolArea.add(new JLabel("Filter:"));
+		final JPanel toolArea = new JPanel();
+		toolArea.setLayout(new FlowLayout(FlowLayout.LEFT));
+		toolArea.add(new JLabel("Filter:"));
 
-        searchBox = new JTextField(20);
-        searchBox.addActionListener(actionListener);
-        toolArea.add(searchBox);
+		searchBox = new JTextField(20);
+		searchBox.addActionListener(actionListener);
+		toolArea.add(searchBox);
 
-        final JButton updateButton = new JButton("Update");
-        updateButton.addActionListener(actionListener);
-        toolArea.add(updateButton);
-        window.add(toolArea, BorderLayout.NORTH);
+		final JButton updateButton = new JButton("Update");
+		updateButton.addActionListener(actionListener);
+		toolArea.add(updateButton);
+		window.add(toolArea, BorderLayout.NORTH);
 
-        window.pack();
-        window.setVisible(true);
-        return true;
-    }
+		window.pack();
+		window.setVisible(true);
+		return true;
+	}
 }

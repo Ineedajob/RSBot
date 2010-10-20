@@ -113,7 +113,7 @@ public class Bank extends MethodProvider {
 				item.doAction("Deposit-10");
 				break;
 			default: // Deposit x
-				if (item.doAction("Deposit-" + numberToDeposit)) {
+				if (!item.doAction("Deposit-" + numberToDeposit)) {
 					if (item.doAction("Deposit-X")) {
 						sleep(random(1000, 1300));
 						methods.inputManager.sendKeys("" + numberToDeposit, true);
@@ -426,7 +426,7 @@ public class Bank extends MethodProvider {
 					banker = null;
 				}
 				if (((bankBooth != null)
-						&& (methods.calc.distanceTo(bankBooth) < 8)
+						&& (methods.calc.distanceTo(bankBooth) < 5)
 						&& methods.calc.tileOnMap(bankBooth.getLocation()) && methods.calc
 						.canReach(bankBooth.getLocation(), true))
 						|| ((banker != null)
@@ -688,6 +688,7 @@ public class Bank extends MethodProvider {
 					sleep(random(1000, 1300));
 					methods.inputManager.sendKeys("" + count, true);
 				}
+				sleep(random(100, 200));
 			}
 			break;
 		}

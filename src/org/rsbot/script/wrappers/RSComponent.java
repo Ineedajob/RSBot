@@ -54,7 +54,8 @@ public class RSComponent extends MethodProvider {
      * Initializes the component.
      *
      * @param ctx The method context.
-     * @param parent The parent interface.
+     * @param parInterface The parent interface.
+	 * @param parent The parent component.
      * @param index  The child index of this child.
      */
     RSComponent(final MethodContext ctx, final RSInterface parInterface, final RSComponent parent, final int index) {
@@ -78,7 +79,17 @@ public class RSComponent extends MethodProvider {
         if (pos.x == -1 || pos.y == -1 || pos.width == -1 || pos.height == -1)
             return false;
         int dx = (int) (pos.getWidth() - 4) / 2;
+		if (dx > 20) {
+			dx -= 8;
+			dx *= 3;
+			dx /= 4;
+		}
         int dy = (int) (pos.getHeight() - 4) / 2;
+		if (dy > 20) {
+			dy -= 8;
+			dy *= 3;
+			dy /= 4;
+		}
         int midx = (int) (pos.getMinX() + pos.getWidth() / 2);
         int midy = (int) (pos.getMinY() + pos.getHeight() / 2);
         methods.mouse.move(midx + random(-dx, dx), midy + random(-dy, dy));
@@ -116,7 +127,17 @@ public class RSComponent extends MethodProvider {
             return true;
         }
         int dx = (int) (pos.getWidth() - 4) / 2;
+		if (dx > 20) {
+			dx -= 8;
+			dx *= 3;
+			dx /= 4;
+		}
         int dy = (int) (pos.getHeight() - 4) / 2;
+		if (dy > 20) {
+			dy -= 8;
+			dy *= 3;
+			dy /= 4;
+		}
         int midx = (int) (pos.getMinX() + pos.getWidth() / 2);
         int midy = (int) (pos.getMinY() + pos.getHeight() / 2);
         methods.mouse.click(midx + random(-dx, dx), midy + random(-dy, dy), leftClick);
@@ -401,30 +422,6 @@ public class RSComponent extends MethodProvider {
         return -1;
     }
 
-    public int getHorizontalScrollBarSize() {
-        final org.rsbot.client.RSInterface inter = getInterfaceInternal();
-        if (inter != null)
-            return inter.getHorizontalScrollBarSize();
-        return -1;
-
-    }
-
-    public int getHorizontalScrollBarThumbPosition() {
-        final org.rsbot.client.RSInterface inter = getInterfaceInternal();
-        if (inter != null)
-            return inter.getHorizontalScrollBarThumbPosition();
-        return -1;
-
-    }
-
-    public int getHorizontalScrollBarThumbSize() {
-        final org.rsbot.client.RSInterface inter = getInterfaceInternal();
-        if (inter != null)
-            return inter.getHorizontalScrollBarThumbSize();
-        return -1;
-
-    }
-
     public int getID() {
         final org.rsbot.client.RSInterface inter = getInterfaceInternal();
         if (inter != null)
@@ -683,45 +680,6 @@ public class RSComponent extends MethodProvider {
             }
         }
         return new int[0][0];
-    }
-
-    /**
-     * Returns the vertical scroll bar position
-     * 
-     * @return the vertical scroll bar position, or -1.
-     */
-    public int getVerticalScrollBarPosition() {
-        final org.rsbot.client.RSInterface inter = getInterfaceInternal();
-        if (inter != null)
-            return inter.getVerticalScrollBarPosition();
-        return -1;
-
-    }
-
-    /**
-     * Returns the vertical scroll bar size
-     * 
-     * @return the vertical scroll bar size, or -1.
-     */
-    public int getVerticalScrollBarSize() {
-        final org.rsbot.client.RSInterface inter = getInterfaceInternal();
-        if (inter != null)
-            return inter.getVerticalScrollBarSize();
-        return -1;
-
-    }
-
-    /**
-     * Returns the vertical scroll bar thumb size
-     * 
-     * @return the vertical scroll bar thumb size, or -1.
-     */
-    public int getVerticalScrollBarThumbSize() {
-        final org.rsbot.client.RSInterface inter = getInterfaceInternal();
-        if (inter != null)
-            return inter.getVerticalScrollBarThumbSize();
-        return -1;
-
     }
 
     /**

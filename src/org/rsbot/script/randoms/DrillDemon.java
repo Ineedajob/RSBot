@@ -22,7 +22,7 @@ public class DrillDemon extends Random {
 
     @Override
     public int loop() {
-        camera.setAltitude(true);
+        camera.setPitch(true);
         camera.setCompass('N');
 
         if (getMyPlayer().isMoving() || (getMyPlayer().getAnimation() != -1))

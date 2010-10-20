@@ -7,21 +7,10 @@ import org.rsbot.script.wrappers.RSComponent;
 @ScriptManifest(authors = {"Holo", "Gnarly"}, name = "BankPin", version = 2.1)
 public class BankPins extends Random {
 
-    private String pin;
-
     @Override
     public boolean activateCondition() {
-        pin = account.getPin();
-        if (interfaces.get(13).isValid()) {
-            if ((pin == null) || (pin.length() != 4)) {
-                log.severe("You must add a bank pin to your account.");
-                stopScript(false);
-            } else {
-                return true;
-            }
-        }
-        return false;
-    }
+		return interfaces.get(13).isValid();
+	}
 
     public void enterCode(final String pin) {
         if (!interfaces.get(13).isValid())
@@ -49,6 +38,11 @@ public class BankPins extends Random {
 
     @Override
     public int loop() {
+		String pin = account.getPin();
+		if ((pin == null) || (pin.length() != 4)) {
+            log.severe("You must add a bank pin to your account.");
+			stopScript(false);
+        }
         if (interfaces.get(14).isValid() || !interfaces.get(13).isValid()) {
         	interfaces.get(14).getComponent(3).doClick();
             return -1;

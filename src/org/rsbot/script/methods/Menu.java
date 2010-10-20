@@ -132,7 +132,7 @@ public class Menu extends MethodProvider {
     /**
      * Returns the index (starts at 0) in the menu for a given action. -1 when invalid.
      *
-     * @param action The String or a substring of the String that you want the index of.
+     * @param action The String or a beginning of the String that you want the index of.
      * @return The index of the given option in the context menu; or -1 if the
      *         option was not found.
      */
@@ -141,7 +141,7 @@ public class Menu extends MethodProvider {
         String[] actions = getItems();
         for (int i = 0; i < actions.length; i++) {
             String a = actions[i];
-            if (a.toLowerCase().contains(action))
+            if (a.toLowerCase().startsWith(action))
                 return i;
         }
         return -1;

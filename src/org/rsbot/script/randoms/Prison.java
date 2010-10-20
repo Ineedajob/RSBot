@@ -41,7 +41,7 @@ public class Prison extends Random {
             return -1;
         }
         if (!talkedtopete) {
-            camera.setAltitude(true);
+            camera.setPitch(true);
             if ((camera.getAngle() < 175) || (camera.getAngle() > 185)) {
                 camera.setAngle(random(175, 185));
                 return random(500, 750);

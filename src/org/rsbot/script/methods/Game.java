@@ -3,8 +3,6 @@ package org.rsbot.script.methods;
 import org.rsbot.script.wrappers.RSComponent;
 import org.rsbot.script.wrappers.RSInterface;
 
-import java.util.ArrayList;
-
 /**
  * Game state and GUI operations.
  */
@@ -207,7 +205,7 @@ public class Game extends MethodProvider {
 
     /**
      * Gets the current run energy.
-     * 
+     *
      * Deprecated : use walking.getEnergy()
      *
      * @return An <tt>int</tt> representation of the players current energy.
@@ -244,21 +242,21 @@ public class Game extends MethodProvider {
         int currentWorld = Integer.parseInt(methods.interfaces.getComponent(910, 10).getText());
         RSComponent[] worldsAvailable = methods.interfaces.getComponent(910, 68).getComponents();
 
-        for (int i = 0; i < worldsAvailable.length; i++) {
-            if (!worldsAvailable[i].isValid()) {
-                methods.interfaces.getComponent(910, 85).getComponent(5).doAction("");
-            }
-            if (Integer.parseInt(worldsAvailable[i].getText()) == worldToSwitchTo
-                    && Integer.parseInt(worldsAvailable[i].getText()) != currentWorld) {
-                worldsAvailable[i].doAction("Select");
-                sleep(1000);
-                if (currentWorld == Integer.parseInt(worldsAvailable[i]
-                        .getText())) {
-                    methods.interfaces.getComponent(906, 181).doAction("Click Here To Play");
-                    break;
-                }
-            }
-        }
+		for (RSComponent world : worldsAvailable) {
+			if (!world.isValid()) {
+				methods.interfaces.getComponent(910, 85).getComponent(5).doAction("");
+			}
+			if (Integer.parseInt(world.getText()) == worldToSwitchTo
+					&& Integer.parseInt(world.getText()) != currentWorld) {
+				world.doAction("Select");
+				sleep(1000);
+				if (currentWorld == Integer.parseInt(world
+						.getText())) {
+					methods.interfaces.getComponent(906, 181).doAction("Click Here To Play");
+					break;
+				}
+			}
+		}
     }
 
     /**
@@ -286,28 +284,29 @@ public class Game extends MethodProvider {
      */
     public boolean logout(boolean lobby) {
         int i;
-        while (methods.bank.isOpen()) {
+        if (methods.bank.isOpen()) {
             methods.bank.close();
             sleep(random(200, 400));
         }
-        while (methods.client.isSpellSelected() || methods.inventory.isItemSelected()) {
-            while (methods.interfaces.get(620).isValid()) {
-                methods.interfaces.getComponent(620, 7).doClick();
-                sleep(random(1000, 1300));
-            }
+		if (methods.bank.isOpen()) {
+			return false;
+		}
+        if (methods.client.isSpellSelected() || methods.inventory.isItemSelected()) {
             int currentTab = methods.game.getCurrentTab();
             int randomTab = random(1, 6);
             while (randomTab == currentTab) {
                 randomTab = random(1, 6);
             }
-            do {
-                methods.game.openTab(randomTab);
-                sleep(random(400, 800));
-            } while (methods.client.isSpellSelected() || methods.inventory.isItemSelected());
+            methods.game.openTab(randomTab);
+            sleep(random(400, 800));
         }
-        while (!isOnLogoutTab()) {
-            methods.interfaces.getComponent(548, 178).doClick();
+		if (methods.client.isSpellSelected() || methods.inventory.isItemSelected()) {
+			return false;
+		}
+        if (!isOnLogoutTab()) {
+			int idx = methods.client.getGUIRSInterfaceIndex();
             //Logout button in the top right hand corner
+            methods.interfaces.getComponent(idx, isFixed() ? 178 : 170).doClick();
             int timesToWait = 0;
             while (!isOnLogoutTab() && timesToWait < 5) {
                 sleep(random(200, 400));
@@ -315,15 +314,25 @@ public class Game extends MethodProvider {
             }
         }
         if (!lobby) {
-            i = 8;
-        } else {
             i = 7;
+        } else {
+            i = 6;
         }
         methods.interfaces.getComponent(182, i).doClick();
         //Final logout button in the logout tab
         sleep(random(1500, 2000));
         return !isLoggedIn();
     }
+
+	/**
+	 * Determines whether or no the client is currently in the
+	 * fixed display mode.
+	 *
+	 * @return <tt>true</tt> if in fixed mode; otherwise <tt>false</tt>.
+	 */
+	public boolean isFixed() {
+		return methods.client.getGUIRSInterfaceIndex() != 746;
+	}
 
     /**
      * Determines whether or not the client is currently logged in

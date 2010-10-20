@@ -32,74 +32,77 @@ import com.sun.org.apache.bcel.internal.classfile.ConstantUtf8;
 import com.sun.org.apache.bcel.internal.classfile.Field;
 import com.sun.org.apache.bcel.internal.classfile.Method;
 import com.sun.org.apache.bcel.internal.generic.*;
+import org.rsbot.client.Model;
+import org.rsbot.client.ModelCapture;
 import org.rsbot.util.GlobalConfiguration;
 
 import static org.rsbot.injector.HookData.*;
 
 public class Injector {
 
-    private static final boolean LOAD_LOCAL = false;
+	private static final boolean LOAD_LOCAL = false;
 	private static final String ACCESSOR_DESC = "org/rsbot/client/";
-    private static final String ACCESSOR_PACKAGE = "org.rsbot.client.";
+	private static final String ACCESSOR_PACKAGE = "org.rsbot.client.";
 
 	private static final Object LOCK = new Object();
 
-    private Logger log = Logger.getLogger(Injector.class.getName());
+	private Logger log = Logger.getLogger(Injector.class.getName());
 
-    private ClassGen[] loaded;
-    private HookData hd = null;
+	private ClassGen[] loaded;
+	private HookData hd = null;
 
-    private int world;
+	private int world;
 
-    public Injector() {
-        if (LOAD_LOCAL) {
-            try {
-                hd = new HookData(download(new File("info.dat").toURI().toURL().toString()));
-            } catch (Exception e) {
+	public Injector() {
+		if (LOAD_LOCAL) {
+			try {
+				hd = new HookData(download(new File("info.dat").toURI().toURL().toString()));
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
-        } else {
-            hd = new HookData(download(GlobalConfiguration.Paths.URLs.UPDATE));
+		} else {
+			hd = new HookData(download(GlobalConfiguration.Paths.URLs.UPDATE));
 		}
 
-        world = 1 + new Random().nextInt(169);
-    }
+		world = 1 + new Random().nextInt(169);
+	}
 
-    public String generateTargetName() {
-        String s = "";
-        for (byte b : hd.charData.i)
-            s += (char) hd.charData.c[b];
+	public String generateTargetName() {
+		String s = "";
+		for (byte b : hd.charData.i)
+			s += (char) hd.charData.c[b];
 
-        return s;
-    }
+		return s;
+	}
 
-    private int getCachedVersion() {
-        try {
-            File versionFile = new File(GlobalConfiguration.Paths.getVersionCache());
-            BufferedReader reader = new BufferedReader(new FileReader(versionFile));
-            int version = Integer.parseInt(reader.readLine());
-            reader.close();
-            return version;
-        } catch (Exception e) {
-            return 0;
-        }
-    }
+	private int getCachedVersion() {
+		try {
+			File versionFile = new File(GlobalConfiguration.Paths.getVersionCache());
+			BufferedReader reader = new BufferedReader(new FileReader(versionFile));
+			int version = Integer.parseInt(reader.readLine());
+			reader.close();
+			return version;
+		} catch (Exception e) {
+			return 0;
+		}
+	}
 
-    private JarFile getJar(boolean loader) {
-        while (true) {
-            try {
-                String s = "jar:http://world" + world + "." + generateTargetName() + ".com/";
-                if (loader)
-                    s += "loader.jar!/";
-                else
-                    s += generateTargetName() + ".jar!/";
+	private JarFile getJar(boolean loader) {
+		while (true) {
+			try {
+				String s = "jar:http://world" + world + "." + generateTargetName() + ".com/";
+				if (loader)
+					s += "loader.jar!/";
+				else
+					s += generateTargetName() + ".jar!/";
 
-                URL url = new URL(s);
-                return ((JarURLConnection) url.openConnection()).getJarFile();
-            }
-            catch (Exception ignored) { }
-        }
-    }
+				URL url = new URL(s);
+				return ((JarURLConnection) url.openConnection()).getJarFile();
+			}
+			catch (Exception ignored) {
+			}
+		}
+	}
 
 	public HashMap<String, byte[]> getClasses() {
 		synchronized (Injector.LOCK) {
@@ -368,10 +371,10 @@ public class Injector {
 
 				//Hack mouse/keyboard/canvas/signlink
 				hackMouse();
-				//hackMouseWheel();
 				hackKeyboard();
 				hackCanvas();
 				hackRender();
+				hackHeapSize();
 				hackSignUID(username);
 
 				//Insert callback
@@ -382,6 +385,7 @@ public class Injector {
 				for (ClassGen cg : loaded) {
 					ret.put(cg.getClassName(), cg.getJavaClass().getBytes());
 				}
+
 				return ret;
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -390,261 +394,287 @@ public class Injector {
 		return null;
 	}
 
-    private int getRSBuild() throws Exception {
-        ClassGen client = findClass("client");
-        Method main = client.containsMethod("main", "([Ljava/lang/String;)V");
-        MethodGen mg = new MethodGen(main, "client", client.getConstantPool());
-        Instruction instructions[] = mg.getInstructionList().getInstructions();
-        boolean foundWidth = false, foundHeight = false;
-        for (int i = instructions.length - 1; i >= 0; i--) {
-            Instruction instruction = instructions[i];
-            short opcode = instruction.getOpcode();
-            if (opcode == 17) {
-                SIPUSH sipush = (SIPUSH) instruction;
-                short value = sipush.getValue().shortValue();
-                if (value != 1024 && value != 768 && value > 400 && value < 1000) {
-                    return value;
-                }
-                if (value == 1024 || value == 768) {
-                    if (value == 1024) {
-                        if (foundWidth) return value;
-                        else foundWidth = true;
-                    } else {
-                        if (foundHeight) return value;
-                        else foundHeight = true;
-                    }
-                }
-            }
-        }
-        return -1;
-    }
+	private int getRSBuild() throws Exception {
+		ClassGen client = findClass("client");
+		Method main = client.containsMethod("main", "([Ljava/lang/String;)V");
+		MethodGen mg = new MethodGen(main, "client", client.getConstantPool());
+		Instruction instructions[] = mg.getInstructionList().getInstructions();
+		boolean foundWidth = false, foundHeight = false;
+		for (int i = instructions.length - 1; i >= 0; i--) {
+			Instruction instruction = instructions[i];
+			short opcode = instruction.getOpcode();
+			if (opcode == 17) {
+				SIPUSH sipush = (SIPUSH) instruction;
+				short value = sipush.getValue().shortValue();
+				if (value != 1024 && value != 768 && value > 400 && value < 1000) {
+					return value;
+				}
+				if (value == 1024 || value == 768) {
+					if (value == 1024) {
+						if (foundWidth) return value;
+						else foundWidth = true;
+					} else {
+						if (foundHeight) return value;
+						else foundHeight = true;
+					}
+				}
+			}
+		}
+		return -1;
+	}
 
-    private void cacheClient() {
-        try {
-            File file = new File(GlobalConfiguration.Paths.getClientCache());
-            FileOutputStream stream = new FileOutputStream(file);
-            JarOutputStream out = new JarOutputStream(stream);
+	private void cacheClient() {
+		try {
+			File file = new File(GlobalConfiguration.Paths.getClientCache());
+			FileOutputStream stream = new FileOutputStream(file);
+			JarOutputStream out = new JarOutputStream(stream);
 
-            for (ClassGen cg : loaded) {
-                out.putNextEntry(new JarEntry(cg.getClassName() + ".class"));
-                out.write(cg.getJavaClass().getBytes());
-            }
+			for (ClassGen cg : loaded) {
+				out.putNextEntry(new JarEntry(cg.getClassName() + ".class"));
+				out.write(cg.getJavaClass().getBytes());
+			}
 
-            out.close();
-            stream.close();
+			out.close();
+			stream.close();
 
-            FileWriter writer = new FileWriter(GlobalConfiguration.Paths.getVersionCache());
-            writer.write(Integer.toString(hd.version));
-            writer.close();
-        } catch (IOException ignored) {}
-    }
+			FileWriter writer = new FileWriter(GlobalConfiguration.Paths.getVersionCache());
+			writer.write(Integer.toString(hd.version));
+			writer.close();
+		} catch (IOException ignored) {
+		}
+	}
 
-    private void insertCallback() {
-        ClassGen client = findClass("client");
+	private void insertCallback() {
+		ClassGen client = findClass("client");
 
-        //Insert field callback
-        Field f = new FieldGen(Constants.ACC_PUBLIC | Constants.ACC_STATIC,
-                Type.getType(org.rsbot.client.Callback.class), "callback", client.getConstantPool()).getField();
-        client.addField(f);
+		//Insert field callback
+		Field f = new FieldGen(Constants.ACC_PUBLIC | Constants.ACC_STATIC,
+				Type.getType(org.rsbot.client.Callback.class), "callback", client.getConstantPool()).getField();
+		client.addField(f);
 
-        //Insert getCallback
-        {
-            InstructionList il = new InstructionList();
-            InstructionFactory factory = new InstructionFactory(client, client.getConstantPool());
-            il.append(factory.createGetStatic("client", f.getName(), f.getType()));
-            il.append(InstructionFactory.createReturn(f.getType()));
+		//Insert getCallback
+		{
+			InstructionList il = new InstructionList();
+			InstructionFactory factory = new InstructionFactory(client, client.getConstantPool());
+			il.append(factory.createGetStatic("client", f.getName(), f.getType()));
+			il.append(InstructionFactory.createReturn(f.getType()));
 
-            MethodGen mg = new MethodGen(Constants.ACC_PUBLIC | Constants.ACC_FINAL, // access_flags
-                    f.getType(), // return_type
-                    null, // arguement_types
-                    null, // arguement_names
-                    "getCallback", // method_name
-                    "client", // class_name;
-                    il, // instruction_list;
-                    client.getConstantPool() // constant_pool_gen
-            );
-            mg.setMaxLocals();
-            mg.setMaxStack();
+			MethodGen mg = new MethodGen(Constants.ACC_PUBLIC | Constants.ACC_FINAL, // access_flags
+					f.getType(), // return_type
+					null, // arguement_types
+					null, // arguement_names
+					"getCallback", // method_name
+					"client", // class_name;
+					il, // instruction_list;
+					client.getConstantPool() // constant_pool_gen
+			);
+			mg.setMaxLocals();
+			mg.setMaxStack();
 
-            client.addMethod(mg.getMethod());
-        }
+			client.addMethod(mg.getMethod());
+		}
 
-        //Insert setCallback
-        {
-            InstructionList il = new InstructionList();
-            InstructionFactory factory = new InstructionFactory(client, client.getConstantPool());
-            il.append(new ALOAD(1));
-            il.append(factory.createPutStatic("client", f.getName(), f.getType()));
-            il.append(new RETURN());
+		//Insert setCallback
+		{
+			InstructionList il = new InstructionList();
+			InstructionFactory factory = new InstructionFactory(client, client.getConstantPool());
+			il.append(new ALOAD(1));
+			il.append(factory.createPutStatic("client", f.getName(), f.getType()));
+			il.append(new RETURN());
 
-            MethodGen mg = new MethodGen(Constants.ACC_PUBLIC | Constants.ACC_FINAL, // access_flags
-                    Type.VOID, // return_type
-                    new Type[]{f.getType()}, // arguement_types
-                    null, // arguement_names
-                    "setCallback", // method_name
-                    "client", // class_name;
-                    il, // instruction_list;
-                    client.getConstantPool() // constant_pool_gen
-            );
-            mg.setMaxLocals();
-            mg.setMaxStack();
+			MethodGen mg = new MethodGen(Constants.ACC_PUBLIC | Constants.ACC_FINAL, // access_flags
+					Type.VOID, // return_type
+					new Type[]{f.getType()}, // arguement_types
+					null, // arguement_names
+					"setCallback", // method_name
+					"client", // class_name;
+					il, // instruction_list;
+					client.getConstantPool() // constant_pool_gen
+			);
+			mg.setMaxLocals();
+			mg.setMaxStack();
 
-            client.addMethod(mg.getMethod());
-        }
-    }
-    
-    private void hackCharacterModel() {
-    	String model = "L" + findClass("Model").getClassName() + ";";
-    	Type modelType = Type.getType(model);
-    	ClassGen cg = findClass("RSCharacter");
-    	Field f = new FieldGen(Constants.ACC_PRIVATE, modelType, "model", cg.getConstantPool()).getField();
-        cg.addField(f);
-        
-    	for (Method method : cg.getMethods()) {
-    		if (!method.isStatic() && method.getSignature().contains("[" + model)) {
-    			MethodGen mg = new MethodGen(method, cg.getClassName(), cg.getConstantPool());
-    			
-    			int idx = 0;
-    			InstructionHandle handle = null;
-        		
-        		for (InstructionHandle h : mg.getInstructionList().getInstructionHandles()) {
-        			if (h.getInstruction() instanceof ASTORE) {
-        				handle = h;
-    					idx = ((ASTORE) h.getInstruction()).getIndex();
-    					break;
-        			}
-        		}
-        		
-        		if (handle != null) {
-        			InstructionFactory fac = new InstructionFactory(cg, cg.getConstantPool());
-            		
-            		InstructionList il = mg.getInstructionList();
-            		
-            		il.append(il.append(il.append(handle, new ALOAD(0)), new ALOAD(idx)),
-            				fac.createPutField(cg.getClassName(), "model", modelType));
-            		mg.setMaxLocals();
-                    mg.setMaxStack();
-                    mg.update();
-                    cg.replaceMethod(method, mg.getMethod());
-        		}
-        		
-    			break;
-    		}
-    	}
-    }
-    
-    private void hackAnimatedModel() {
-    	Type modelType = Type.getType("L" + findClass("Model").getClassName() + ";");
-    	Type compositeType = Type.getType("L" + findClass("RSObjectComposite").getClassName() + ";");
-    	String toolkit = "L" + findClass("Render").getClassName() + ";";
-    	
-    	for (String rsobject : hd.rsObjects.object_class_names) {
-    		ClassGen cg = findClass(rsobject);
-            
-            for (Field field : cg.getFields()) {
-            	if (field.getType().equals(compositeType)) {
-            		Field f = new FieldGen(Constants.ACC_PRIVATE, modelType, "model", cg.getConstantPool()).getField();
-                    cg.addField(f);
-                    
-                    for (Method method : cg.getMethods()) {
-                    	if (!method.isStatic() && method.getSignature().contains(toolkit)
-                    			&& !method.getName().equals("<init>")
-                    			&& method.getSignature().endsWith(";")) {
-                    		
-                    		MethodGen mg = new MethodGen(method, cg.getClassName(), cg.getConstantPool());
-                    		
-                    		int idx = 0;
-                    		InstructionHandle ret = null;
-                    		
-                    		for (InstructionHandle h : mg.getInstructionList().getInstructionHandles()) {
-                    			if (h.getInstruction() instanceof INVOKEVIRTUAL) {
-                    				if (((INVOKEVIRTUAL) h.getInstruction()).getReturnType(cg.getConstantPool()).equals(modelType)) {
-                    					h = h.getNext();
-                    					if (h.getInstruction() instanceof ASTORE) {
-                    						idx = ((ASTORE) h.getInstruction()).getIndex();
-                            				ret = h;
-                            			}
-                    					break;
-                    				}
-                    			}
-                    		}
-                    		
-                    		if (ret != null) {
-                    			InstructionFactory fac = new InstructionFactory(cg, cg.getConstantPool());
-                        		
-                        		InstructionList il = mg.getInstructionList();
-                        		
-                        		il.append(il.append(il.append(il.append(ret, new ALOAD(0)), new ALOAD(idx)),
-                        				fac.createPutField(cg.getClassName(), "model", modelType)), new ALOAD(idx));
-                        		mg.setMaxLocals();
-                                mg.setMaxStack();
-                                mg.update();
-                                cg.replaceMethod(method, mg.getMethod());
-                    		}
-                    	}
-                    }
-            		
-            		break;
-            	}
-            }
-    	}
-        
-        
-    }
+			client.addMethod(mg.getMethod());
+		}
+	}
 
-    private void hackCanvas() {
-        for (ClassGen cg : loaded) {
-            if (cg.getSuperclassName().equals("java.awt.Canvas")) {
-                ConstantPoolGen cpg = cg.getConstantPool();
-                cpg.setConstant(cg.getSuperclassNameIndex(), new ConstantClass(cpg.addUtf8(ACCESSOR_DESC + "input/Canvas")));
-            }
-        }
-    }
+	private void hackCharacterModel() {
+		String model = "L" + findClass("Model").getClassName() + ";";
+		ObjectType modelCaptureType = (ObjectType) Type.getType(ModelCapture.class);
+		ClassGen cg = findClass("RSCharacter");
+		Field f = new FieldGen(Constants.ACC_PRIVATE, Type.getType(Model.class), "model", cg.getConstantPool()).getField();
+		cg.addField(f);
 
-    private void hackMouse() {
-        for (ClassGen cg : loaded) {
-            String interfaces[] = cg.getInterfaceNames();
-            boolean foundMouseListener = false;
+		for (Method method : cg.getMethods()) {
+			if (!method.isStatic() && method.getSignature().contains("[" + model)) {
+				MethodGen mg = new MethodGen(method, cg.getClassName(), cg.getConstantPool());
 
-            for (String iface : interfaces) {
-                if (iface.endsWith("MouseListener"))
-                    foundMouseListener = true;
-                else if (iface.endsWith("MouseWheelListener")) {
-                    setSuperclassName(findClass(cg.getSuperclassName()), ACCESSOR_DESC + "input/Mouse");
-                    break;
-                }
-            }
+				int idx = 0;
+				InstructionHandle handle = null;
 
-            if (foundMouseListener) {
-                Method methods[] = cg.getMethods();
-                for (Method m : methods) {
-                    String name = m.getName();
-                    if (name.startsWith("mouse") || name.startsWith("focus"))
-                        cg.getConstantPool().setConstant(m.getNameIndex(), new ConstantUtf8("_" + name));
-                }
-            }
-        }
-    }
+				for (InstructionHandle h : mg.getInstructionList().getInstructionHandles()) {
+					if (h.getInstruction() instanceof ASTORE) {
+						handle = h;
+						idx = ((ASTORE) h.getInstruction()).getIndex();
+						break;
+					}
+				}
 
-    private void hackKeyboard() {
-        for (ClassGen cg : loaded) {
-            String interfaces[] = cg.getInterfaceNames();
-            for (String iface : interfaces) {
-                if (iface.endsWith("KeyListener")) {
-                    setSuperclassName(findClass(cg.getSuperclassName()), ACCESSOR_DESC + "input/Keyboard");
+				if (handle != null) {
+					InstructionFactory fac = new InstructionFactory(cg, cg.getConstantPool());
 
-                    Method methods[] = cg.getMethods();
-                    for (Method m : methods) {
-                        String name = m.getName();
-                        if (name.startsWith("key") || name.startsWith("focus"))
-                            cg.getConstantPool().setConstant(m.getNameIndex(), new ConstantUtf8("_" + name));
-                    }
+					InstructionList il = mg.getInstructionList();
+					InstructionList nil = new InstructionList();
 
-                    return;
-                }
-            }
-        }
-    }
+					nil.append(new ALOAD(0));
+					nil.append(fac.createNew(modelCaptureType));
+					nil.append(new DUP());
+					nil.append(new ALOAD(idx));
+					nil.append(fac.createInvoke(
+							modelCaptureType.getClassName(),
+							"<init>",
+							Type.VOID,
+							new Type[]{Type.getType(Model.class)},
+							Constants.INVOKESPECIAL));
+					nil.append(fac.createPutField(cg.getClassName(), "model", Type.getType(Model.class)));
+
+					il.append(handle, nil);
+					mg.setMaxLocals();
+					mg.setMaxStack();
+					mg.update();
+					cg.replaceMethod(method, mg.getMethod());
+				}
+
+				break;
+			}
+		}
+	}
+
+	private void hackAnimatedModel() {
+		Type modelType = Type.getType("L" + findClass("Model").getClassName() + ";");
+		ObjectType modelCaptureType = (ObjectType) Type.getType(ModelCapture.class);
+		Type compositeType = Type.getType("L" + findClass("RSObjectComposite").getClassName() + ";");
+		String toolkit = "L" + findClass("Render").getClassName() + ";";
+
+		for (String rsobject : hd.rsObjects.object_class_names) {
+			ClassGen cg = findClass(rsobject);
+
+			for (Field field : cg.getFields()) {
+				if (field.getType().equals(compositeType)) {
+					Field f = new FieldGen(Constants.ACC_PRIVATE, Type.getType(Model.class), "model", cg.getConstantPool()).getField();
+					cg.addField(f);
+
+					for (Method method : cg.getMethods()) {
+						if (!method.isStatic() && method.getSignature().contains(toolkit)
+								&& !method.getName().equals("<init>")
+								&& method.getSignature().endsWith(";")) {
+
+							MethodGen mg = new MethodGen(method, cg.getClassName(), cg.getConstantPool());
+
+							int idx = 0;
+							InstructionHandle ret = null;
+
+							for (InstructionHandle h : mg.getInstructionList().getInstructionHandles()) {
+								if (h.getInstruction() instanceof INVOKEVIRTUAL) {
+									if (((INVOKEVIRTUAL) h.getInstruction()).getReturnType(cg.getConstantPool()).equals(modelType)) {
+										h = h.getNext();
+										if (h.getInstruction() instanceof ASTORE) {
+											idx = ((ASTORE) h.getInstruction()).getIndex();
+											ret = h;
+										}
+										break;
+									}
+								}
+							}
+
+							if (ret != null) {
+								InstructionFactory fac = new InstructionFactory(cg, cg.getConstantPool());
+
+								InstructionList il = mg.getInstructionList();
+								InstructionList nil = new InstructionList();
+
+								nil.append(new ALOAD(0));
+								nil.append(fac.createNew(modelCaptureType));
+								nil.append(new DUP());
+								nil.append(new ALOAD(idx));
+								nil.append(fac.createInvoke(
+										modelCaptureType.getClassName(),
+										"<init>",
+										Type.VOID,
+										new Type[]{Type.getType(Model.class)},
+										Constants.INVOKESPECIAL));
+								nil.append(fac.createPutField(cg.getClassName(), "model", Type.getType(Model.class)));
+
+								il.append(ret, nil);
+								mg.setMaxLocals();
+								mg.setMaxStack();
+								mg.update();
+								cg.replaceMethod(method, mg.getMethod());
+							}
+						}
+					}
+
+					break;
+				}
+			}
+		}
+
+
+	}
+
+	private void hackCanvas() {
+		for (ClassGen cg : loaded) {
+			if (cg.getSuperclassName().equals("java.awt.Canvas")) {
+				ConstantPoolGen cpg = cg.getConstantPool();
+				cpg.setConstant(cg.getSuperclassNameIndex(), new ConstantClass(cpg.addUtf8(ACCESSOR_DESC + "input/Canvas")));
+			}
+		}
+	}
+
+	private void hackMouse() {
+		for (ClassGen cg : loaded) {
+			String interfaces[] = cg.getInterfaceNames();
+			boolean foundMouseListener = false;
+
+			for (String iface : interfaces) {
+				if (iface.endsWith("MouseListener"))
+					foundMouseListener = true;
+				else if (iface.endsWith("MouseWheelListener")) {
+					setSuperclassName(findClass(cg.getSuperclassName()), ACCESSOR_DESC + "input/Mouse");
+					break;
+				}
+			}
+
+			if (foundMouseListener) {
+				Method methods[] = cg.getMethods();
+				for (Method m : methods) {
+					String name = m.getName();
+					if (name.startsWith("mouse") || name.startsWith("focus"))
+						cg.getConstantPool().setConstant(m.getNameIndex(), new ConstantUtf8("_" + name));
+				}
+			}
+		}
+	}
+
+	private void hackKeyboard() {
+		for (ClassGen cg : loaded) {
+			String interfaces[] = cg.getInterfaceNames();
+			for (String iface : interfaces) {
+				if (iface.endsWith("KeyListener")) {
+					setSuperclassName(findClass(cg.getSuperclassName()), ACCESSOR_DESC + "input/Keyboard");
+
+					Method methods[] = cg.getMethods();
+					for (Method m : methods) {
+						String name = m.getName();
+						if (name.startsWith("key") || name.startsWith("focus"))
+							cg.getConstantPool().setConstant(m.getNameIndex(), new ConstantUtf8("_" + name));
+					}
+
+					return;
+				}
+			}
+		}
+	}
 
 	private void hackRender() {
 		String modelName = findClass("LDModel").getClassName();
@@ -687,370 +717,404 @@ public class Injector {
 		}
 	}
 
-    private boolean hackSignUID(String[] username) {
-        ClassGen CacheIOMaster = null;
-        ClassGen CacheIO = null;
+	private void hackHeapSize() {
+		for (ClassGen cg : loaded) {
+			if (cg.getConstantPool().lookupString("maxMemory") > -1) {
+				for (Method m : cg.getMethods()) {
+					if (m.isStatic()) {
+						InstructionSearcher s = new InstructionSearcher(cg, m);
+						if (s.nextLDC("maxMemory") != null) {
+							MethodGen mg = new MethodGen(m, cg.getClassName(), cg.getConstantPool());
+							InstructionHandle handle = null;
+							int found = 0;
+							for (InstructionHandle h : mg.getInstructionList().getInstructionHandles()) {
+								if (found == 2) {
+									if (h.getInstruction() instanceof PUTSTATIC) {
+										handle = h;
+										break;
+									}
+								} else if (h.getInstruction() instanceof LDC) {
+									++found;
+								}
+							}
+							InstructionList il = mg.getInstructionList();
+							il.append(il.insert(handle, new POP()), new BIPUSH((byte) 99));
+							mg.setInstructionList(il);
+							mg.setMaxLocals();
+							mg.setMaxStack();
+							cg.replaceMethod(m, mg.getMethod());
+						}
+					}
+				}
+			}
+		}
+	}
 
-        for (ClassGen cg : loaded) {
-            ConstantPoolGen cpg = cg.getConstantPool();
-            if (cpg.lookupUtf8(" in file ") != -1)
-                CacheIOMaster = cg;
-            else if (cpg.lookupString("Warning! fileondisk ") != -1)
-                CacheIO = cg;
-        }
+	private boolean hackSignUID(String[] username) {
+		ClassGen CacheIOMaster = null;
+		ClassGen CacheIO = null;
 
-        if (CacheIOMaster == null || CacheIO == null)
-            return false;
+		for (ClassGen cg : loaded) {
+			ConstantPoolGen cpg = cg.getConstantPool();
+			if (cpg.lookupUtf8(" in file ") != -1)
+				CacheIOMaster = cg;
+			else if (cpg.lookupString("Warning! fileondisk ") != -1)
+				CacheIO = cg;
+		}
 
-        Field fCacheIO = null;
-        for (Field f : CacheIOMaster.getFields()) {
-            if (!f.isStatic() && f.getType().toString().equals(CacheIO.getClassName()))
-                fCacheIO = f;
-        }
+		if (CacheIOMaster == null || CacheIO == null)
+			return false;
 
-        if (fCacheIO == null)
-            return false;
+		Field fCacheIO = null;
+		for (Field f : CacheIOMaster.getFields()) {
+			if (!f.isStatic() && f.getType().toString().equals(CacheIO.getClassName()))
+				fCacheIO = f;
+		}
 
-        // patch part 1
-        boolean breakLoop = false;
-        for (ClassGen cg : loaded) {
-            if (breakLoop) break;
-            for (Method m : cg.getMethods()) {
-                if (breakLoop) break;
-                if (!m.isAbstract() && !m.isNative()) {
-                    InstructionSearcher s = new InstructionSearcher(cg, m);
+		if (fCacheIO == null)
+			return false;
 
-                    while (s.next("athrow") != null) {
-                        int T_INDEX = s.index;
-                        if (!(s.previous() instanceof INVOKESPECIAL)) {
-                            s.index = T_INDEX;
-                            continue;
-                        }
-                        if (!((InvokeInstruction) s.current()).getClassName(cg.getConstantPool()).equals("java.io.IOException")) {
-                            s.index = T_INDEX;
-                            continue;
-                        }
+		// patch part 1
+		boolean breakLoop = false;
+		for (ClassGen cg : loaded) {
+			if (breakLoop) break;
+			for (Method m : cg.getMethods()) {
+				if (breakLoop) break;
+				if (!m.isAbstract() && !m.isNative()) {
+					InstructionSearcher s = new InstructionSearcher(cg, m);
 
-                        if (s.previous("invokevirtual") == null || s.previous("invokevirtual") == null) {
-                            s.index = T_INDEX;
-                            continue;
-                        }
-                        InvokeInstruction iv = (InvokeInstruction) s.current();
+					while (s.next("athrow") != null) {
+						int T_INDEX = s.index;
+						if (!(s.previous() instanceof INVOKESPECIAL)) {
+							s.index = T_INDEX;
+							continue;
+						}
+						if (!((InvokeInstruction) s.current()).getClassName(cg.getConstantPool()).equals("java.io.IOException")) {
+							s.index = T_INDEX;
+							continue;
+						}
 
-                        if (iv.getClassName(cg.getConstantPool()).equals(CacheIOMaster.getClassName())) {
-                            FieldInstruction fi = s.previousFieldInstruction();
-                            InstructionFactory fac = new InstructionFactory(cg, cg.getConstantPool());
-                            MethodGen mgn = new MethodGen(m, cg.getClassName(), cg.getConstantPool());
-                            InstructionList il = mgn.getInstructionList();
-                            il.insert(il.insert(
-                                    il.getInstructionHandles()[s.index()],
-                                    fac.createInvoke(CacheIOMaster.getClassName(), "fixFile", Type.VOID, Type.NO_ARGS, Constants.INVOKEVIRTUAL)),
-                                    fac.createGetStatic(fi.getClassName(cg.getConstantPool()), fi.getFieldName(cg.getConstantPool()), fi.getFieldType(cg.getConstantPool())));
-                            mgn.setMaxLocals();
-                            mgn.setMaxStack();
-                            mgn.update();
-                            cg.replaceMethod(m, mgn.getMethod());
-                            breakLoop = true; //Break method and class loop aswell
-                            break; //Don't continue, because it takes useless time
-                        }
+						if (s.previous("invokevirtual") == null || s.previous("invokevirtual") == null) {
+							s.index = T_INDEX;
+							continue;
+						}
+						InvokeInstruction iv = (InvokeInstruction) s.current();
 
-                        s.index = T_INDEX;
-                    }
-                }
-            }
-        }
+						if (iv.getClassName(cg.getConstantPool()).equals(CacheIOMaster.getClassName())) {
+							FieldInstruction fi = s.previousFieldInstruction();
+							InstructionFactory fac = new InstructionFactory(cg, cg.getConstantPool());
+							MethodGen mgn = new MethodGen(m, cg.getClassName(), cg.getConstantPool());
+							InstructionList il = mgn.getInstructionList();
+							il.insert(il.insert(
+									il.getInstructionHandles()[s.index()],
+									fac.createInvoke(CacheIOMaster.getClassName(), "fixFile", Type.VOID, Type.NO_ARGS, Constants.INVOKEVIRTUAL)),
+									fac.createGetStatic(fi.getClassName(cg.getConstantPool()), fi.getFieldName(cg.getConstantPool()), fi.getFieldType(cg.getConstantPool())));
+							mgn.setMaxLocals();
+							mgn.setMaxStack();
+							mgn.update();
+							cg.replaceMethod(m, mgn.getMethod());
+							breakLoop = true; //Break method and class loop aswell
+							break; //Don't continue, because it takes useless time
+						}
 
-        //patch part 2
-        InstructionList il2 = new InstructionList();
-        InstructionFactory fac2 = new InstructionFactory(CacheIOMaster, CacheIOMaster.getConstantPool());
-        MethodGen mgff = new MethodGen(Constants.ACC_PUBLIC, // access flags
-                Type.VOID,               // return type
-                Type.NO_ARGS, // argument types
-                new String[]{}, // arg names
-                "fixFile", CacheIOMaster.getClassName(),    // method, class
-                il2, CacheIOMaster.getConstantPool());
-        il2.append(new ALOAD(0));
-        il2.append(fac2.createGetField(CacheIOMaster.getClassName(), fCacheIO.getName(), fCacheIO.getType()));
-        il2.append(fac2.createNew("java.lang.String"));
-        il2.append(new DUP());
-        il2.append(fac2.createGetStatic(username[0], username[1], Type.STRING));
-        il2.append(fac2.createInvoke(Type.STRING.getClassName(), "getBytes", new ArrayType(Type.BYTE, 1), Type.NO_ARGS, Constants.INVOKEVIRTUAL));
-        il2.append(fac2.createInvoke("java.lang.String", "<init>", Type.VOID, new Type[]{new ArrayType(Type.BYTE, 1)}, Constants.INVOKESPECIAL));
-        il2.append(fac2.createInvoke(CacheIO.getClassName(), "FixFile", Type.VOID, new Type[]{Type.STRING}, Constants.INVOKEVIRTUAL));
-        il2.append(new RETURN());
+						s.index = T_INDEX;
+					}
+				}
+			}
+		}
 
-        mgff.setMaxLocals();
-        mgff.setMaxStack();
-        CacheIOMaster.addMethod(mgff.getMethod());
+		//patch part 2
+		InstructionList il2 = new InstructionList();
+		InstructionFactory fac2 = new InstructionFactory(CacheIOMaster, CacheIOMaster.getConstantPool());
+		MethodGen mgff = new MethodGen(Constants.ACC_PUBLIC, // access flags
+				Type.VOID,			   // return type
+				Type.NO_ARGS, // argument types
+				new String[]{}, // arg names
+				"fixFile", CacheIOMaster.getClassName(),	// method, class
+				il2, CacheIOMaster.getConstantPool());
+		il2.append(new ALOAD(0));
+		il2.append(fac2.createGetField(CacheIOMaster.getClassName(), fCacheIO.getName(), fCacheIO.getType()));
+		il2.append(fac2.createNew("java.lang.String"));
+		il2.append(new DUP());
+		il2.append(fac2.createGetStatic(username[0], username[1], Type.STRING));
+		il2.append(fac2.createInvoke(Type.STRING.getClassName(), "getBytes", new ArrayType(Type.BYTE, 1), Type.NO_ARGS, Constants.INVOKEVIRTUAL));
+		il2.append(fac2.createInvoke("java.lang.String", "<init>", Type.VOID, new Type[]{new ArrayType(Type.BYTE, 1)}, Constants.INVOKESPECIAL));
+		il2.append(fac2.createInvoke(CacheIO.getClassName(), "FixFile", Type.VOID, new Type[]{Type.STRING}, Constants.INVOKEVIRTUAL));
+		il2.append(new RETURN());
+
+		mgff.setMaxLocals();
+		mgff.setMaxStack();
+		CacheIOMaster.addMethod(mgff.getMethod());
 
 
-        //patch part 3
-        createMethodFixFile(CacheIO);
+		//patch part 3
+		createMethodFixFile(CacheIO);
 
-        return true;
-    }
+		return true;
+	}
 
-    public static void createMethodFixFile(ClassGen CacheIO) {
-        Field cFile = null;
-        Field cRAF = null;
-        for (Field f : CacheIO.getFields()) {
-            if (f.getType().toString().equals("java.io.File")) cFile = f;
-            if (f.getType().toString().equals("java.io.RandomAccessFile")) cRAF = f;
-        }
-        if (cFile == null || cRAF == null) return;
+	public static void createMethodFixFile(ClassGen CacheIO) {
+		Field cFile = null;
+		Field cRAF = null;
+		for (Field f : CacheIO.getFields()) {
+			if (f.getType().toString().equals("java.io.File")) cFile = f;
+			if (f.getType().toString().equals("java.io.RandomAccessFile")) cRAF = f;
+		}
+		if (cFile == null || cRAF == null) return;
 
-        InstructionList il = new InstructionList();
-        InstructionFactory fac = new InstructionFactory(CacheIO, CacheIO.getConstantPool());
-        MethodGen ff = new MethodGen(Constants.ACC_PUBLIC, // access flags
-                Type.VOID,               // return type
-                new Type[]{Type.STRING}, // argument types
-                new String[]{"username"}, // arg names
-                "FixFile", CacheIO.getClassName(),    // method, class
-                il, CacheIO.getConstantPool());
-        //add all the instructions
-        InstructionHandle instr1 = il.append(new ALOAD(0));
-        il.append(fac.createNew("java.io.File"));
-        il.append(new DUP());
-        il.append(new ALOAD(0));
-        il.append(fac.createGetField(CacheIO.getClassName(), cFile.getName(), cFile.getType()));
-        il.append(fac.createInvoke("java.io.File", "getParent", Type.STRING, Type.NO_ARGS, Constants.INVOKEVIRTUAL));
-        il.append(fac.createNew("java.lang.StringBuilder"));
-        il.append(new DUP());
-        il.append(new ALOAD(1));
-        il.append(fac.createInvoke("java.lang.String", "valueOf", Type.STRING, new Type[]{Type.OBJECT}, Constants.INVOKESTATIC));
-        il.append(fac.createInvoke("java.lang.StringBuilder", "<init>", Type.VOID, new Type[]{Type.STRING}, Constants.INVOKESPECIAL));
-        il.append(new PUSH(CacheIO.getConstantPool(), ".dat"));
-        il.append(fac.createInvoke("java.lang.StringBuilder", "append", Type.getType(StringBuilder.class), new Type[]{Type.STRING}, Constants.INVOKEVIRTUAL));
-        il.append(fac.createInvoke("java.lang.StringBuilder", "toString", Type.STRING, Type.NO_ARGS, Constants.INVOKEVIRTUAL));
-        il.append(fac.createInvoke("java.io.File", "<init>", Type.VOID, new Type[]{Type.STRING, Type.STRING}, Constants.INVOKESPECIAL));
-        il.append(fac.createPutField(CacheIO.getClassName(), cFile.getName(), cFile.getType()));
-        il.append(new ALOAD(0));
-        il.append(fac.createGetField(CacheIO.getClassName(), cFile.getName(), cFile.getType()));
-        il.append(fac.createInvoke("java.io.File", "createNewFile", Type.BOOLEAN, Type.NO_ARGS, Constants.INVOKEVIRTUAL));
-        il.append(new POP());
-        il.append(new ALOAD(0));
-        il.append(fac.createNew("java.io.RandomAccessFile"));
-        il.append(new DUP());
-        il.append(new ALOAD(0));
-        il.append(fac.createGetField(CacheIO.getClassName(), cFile.getName(), cFile.getType()));
-        il.append(new PUSH(CacheIO.getConstantPool(), "rw"));
-        il.append(fac.createInvoke("java.io.RandomAccessFile", "<init>", Type.VOID, new Type[]{Type.getType(File.class), Type.STRING}, Constants.INVOKESPECIAL));
-        InstructionHandle instr2 = il.append(fac.createPutField(CacheIO.getClassName(), cRAF.getName(), cRAF.getType()));
-        InstructionHandle instr3 = il.append(new ASTORE(2));
-        il.append(fac.createGetStatic("java.lang.System", "out", Type.getType(PrintStream.class)));
-        il.append(new PUSH(CacheIO.getConstantPool(), "###############\r\n# !! ERROR !! #\r\n###############"));
-        il.append(fac.createInvoke("java.io.PrintStream", "println", Type.VOID, new Type[]{Type.STRING}, Constants.INVOKEVIRTUAL));
-        il.append(new ALOAD(2));
-        il.append(fac.createInvoke("java.io.IOException", "printStackTrace", Type.VOID, Type.NO_ARGS, Constants.INVOKEVIRTUAL));
-        InstructionHandle instr0 = il.append(new RETURN());
-        il.append(instr2, new GOTO(instr0));
-        ff.addExceptionHandler(instr1, instr2, instr3, new ObjectType("java.io.IOException"));
-        ff.setMaxLocals();
-        ff.setMaxStack();
-        CacheIO.addMethod(ff.getMethod());
-    }
+		InstructionList il = new InstructionList();
+		InstructionFactory fac = new InstructionFactory(CacheIO, CacheIO.getConstantPool());
+		MethodGen ff = new MethodGen(Constants.ACC_PUBLIC, // access flags
+				Type.VOID,			   // return type
+				new Type[]{Type.STRING}, // argument types
+				new String[]{"username"}, // arg names
+				"FixFile", CacheIO.getClassName(),	// method, class
+				il, CacheIO.getConstantPool());
+		//add all the instructions
+		InstructionHandle instr1 = il.append(new ALOAD(0));
+		il.append(fac.createNew("java.io.File"));
+		il.append(new DUP());
+		il.append(new ALOAD(0));
+		il.append(fac.createGetField(CacheIO.getClassName(), cFile.getName(), cFile.getType()));
+		il.append(fac.createInvoke("java.io.File", "getParent", Type.STRING, Type.NO_ARGS, Constants.INVOKEVIRTUAL));
+		il.append(fac.createNew("java.lang.StringBuilder"));
+		il.append(new DUP());
+		il.append(new ALOAD(1));
+		il.append(fac.createInvoke("java.lang.String", "valueOf", Type.STRING, new Type[]{Type.OBJECT}, Constants.INVOKESTATIC));
+		il.append(fac.createInvoke("java.lang.StringBuilder", "<init>", Type.VOID, new Type[]{Type.STRING}, Constants.INVOKESPECIAL));
+		il.append(new PUSH(CacheIO.getConstantPool(), ".dat"));
+		il.append(fac.createInvoke("java.lang.StringBuilder", "append", Type.getType(StringBuilder.class), new Type[]{Type.STRING}, Constants.INVOKEVIRTUAL));
+		il.append(fac.createInvoke("java.lang.StringBuilder", "toString", Type.STRING, Type.NO_ARGS, Constants.INVOKEVIRTUAL));
+		il.append(fac.createInvoke("java.io.File", "<init>", Type.VOID, new Type[]{Type.STRING, Type.STRING}, Constants.INVOKESPECIAL));
+		il.append(fac.createPutField(CacheIO.getClassName(), cFile.getName(), cFile.getType()));
+		il.append(new ALOAD(0));
+		il.append(fac.createGetField(CacheIO.getClassName(), cFile.getName(), cFile.getType()));
+		il.append(fac.createInvoke("java.io.File", "createNewFile", Type.BOOLEAN, Type.NO_ARGS, Constants.INVOKEVIRTUAL));
+		il.append(new POP());
+		il.append(new ALOAD(0));
+		il.append(fac.createNew("java.io.RandomAccessFile"));
+		il.append(new DUP());
+		il.append(new ALOAD(0));
+		il.append(fac.createGetField(CacheIO.getClassName(), cFile.getName(), cFile.getType()));
+		il.append(new PUSH(CacheIO.getConstantPool(), "rw"));
+		il.append(fac.createInvoke("java.io.RandomAccessFile", "<init>", Type.VOID, new Type[]{Type.getType(File.class), Type.STRING}, Constants.INVOKESPECIAL));
+		InstructionHandle instr2 = il.append(fac.createPutField(CacheIO.getClassName(), cRAF.getName(), cRAF.getType()));
+		InstructionHandle instr3 = il.append(new ASTORE(2));
+		il.append(fac.createGetStatic("java.lang.System", "out", Type.getType(PrintStream.class)));
+		il.append(new PUSH(CacheIO.getConstantPool(), "###############\r\n# !! ERROR !! #\r\n###############"));
+		il.append(fac.createInvoke("java.io.PrintStream", "println", Type.VOID, new Type[]{Type.STRING}, Constants.INVOKEVIRTUAL));
+		il.append(new ALOAD(2));
+		il.append(fac.createInvoke("java.io.IOException", "printStackTrace", Type.VOID, Type.NO_ARGS, Constants.INVOKEVIRTUAL));
+		InstructionHandle instr0 = il.append(new RETURN());
+		il.append(instr2, new GOTO(instr0));
+		ff.addExceptionHandler(instr1, instr2, instr3, new ObjectType("java.io.IOException"));
+		ff.setMaxLocals();
+		ff.setMaxStack();
+		CacheIO.addMethod(ff.getMethod());
+	}
 
-    public ClassGen findClass(String className) {
-        for (ClassGen clazz : loaded) {
-            if (clazz.getClassName().equals(className))
-                return clazz;
-        }
+	public ClassGen findClass(String className) {
+		for (ClassGen clazz : loaded) {
+			if (clazz.getClassName().equals(className))
+				return clazz;
+		}
 
-        for (ClassData cd : hd.classes) {
-            if (cd.injected_name.equals(className))
-                return findClass(cd.official_name);
-        }
+		for (ClassData cd : hd.classes) {
+			if (cd.injected_name.equals(className))
+				return findClass(cd.official_name);
+		}
 
-        return null;
-    }
+		return null;
+	}
 
-    private byte[] download(String address) {
-        ByteArrayOutputStream out = null;
-        InputStream in = null;
-        try {
-            URL url = new URL(address);
-            URLConnection urlc = url.openConnection();
-            urlc.setConnectTimeout(1000);
-            urlc.setReadTimeout(1000);
+	private byte[] download(String address) {
+		ByteArrayOutputStream out = null;
+		InputStream in = null;
+		try {
+			URL url = new URL(address);
+			URLConnection urlc = url.openConnection();
+			urlc.setConnectTimeout(1000);
+			urlc.setReadTimeout(1000);
 
-            out = new ByteArrayOutputStream();
-            in = urlc.getInputStream();
-            byte[] buffer = new byte[1024];
-            int numRead;
-            while ((numRead = in.read(buffer)) != -1) {
-                out.write(buffer, 0, numRead);
-            }
-        } catch (SocketTimeoutException ste) {
-            //Socket timed out, so the server is down.
-        } catch (Exception exception) {
-            exception.printStackTrace();
-        } finally {
-            try {
-                if (in != null) {
-                    in.close();
-                }
-                if (out != null) {
-                    out.close();
-                }
-            } catch (IOException ignored) { }
-        }
-        if (out != null)
-            return out.toByteArray();
+			out = new ByteArrayOutputStream();
+			in = urlc.getInputStream();
+			byte[] buffer = new byte[1024];
+			int numRead;
+			while ((numRead = in.read(buffer)) != -1) {
+				out.write(buffer, 0, numRead);
+			}
+		} catch (SocketTimeoutException ste) {
+			//Socket timed out, so the server is down.
+		} catch (Exception exception) {
+			exception.printStackTrace();
+		} finally {
+			try {
+				if (in != null) {
+					in.close();
+				}
+				if (out != null) {
+					out.close();
+				}
+			} catch (IOException ignored) {
+			}
+		}
+		if (out != null)
+			return out.toByteArray();
 
-        return null;
-    }
+		return null;
+	}
 
-    private void setSuperclassName(ClassGen cg, String name) {
-        ConstantPoolGen cpg = cg.getConstantPool();
-        cpg.setConstant(cg.getSuperclassNameIndex(), new ConstantClass(cpg.addUtf8(name)));
-    }
+	private void setSuperclassName(ClassGen cg, String name) {
+		ConstantPoolGen cpg = cg.getConstantPool();
+		cpg.setConstant(cg.getSuperclassNameIndex(), new ConstantClass(cpg.addUtf8(name)));
+	}
 
-    private void injectGetter(ClassGen cg, Type castType, String methodName, String fieldName) {
-        if (fieldName.contains(".")) {
-            String[] parts = fieldName.split("\\.");
-            if (parts.length > 2)
-                throw new RuntimeException("Argument 'fieldName': " + fieldName + " contains more then one '.'!");
+	private void injectGetter(ClassGen cg, Type castType, String methodName, String fieldName) {
+		if (fieldName.contains(".")) {
+			String[] parts = fieldName.split("\\.");
+			if (parts.length > 2)
+				throw new RuntimeException("Argument 'fieldName': " + fieldName + " contains more then one '.'!");
 
-            ClassGen c = findClass(parts[0]);
-            if (c == null)
-                throw new RuntimeException("Could not find class: " + parts[0]);
+			ClassGen c = findClass(parts[0]);
+			if (c == null)
+				throw new RuntimeException("Could not find class: " + parts[0]);
 
-            for (Field f : c.getFields()) {
-                if (f.getName().equals(parts[1])) {
-                    injectGetter(cg, methodName, castType, c.getClassName(), f.getName(), f.getType());
-                    return;
-                }
-            }
+			for (Field f : c.getFields()) {
+				if (f.getName().equals(parts[1])) {
+					injectGetter(cg, methodName, castType, c.getClassName(), f.getName(), f.getType());
+					return;
+				}
+			}
 
-            throw new RuntimeException("Could not find field: " + parts[1] + " in class: " + parts[0]);
-        }
+			throw new RuntimeException("Could not find field: " + parts[1] + " in class: " + parts[0]);
+		}
 
-        for (Field f : cg.getFields()) {
-            if (f.getName().equals(fieldName)) {
-                if (f.getType() instanceof BasicType && !f.getType().equals(castType))
-                    injectGetter(cg, methodName, castType, cg.getClassName(), f.getName(), f.getType(), true);
-                else
-                    injectGetter(cg, castType, methodName, f);
-                return;
-            }
-        }
+		for (Field f : cg.getFields()) {
+			if (f.getName().equals(fieldName)) {
+				if (f.getType() instanceof BasicType && !f.getType().equals(castType))
+					injectGetter(cg, methodName, castType, cg.getClassName(), f.getName(), f.getType(), true);
+				else
+					injectGetter(cg, castType, methodName, f);
+				return;
+			}
+		}
 
-        throw new RuntimeException("Could not find field:" + fieldName + " in class: " + cg.getClassName());
-    }
+		throw new RuntimeException("Could not find field:" + fieldName + " in class: " + cg.getClassName());
+	}
 
-    private void injectGetter(ClassGen cg, Type castType, String methodName, Field f) {
-        injectGetter(cg, methodName, castType, cg.getClassName(), f.getName(), f.getType());
-    }
+	private void injectGetter(ClassGen cg, Type castType, String methodName, Field f) {
+		injectGetter(cg, methodName, castType, cg.getClassName(), f.getName(), f.getType());
+	}
 
-    private int getFlags(String field_class, String field_name, Type field_type) {
-        ClassGen cg = findClass(field_class);
-        Field fields[] = cg.getFields();
-        for (Field f : fields) {
-            if (field_name.equals(f.getName()) && field_type.equals(field_type)) {
-                return f.getAccessFlags();
-            }
-        }
-        throw new RuntimeException("Hooked some invalid field -> " + field_type + " " + field_class + "." + field_name);
-    }
+	private int getFlags(String field_class, String field_name, Type field_type) {
+		ClassGen cg = findClass(field_class);
+		Field fields[] = cg.getFields();
+		for (Field f : fields) {
+			if (field_name.equals(f.getName()) && field_type.equals(field_type)) {
+				return f.getAccessFlags();
+			}
+		}
+		throw new RuntimeException("Hooked some invalid field -> " + field_type + " " + field_class + "." + field_name);
+	}
 
-    private ClassGen injectGetter(ClassGen into, String method_name, Type return_type, String field_class, String field_name, Type field_type) {
-        return injectGetter(into, method_name, return_type, field_class, field_name, field_type, false);
-    }
+	private ClassGen injectGetter(ClassGen into, String method_name, Type return_type, String field_class, String field_name, Type field_type) {
+		return injectGetter(into, method_name, return_type, field_class, field_name, field_type, false);
+	}
 
-    private ClassGen injectGetter(ClassGen into, String method_name, Type return_type, String field_class, String field_name, Type field_type, boolean checkcast) {
-        boolean isStatic = (getFlags(field_class, field_name, field_type) & Constants.ACC_STATIC) != 0;
-        ConstantPoolGen cpg = into.getConstantPool();
-        InstructionList il = new InstructionList();
-        InstructionFactory factory = new InstructionFactory(into, cpg);
-        String class_name = into.getClassName();
+	private ClassGen injectGetter(ClassGen into, String method_name, Type return_type, String field_class, String field_name, Type field_type, boolean checkcast) {
+		boolean isStatic = (getFlags(field_class, field_name, field_type) & Constants.ACC_STATIC) != 0;
+		ConstantPoolGen cpg = into.getConstantPool();
+		InstructionList il = new InstructionList();
+		InstructionFactory factory = new InstructionFactory(into, cpg);
+		String class_name = into.getClassName();
 
-        if (!isStatic)
-            il.append(new ALOAD(0));
+		if (!isStatic)
+			il.append(new ALOAD(0));
 
-        il.append(factory.createFieldAccess(field_class, field_name, field_type, isStatic ? Constants.GETSTATIC : Constants.GETFIELD));
-        if (checkcast && !(return_type instanceof BasicType))
-            il.append(factory.createCheckCast(return_type instanceof ArrayType ? ((ArrayType) return_type) : (ObjectType) return_type));
-        else if (checkcast) {
-            switch (field_type.getType()) {
-                case Constants.T_DOUBLE:
-                    switch (return_type.getType()) {
-                        case Constants.T_FLOAT:
-                            il.append(new D2F());
-                            break;
-                        case Constants.T_INT:
-                            il.append(new D2I());
-                            break;
-                        case Constants.T_LONG:
-                            il.append(new D2L());
-                            break;
-                    }
-                    break;
-                case Constants.T_FLOAT:
-                    switch (return_type.getType()) {
-                        case Constants.T_DOUBLE:
-                            il.append(new F2D());
-                            break;
-                        case Constants.T_INT:
-                            il.append(new F2I());
-                            break;
-                        case Constants.T_LONG:
-                            il.append(new F2L());
-                            break;
-                    }
-                    break;
-                case Constants.T_INT:
-                    switch (return_type.getType()) {
-                        case Constants.T_BYTE:
-                            il.append(new I2B());
-                            break;
-                        case Constants.T_CHAR:
-                            il.append(new I2C());
-                            break;
-                        case Constants.T_DOUBLE:
-                            il.append(new I2D());
-                            break;
-                        case Constants.T_FLOAT:
-                            il.append(new I2F());
-                            break;
-                        case Constants.T_LONG:
-                            il.append(new I2L());
-                            break;
-                        case Constants.T_SHORT:
-                            il.append(new I2S());
-                            break;
-                    }
-                    break;
-                case Constants.T_LONG:
-                    switch (return_type.getType()) {
-                        case Constants.T_DOUBLE:
-                            il.append(new L2D());
-                            break;
-                        case Constants.T_FLOAT:
-                            il.append(new L2F());
-                            break;
-                        case Constants.T_INT:
-                            il.append(new L2I());
-                            break;
-                    }
-                    break;
-            }
-        }
-        il.append(InstructionFactory.createReturn(return_type));
+		il.append(factory.createFieldAccess(field_class, field_name, field_type, isStatic ? Constants.GETSTATIC : Constants.GETFIELD));
+		if (checkcast && !(return_type instanceof BasicType))
+			il.append(factory.createCheckCast(return_type instanceof ArrayType ? ((ArrayType) return_type) : (ObjectType) return_type));
+		else if (checkcast) {
+			switch (field_type.getType()) {
+				case Constants.T_DOUBLE:
+					switch (return_type.getType()) {
+						case Constants.T_FLOAT:
+							il.append(new D2F());
+							break;
+						case Constants.T_INT:
+							il.append(new D2I());
+							break;
+						case Constants.T_LONG:
+							il.append(new D2L());
+							break;
+					}
+					break;
+				case Constants.T_FLOAT:
+					switch (return_type.getType()) {
+						case Constants.T_DOUBLE:
+							il.append(new F2D());
+							break;
+						case Constants.T_INT:
+							il.append(new F2I());
+							break;
+						case Constants.T_LONG:
+							il.append(new F2L());
+							break;
+					}
+					break;
+				case Constants.T_INT:
+					switch (return_type.getType()) {
+						case Constants.T_BYTE:
+							il.append(new I2B());
+							break;
+						case Constants.T_CHAR:
+							il.append(new I2C());
+							break;
+						case Constants.T_DOUBLE:
+							il.append(new I2D());
+							break;
+						case Constants.T_FLOAT:
+							il.append(new I2F());
+							break;
+						case Constants.T_LONG:
+							il.append(new I2L());
+							break;
+						case Constants.T_SHORT:
+							il.append(new I2S());
+							break;
+					}
+					break;
+				case Constants.T_LONG:
+					switch (return_type.getType()) {
+						case Constants.T_DOUBLE:
+							il.append(new L2D());
+							break;
+						case Constants.T_FLOAT:
+							il.append(new L2F());
+							break;
+						case Constants.T_INT:
+							il.append(new L2I());
+							break;
+					}
+					break;
+			}
+		}
+		il.append(InstructionFactory.createReturn(return_type));
 
-        MethodGen mg = new MethodGen(
-                Constants.ACC_PUBLIC | Constants.ACC_FINAL, // access_flags
-                return_type, // return_type
-                null, // arguement_types
-                null, // arguement_names
-                method_name, // method_name
-                class_name, // class_name;
-                il, // instruction_list;
-                cpg // constant_pool_gen
-        );
-        mg.setMaxLocals();
-        mg.setMaxStack();
+		MethodGen mg = new MethodGen(
+				Constants.ACC_PUBLIC | Constants.ACC_FINAL, // access_flags
+				return_type, // return_type
+				null, // arguement_types
+				null, // arguement_names
+				method_name, // method_name
+				class_name, // class_name;
+				il, // instruction_list;
+				cpg // constant_pool_gen
+		);
+		mg.setMaxLocals();
+		mg.setMaxStack();
 
-        into.addMethod(mg.getMethod());
-        return into;
-    }
+		into.addMethod(mg.getMethod());
+		return into;
+	}
 }

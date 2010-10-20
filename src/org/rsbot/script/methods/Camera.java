@@ -12,7 +12,7 @@ import java.awt.event.KeyEvent;
  */
 public class Camera extends MethodProvider {
 
-    Camera(final MethodContext ctx) {
+    Camera(MethodContext ctx) {
         super(ctx);
     }
 
@@ -84,14 +84,16 @@ public class Camera extends MethodProvider {
 
     /**
      * Sets the altitude to max or minimum.
-     * 
-     * @param maxAltitude True to go up. False to go down. 
+     *
+     * @param up True to go up. False to go down.
+	 * @return <tt>true</tt> if the altitude was changed.
      */
-    public void setAltitude(boolean maxAltitude) {
-        char key = (char) (maxAltitude ? KeyEvent.VK_UP : KeyEvent.VK_DOWN);
-        methods.inputManager.pressKey(key);
-        sleep(random(1000, 1500));
-        methods.inputManager.releaseKey(key);
+    public boolean setPitch(boolean up) {
+    	if (up) {
+    		return setPitch(100);
+		} else {
+    		return setPitch(0);
+		}
     }
 
     /**
@@ -99,49 +101,51 @@ public class Camera extends MethodProvider {
      * rely on the return value too much - it should return whether the camera
      * was successfully set, but it isn't very accurate near the very extremes
      * of the height.
-     * <p/>
+     *
+
      * This also depends on the maximum camera angle in a region, as it changes
      * depending on situation and surroundings. So in some areas, 68% might be
      * the maximum altitude. This method will do the best it can to switch the
      * camera altitude to what you want, but if it hits the maximum or stops
      * moving for any reason, it will return.
-     * <p/>
+     *
+
+
      * Mess around a little to find the altitude percentage you like. In later
      * versions, there will be easier-to-work-with methods regarding altitude.
      *
-     * @param altPercent The percentage of the maximum pitch to set the camera to.
-     * @return <tt>true</tt> if the camera was successfully moved; otherwise <tt>false</tt>.
+     * @param percent The percentage of the maximum pitch to set the camera to.
+     * @return true if the camera was successfully moved; otherwise false.
      */
-    public boolean setPitch(int altPercent) {
-        int alt = (int) (altPercent * 20.48 + 1024);
-        int curAlt = methods.client.getCameraPitch();
+    public boolean setPitch(int percent) {
+        int curAlt = getPitch();
         int lastAlt = 0;
-        if (curAlt == alt)
+        if (curAlt == percent)
             return true;
-        else if (curAlt > alt) {
+        else if (curAlt < percent) {
             methods.inputManager.pressKey((char) KeyEvent.VK_UP);
             long start = System.currentTimeMillis();
-            while (curAlt > alt && System.currentTimeMillis() - start < 30) {
+            while (curAlt < percent && System.currentTimeMillis() - start < random(50,100)) {
                 if (lastAlt != curAlt) {
                     start = System.currentTimeMillis();
                 }
                 lastAlt = curAlt;
 
-                sleep(1);
-                curAlt = methods.client.getCameraPitch();
+                sleep(random(5,10));
+                curAlt = getPitch();
             }
             methods.inputManager.releaseKey((char) KeyEvent.VK_UP);
             return true;
         } else {
             methods.inputManager.pressKey((char) KeyEvent.VK_DOWN);
             long start = System.currentTimeMillis();
-            while (curAlt < alt && System.currentTimeMillis() - start < 30) {
+            while (curAlt > percent && System.currentTimeMillis() - start < random(50,100)) {
                 if (lastAlt != curAlt) {
                     start = System.currentTimeMillis();
                 }
                 lastAlt = curAlt;
-                sleep(1);
-                curAlt = methods.client.getCameraPitch();
+                sleep(random(5,10));
+                curAlt = getPitch();
             }
             methods.inputManager.releaseKey((char) KeyEvent.VK_DOWN);
             return true;
@@ -151,7 +155,7 @@ public class Camera extends MethodProvider {
 
     /**
      * Moves the camera in a random direction for a given time.
-     * 
+     *
      * @param timeOut The maximum time in milliseconds to move
      * the camera for.
      */
@@ -216,8 +220,8 @@ public class Camera extends MethodProvider {
 
     /**
      * Rotates the camera to the specified cardinal direction.
-     * 
-     * @param direction The <tt>char</tt> direction to turn the map. <tt>char</tt> options are
+     *
+     * @param direction The char direction to turn the map. char options are
      * w,s,e,n and defaults to north if character is unrecognized.
      */
     public void setCompass(char direction) {
@@ -239,7 +243,7 @@ public class Camera extends MethodProvider {
                 break;
         }
     }
-    
+
     /**
      * Uses the compass component to set the camera to face north.
      */
@@ -326,48 +330,48 @@ public class Camera extends MethodProvider {
     /**
      * Returns the current compass orientation in degrees,
      * with North at 0, increasing counter-clockwise to 360.
-     * 
+     *
      * @return The current camera angle in degrees.
      */
     public int getAngle() {
         return methods.client.getCameraYaw() / 46;
     }
-    
+
     /**
      * Returns the current percentage of the maximum pitch
      * of the camera in an open area.
-     * 
+     *
      * @return The current camera altitude percentage.
      */
     public int getPitch() {
     	return (int) ((methods.client.getCameraPitch() - 1024) / 20.48);
     }
-    
+
     /**
      * Returns the current x position of the camera.
-     * 
+     *
      * @return The x position.
      */
     public int getX() {
     	return methods.client.getCamPosX();
     }
-    
+
     /**
      * Returns the current y position of the camera.
-     * 
+     *
      * @return The y position.
      */
     public int getY() {
     	return methods.client.getCamPosY();
     }
-    
+
     /**
      * Returns the current z position of the camera.
-     * 
+     *
      * @return The z position.
      */
     public int getZ() {
     	return methods.client.getCamPosZ();
     }
-    
+
 }

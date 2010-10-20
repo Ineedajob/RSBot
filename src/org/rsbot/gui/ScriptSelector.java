@@ -73,7 +73,7 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 		submit.setEnabled(available && table.getSelectedRow() != -1);
 		table.setEnabled(available);
 		search.setEnabled(available);
-		connect.setEnabled(available);
+		connect.setEnabled(false/*available*/);
 		accounts.setEnabled(available);
 		table.clearSelection();
 	}
@@ -161,7 +161,7 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 		add(table, BorderLayout.CENTER);
 		add(toolBar, BorderLayout.SOUTH);
 
-		setSize(650, 400);
+		setSize(700, 400);
 		setMinimumSize(getSize());
 		setLocationRelativeTo(getParent());
 		search.requestFocus();

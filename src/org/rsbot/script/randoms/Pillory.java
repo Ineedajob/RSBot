@@ -116,7 +116,7 @@ public class Pillory extends Random implements ServerMessageListener {
 
     @Override
     public int loop() {
-        camera.setAltitude(true);
+        camera.setPitch(true);
         if (calc.distanceTo(South) <= 10) {
             camera.setAngle(180);
         } else {
