@@ -3,314 +3,270 @@ package org.rsbot.script.randoms;
 import org.rsbot.script.Random;
 import org.rsbot.script.ScriptManifest;
 import org.rsbot.script.wrappers.RSComponent;
-import org.rsbot.script.wrappers.RSItem;
 
-import java.awt.*;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
+import java.awt.Rectangle;
 
-@ScriptManifest(authors = {"Fred"}, name = "ImprovedRewardsBox", version = 1.1)
+@ScriptManifest(authors = {"Fred", "Arbiter"}, name = "Improved Rewards Box", version = 1.2)
 public class ImprovedRewardsBox extends Random {
 
-    Rectangle temp;
+	private static final int BOOK_KNOWLEDGE_ID = 11640;
+	private static final int LAMP_ID = 2528;
+	private static final int MYSTERY_BOX_ID = 6199;
+	private static final int BOX_ID = 14664;
+	private static final int BOX_IF = 202;
+	private static final int BOX_CONFIRM_IF = 28;
+	private static final int BOX_SELECTION_IF = 15;
+	private static final int BOX_SCROLLBAR_IF = 24;
+	private static final int XP_IF = 134;
 
-    String[] choices = {"Cash", "Runes", "Coal", "Essence", "Ore", "Bars", "Gems", "Herbs", "Seeds", "Charms", "XP item", "Surprise", "Emote", "Costume"};
-    String XPChoice = "Attack";
+	private static final int ATT_ID = 4;
+	private static final int AGILITY_ID = 5;
+	private static final int HERBLORE_ID = 6;
+	private static final int FISHING_ID = 7;
+	private static final int THIEVING_ID = 8;
+	private static final int RUNECRAFTING_ID = 9;
+	private static final int SLAYER_ID = 10;
+	private static final int FARMING_ID = 11;
+	private static final int MINING_ID = 12;
+	private static final int SMITHING_ID = 13;
+	private static final int HUNTER_ID = 14;
+	private static final int COOKING_ID = 15;
+	private static final int FIREMAKING_ID = 16;
+	private static final int WOODCUTTING_ID = 17;
+	private static final int FLETCHING_ID = 18;
+	private static final int CONSTRUCTION_ID = 19;
+	private static final int SUMMONING_ID = 20;
+	private static final int STRENGTH_ID = 21;
+	private static final int RANGED_ID = 22;
+	private static final int MAGIC_ID = 23;
+	private static final int DEFENCE_ID = 24;
+	private static final int HITPOINTS_ID = 25;
+	private static final int CRAFTING_ID = 26;
+	private static final int PRAYER_ID = 27;
+	private static final int DUNGEONEERING_ID = 28;
+	private static final int CONFIRM_ID = 2;
 
-    final int bookKnowledgeID = 11640;
-    final int LampID = 2528;
-    final int mysteryBoxID = 6199;
-    final int boxID = 14664;
-    final int boxIF = 202;
-    final int boxConfirmIF = 28;
-    final int boxSelectionIF = 15;
-    final int boxScrollbarIF = 24;
-    int optionSelected = 999;
+	private int scrollbarTopLength;
+	private int scrollbarTotalLength;
+	private int hiddenScreenHeight;
+	private int viewableScreenHeight;
+	private int endofselection = 0;
+	private int XPSelection;
 
-    final int XPIF = 134;
-    final int ATT_ID = 4;
-    final int AGILITY_ID = 5;
-    final int HERBLORE_ID = 6;
-    final int FISHING_ID = 7;
-    final int THIEVING_ID = 8;
-    final int RUNECRAFTING_ID = 9;
-    final int SLAYER_ID = 10;
-    final int FARMING_ID = 11;
-    final int MINING_ID = 12;
-    final int SMITHING_ID = 13;
-    final int HUNTER_ID = 14;
-    final int COOKING_ID = 15;
-    final int FIREMAKING_ID = 16;
-    final int WOODCUTTING_ID = 17;
-    final int FLETCHING_ID = 18;
-    final int CONSTRUCTION_ID = 19;
-    final int SUMMONING_ID = 20;
-    final int STRENGTH_ID = 21;
-    final int RANGED_ID = 22;
-    final int MAGIC_ID = 23;
-    final int DEFENCE_ID = 24;
-    final int HITPOINTS_ID = 25;
-    final int CRAFTING_ID = 26;
-    final int PRAYER_ID = 27;
-    final int CONFIRM_ID = 2;
+	public boolean activateCondition() {
+		return game.isLoggedIn()
+				&& !getMyPlayer().isInCombat()
+				&& (inventory.contains(BOX_ID)
+				|| inventory.contains(BOOK_KNOWLEDGE_ID)
+				|| inventory.contains(LAMP_ID) || inventory.contains(MYSTERY_BOX_ID));
+	}
 
-    int scrollbarBottomLength;
-    int scrollbarTopLength;
-    int hiddenScreenHeight;
-    double difference;
-    int endofselection = 0;
+	public int getActualY(final RSComponent Component) {
+		int boxYPos;
+		final RSComponent[] selection = interfaces.get(202).getComponent(15)
+				.getComponents();
+		for (int end = 0; end < selection.length; end++) {
+			if (selection[end].containsText(":")) {
+				endofselection = (end - 6);
+			}
+			if (selection[end].containsText("emote")) {
+				endofselection = (end - 6);
+			}
+			if (selection[end].containsText("costume")) {
+				endofselection = (end - 6);
+			}
+		}
+		viewableScreenHeight = (interfaces.get(202).getComponent(15).getHeight() - 11);
+		int totalScreenHeight = (selection[endofselection].getAbsoluteY()
+				+ selection[endofselection].getHeight() - selection[0]
+				.getAbsoluteY());
+		hiddenScreenHeight = (totalScreenHeight - viewableScreenHeight);
+		if (hiddenScreenHeight > 0) {
+			final RSComponent[] scrollbar = interfaces.get(202)
+					.getComponent(24).getComponents();
+			scrollbarTopLength = (scrollbar[1].getAbsoluteY() - scrollbar[0]
+					.getAbsoluteY());
+			int scrollbarBottomLength = (scrollbar[5].getAbsoluteY()
+					- scrollbar[3].getAbsoluteY() + scrollbar[3].getHeight() - 6);
+			scrollbarTotalLength = scrollbarTopLength + scrollbarBottomLength;
+			double difference = (Double.parseDouble(Integer.toString(scrollbarTopLength))
+					/ Double.parseDouble(Integer.toString(scrollbarTotalLength)) * Double
+					.parseDouble(Integer.toString(hiddenScreenHeight)));
+			boxYPos = (Component.getAbsoluteY() - (int) difference);
+		} else {
+			boxYPos = Component.getAbsoluteY();
+		}
+		return boxYPos;
+	}
 
-    public boolean activateCondition() {
-        return game.isLoggedIn() && !getMyPlayer().isInCombat() && !bank.isOpen() && !bank.isDepositOpen() && (cachedInventoryContainedOneOf(boxID, bookKnowledgeID, LampID, mysteryBoxID));
-    }
+	public Rectangle getBoxArea(final RSComponent Component) {
+		return new Rectangle(Component.getAbsoluteX(), getActualY(Component),
+				Component.getWidth(), Component.getHeight());
+	}
 
-    private boolean cachedInventoryContainedOneOf(int... ids) {
-    	for (RSItem item : inventory.getCachedItems()) {
-            for (int id : ids) {
-                if (item.getID() == id)
-                    return true;
-            }
-        }
-        return false;
-    }
+	public int loop() {
+		String[] choices = getChoices();
+		if (interfaces.get(BOX_IF).isValid()) {
+			for (RSComponent child : interfaces.get(137).getComponents()) {
+				if (choices[choices.length - 1].equals("Emote")) {
+					break;
+				}
+				if (child.containsText("You've already unlocked")
+						&& child.containsText("emotes")
+						&& !child.containsText("<col=0000ff>")) {
+					for (int i = 0; i < choices.length; i++) {
+						if (choices[i].contains("Emote")) {
+							System.arraycopy(choices, i + 1, choices, i, choices.length - 1 - i);
+							choices[choices.length - 1] = "Emote";
+							break;
+						}
+					}
+				}
+			}
+			RSComponent[] selection = interfaces.get(BOX_IF).getComponent(BOX_SELECTION_IF).getComponents();
+			int optionSelected = 999;
+			for (final String choice : choices) {
+				for (int i = 0; i < selection.length; i++) {
+					if (selection[i].getText().toLowerCase()
+							.contains(choice.toLowerCase())) {
+						optionSelected = i - 6;
+						break;
+					}
+				}
+				if (optionSelected != 999) {
+					break;
+				}
+			}
+			if (optionSelected == 999) {
+				optionSelected = 0;
+			}
+			RSComponent[] scrollbar = interfaces.get(BOX_IF).getComponent(BOX_SCROLLBAR_IF).getComponents();
+			if (scrollbarTopLength > 0) {
+				mouse.move(scrollbar[1].getAbsoluteX() + random(-4, 4),
+						scrollbar[1].getAbsoluteY() + random(-15, 15));
+				mouse.drag((int) mouse.getLocation().getX(),
+						(int) mouse.getLocation().getY() - scrollbarTopLength);
+			}
+			if (getBoxArea(selection[optionSelected]).y > 278) {
+				mouse.move(scrollbar[1].getAbsoluteX() + random(-4, 4),
+						scrollbar[1].getAbsoluteY() + random(-15, 15));
+				int toDragtoY = (int) (mouse.getLocation().getY() + (Double
+						.parseDouble(Integer
+								.toString((getBoxArea(selection[optionSelected]).y
+								+ getBoxArea(selection[optionSelected]).height
+								- selection[0].getAbsoluteY() - viewableScreenHeight)))
+						/ Double.parseDouble(Integer
+						.toString(hiddenScreenHeight)) * Double
+						.parseDouble(Integer.toString(scrollbarTotalLength))));
+				if ((toDragtoY - (int) mouse.getLocation().getY()) > (scrollbar[5]
+						.getAbsoluteY()
+						- scrollbar[3].getAbsoluteY()
+						+ scrollbar[3].getHeight() - 6)) {
+					toDragtoY = (int) mouse.getLocation().getY()
+							+ (scrollbar[5].getAbsoluteY()
+							- scrollbar[3].getAbsoluteY()
+							+ scrollbar[3].getHeight() - 6);
+				}
+				mouse.drag((int) mouse.getLocation().getX(), toDragtoY);
+			}
+			sleep(random(3000, 4000));
+			selection = interfaces.get(BOX_IF).getComponent(BOX_SELECTION_IF)
+					.getComponents();
+			int boxX = getBoxArea(selection[optionSelected]).x + 15;
+			int boxY = getBoxArea(selection[optionSelected]).y + 15;
+			int boxWidth = getBoxArea(selection[optionSelected]).width - 30;
+			int boxHeight = getBoxArea(selection[optionSelected]).height - 30;
+			mouse.move(random(boxX, boxX + boxWidth),
+					random(boxY, boxY + boxHeight));
+			mouse.click(true);
+			interfaces.get(BOX_IF).getComponent(BOX_CONFIRM_IF).doClick();
+			return random(3000, 4000);
+		}
+		if (interfaces.get(XP_IF).isValid()) {
+			interfaces.get(XP_IF).getComponent(XPSelection).doClick();
+			interfaces.get(XP_IF).getComponent(CONFIRM_ID).doClick();
+			return random(3000, 4000);
+		}
+		if (inventory.contains(BOX_ID)) {
+			inventory.getItem(BOX_ID).doAction("Open");
+			return random(3000, 4000);
+		}
+		if (inventory.contains(BOOK_KNOWLEDGE_ID)) {
+			inventory.getItem(BOOK_KNOWLEDGE_ID).doAction("Read");
+			return random(3000, 4000);
+		}
+		if (inventory.contains(LAMP_ID)) {
+			inventory.getItem(LAMP_ID).doAction("Rub");
+			return random(3000, 4000);
+		}
+		if (inventory.contains(MYSTERY_BOX_ID)) {
+			inventory.getItem(MYSTERY_BOX_ID).doAction("Open");
+			return random(3000, 4000);
+		}
+		return -1;
+	}
 
-    public int getActualY(RSComponent Component) {
-        int boxYPos;
-        RSComponent[] selection = interfaces.get(202).getComponent(15).getComponents();
-        RSComponent[] scrollbar = interfaces.get(202).getComponent(24).getComponents();
-        for (int end = 0; end < selection.length; end++) {
-            if (selection[end].containsText(":")) {
-                endofselection = (end - 6);
-            }
-            if (selection[end].containsText("emote")) {
-                endofselection = (end - 6);
-            }
-            if (selection[end].containsText("costume")) {
-                endofselection = (end - 6);
-            }
-        }
-        int viewableScreenHeight = (interfaces.get(202).getComponent(15).getHeight() - 11);
-        int totalScreenHeight = (selection[endofselection].getAbsoluteY() + selection[endofselection].getHeight() - selection[0].getAbsoluteY());
-        hiddenScreenHeight = (totalScreenHeight - viewableScreenHeight);
-        if (hiddenScreenHeight > 0) {
-            scrollbarTopLength = (scrollbar[1].getAbsoluteY() - scrollbar[0].getAbsoluteY());
-            difference = (Double.parseDouble(Integer.toString(scrollbarTopLength)) / Double.parseDouble(Integer.toString(scrollbarBottomLength)) * Double.parseDouble(Integer.toString(hiddenScreenHeight)));
-            boxYPos = (Component.getAbsoluteY() - (int) difference);
-        } else {
-            boxYPos = Component.getAbsoluteY();
-        }
-        return boxYPos;
-    }
+	private String[] getChoices() {
+		String[] choices = new String[2];
+		choices[0] = "XP Item";
+		choices[1] = "Cash";
 
-    public Rectangle getBoxArea(RSComponent Component) {
-        return new Rectangle(Component.getAbsoluteX(), getActualY(Component), Component.getWidth(), Component.getHeight());
-    }
-
-    public int loop() {
-        if (interfaces.get(boxIF).isValid()) {
-            String os = System.getProperty("os.name");
-            String filename;
-            if (os.contains("Windows")) {
-                filename = System.getenv("APPDATA") + File.separator + "RewardsChoices.ini";
-            } else {
-                String home = System.getProperty("user.home");
-                filename = (home == null ? "~" : home) + File.separator + ".rewardschoices";
-            }
-            File RewardsChoiceFile = new File(filename);
-            if (RewardsChoiceFile.exists()) {
-                try {
-                    BufferedReader in = new BufferedReader(new FileReader(filename));
-                    String inputLine = "";
-                    int choicenumber = 0;
-                    while ((inputLine = in.readLine()) != null) {
-                        if (choicenumber > (choices.length - 1)) {
-                            XPChoice = inputLine;
-                            break;
-                        }
-                        choices[choicenumber] = inputLine;
-                        choicenumber++;
-                    }
-                } catch (final Exception e) {
-                    log("Error opening");
-                }
-            }
-            RSComponent[] selection = interfaces.get(boxIF).getComponent(boxSelectionIF).getComponents();
-            for (String choice : choices) {
-                for (int i = 0; i < selection.length; i++) {
-                    if (selection[i].getText().toLowerCase().contains(choice.toLowerCase())) {
-                        optionSelected = i - 6;
-                        break;
-                    }
-                }
-                if (optionSelected != 999) {
-                    break;
-                }
-            }
-            if (optionSelected == 999) {
-                optionSelected = 0;
-            }
-            temp = getBoxArea(selection[optionSelected]);
-            if (getBoxArea(selection[optionSelected]).y > 278) {
-                RSComponent[] scrollbar = interfaces.get(boxIF).getComponent(boxScrollbarIF).getComponents();
-                scrollbarBottomLength = (scrollbar[5].getAbsoluteY() - scrollbar[3].getAbsoluteY() + scrollbar[3].getHeight() - 6);
-                mouse.move(scrollbar[1].getCenter().x + random(-4, 4), scrollbar[1].getCenter().y + random(-15, 15));
-                int toDragtoY = (int) mouse.getLocation().getY() + (getBoxArea(selection[optionSelected]).y - selection[0].getAbsoluteY());
-                if ((toDragtoY - (int) mouse.getLocation().getY()) > (scrollbar[5].getAbsoluteY() - scrollbar[3].getAbsoluteY() + scrollbar[3].getHeight() - 6)) {
-                    toDragtoY = (int) mouse.getLocation().getY() + (scrollbar[5].getAbsoluteY() - scrollbar[3].getAbsoluteY() + scrollbar[3].getHeight() - 6);
-                }
-                mouse.drag((int) mouse.getLocation().getX(), toDragtoY);
-            }
-
-            /*
-                * if (getBoxArea(selection[optionSelected]).y +
-                * getBoxArea(selection[optionSelected]).height < 135) {
-                * RSComponent[] scrollbar =
-                * interfaces.getInterface(boxIF).getChild(boxScrollbarIF).getComponents();
-                * mouse.move(scrollbar[1].getPoint().x + random(-4, 4),
-                * scrollbar[1].getPoint().y + random(-15, 15)); int toDragtoY =
-                * (int) mouse.getLocation().getY() +
-                * (getBoxArea(selection[optionSelected]).y -
-                * selection[0].getAbsoluteY()); if (((int)
-                * mouse.getLocation().getY() - toDragtoY) >
-                * (scrollbar[1].getAbsoluteY() - scrollbar[0].getAbsoluteY())) {
-                * toDragtoY = (int) mouse.getLocation().getY() -
-                * (scrollbar[1].getAbsoluteY() - scrollbar[0].getAbsoluteY()); }
-                * mouse.drag((int) mouse.getLocation().getX(), toDragtoY); }
-                */
-            sleep(random(3000, 4000));
-            selection = interfaces.get(boxIF).getComponent(boxSelectionIF).getComponents();
-            int boxX = getBoxArea(selection[optionSelected]).x + 15;
-            int boxY = getBoxArea(selection[optionSelected]).y + 15;
-            int boxWidth = getBoxArea(selection[optionSelected]).width - 30;
-            int boxHeight = getBoxArea(selection[optionSelected]).height - 30;
-            temp = getBoxArea(selection[optionSelected]);
-            mouse.move(random(boxX, boxX + boxWidth), random(boxY, boxY + boxHeight));
-            mouse.click(true);
-            interfaces.getComponent(boxIF, boxConfirmIF).doClick();
-            sleep(random(3000, 4000));
-        }
-        if (interfaces.get(XPIF).isValid()) {
-            String os = System.getProperty("os.name");
-            String filename;
-            if (os.contains("Windows")) {
-                filename = System.getenv("APPDATA") + File.separator + "RewardsChoices.ini";
-            } else {
-                String home = System.getProperty("user.home");
-                filename = (home == null ? "~" : home) + File.separator + ".rewardschoices";
-            }
-            File RewardsChoiceFile = new File(filename);
-            if (RewardsChoiceFile.exists()) {
-                try {
-                    BufferedReader in = new BufferedReader(new FileReader(filename));
-                    String inputLine = "";
-                    int choicenumber = 0;
-                    while ((inputLine = in.readLine()) != null) {
-                        if (choicenumber > (choices.length - 1)) {
-                            XPChoice = inputLine;
-                            break;
-                        }
-                        choices[choicenumber] = inputLine;
-                        choicenumber++;
-                    }
-                } catch (final Exception e) {
-                    log("Error opening");
-                }
-            }
-            int XPSelection = 0;
-            if (XPChoice.contains("Attack")) {
-                XPSelection = ATT_ID;
-            }
-            if (XPChoice.contains("Strength")) {
-                XPSelection = STRENGTH_ID;
-            }
-            if (XPChoice.contains("Defence")) {
-                XPSelection = DEFENCE_ID;
-            }
-            if (XPChoice.contains("Ranged")) {
-                XPSelection = RANGED_ID;
-            }
-            if (XPChoice.contains("Prayer")) {
-                XPSelection = PRAYER_ID;
-            }
-            if (XPChoice.contains("Magic")) {
-                XPSelection = MAGIC_ID;
-            }
-            if (XPChoice.contains("Runecrafting")) {
-                XPSelection = RUNECRAFTING_ID;
-            }
-            if (XPChoice.contains("Construction")) {
-                XPSelection = CONSTRUCTION_ID;
-            }
-            if (XPChoice.contains("Hitpoints")) {
-                XPSelection = HITPOINTS_ID;
-            }
-            if (XPChoice.contains("Agility")) {
-                XPSelection = AGILITY_ID;
-            }
-            if (XPChoice.contains("Herblore")) {
-                XPSelection = HERBLORE_ID;
-            }
-            if (XPChoice.contains("Thieving")) {
-                XPSelection = THIEVING_ID;
-            }
-            if (XPChoice.contains("Crafting")) {
-                XPSelection = CRAFTING_ID;
-            }
-            if (XPChoice.contains("Fletching")) {
-                XPSelection = FLETCHING_ID;
-            }
-            if (XPChoice.contains("Slayer")) {
-                XPSelection = SLAYER_ID;
-            }
-            if (XPChoice.contains("Hunter")) {
-                XPSelection = HUNTER_ID;
-            }
-            if (XPChoice.contains("Mining")) {
-                XPSelection = MINING_ID;
-            }
-            if (XPChoice.contains("Smithing")) {
-                XPSelection = SMITHING_ID;
-            }
-            if (XPChoice.contains("Fishing")) {
-                XPSelection = FISHING_ID;
-            }
-            if (XPChoice.contains("Cooking")) {
-                XPSelection = COOKING_ID;
-            }
-            if (XPChoice.contains("Firemaking")) {
-                XPSelection = FIREMAKING_ID;
-            }
-            if (XPChoice.contains("Woodcutting")) {
-                XPSelection = WOODCUTTING_ID;
-            }
-            if (XPChoice.contains("Farming")) {
-                XPSelection = FARMING_ID;
-            }
-            if (XPChoice.contains("Summoning")) {
-                XPSelection = SUMMONING_ID;
-            }
-            interfaces.getComponent(XPIF, XPSelection).doClick();
-            interfaces.getComponent(XPIF, CONFIRM_ID).doClick();
-            sleep(random(3000, 4000));
-        }
-        if (inventory.containsAll(boxID)) {
-            inventory.getItem(boxID).doAction("Open");
-            return random(3000, 4000);
-        }
-        if (inventory.containsAll(bookKnowledgeID)) {
-            inventory.getItem(bookKnowledgeID).doAction("Read");
-            return random(3000, 4000);
-        }
-        if (inventory.containsAll(LampID)) {
-            inventory.getItem(LampID).doAction("Rub");
-            return random(3000, 4000);
-        }
-        if (inventory.containsAll(mysteryBoxID)) {
-            inventory.getItem(mysteryBoxID).doAction("Open");
-            return random(3000, 4000);
-        }
-        return -1;
-    }
+		String a = account.getPreferredReward();
+		if (a.equals("Attack")) {
+			XPSelection = ATT_ID;
+		} else if (a.equals("Strength")) {
+			XPSelection = STRENGTH_ID;
+		} else if (a.equals("Defence")) {
+			XPSelection = DEFENCE_ID;
+		} else if (a.equals("Ranged")) {
+			XPSelection = RANGED_ID;
+		} else if (a.equals("Prayer")) {
+			XPSelection = PRAYER_ID;
+		} else if (a.equals("Magic")) {
+			XPSelection = MAGIC_ID;
+		} else if (a.equals("Runecrafting")) {
+			XPSelection = RUNECRAFTING_ID;
+		} else if (a.equals("Construction")) {
+			XPSelection = CONSTRUCTION_ID;
+		} else if (a.equals("Hitpoints")) {
+			XPSelection = HITPOINTS_ID;
+		} else if (a.equals("Agility")) {
+			XPSelection = AGILITY_ID;
+		} else if (a.equals("Herblore")) {
+			XPSelection = HERBLORE_ID;
+		} else if (a.equals("Thieving")) {
+			XPSelection = THIEVING_ID;
+		} else if (a.equals("Crafting")) {
+			XPSelection = CRAFTING_ID;
+		} else if (a.equals("Fletching")) {
+			XPSelection = FLETCHING_ID;
+		} else if (a.equals("Slayer")) {
+			XPSelection = SLAYER_ID;
+		} else if (a.equals("Hunter")) {
+			XPSelection = HUNTER_ID;
+		} else if (a.equals("Mining")) {
+			XPSelection = MINING_ID;
+		} else if (a.equals("Smithing")) {
+			XPSelection = SMITHING_ID;
+		} else if (a.equals("Fishing")) {
+			XPSelection = FISHING_ID;
+		} else if (a.equals("Cooking")) {
+			XPSelection = COOKING_ID;
+		} else if (a.equals("Firemaking")) {
+			XPSelection = FIREMAKING_ID;
+		} else if (a.equals("Woodcutting")) {
+			XPSelection = WOODCUTTING_ID;
+		} else if (a.equals("Farming")) {
+			XPSelection = FARMING_ID;
+		} else if (a.equals("Summoning")) {
+			XPSelection = SUMMONING_ID;
+		} else if (a.equals("Dungeoneering")) {
+			XPSelection = DUNGEONEERING_ID;
+		} else {
+			XPSelection = WOODCUTTING_ID;
+			choices[0] = account.getPreferredReward();
+		}
+		return choices;
+	}
 
 }

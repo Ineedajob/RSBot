@@ -124,8 +124,6 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
         				current.disableRandoms = ((JCheckBoxMenuItem) evt.getSource()).isSelected();
         			} else if (option.equals("Disable Auto Login")) {
         				current.disableAutoLogin = ((JCheckBoxMenuItem) evt.getSource()).isSelected();
-        			} else if (option.equals("Disable Break Handler")) {
-        				current.disableBreakHandler = ((JCheckBoxMenuItem) evt.getSource()).isSelected();
         			}
         		}
         	}

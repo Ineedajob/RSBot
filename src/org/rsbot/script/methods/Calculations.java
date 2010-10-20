@@ -26,8 +26,8 @@ public class Calculations extends MethodProvider {
         float zOff = 0, zX = 0, zY = 0, zZ = 32768;
     }
 	
-	private static final int[] CURVE_SIN = new int[16384];
-    private static final int[] CURVE_COS = new int[16384];
+	public static final int[] CURVE_SIN = new int[16384];
+    public static final int[] CURVE_COS = new int[16384];
 
     static {
         final double d = 0.00038349519697141029D;
@@ -383,6 +383,9 @@ public class Calculations extends MethodProvider {
             int _y = (int) (render.yMultiplier * ((int) renderData.yOff + ((int) (renderData.yX * x + renderData.yY * y + renderData.yZ * z))) / _z);
 
             if ((_x >= render.absoluteX1) && (_x <= render.absoluteX2) && (_y >= render.absoluteY1) && (_y <= render.absoluteY2)) {
+				if (methods.game.isFixed()) {
+					return new Point((int) (_x - render.absoluteX1) + 4, (int) (_y - render.absoluteY1) + 4);
+				}
                 return new Point((int) (_x - render.absoluteX1), (int) (_y - render.absoluteY1));
 			}
 		}

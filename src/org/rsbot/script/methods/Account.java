@@ -33,10 +33,24 @@ public class Account extends MethodProvider {
 	}
 
 	/**
-	 * @return The currently selected account's membership status.
+	 * @return <tt>true</tt> if the currently selected account is a member.
 	 */
 	public boolean isMember() {
 		return AccountManager.isMember(getName());
+	}
+
+	/**
+	 * @return <tt>true</tt> if the currently selected account may take breaks.
+	 */
+	public boolean isTakingBreaks() {
+		return AccountManager.isTakingBreaks(getName());
+	}
+
+	/**
+	 * @return The currently selected account's reward choice, or <code>null</code>.
+	 */
+	public String getPreferredReward() {
+		return getName() == null ? null : AccountManager.getReward(getName());
 	}
 	
 }

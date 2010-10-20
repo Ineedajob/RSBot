@@ -60,11 +60,6 @@ public class Bot {
     public volatile boolean disableAutoLogin = false;
 
 	/**
-	 * Whether or not the break handler is enabled.
-	 */
-    public volatile boolean disableBreakHandler = false;
-
-	/**
 	 * Whether or not rendering is enabled.
 	 */
     public volatile boolean disableRendering = false;

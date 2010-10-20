@@ -6,8 +6,6 @@ public interface RSObject {
     
     int getType();
     
-    int getOrientation();
-    
     int getX();
     
     int getY();

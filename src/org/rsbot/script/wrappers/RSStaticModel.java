@@ -13,12 +13,14 @@ class RSStaticModel extends RSModel {
 		this.y = y;
 	}
 
-	@Override
+	protected void update() {
+
+	}
+
 	protected int getLocalX() {
 		return x;
 	}
 
-	@Override
 	protected int getLocalY() {
 		return y;
 	}

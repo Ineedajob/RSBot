@@ -100,8 +100,8 @@ public class RSObject extends MethodProvider {
 	public RSModel getModel() {
 		try {
 			Model model = obj.getModel();
-			if (model != null) {
-				return new RSObjectModel(methods, (LDModel) model, obj);
+			if (model != null && model.getXPoints() != null) {
+				return new RSObjectModel(methods, model, obj);
 			}
 		} catch (AbstractMethodError ignored) {
 		}

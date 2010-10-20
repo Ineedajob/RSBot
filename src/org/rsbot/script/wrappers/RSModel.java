@@ -5,7 +5,7 @@ import java.awt.Polygon;
 import java.util.Arrays;
 import java.util.LinkedList;
 
-import org.rsbot.client.LDModel;
+import org.rsbot.client.Model;
 import org.rsbot.script.methods.MethodContext;
 import org.rsbot.script.methods.MethodProvider;
 
@@ -16,27 +16,27 @@ import org.rsbot.script.methods.MethodProvider;
  */
 public abstract class RSModel extends MethodProvider {
 	
-	private int[] xPoints;
-	private int[] yPoints;
-	private int[] zPoints;
+	protected int[] xPoints;
+	protected int[] yPoints;
+	protected int[] zPoints;
 	
-	private short[] indices1;
-	private short[] indices2;
-	private short[] indices3;
+	protected short[] indices1;
+	protected short[] indices2;
+	protected short[] indices3;
 	
-	public RSModel(MethodContext ctx, LDModel model) {
+	public RSModel(MethodContext ctx, Model model) {
 		super(ctx);
-		xPoints = model.getXPoints().clone();
-		yPoints = model.getYPoints().clone();
-		zPoints = model.getZPoints().clone();
-		
-		indices1 = model.getIndices1().clone();
-		indices2 = model.getIndices2().clone();
-		indices3 = model.getIndices3().clone();
+		xPoints = model.getXPoints();
+		yPoints = model.getYPoints();
+		zPoints = model.getZPoints();
+		indices1 = model.getIndices1();
+		indices2 = model.getIndices2();
+		indices3 = model.getIndices3();
 	}
 	
 	protected abstract int getLocalX();
 	protected abstract int getLocalY();
+	protected abstract void update();
 	
 	/**
 	 * Returns a random screen point.
@@ -45,6 +45,7 @@ public abstract class RSModel extends MethodProvider {
 	 * the model is not on screen.
 	 */
 	public Point getPoint() {
+		update();
 		int len = indices1.length;
 		int sever = random(0, len);
 		Point point = getPointInRange(sever, len);
@@ -65,6 +66,7 @@ public abstract class RSModel extends MethodProvider {
 	 * @return The on screen triangles of this model.
 	 */
 	public Polygon[] getTriangles() {
+		update();
 		LinkedList<Polygon> polygons = new LinkedList<Polygon>();
 		int locX = getLocalX();
 		int locY = getLocalY();

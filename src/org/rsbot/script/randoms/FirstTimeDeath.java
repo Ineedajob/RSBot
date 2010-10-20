@@ -21,7 +21,7 @@ public class FirstTimeDeath extends Random {
     public int loop() {
         if (!activateCondition())
             return -1;
-        camera.setAltitude(true);
+        camera.setPitch(true);
         if (interfaces.canContinue() && !exit) {
             if (interfaces.getComponent(241, 4).getText().contains("Yes?")) {
                 step++;
