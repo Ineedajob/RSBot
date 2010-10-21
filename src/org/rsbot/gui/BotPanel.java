@@ -141,7 +141,7 @@ public class BotPanel extends JPanel {
 			e.translatePoint(-offX, 0);
 			// fire human mouse event for scripts
 			dispatchHuman(c, e);
-			if (bot.disableInput && (bot.inputMask & INPUT_MOUSE) == 0) {
+			if (!bot.overrideInput && (bot.inputMask & INPUT_MOUSE) == 0) {
 				return;
 			}
 			if (e.getX() > 0 && e.getX() < c.getWidth() && e.getY() < c.getHeight() // account for edges
@@ -173,8 +173,7 @@ public class BotPanel extends JPanel {
 			if (m != null) {
 				m.dispatchEvent(e);
 			}
-			if (!(bot.disableInput && (bot.inputMask & INPUT_KEYBOARD) == 0) &
-					bot.getLoader().getComponentCount() > 0) {
+			if ((bot.overrideInput || (bot.inputMask & INPUT_KEYBOARD) != 0) && bot.getLoader().getComponentCount() > 0) {
 				Component c = bot.getLoader().getComponent(0);
 				c.dispatchEvent(e);
 			}

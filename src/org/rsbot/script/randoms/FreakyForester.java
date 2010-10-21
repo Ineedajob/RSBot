@@ -71,7 +71,7 @@ public class FreakyForester extends Random implements ServerMessageListener {
 
         if (inventory.contains(6179)) {
             phe = -1;
-            inventory.getItem(6179).doAction("rop");
+            inventory.getItem(6179).doAction("Drop");
             return random(500, 900);
         }
         if (unequip && (inventory.getCount(false) != 28)) {
@@ -138,7 +138,7 @@ public class FreakyForester extends Random implements ServerMessageListener {
                     return random(600, 900);
                 } else if (Pheasant != null) {
                     if (calc.tileOnScreen(Pheasant.getLocation()) && (calc.distanceTo(Pheasant.getLocation()) <= 5)) {
-                        Pheasant.doAction("ttack");
+                        Pheasant.doAction("Attack");
                         return random(1000, 1500);
                     } else if (calc.distanceTo(Pheasant.getLocation()) >= 5) {
                         walking.walkTileMM(walking.getClosestTileOnMap(walking.randomizeTile(Pheasant.getLocation(), 3, 3)));

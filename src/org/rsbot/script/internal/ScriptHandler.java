@@ -105,7 +105,7 @@ public class ScriptHandler {
 		}
     }
 
-    public void removeScript(int id) {
+    public void stopScript(int id) {
 		Script script = scripts.get(id);
         if (script != null) {
 			script.deactivate(id);
@@ -139,11 +139,9 @@ public class ScriptHandler {
         for (int i = 0; i < scripts.size(); i++) {
 			Script script = scripts.get(i);
             if (script != null && script.isActive()) {
-                if (scriptThreads.get(i) == curThread) {
-                    removeScript(i);
-                } else {
-                    stopScript(i);
-                }
+                //if (scriptThreads.get(i) == curThread) {
+                stopScript(i);
+                //}
             }
         }
         if (curThread == null) {
@@ -151,10 +149,10 @@ public class ScriptHandler {
 		}
     }
 
-    public void stopScript(int id) {
-		Script script = scripts.get(id);
-        script.deactivate(id);
-        scripts.remove(id);
-        scriptThreads.remove(id);
-    }
+	public void updateInput(Bot bot, int mask) {
+		for (ScriptListener l : listeners) {
+			l.inputChanged(bot, mask);
+		}
+	}
+
 }

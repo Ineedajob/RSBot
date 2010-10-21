@@ -34,7 +34,7 @@ public class Environment extends MethodProvider {
      * @param mask flags indicating which types of input to allow
      */
     public void setUserInput(int mask) {
-        methods.bot.inputMask = mask;
+        methods.bot.getScriptHandler().updateInput(methods.bot, mask);
     }
 
     /**
@@ -96,6 +96,28 @@ public class Environment extends MethodProvider {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Enables all random event solvers.
+	 */
+	public void enableRandoms() {
+		for (final Random random : methods.bot.getScriptHandler().getRandoms()) {
+			if (!random.isEnabled()) {
+				random.setEnabled(true);
+			}
+		}
+	}
+
+	/**
+	 * Disables all random event solvers.
+	 */
+	public void disbleRandoms() {
+		for (final Random random : methods.bot.getScriptHandler().getRandoms()) {
+			if (random.isEnabled()) {
+				random.setEnabled(false);
+			}
+		}
 	}
 
 }

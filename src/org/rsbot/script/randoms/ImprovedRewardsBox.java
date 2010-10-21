@@ -3,6 +3,7 @@ package org.rsbot.script.randoms;
 import org.rsbot.script.Random;
 import org.rsbot.script.ScriptManifest;
 import org.rsbot.script.wrappers.RSComponent;
+import org.rsbot.script.wrappers.RSItem;
 
 import java.awt.Rectangle;
 
@@ -54,11 +55,19 @@ public class ImprovedRewardsBox extends Random {
 	private int XPSelection;
 
 	public boolean activateCondition() {
-		return game.isLoggedIn()
-				&& !getMyPlayer().isInCombat()
-				&& (inventory.contains(BOX_ID)
-				|| inventory.contains(BOOK_KNOWLEDGE_ID)
-				|| inventory.contains(LAMP_ID) || inventory.contains(MYSTERY_BOX_ID));
+		return game.isLoggedIn() && !getMyPlayer().isInCombat()
+				&& cachedInventoryContainedOneOf(BOX_ID, BOOK_KNOWLEDGE_ID, LAMP_ID, MYSTERY_BOX_ID);
+	}
+
+	private boolean cachedInventoryContainedOneOf(int... ids) {
+		for (RSItem item : inventory.getCachedItems()) {
+			for (int id : ids) {
+				if (item.getID() == id) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	public int getActualY(final RSComponent Component) {
@@ -142,13 +151,13 @@ public class ImprovedRewardsBox extends Random {
 			}
 			RSComponent[] scrollbar = interfaces.get(BOX_IF).getComponent(BOX_SCROLLBAR_IF).getComponents();
 			if (scrollbarTopLength > 0) {
-				mouse.move(scrollbar[1].getAbsoluteX() + random(-4, 4),
+				mouse.move(scrollbar[1].getAbsoluteX() + random(1, 7),
 						scrollbar[1].getAbsoluteY() + random(-15, 15));
 				mouse.drag((int) mouse.getLocation().getX(),
 						(int) mouse.getLocation().getY() - scrollbarTopLength);
 			}
 			if (getBoxArea(selection[optionSelected]).y > 278) {
-				mouse.move(scrollbar[1].getAbsoluteX() + random(-4, 4),
+				mouse.move(scrollbar[1].getAbsoluteX() + random(1, 7),
 						scrollbar[1].getAbsoluteY() + random(-15, 15));
 				int toDragtoY = (int) (mouse.getLocation().getY() + (Double
 						.parseDouble(Integer
@@ -170,16 +179,17 @@ public class ImprovedRewardsBox extends Random {
 				mouse.drag((int) mouse.getLocation().getX(), toDragtoY);
 			}
 			sleep(random(3000, 4000));
-			selection = interfaces.get(BOX_IF).getComponent(BOX_SELECTION_IF)
-					.getComponents();
-			int boxX = getBoxArea(selection[optionSelected]).x + 15;
-			int boxY = getBoxArea(selection[optionSelected]).y + 15;
-			int boxWidth = getBoxArea(selection[optionSelected]).width - 30;
-			int boxHeight = getBoxArea(selection[optionSelected]).height - 30;
-			mouse.move(random(boxX, boxX + boxWidth),
-					random(boxY, boxY + boxHeight));
-			mouse.click(true);
-			interfaces.get(BOX_IF).getComponent(BOX_CONFIRM_IF).doClick();
+			selection = interfaces.get(BOX_IF).getComponent(BOX_SELECTION_IF).getComponents();
+			if (selection.length > optionSelected) {
+				int boxX = getBoxArea(selection[optionSelected]).x + 15;
+				int boxY = getBoxArea(selection[optionSelected]).y + 15;
+				int boxWidth = getBoxArea(selection[optionSelected]).width - 30;
+				int boxHeight = getBoxArea(selection[optionSelected]).height - 30;
+				mouse.move(random(boxX, boxX + boxWidth),
+						random(boxY, boxY + boxHeight));
+				mouse.click(true);
+				interfaces.get(BOX_IF).getComponent(BOX_CONFIRM_IF).doClick();
+			}
 			return random(3000, 4000);
 		}
 		if (interfaces.get(XP_IF).isValid()) {

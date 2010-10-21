@@ -39,6 +39,8 @@ public class GlobalConfiguration {
             public static final String ICON_CLOSE = Resources.ROOT_IMG + "/close.png";
             public static final String ICON_CLOSE_OVER = Resources.ROOT_IMG + "/close_over.png";
             public static final String ICON_TICK = Resources.ROOT_IMG + "/tick.png";
+            public static final String ICON_MOUSE = Resources.ROOT_IMG + "/mouse.png";
+            public static final String ICON_KEYBOARD = Resources.ROOT_IMG + "/keyboard.png";
             public static final String ICON_CONNECT = Resources.ROOT_IMG + "/connect.png";
             public static final String ICON_DISCONNECT = Resources.ROOT_IMG + "/disconnect.png";
             public static final String ICON_START = Resources.ROOT_IMG + "/control_play.png";
@@ -78,6 +80,8 @@ public class GlobalConfiguration {
         public static final String ICON_CLOSE = Paths.ROOT_IMG + File.separator + "close.png";
         public static final String ICON_CLOSE_OVER = Paths.ROOT_IMG + File.separator + "close_over.png";
         public static final String ICON_TICK = Paths.ROOT_IMG + File.separator + "tick.png";
+        public static final String ICON_MOUSE = Paths.ROOT_IMG + File.separator + "mouse.png";
+        public static final String ICON_KEYBOARD = Paths.ROOT_IMG + File.separator + "keyboard.png";
         public static final String ICON_CONNECT = Paths.ROOT_IMG + File.separator + "connect.png";
         public static final String ICON_DISCONNECT = Paths.ROOT_IMG + File.separator + "disconnect.png";
         public static final String ICON_START = Paths.ROOT_IMG + File.separator + "control_play.png";

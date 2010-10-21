@@ -1,9 +1,12 @@
 package org.rsbot.script;
 
+import org.rsbot.event.listeners.PaintListener;
 import org.rsbot.script.methods.MethodContext;
 import org.rsbot.script.methods.Methods;
 
-public abstract class Random extends Methods {
+import java.awt.*;
+
+public abstract class Random extends Methods implements PaintListener {
 
     private volatile boolean enabled = true;
 
@@ -84,6 +87,11 @@ public abstract class Random extends Methods {
         }
 		script = ctx;
         name = getClass().getAnnotation(ScriptManifest.class).name();
+		ctx.ctx.bot.getEventManager().removeListener(ctx);
+		for (Script s : ctx.delegates) {
+			ctx.ctx.bot.getEventManager().removeListener(s);
+		}
+		ctx.ctx.bot.getEventManager().addListener(this);
         log("Random event started: " + name);
         int timeout = getTimeout();
         if (timeout > 0) {
@@ -109,6 +117,22 @@ public abstract class Random extends Methods {
 		script = null;
         onFinish();
         log("Random event finished: " + name);
+		ctx.ctx.bot.getEventManager().removeListener(this);
+		ctx.ctx.bot.getEventManager().addListener(ctx);
+		for (Script s : ctx.delegates) {
+			ctx.ctx.bot.getEventManager().addListener(s);
+		}
 		return true;
 	}
+
+	public final void onRepaint(Graphics g) {
+		Point p = mouse.getLocation();
+		int w = game.getWidth(), h = game.getHeight();
+		g.setColor(new Color(0, 0, 0, 100));
+		g.fillRect(0, 0, p.x - 1, p.y - 1);
+		g.fillRect(p.x + 1, 0, w - (p.x + 1), p.y - 1);
+		g.fillRect(0, p.y + 1, p.x - 1, h - (p.y - 1));
+		g.fillRect(p.x + 1, p.y + 1, w - (p.x + 1), h - (p.y - 1));
+	}
+
 }

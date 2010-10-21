@@ -17,6 +17,11 @@ public class InputManager {
 
     private byte dragLength = 0;
 
+	/**
+	 * The side of the screen off which the mouse last moved.
+	 */
+	private int side = random(1, 5);
+
     public InputManager(Bot bot) {
     	this.bot = bot;
     }
@@ -131,6 +136,20 @@ public class InputManager {
         } else if (!isOnCanvas(x, y)) {
             final MouseEvent me = new MouseEvent(getTarget(), MouseEvent.MOUSE_EXITED, System.currentTimeMillis(), 0, x, y, 0, false);
             getClient().getMouse().sendEvent(me);
+			int w = bot.getCanvas().getWidth(), h = bot.getCanvas().getHeight(), d = 50;
+			if (x < d) {
+				if (y < d) {
+					side = 4; // top
+				} else if (y > h + d) {
+					side = 2; // bottom
+				} else {
+					side = 1; // left
+				}
+			} else if (x > w) {
+				side = 3; // right
+			} else {
+				side = random(1, 5);
+			}
         } else if (!getClient().getMouse().isPressed()) {
             final MouseEvent me = new MouseEvent(getTarget(), MouseEvent.MOUSE_MOVED, System.currentTimeMillis(), 0, x, y, 0, false);
             getClient().getMouse().sendEvent(me);
@@ -157,7 +176,7 @@ public class InputManager {
         int thisX = getX(), thisY = getY();
         if (!isOnCanvas(thisX, thisY)) {
         	// on which side of canvas should it enter
-            switch (random(1, 5)) {
+            switch (side) {
                 case 1:
                     thisX = -1;
                     thisY = random(0, bot.getCanvas().getHeight());

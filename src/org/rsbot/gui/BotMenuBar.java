@@ -59,7 +59,7 @@ public class BotMenuBar extends JMenuBar {
         TITLES = new String[]{"File", "Edit", "View", "Help"};
         ELEMENTS = new String[][]{
         		{"New Bot", "Close Bot", "-", "Run Script", "Stop Script", "Pause Script", "-", "Save Screenshot", "-", "Exit"},
-        		{"Accounts", "-", "ToggleF Block Input", "ToggleF Less CPU", "-", "ToggleF Disable Anti-Randoms", "ToggleF Disable Auto Login"},
+        		{"Accounts", "-", "ToggleF Force Input", "ToggleF Less CPU", "-", "ToggleF Disable Anti-Randoms", "ToggleF Disable Auto Login"},
         		constructDebugs(),
         		{"Site", "Project", "About"}};
     }
@@ -113,8 +113,8 @@ public class BotMenuBar extends JMenuBar {
         }
 	}
 	
-	public void setBlockInput(boolean block) {
-		commandCheckMap.get("Block Input").setSelected(block);
+	public void setOverrideInput(boolean force) {
+		commandCheckMap.get("Force Input").setSelected(force);
 	}
 
 	public void setPauseScript(boolean pause) {
@@ -132,7 +132,7 @@ public class BotMenuBar extends JMenuBar {
 				item.setSelected(false);
 				item.setEnabled(false);
 			}
-			disable("All Debugging", "Block Input", "Less CPU",
+			disable("All Debugging", "Force Input", "Less CPU",
 					"Disable Anti-Randoms", "Disable Auto Login");
 		} else {
 			commandMenuItem.get("Close Bot").setEnabled(true);
@@ -150,7 +150,7 @@ public class BotMenuBar extends JMenuBar {
 				}
 			}
 			enable("All Debugging", selections == eventCheckMap.size());
-			enable("Block Input", bot.disableInput);
+			enable("Force Input", bot.overrideInput);
 			enable("Less CPU", bot.disableRendering);
 			enable("Disable Anti-Randoms", bot.disableRandoms);
 			enable("Disable Auto Login", bot.disableAutoLogin);

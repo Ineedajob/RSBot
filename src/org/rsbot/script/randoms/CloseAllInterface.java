@@ -41,6 +41,7 @@ public class CloseAllInterface extends Random {
         addChild(157, 13); // Quick chat help
         addChild(764, 2); // Objectives
         addChild(895, 19); // Advisor
+		addChild(109, 13); // Grand exchange collection
     }
 
     private void addChild(int parent, int idx) {

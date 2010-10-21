@@ -17,7 +17,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Map;
 
 @ScriptManifest(authors = {"joku.rules"}, keywords = "Development", name = "Interface Explorer", version = 0.2, description = "Fetches various interface data for developers.")
 public class InterfaceExplorer extends Script implements PaintListener {
@@ -89,10 +88,7 @@ public class InterfaceExplorer extends Script implements PaintListener {
 		}
 
 		public boolean isLeaf(final Object o) {
-			if (o instanceof RSComponentWrap) {
-				return ((RSComponentWrap) o).wrapped.getComponents().length == 0;
-			}
-			return false;
+			return o instanceof RSComponentWrap && ((RSComponentWrap) o).wrapped.getComponents().length == 0;
 		}
 
 		public void removeTreeModelListener(final TreeModelListener l) {
@@ -143,8 +139,7 @@ public class InterfaceExplorer extends Script implements PaintListener {
 
 		@Override
 		public boolean equals(final Object o) {
-			return o instanceof RSComponentWrap ? wrapped == ((RSComponentWrap) o).wrapped
-					: false;
+			return o instanceof RSComponentWrap && wrapped == ((RSComponentWrap) o).wrapped;
 		}
 
 		@Override
@@ -163,8 +158,7 @@ public class InterfaceExplorer extends Script implements PaintListener {
 
 		@Override
 		public boolean equals(final Object o) {
-			return o instanceof RSInterfaceWrap ? wrapped == ((RSInterfaceWrap) o).wrapped
-					: false;
+			return o instanceof RSInterfaceWrap && wrapped == ((RSInterfaceWrap) o).wrapped;
 		}
 
 		@Override
@@ -186,7 +180,7 @@ public class InterfaceExplorer extends Script implements PaintListener {
 
 	@Override
 	public int loop() {
-		while (window.isVisible()) {
+		if (window.isVisible()) {
 			return 1000;
 		}
 		return -1;
@@ -198,14 +192,6 @@ public class InterfaceExplorer extends Script implements PaintListener {
 			g.drawRect(highlightArea.x, highlightArea.y, highlightArea.width,
 					highlightArea.height);
 		}
-	}
-
-	public boolean canStart() {
-		return true;
-	}
-
-	public boolean useBreakhandler() {
-		return false;
 	}
 
 	public boolean onStart() {
@@ -247,10 +233,9 @@ public class InterfaceExplorer extends Script implements PaintListener {
 					highlightArea = ((RSComponentWrap) node).wrapped
 							.getArea();
 					iface = ((RSComponentWrap) node).wrapped;
-				} else if (node instanceof RSComponentWrap) {
-					highlightArea = ((RSComponentWrap) node).wrapped
-							.getArea();
-					iface = ((RSComponentWrap) node).wrapped;
+				}
+				if (iface == null) {
+					return;
 				}
 				addInfo("Action type: ", "-1" /* + iface.getActionType() */);
 				addInfo("Type: ", "" + iface.getType());

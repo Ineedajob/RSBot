@@ -15,12 +15,13 @@ import java.util.logging.Level;
 
 public abstract class Script extends Methods implements EventListener, Runnable {
 
+	Set<Script> delegates = new HashSet<Script>();
+	MethodContext ctx;
+
 	private volatile boolean active = false;
 	private volatile boolean paused = false;
 
 	private int id = -1;
-	private MethodContext ctx;
-	private Set<Script> delegates = new HashSet<Script>();
 	private long lastNotice;
 
 	/**
@@ -264,7 +265,7 @@ public abstract class Script extends Methods implements EventListener, Runnable 
 		}
 		delegates.clear();
 		ctx.bot.getEventManager().removeListener(this);
-		ctx.bot.getScriptHandler().removeScript(id);
+		ctx.bot.getScriptHandler().stopScript(id);
 		ctx.bot.inputMask = Environment.INPUT_KEYBOARD;
 		id = -1;
 	}

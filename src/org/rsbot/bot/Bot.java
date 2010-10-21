@@ -45,9 +45,9 @@ public class Bot {
 	private Map<String, EventListener> listeners;
 
 	/**
-	 * Whether or not user input is allowed.
+	 * Whether or not user input is allowed despite a script's preference.
 	 */
-    public volatile boolean disableInput = false;
+    public volatile boolean overrideInput = false;
 
 	/**
 	 * Whether or not all anti-randoms are enabled.
@@ -65,10 +65,10 @@ public class Bot {
     public volatile boolean disableRendering = false;
 
 	/**
-	 * Defines what types of input are disabled when disableInput is true.
+	 * Defines what types of input are enabled when overrideInput is false.
 	 * Defaults to 'keyboard only' whenever a script is started.
 	 */
-	public volatile int inputMask = Environment.INPUT_KEYBOARD;
+	public volatile int inputMask = Environment.INPUT_KEYBOARD | Environment.INPUT_MOUSE;
 
     public Bot() {
         im = new InputManager(this);

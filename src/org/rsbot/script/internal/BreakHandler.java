@@ -19,10 +19,10 @@ public class BreakHandler {
 		++ticks;
 		if (nextBreak < 0 || nextBreak - System.currentTimeMillis() < -30000) {
 			ticks = 0;
-			int offset = random(10, 120) * 60000;
+			int offset = random(20, 120) * 60000;
 			nextBreak = System.currentTimeMillis() + offset;
-			if (random(0, 5) != 0) {
-				breakEnd = nextBreak + random(2, 60) * 60000 + offset / 8;
+			if (random(0, 4) != 0) {
+				breakEnd = nextBreak + random(2, 40) * 60000 + offset / 6;
 			} else {
 				breakEnd = nextBreak + random(10, 60) * 1000;
 			}
