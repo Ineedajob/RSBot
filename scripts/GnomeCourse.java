@@ -1,15 +1,18 @@
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.Polygon;
 import java.awt.event.KeyEvent;
 
 import org.rsbot.event.listeners.PaintListener;
 import org.rsbot.script.Script;
 import org.rsbot.script.ScriptManifest;
 import org.rsbot.script.methods.Skills;
+import org.rsbot.script.wrappers.RSModel;
+import org.rsbot.script.wrappers.RSObject;
 import org.rsbot.script.wrappers.RSTile;
 
-@ScriptManifest(authors = {"Jacmob", "Arbiter"}, keywords = "Agility", name = "Gnome Course", version = 2.0, description = "Standard gnome course. Eats common food.")
+@ScriptManifest(authors = "Jacmob", keywords = "Agility", name = "Gnome Course", version = 2.1, description = "Standard gnome course. Eats common food.")
 public class GnomeCourse extends Script implements PaintListener {
 
 	public static final int[] FOOD = new int[]{
@@ -18,7 +21,7 @@ public class GnomeCourse extends Script implements PaintListener {
 			3014, 3012, 3010, 3008, 3022, 3020, 3018, 3016};
 
 	public static final Color BG = new Color(123, 123, 123, 100);
-	public static final Color GREEN = new Color(0, 200, 0, 255);
+	public static final Color GREEN = new Color(0, 220, 0, 255);
 	public static final Color GREENBAR = new Color(0, 255, 0, 150);
 	public static final Color RED = new Color(255, 0, 0, 150);
 
@@ -37,13 +40,27 @@ public class GnomeCourse extends Script implements PaintListener {
 	});
 	public static final Obstacle OBSTACLE_NET = new Obstacle(2474, 3425, 50, "Climb-over");
 	public static final Obstacle OBSTACLE_BRANCH = new Obstacle(2473, 3422, 120, "Climb");
-	public static final Obstacle OBSTACLE_ROPE = new Obstacle(2478, 3420, 0, "Walk-on");
+	public static final Obstacle OBSTACLE_ROPE = new Obstacle(2478, 3420, 0, "Walk-on", new Obstacle.PassedListener() {
+		public void onPassed(GnomeCourse ctx) {
+			if (ctx.random(0, 10) != 0) {
+				ctx.camera.setPitch(false);
+				ctx.sleep(ctx.random(10, 100));
+			}
+			if (ctx.random(0, 5) != 0) {
+				ctx.turner.setTarget(OBSTACLE_BRANCH_DOWN);
+			}
+		}
+	});
 	public static final Obstacle OBSTACLE_BRANCH_DOWN = new Obstacle(2486, 3419, 60, "Climb-down", new Obstacle.PassedListener() {
 		public void onPassed(GnomeCourse ctx) {
 			ctx.turner.setTarget(OBSTACLE_NET_END);
 		}
 	});
-	public static final Obstacle OBSTACLE_NET_END = new Obstacle(2486, 3426, 100, "Climb-over");
+	public static final Obstacle OBSTACLE_NET_END = new Obstacle(2486, 3426, 100, "Climb-over", new Obstacle.PassedListener() {
+		public void onPassed(GnomeCourse ctx) {
+			ctx.turner.setTarget(OBSTACLE_PIPE);
+		}
+	});
 	public static final Obstacle OBSTACLE_PIPE = new Obstacle(2483, 3431, 60, "Squeeze-through", new Obstacle.PassedListener() {
 		public void onPassed(GnomeCourse ctx) {
 			ctx.turner.setTarget(OBSTACLE_LOG);
@@ -54,8 +71,12 @@ public class GnomeCourse extends Script implements PaintListener {
 	private int eatingHealth = random(10, 20);
 	private int drinkingEnergy = random(20, 40);
 	private int laps;
+	private int tries;
 	private int startXp = -1;
 	private long startTime;
+	private Obstacle last;
+	private RSModel model;
+	private Color color;
 
 	private void eat() {
 		if (inventory.getCount(GnomeCourse.FOOD) >= 1
@@ -92,6 +113,9 @@ public class GnomeCourse extends Script implements PaintListener {
 	@Override
 	public int loop() {
 		mouse.setSpeed(random(6, 8));
+		if (random(0, 100) == 0) {
+			camera.setPitch(true);
+		}
 		if (startXp == -1) {
 			if (game.isLoggedIn() && skills.getRealLevel(Skills.AGILITY) > 1) {
 				setInitialState();
@@ -103,10 +127,16 @@ public class GnomeCourse extends Script implements PaintListener {
 			drink();
 			Obstacle obstacle = getObstacle();
 			if (obstacle != null) {
+				if (obstacle == last) {
+					++tries;
+				} else {
+					tries = 0;
+					last = obstacle;
+				}
 				if (obstacle.doAction(this)) {
 					obstacle.onPassed(this);
-					waitForChange(obstacle, 5000);
-				} else if (!obstacle.isOnScreen(this)) {
+					waitForChange(obstacle, 2000);
+				} else if (!obstacle.isOnScreen(this) || tries > 3) {
 					if (calc.distanceTo(obstacle) > 5) {
 						walking.walkTileOnScreen(obstacle);
 						sleep(500);
@@ -123,6 +153,9 @@ public class GnomeCourse extends Script implements PaintListener {
 		long end = System.currentTimeMillis() + timeout;
 		while (current.equals(getObstacle()) &&
 				System.currentTimeMillis() < end) {
+			if (!getMyPlayer().isIdle()) {
+				end += 60;
+			}
 			sleep(100);
 		}
 	}
@@ -163,6 +196,14 @@ public class GnomeCourse extends Script implements PaintListener {
 					- Skills.getLevelAt(startXp);
 			long runSeconds = (System.currentTimeMillis() - startTime) / 1000;
 
+			RSModel model = this.model;
+			if (model != null) {
+				g.setColor(color);
+				for (Polygon polygon : model.getTriangles()) {
+					g.drawPolygon(polygon);
+				}
+			}
+
 			g.setColor(BG);
 			if (runSeconds != 0) {
 				g.fill3DRect(8, 25, 210, 164, true);
@@ -171,8 +212,8 @@ public class GnomeCourse extends Script implements PaintListener {
 			}
 
 			g.setColor(GREEN);
-			g.drawString("GnomeCourse v2.0", x, y += 20);
-			g.drawString("GnomeCourse v2.0", x, y);
+			g.drawString("GnomeCourse v2.1", x, y += 20);
+			g.drawString("GnomeCourse v2.1", x, y);
 			g.drawString("Runtime: " + getFormattedTime(
 					System.currentTimeMillis() - startTime) + ".", x, y += 20);
 
@@ -211,6 +252,7 @@ public class GnomeCourse extends Script implements PaintListener {
 
 	@Override
 	public boolean onStart() {
+		new Thread(turner).start();
 		return true;
 	}
 
@@ -262,32 +304,32 @@ public class GnomeCourse extends Script implements PaintListener {
 
 		private final Object targetLock = new Object();
 
-		private volatile boolean running;
-		private Obstacle target;
+		private boolean running;
+		private volatile Obstacle target;
 
 		public void run() {
 			running = true;
 			while (running) {
 				synchronized (targetLock) {
-					if (target != null && !calc.tileOnScreen(target)) {
-						char key = KeyEvent.VK_LEFT;
+					if (target != null && !target.isOnScreen(GnomeCourse.this)) {
+						char key = KeyEvent.VK_RIGHT;
 						keyboard.pressKey(key);
 						int i = 60;
-						while (!calc.tileOnScreen(target) && --i >= 0) {
+						while (!target.isOnScreen(GnomeCourse.this) && --i >= 0) {
 							GnomeCourse.this.sleep(50);
 						}
-						GnomeCourse.this.sleep(random(150, 300));
+						GnomeCourse.this.sleep(random(250, 350));
 						keyboard.releaseKey(key);
-						if (i >= 0 && !calc.tileOnScreen(target)) {
-							key = KeyEvent.VK_LEFT;
+						if (i >= 0 && !target.isOnScreen(GnomeCourse.this)) {
+							key = KeyEvent.VK_RIGHT;
 							i = 20;
-							while (!calc.tileOnScreen(target) && --i >= 0) {
+							while (!target.isOnScreen(GnomeCourse.this) && --i >= 0) {
 								GnomeCourse.this.sleep(50);
 							}
 							keyboard.releaseKey(key);
 						}
-						target = null;
 					}
+					target = null;
 				}
 				GnomeCourse.this.sleep(100);
 			}
@@ -297,6 +339,10 @@ public class GnomeCourse extends Script implements PaintListener {
 			synchronized (targetLock) {
 				this.target = target;
 			}
+		}
+		
+		public Obstacle getTarget() {
+			return target;
 		}
 
 		public void stop() {
@@ -350,6 +396,24 @@ public class GnomeCourse extends Script implements PaintListener {
 		}
 
 		public boolean doAction(GnomeCourse ctx) {
+			while (ctx.turner.getTarget() != null) {
+				ctx.sleep(ctx.random(50, 100));
+			}
+			RSObject o = ctx.objects.getTopAt(this);
+			if (o != null && o.getModel() != null) {
+				ctx.model = o.getModel();
+				ctx.color = new Color(ctx.random(100, 255),
+								ctx.random(100, 255),
+								ctx.random(100, 255), 123);
+				ctx.mouse.move(o.getModel().getPoint());
+				ctx.sleep(ctx.random(5, 50));
+				if (ctx.menu.contains(action) && (!ctx.getMyPlayer().isIdle() || ctx.turner.getTarget() != null)) {
+					ctx.mouse.click(false);
+					ctx.sleep(ctx.random(5, 50));
+				}
+				return ctx.menu.doAction(action);
+			}
+			ctx.model = null;
 			Point p = ctx.calc.tileToScreen(this, clickHeight);
 			if (p.x != -1) {
 				ctx.mouse.move(p, 5, 5);
@@ -360,6 +424,10 @@ public class GnomeCourse extends Script implements PaintListener {
 		}
 
 		public boolean isOnScreen(GnomeCourse ctx) {
+			RSObject o = ctx.objects.getTopAt(this);
+			if (o != null) {
+				return o.isOnScreen();
+			}
 			return ctx.calc.tileToScreen(this).x >= 0;
 		}
 

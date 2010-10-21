@@ -7,7 +7,7 @@ FOR /F "tokens=3" %%A IN ('REG QUERY "%KEY_NAME%" /v CurrentVersion 2^>NUL') DO 
 SET jdk=
 
 IF DEFINED jdkv (
-	FOR /F "skip=2 tokens=3,4" %%A IN ('REG QUERY "%KEY_NAME%\%jdkv%" /v JavaHome 2^>NUL') DO SET jdk=%%A %%B
+	FOR /F "skip=2 tokens=2*" %%A IN ('REG QUERY "%KEY_NAME%\%jdkv%" /v JavaHome 2^>NUL') DO SET jdk=%%B
 ) ELSE (
 	FOR /F "tokens=*" %%G IN ('DIR /B "%ProgramFiles%\Java\jdk*"') DO SET jdk=%%G
 )

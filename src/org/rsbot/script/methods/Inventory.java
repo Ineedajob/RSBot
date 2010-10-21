@@ -317,15 +317,15 @@ public class Inventory extends MethodProvider {
 		if (invIface != null) {
 			if (invIface.getComponents().length > 0) {
 				int len = 0;
-				for (RSComponent com : invIface.getComponents()) {
+				RSComponent[] comps = invIface.getComponents();
+				for (RSComponent com : comps) {
 					if (com.getType() == 5) {
 						++len;
 					}
 				}
-
 				RSItem[] inv = new RSItem[len];
 				for (int i = 0; i < len; ++i) {
-					RSComponent item = invIface.getComponents()[i];
+					RSComponent item = comps[i];
 					int idx = item.getComponentIndex();
 					if (idx >= 0) {
 						inv[idx] = new RSItem(methods, item);
@@ -333,7 +333,6 @@ public class Inventory extends MethodProvider {
 						return new RSItem[0];
 					}
 				}
-
 				return inv;
 			}
 		}

@@ -41,6 +41,12 @@ public class Canvas extends java.awt.Canvas {
 				toshi = true;
 			}
 		}
+		if (bot.disableRendering) {
+			try {
+				Thread.sleep(50);
+			} catch (InterruptedException ignored) {
+			}
+		}
 		return bot.getBufferGraphics();
 	}
 	

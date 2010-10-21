@@ -98,7 +98,31 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 			}
 		});
 
-		table = new JTable(model);
+		table = new JTable(model) {
+			public String getToolTipText(MouseEvent e) {
+				int row = rowAtPoint(e.getPoint());
+				ScriptDefinition def = model.getDefinition(row);
+				if (def != null) {
+					StringBuilder b = new StringBuilder();
+					if (def.authors.length > 1) {
+						b.append("Authors: ");
+					} else {
+						b.append("Author: ");
+					}
+					boolean prefix = false;
+					for (String author : def.authors) {
+						if (prefix) {
+							b.append(", ");
+						} else {
+							prefix = true;
+						}
+						b.append(author);
+					}
+					return b.toString();
+				}
+				return super.getToolTipText(e);
+			}
+		};
 		table.setRowHeight(20);
 		table.setIntercellSpacing(new Dimension(1, 1));
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -157,8 +181,14 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 		toolBar.add(Box.createHorizontalStrut(5));
 		toolBar.add(submit);
 
-		add(table.getTableHeader(), BorderLayout.NORTH);
-		add(table, BorderLayout.CENTER);
+		JPanel center = new JPanel(new BorderLayout());
+		JScrollPane pane = new JScrollPane(table,
+				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		center.add(pane, BorderLayout.CENTER);
+		center.add(table.getTableHeader(), BorderLayout.NORTH);
+
+		add(center, BorderLayout.CENTER);
 		add(toolBar, BorderLayout.SOUTH);
 
 		setSize(700, 400);
@@ -188,6 +218,10 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 	}
 
 	public void scriptPaused(ScriptHandler handler, Script script) {
+
+	}
+
+	public void inputChanged(Bot bot, int mask) {
 
 	}
 
@@ -301,12 +335,13 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 				return ImageIcon.class;
 			}
 			return String.class;
-      	}
+		}
 
 		@Override
 		public String getColumnName(int col) {
 			return COLUMN_NAMES[col];
 		}
+
 
 	}
 

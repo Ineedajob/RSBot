@@ -6,9 +6,10 @@ import org.rsbot.script.*;
 import org.rsbot.script.methods.Game;
 import org.rsbot.script.methods.Skills;
 import org.rsbot.script.wrappers.*;
+import org.rsbot.script.util.Timer;
 import org.rsbot.event.listeners.PaintListener;
 
-@ScriptManifest(authors = { "Jacmob", "Arbiter" }, keywords = {"Crafting"}, name = "AutoSpinner", version = 2.0, description = "Lumbridge castle; flax at top of bank.")
+@ScriptManifest(authors = "Jacmob", keywords = {"Crafting", "Money Making"}, name = "AutoSpinner", version = 2.1, description = "Lumbridge castle; flax at top of bank.")
 public class AutoSpinner extends Script implements PaintListener {
 
 	private enum State {
@@ -55,11 +56,12 @@ public class AutoSpinner extends Script implements PaintListener {
 			if (game.getCurrentTab() != Game.TAB_STATS) {
 				game.openTab(Game.TAB_STATS);
 				sleep(random(200, 400));
-				if (random(0, 2) == 1) {
-					mouse.move(random(575, 695), random(240, 435), 10);
+				interfaces.getComponent(Skills.INTERFACE_TAB_STATS, Skills.INTERFACE_CRAFTING).doHover();
+				sleep(random(800, 1500));
+				if (random(0, 2) == 0) {
+					moveMouseAway(10);
 				}
-				mouse.move(632, 372, 7, 7);
-				sleep(random(800, 1400));
+				sleep(random(200, 400));
 			} else if (game.getCurrentTab() == Game.TAB_STATS) {
 				game.openTab(Game.TAB_INVENTORY);
 				sleep(random(800, 1200));
@@ -78,42 +80,6 @@ public class AutoSpinner extends Script implements PaintListener {
 		} else if (rand < 4) {
 			waveMouse();
 		}
-	}
-
-	private String getFormattedTime(final long timeMillis) {
-		long millis = timeMillis;
-		final long seconds2 = millis / 1000;
-		final long hours = millis / (1000 * 60 * 60);
-		millis -= hours * 1000 * 60 * 60;
-		final long minutes = millis / (1000 * 60);
-		millis -= minutes * 1000 * 60;
-		final long seconds = millis / 1000;
-		String hoursString = "";
-		String minutesString = "";
-		String secondsString = seconds + "";
-		String type = "seconds";
-
-		if (minutes > 0) {
-			minutesString = minutes + ":";
-			type = "minutes";
-		} else if (hours > 0 && seconds2 > 0) {
-			minutesString = "0:";
-		}
-		if (hours > 0) {
-			hoursString = hours + ":";
-			type = "hours";
-		}
-		if (minutes < 10 && !type.equals("seconds")) {
-			minutesString = "0" + minutesString;
-		}
-		if (hours < 10 && type.equals("hours")) {
-			hoursString = "0" + hoursString;
-		}
-		if (seconds < 10 && !type.equals("seconds")) {
-			secondsString = "0" + secondsString;
-		}
-
-		return hoursString + minutesString + secondsString + " " + type;
 	}
 
 	private State getState() {
@@ -209,7 +175,6 @@ public class AutoSpinner extends Script implements PaintListener {
 			} else {
 				walkTileSmart(BANK_WALK_TILE);
 				sleep(random(200, 700));
-				//mouse.move(200, 200, 80, 80, 10);
 				while (!playerIsInArea(BANK_AREA) && tries < 10) {
 					tries++;
 					sleep(random(400, 600));
@@ -262,16 +227,29 @@ public class AutoSpinner extends Script implements PaintListener {
 			}
 			break;
 		case BANK:
-			while (inventory.getCount() > 0) {
+			if (inventory.getCount() > 0) {
 				bank.depositAll();
-				sleep(random(290, 520));
+				if (random(0, 5) == 0) {
+					moveMouseAway(7);
+				}
+				return random(400, 600);
 			}
-			while (inventory.getCount(FLAX_ID) == 0) {
-				bank.getItem(FLAX_ID).doAction("Withdraw-All");
-				sleep(random(800, 1200));
-				if (inventory.getCount(FLAX_ID) == 0
-						&& bank.getItem(FLAX_ID) == null) {
-					while (bank.isOpen()) {
+			if (inventory.getCount(FLAX_ID) == 0) {
+				if (bank.getItem(FLAX_ID) != null) {
+					bank.getItem(FLAX_ID).doAction("Withdraw-All");
+					sleep(random(50, 100));
+				}
+				if (random(0, 5) == 0) {
+					moveMouseAway(7);
+					sleep(random(1000, 1200));
+				} else {
+					sleep(random(1000, 1200));
+					if (random(0, 5) == 0) {
+						moveMouseAway(7);
+					}
+				}
+				if (inventory.getCount(FLAX_ID) == 0 && bank.getItem(FLAX_ID) == null) {
+					if (bank.isOpen()) {
 						bank.close();
 						sleep(random(200, 500));
 					}
@@ -281,7 +259,7 @@ public class AutoSpinner extends Script implements PaintListener {
 				}
 			}
 			sleep(random(150, 400));
-			if (random(0, 3) == 0) {
+			if (inventory.getCount(FLAX_ID) > 0 && random(0, 3) == 0) {
 				bank.close();
 			}
 		case CLIMBUP:
@@ -311,7 +289,7 @@ public class AutoSpinner extends Script implements PaintListener {
 	@Override
 	public void onFinish() {
 		log.info(flaxSpun + " flax spun in " +
-			getFormattedTime(System.currentTimeMillis() - scriptStartTime) + ".");
+			Timer.format(System.currentTimeMillis() - scriptStartTime) + ".");
 	}
 
 	public void onRepaint(final Graphics g) {
@@ -345,7 +323,7 @@ public class AutoSpinner extends Script implements PaintListener {
 			y -= 3;
 			g.setColor(TEXT);
 			g.drawString("Runtime: "
-					+ getFormattedTime(System.currentTimeMillis()
+					+ Timer.format(System.currentTimeMillis()
 							- scriptStartTime), x, y += 20);
 			g.drawString("Spun: " + flaxSpun + " Flax", x, y += 20);
 
@@ -398,17 +376,12 @@ public class AutoSpinner extends Script implements PaintListener {
 		SPIN_INTERFACE = interfaces.get(905).getComponent(16);
 		final GEItemInfo stringGE = grandExchange.loadItemInfo(BOW_STRING_ID);
 		stringPrice = stringGE.getMarketPrice();
-		log
-				.info("Each bow string will be valued at the current GE market price of "
-						+ stringPrice + " coins.");
+		log.info("Each bow string will be valued at the current GE market price of " + stringPrice + " coins.");
 		final GEItemInfo flaxGE = grandExchange.loadItemInfo(FLAX_ID);
 		flaxPrice = flaxGE.getMarketPrice();
-		log
-				.info("Each piece of flax will be valued at the current GE market price of "
-						+ flaxPrice + " coins.");
+		log.info("Each piece of flax will be valued at the current GE market price of " + flaxPrice + " coins.");
 		if (flaxPrice == 0 || stringPrice == 0) {
-			log
-					.info("Grand Exchange prices could not be loaded - some features of the paint will be disabled.");
+			log.info("Grand Exchange prices could not be loaded - some features of the paint will be disabled.");
 		}
 		return true;
 	}

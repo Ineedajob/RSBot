@@ -12,34 +12,34 @@ import org.rsbot.log.SystemConsoleHandler;
 import org.rsbot.util.Extractor;
 
 public class Application {
-	
+
 	private static BotGUI gui;
 
-	public static void main(final String[] args) {
+	public static void main(final String[] args) throws Exception {
 		bootstrap();
 		new Extractor(args).run();
 		gui = new BotGUI();
 		gui.setVisible(true);
 		gui.addBot();
 	}
-	
+
 	/**
 	 * Returns the Bot for any object loaded
 	 * in its client. For internal use only
 	 * (not useful for script writers).
-	 * 
+	 *
 	 * @param o Any object from within the client.
 	 * @return The Bot for the client.
 	 */
 	public static Bot getBot(Object o) {
 		return gui.getBot(o);
 	}
-	
+
 	/**
 	 * Returns the size of the panel that
 	 * clients should be drawn into. For
 	 * internal use.
-	 * 
+	 *
 	 * @return The client panel size.
 	 */
 	public static Dimension getPanelSize() {
@@ -62,5 +62,5 @@ public class Application {
 
 		System.setErr(new PrintStream(new LogOutputStream(Logger.getLogger("STDERR"), Level.SEVERE), true));
 	}
-	
+
 }

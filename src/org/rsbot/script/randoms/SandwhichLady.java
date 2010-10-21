@@ -25,7 +25,7 @@ public class SandwhichLady extends Random {
     final static int[] ID_Items = {10728, 10732, 10727, 10730, 10726, 45666, 10731};
     final static int ID_SandwhichLady = 8630;
     final static String[] Name_Items = {"chocolate", "triangle", "roll", "pie", "baguette", "doughnut", "square"};
-    final boolean DEBUG = true; // Set to true for more info!
+    final boolean DEBUG = false; // Set to true for more info!
 
     @Override
     public boolean activateCondition() {
@@ -81,13 +81,13 @@ public class SandwhichLady extends Random {
                 if (DEBUG) {
                     log.info("child[" + i + "] ID: " + inf.getModelID() + " == " + SandwhichLady.ID_Items[offset]);
                 }
-
                 if (inf.getModelID() == SandwhichLady.ID_Items[offset]) {
                     inf.doClick();
                     sleep(random(900, 1200)); // Yea, use a sleep here! (Waits are allowed in randoms.)
                     if (!interfaces.get(SandwhichLady.ID_InterfaceSandwhichWindow).isValid()) {
                         log.info("Solved the Sandwich Lady, by eating a " + SandwhichLady.Name_Items[offset]);
-                        return random(6000, 7000);
+						sleep(6000);
+                        return random(900, 1500);
                     }
                 }
 
@@ -101,16 +101,14 @@ public class SandwhichLady extends Random {
         }
         // Talk to the lady
         final RSNPC lady = npcs.getNearest(SandwhichLady.ID_SandwhichLady);
-        if (lady.getAnimation() == -1) {
-            if (lady != null) {
-                if (!calc.tileOnScreen(lady.getLocation())) {
-                    walking.walkTileOnScreen(lady.getLocation());
-                } else {
-                    lady.doAction("talk");
-                    return random(1000, 1500);
-                }
-            }
-        }
+        if (lady != null && lady.getAnimation() == -1) {
+			if (!calc.tileOnScreen(lady.getLocation())) {
+				walking.walkTileOnScreen(lady.getLocation());
+			} else {
+				lady.doAction("talk");
+				return random(1000, 1500);
+			}
+		}
         return random(900, 1200);
     }
 

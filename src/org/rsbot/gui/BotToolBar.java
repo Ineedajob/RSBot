@@ -15,15 +15,16 @@ import javax.swing.JPanel;
 import javax.swing.JToolBar;
 import javax.swing.border.EmptyBorder;
 
+import org.rsbot.script.methods.Environment;
 import org.rsbot.util.GlobalConfiguration;
 
 public class BotToolBar extends JToolBar {
 
-    private static final long serialVersionUID = -1861866523519184211L;
+	private static final long serialVersionUID = -1861866523519184211L;
 
-    public static final int RUN_SCRIPT = 0;
-    public static final int PAUSE_SCRIPT = 1;
-    public static final int RESUME_SCRIPT = 2;
+	public static final int RUN_SCRIPT = 0;
+	public static final int PAUSE_SCRIPT = 1;
+	public static final int RESUME_SCRIPT = 2;
 
 	public static final Icon ICON_HOME;
 	public static final Icon ICON_BOT;
@@ -57,42 +58,35 @@ public class BotToolBar extends JToolBar {
 	}
 
 	private JButton userInputButton;
-    private JButton runScriptButton;
+	private JButton runScriptButton;
 
-    private ActionListener listener;
-    private int idx;
+	private ActionListener listener;
+	private int idx;
+	private int inputState = Environment.INPUT_KEYBOARD | Environment.INPUT_MOUSE;
+	private boolean inputOverride = true;
 
 	public BotToolBar(ActionListener listener) {
 		this.listener = listener;
 
-		try {
-            userInputButton = new JButton("Input", new ImageIcon(GlobalConfiguration.RUNNING_FROM_JAR ? getClass().getResource(GlobalConfiguration.Paths.Resources.ICON_TICK) : new File(GlobalConfiguration.Paths.ICON_TICK).toURI().toURL()));
-        } catch (final MalformedURLException e1) {
-            e1.printStackTrace();
-        }
-        userInputButton.addActionListener(listener);
-        userInputButton.setFocusable(false);
+		userInputButton = new JButton("Input", new ImageIcon(getInputImage(inputOverride, inputState)));
+		userInputButton.addActionListener(listener);
+		userInputButton.setFocusable(false);
 
-        try {
-            runScriptButton = new JButton("Run", new ImageIcon(GlobalConfiguration.RUNNING_FROM_JAR ? getClass().getResource(GlobalConfiguration.Paths.Resources.ICON_PLAY) : new File(GlobalConfiguration.Paths.ICON_PLAY).toURI().toURL()));
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-        runScriptButton.addActionListener(listener);
-        runScriptButton.setFocusable(false);
+		runScriptButton = new JButton("Run", new ImageIcon(GlobalConfiguration.getImage(GlobalConfiguration.Paths.Resources.ICON_PLAY, GlobalConfiguration.Paths.ICON_PLAY)));
+		runScriptButton.addActionListener(listener);
+		runScriptButton.setFocusable(false);
 
-
-        BotButton home = new BotButton("Home", ICON_HOME);
+		BotButton home = new BotButton("Home", ICON_HOME);
 		home.setVisible(false);
 
-        setFloatable(false);
-        add(home);
-        add(new AddButton(listener));
-        add(Box.createHorizontalGlue());
-        add(runScriptButton);
-        add(userInputButton);
+		setFloatable(false);
+		add(home);
+		add(new AddButton(listener));
+		add(Box.createHorizontalGlue());
+		add(runScriptButton);
+		add(userInputButton);
 
-        updateSelection(false);
+		updateSelection(false);
 	}
 
 	public void addTab() {
@@ -139,11 +133,14 @@ public class BotToolBar extends JToolBar {
 		runScriptButton.setEnabled(!home);
 	}
 
-	public void setInputSelected(boolean selected) {
-		try {
-			userInputButton.setIcon(new ImageIcon(selected ? (GlobalConfiguration.RUNNING_FROM_JAR ? getClass().getResource(GlobalConfiguration.Paths.Resources.ICON_DELETE) : new File(GlobalConfiguration.Paths.ICON_DELETE).toURI().toURL()) : GlobalConfiguration.RUNNING_FROM_JAR ? getClass().getResource(GlobalConfiguration.Paths.Resources.ICON_TICK) : new File(GlobalConfiguration.Paths.ICON_TICK).toURI().toURL()));
-		} catch (MalformedURLException ignored) {
-		}
+	public void setInputState(int state) {
+		inputState = state;
+		userInputButton.setIcon(new ImageIcon(getInputImage(inputOverride, state)));
+	}
+
+	public void setOverrideInput(boolean selected) {
+		inputOverride = selected;
+		userInputButton.setIcon(new ImageIcon(getInputImage(selected, inputState)));
 	}
 
 	public void setScriptButton(int state) {
@@ -166,11 +163,11 @@ public class BotToolBar extends JToolBar {
 		}
 
 		runScriptButton.setText(text);
-        try {
-        	runScriptButton.setIcon(new ImageIcon(GlobalConfiguration.RUNNING_FROM_JAR ? getClass().getResource(pathResource) : new File(pathFile).toURI().toURL()));
-        } catch (final MalformedURLException e1) {
-            e1.printStackTrace();
-        }
+		try {
+			runScriptButton.setIcon(new ImageIcon(GlobalConfiguration.RUNNING_FROM_JAR ? getClass().getResource(pathResource) : new File(pathFile).toURI().toURL()));
+		} catch (final MalformedURLException e1) {
+			e1.printStackTrace();
+		}
 		revalidate();
 	}
 
@@ -186,6 +183,18 @@ public class BotToolBar extends JToolBar {
 		if (idx >= 0) {
 			getComponent(idx).setEnabled(enabled);
 			getComponent(idx).repaint();
+		}
+	}
+
+	private Image getInputImage(boolean override, int state) {
+		if (override || state == (Environment.INPUT_KEYBOARD | Environment.INPUT_MOUSE)) {
+			return GlobalConfiguration.getImage(GlobalConfiguration.Paths.Resources.ICON_TICK, GlobalConfiguration.Paths.ICON_TICK);
+		} else if (state == Environment.INPUT_KEYBOARD) {
+			return GlobalConfiguration.getImage(GlobalConfiguration.Paths.Resources.ICON_KEYBOARD, GlobalConfiguration.Paths.ICON_KEYBOARD);
+		} else if (state == Environment.INPUT_MOUSE) {
+			return GlobalConfiguration.getImage(GlobalConfiguration.Paths.Resources.ICON_MOUSE, GlobalConfiguration.Paths.ICON_MOUSE);
+		} else {
+			return GlobalConfiguration.getImage(GlobalConfiguration.Paths.Resources.ICON_DELETE, GlobalConfiguration.Paths.ICON_DELETE);
 		}
 	}
 
@@ -221,10 +230,12 @@ public class BotToolBar extends JToolBar {
 						setSelection(getComponentIndex(BotButton.this));
 					}
 				}
+
 				public void mouseEntered(MouseEvent e) {
 					hovered = true;
 					repaint();
 				}
+
 				public void mouseExited(MouseEvent e) {
 					hovered = false;
 					repaint();
@@ -244,9 +255,9 @@ public class BotToolBar extends JToolBar {
 
 		public void paintComponent(Graphics g) {
 			super.paintComponent(g);
-			if(getComponentIndex(this) == idx) {
+			if (getComponentIndex(this) == idx) {
 				((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                        RenderingHints.VALUE_ANTIALIAS_ON);
+						RenderingHints.VALUE_ANTIALIAS_ON);
 				g.setColor(new Color(255, 255, 255, 200));
 				g.fillRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 4, 4);
 				g.setColor(new Color(180, 180, 180, 200));

@@ -141,19 +141,8 @@ public class RSObject extends MethodProvider {
 		RSModel model = getModel();
 		if (model != null) {
 			methods.mouse.move(model.getPoint());
-			int iters = random(10, 50);
-			while (--iters > 0) {
-				if (!methods.menu.contains(action)) {
-					break;
-				}
-				sleep(3);
-			}
-			if (methods.menu.contains(action)) {
-				return methods.menu.doAction(action);
-			} else {
-				methods.mouse.move(model.getPoint());
-				return methods.menu.doAction(action);
-			}
+			sleep(random(5, 50));
+			return methods.menu.doAction(action);
 		}
 		return methods.tiles.doAction(getLocation(), action);
 	}

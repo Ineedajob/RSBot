@@ -1,5 +1,6 @@
 package org.rsbot.script.internal.event;
 
+import org.rsbot.bot.Bot;
 import org.rsbot.script.Script;
 import org.rsbot.script.internal.ScriptHandler;
 
@@ -15,5 +16,7 @@ public interface ScriptListener {
 	public void scriptResumed(ScriptHandler handler, Script script);
 
 	public void scriptPaused(ScriptHandler handler, Script script);
+
+	public void inputChanged(Bot bot, int mask);
 
 }

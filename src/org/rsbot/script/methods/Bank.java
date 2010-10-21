@@ -9,17 +9,17 @@ import java.awt.*;
  */
 public class Bank extends MethodProvider {
 
-	public static final int[] BANKERS = { 44, 45, 494, 495, 499, 958, 1036,
+	public static final int[] BANKERS = {44, 45, 494, 495, 499, 958, 1036,
 			2271, 2354, 2355, 3824, 5488, 5901, 5912, 5913, 6362, 6532, 6533,
-			6534, 6535, 7605, 8948, 14367, };
-	public static final int[] BANK_BOOTHS = { 2213, 4483, 6084, 11402, 11758,
+			6534, 6535, 7605, 8948, 14367,};
+	public static final int[] BANK_BOOTHS = {2213, 4483, 6084, 11402, 11758,
 			12759, 14367, 19230, 24914, 25808, 26972, 27663, 29085, 34752,
-			35647, };
-	public static final int[] BANK_CHESTS = { 4483, 12308, 21301, 27663, 42192, };
-	public static final int[] BANK_DEPOSIT_BOX = { 9398, 20228, 26969, 36788, };
+			35647,};
+	public static final int[] BANK_CHESTS = {4483, 12308, 21301, 27663, 42192,};
+	public static final int[] BANK_DEPOSIT_BOX = {9398, 20228, 26969, 36788,};
 
-	public static final int[] DO_NOT_DEPOSIT = new int[] {
-		1265, 1267, 1269, 1273, 1271, 1275, 1351, 590, 303 };
+	public static final int[] DO_NOT_DEPOSIT = new int[]{
+			1265, 1267, 1269, 1273, 1271, 1275, 1351, 590, 303};
 
 	public static final int INTERFACE_BANK = 762;
 	public static final int INTERFACE_BANK_BUTTON_CLOSE = 43;
@@ -44,10 +44,10 @@ public class Bank extends MethodProvider {
 	public static final int INTERFACE_COLLECTION_BOX = 105;
 	public static final int INTERFACE_COLLECTION_BOX_CLOSE = 13;
 
-	public static final int[] INTERFACE_BANK_TAB = { 61, 59, 57, 55, 53, 51,
-			49, 47, 45 };
-	public static final int[] INTERFACE_BANK_TAB_FIRST_ITEM = { 78, 79, 80, 81,
-			82, 83, 84, 85, 86 };
+	public static final int[] INTERFACE_BANK_TAB = {61, 59, 57, 55, 53, 51,
+			49, 47, 45};
+	public static final int[] INTERFACE_BANK_TAB_FIRST_ITEM = {78, 79, 80, 81,
+			82, 83, 84, 85, 86};
 
 	public static final int INTERFACE_DEPOSIT_BOX = 11;
 	public static final int INTERFACE_DEPOSIT_BOX_BUTTON_CLOSE = 15;
@@ -67,15 +67,15 @@ public class Bank extends MethodProvider {
 	public boolean close() {
 		if (isOpen()) {
 			methods.interfaces
-				.getComponent(INTERFACE_BANK, INTERFACE_BANK_BUTTON_CLOSE)
-				.doClick();
+					.getComponent(INTERFACE_BANK, INTERFACE_BANK_BUTTON_CLOSE)
+					.doClick();
 			sleep(random(500, 600));
 			return !isOpen();
 		}
 		if (isDepositOpen()) {
 			methods.interfaces
-			.getComponent(INTERFACE_DEPOSIT_BOX, INTERFACE_DEPOSIT_BOX_BUTTON_CLOSE)
-			.doClick();
+					.getComponent(INTERFACE_DEPOSIT_BOX, INTERFACE_DEPOSIT_BOX_BUTTON_CLOSE)
+					.doClick();
 			sleep(random(500, 600));
 			return !isDepositOpen();
 		}
@@ -85,11 +85,9 @@ public class Bank extends MethodProvider {
 	/**
 	 * If bank is open, deposits specified amount of an item into the bank. Supports deposit boxes.
 	 *
-	 * @param itemID
-	 *            The ID of the item.
-	 * @param numberToDeposit
-	 *            The amount to deposit. 0 deposits All. 1,5,10 deposit
-	 *            corresponding amount while other numbers deposit X.
+	 * @param itemID		  The ID of the item.
+	 * @param numberToDeposit The amount to deposit. 0 deposits All. 1,5,10 deposit
+	 *                        corresponding amount while other numbers deposit X.
 	 * @return <tt>true</tt> if successful; otherwise <tt>false</tt>.
 	 */
 	public boolean deposit(final int itemID, final int numberToDeposit) {
@@ -100,26 +98,26 @@ public class Bank extends MethodProvider {
 						+ numberToDeposit + ")");
 			final int inventoryCount = methods.inventory.getCount(true);
 			switch (numberToDeposit) {
-			case 0: // Deposit All
-				item.doAction("Deposit-All");
-				break;
-			case 1: // Deposit 1
-				item.doAction("Deposit-1");
-				break;
-			case 5: // Deposit 5
-				item.doAction("Deposit-5");
-				break;
-			case 10: // Deposit 10
-				item.doAction("Deposit-10");
-				break;
-			default: // Deposit x
-				if (!item.doAction("Deposit-" + numberToDeposit)) {
-					if (item.doAction("Deposit-X")) {
-						sleep(random(1000, 1300));
-						methods.inputManager.sendKeys("" + numberToDeposit, true);
+				case 0: // Deposit All
+					item.doAction("Deposit-All");
+					break;
+				case 1: // Deposit 1
+					item.doAction("Deposit-1");
+					break;
+				case 5: // Deposit 5
+					item.doAction("Deposit-5");
+					break;
+				case 10: // Deposit 10
+					item.doAction("Deposit-10");
+					break;
+				default: // Deposit x
+					if (!item.doAction("Deposit-" + numberToDeposit)) {
+						if (item.doAction("Deposit-X")) {
+							sleep(random(1000, 1300));
+							methods.inputManager.sendKeys("" + numberToDeposit, true);
+						}
 					}
-				}
-				break;
+					break;
 			}
 			return (methods.inventory.getCount(true) < inventoryCount)
 					|| (methods.inventory.getCount() == 0);
@@ -130,26 +128,26 @@ public class Bank extends MethodProvider {
 				int id = item.getComponentID();
 				if (id == itemID) {
 					switch (numberToDeposit) {
-					case 0: // Deposit All
-						item.doAction("Deposit-All");
-						break;
-					case 1: // Deposit 1
-						item.doAction("Deposit-1");
-						break;
-					case 5: // Deposit 5
-						item.doAction("Deposit-5");
-						break;
-					case 10: // Deposit 10
-						item.doAction("Deposit-10");
-						break;
-					default: // Deposit x
-						if (item.doAction("Deposit-" + numberToDeposit)) {
-							if (item.doAction("Deposit-X")) {
-								sleep(random(1000, 1300));
-								methods.inputManager.sendKeys("" + numberToDeposit, true);
+						case 0: // Deposit All
+							item.doAction("Deposit-All");
+							break;
+						case 1: // Deposit 1
+							item.doAction("Deposit-1");
+							break;
+						case 5: // Deposit 5
+							item.doAction("Deposit-5");
+							break;
+						case 10: // Deposit 10
+							item.doAction("Deposit-10");
+							break;
+						default: // Deposit x
+							if (item.doAction("Deposit-" + numberToDeposit)) {
+								if (item.doAction("Deposit-X")) {
+									sleep(random(1000, 1300));
+									methods.inputManager.sendKeys("" + numberToDeposit, true);
+								}
 							}
-						}
-						break;
+							break;
 					}
 					return true;
 				}
@@ -191,46 +189,59 @@ public class Bank extends MethodProvider {
 	 * Deposits all items in inventory except for the given IDs. Supports deposit boxes.
 	 *
 	 * @param items The items not to deposit.
-	 * @return <tt>true</tt> on success.
+	 * @return true on success.
 	 */
 	public boolean depositAllExcept(final int... items) {
+		boolean deposit = true;
 		if (isOpen()) {
 			int inventoryCount = methods.inventory.getCount();
-			RSItem[] inventoryArray = methods.inventory.getItems();
 			outer:
-			for (RSItem anInventoryArray : inventoryArray) {
-				if (anInventoryArray.getID() == -1) {
-					continue;
-				}
-				for (final int item : items) {
-					if (anInventoryArray.getID() == item) {
-						continue outer;
+			for (int i = 0; i < 28; i++) {
+				RSItem item = methods.inventory.getItemAt(i);
+				if (item.getID() != -1) {
+					for (int id : items) {
+						if (item.getID() == id) {
+							continue outer;
+						}
 					}
-				}
-
-				for (int tries = 0; tries < 5; tries++) {
-					anInventoryArray.doAction("Deposit-All");
-					sleep(random(500, 700));
-					if (methods.inventory.getCount() < inventoryCount) {
-						break;
+					for (int tries = 0; tries < 5; tries++) {
+						item.doAction("Deposit-All");
+						sleep(random(500, 700));
+						if (methods.inventory.getCount() < inventoryCount) {
+							inventoryCount = methods.inventory.getCount();
+							continue outer;
+						}
 					}
+					deposit = false;
 				}
-				return methods.inventory.getCount() < inventoryCount;
 			}
-		}
-		else if (isDepositOpen()) {
+		} else if (isDepositOpen()) {
+			int depositBoxCount = getBoxCount();
+			outer:
 			for (int i = 0; i < 28; i++) {
 				RSComponent item = methods.interfaces.get(11).getComponent(17).getComponent(i);
 				int id = item.getComponentID();
 				if (id != -1) {
-					for (int j = 0; j < items.length; j++) {
-						if (id != items[j])
-							item.doAction("Deposit-All");
+					for (int iid : items) {
+						if (iid == id) {
+							continue outer;
+						}
 					}
+					for (int tries = 0; tries < 5; tries++) {
+						item.doAction("Deposit-All");
+						sleep(random(500, 700));
+						if (getBoxCount() < depositBoxCount) {
+							depositBoxCount = getBoxCount();
+							continue outer;
+						}
+					}
+					deposit = false;
 				}
 			}
+		} else {
+			return false;
 		}
-		return false;
+		return deposit;
 	}
 
 	/**
@@ -308,7 +319,7 @@ public class Bank extends MethodProvider {
 	 *
 	 * @param index The index of the item.
 	 * @return <code>RSComponent</code> if item is found at index;
-	 * otherwise null.
+	 *         otherwise null.
 	 */
 	public RSItem getItemAt(final int index) {
 		final RSItem[] items = getItems();
@@ -430,15 +441,15 @@ public class Bank extends MethodProvider {
 						&& methods.calc.tileOnMap(bankBooth.getLocation()) && methods.calc
 						.canReach(bankBooth.getLocation(), true))
 						|| ((banker != null)
-								&& (methods.calc.distanceTo(banker) < 8)
-								&& methods.calc.tileOnMap(banker.getLocation()) && methods.calc
-								.canReach(banker.getLocation(), true))
+						&& (methods.calc.distanceTo(banker) < 8)
+						&& methods.calc.tileOnMap(banker.getLocation()) && methods.calc
+						.canReach(banker.getLocation(), true))
 						|| ((bankChest != null)
-								&& (methods.calc.distanceTo(bankChest) < 8)
-								&& methods.calc.tileOnMap(bankChest
-										.getLocation())
-								&& methods.calc.canReach(bankChest
-										.getLocation(), true) && !isOpen())) {
+						&& (methods.calc.distanceTo(bankChest) < 8)
+						&& methods.calc.tileOnMap(bankChest
+						.getLocation())
+						&& methods.calc.canReach(bankChest
+						.getLocation(), true) && !isOpen())) {
 					if (bankBooth != null) {
 						if (bankBooth.doAction("Use-Quickly")) {
 							int count = 0;
@@ -547,8 +558,7 @@ public class Bank extends MethodProvider {
 	 * Searches for an item in the bank. Returns true if succeeded (does not
 	 * necessarily mean it was found).
 	 *
-	 * @param itemName
-	 *            The item name to find.
+	 * @param itemName The item name to find.
 	 * @return <tt>true</tt> on success.
 	 */
 	public boolean searchItem(final String itemName) {
@@ -633,7 +643,7 @@ public class Bank extends MethodProvider {
 			return false;
 		if (methods.settings
 				.getSetting(Settings.SETTING_BANK_TOGGLE_WITHDRAW_MODE) != 1) {
-				methods.interfaces.getComponent(INTERFACE_BANK,
+			methods.interfaces.getComponent(INTERFACE_BANK,
 					INTERFACE_BANK_BUTTON_NOTE).doClick();
 			sleep(random(500, 700));
 		}
@@ -646,10 +656,8 @@ public class Bank extends MethodProvider {
 	 * <p/>
 	 * 0 is All. 1,5,10 use Withdraw 1,5,10 while other numbers Withdraw X.
 	 *
-	 * @param itemID
-	 *            The ID of the item.
-	 * @param count
-	 *            The number to withdraw.
+	 * @param itemID The ID of the item.
+	 * @param count  The number to withdraw.
 	 * @return <tt>true</tt> on success.
 	 */
 	public boolean withdraw(final int itemID, final int count) {
@@ -662,35 +670,33 @@ public class Bank extends MethodProvider {
 			return false;
 		final int inventoryCount = methods.inventory.getCount(true);
 		switch (count) {
-		case 0: // Withdraw All
-			item.doAction("Withdraw-All");
-			break;
-		case 1: // Withdraw 1
-            item.doClick(true);
-            break;
-		case 5: // Withdraw 5
-		case 10: // Withdraw 10
-			item.doAction("Withdraw-" + count);
-			break;
-		default: // Withdraw x
-			if (item.doClick(false)) {
-				sleep(random(600, 900));
-				String[] mactions = methods.menu.getActions();
-				boolean found = false;
-				for (int i = 0; i < mactions.length; i++) {
-					if (mactions[i].equalsIgnoreCase("Withdraw-" + count)) {
-						found = true;
-						methods.menu.clickIndex(i);
-						break;
+			case 0: // Withdraw All
+				item.doAction("Withdraw-All");
+				break;
+			case 1: // Withdraw 1
+				item.doClick(true);
+				break;
+			case 5: // Withdraw 5
+			case 10: // Withdraw 10
+				item.doAction("Withdraw-" + count);
+				break;
+			default: // Withdraw x
+				if (item.doClick(false)) {
+					sleep(random(600, 900));
+					if (methods.menu.contains("Withdraw-" + count)) {
+						if (methods.menu.doAction("Withdraw-" + count)) {
+							sleep(random(100, 200));
+							return true;
+						}
+						return false;
 					}
+					if (item.doAction("Withdraw-X")) {
+						sleep(random(1000, 1300));
+						methods.inputManager.sendKeys("" + count, true);
+					}
+					sleep(random(100, 200));
 				}
-				if (!found && item.doAction("Withdraw-X")) {
-					sleep(random(1000, 1300));
-					methods.inputManager.sendKeys("" + count, true);
-				}
-				sleep(random(100, 200));
-			}
-			break;
+				break;
 		}
 		return (methods.inventory.getCount(true) > inventoryCount)
 				|| (methods.inventory.getCount(true) == 28);
