@@ -396,14 +396,14 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 			bot.inputMask = Environment.INPUT_KEYBOARD;
 			bot.overrideInput = false;
 			toolBar.setScriptButton(BotToolBar.PAUSE_SCRIPT);
+			toolBar.setInputState(bot.inputMask);
 			toolBar.setOverrideInput(false);
-			toolBar.setInputState(Environment.INPUT_KEYBOARD);
 			menuBar.setOverrideInput(false);
 			String acct = bot.getAccountName();
 			toolBar.setTabLabel(bots.indexOf(bot) + 1, acct == null ? "RuneScape" : acct);
+			toolBar.updateInputButton();
 			setTitle(acct);
 		}
-		bot.overrideInput = true;
 	}
 
 	public void scriptStopped(ScriptHandler handler, Script script) {
@@ -412,11 +412,12 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 			bot.inputMask = Environment.INPUT_KEYBOARD | Environment.INPUT_MOUSE;
 			bot.overrideInput = false;
 			toolBar.setScriptButton(BotToolBar.RUN_SCRIPT);
+			toolBar.setInputState(bot.inputMask);
 			toolBar.setOverrideInput(false);
-			toolBar.setInputState(Environment.INPUT_KEYBOARD | Environment.INPUT_MOUSE);
 			menuBar.setOverrideInput(false);
 			menuBar.setPauseScript(false);
 			toolBar.setTabLabel(bots.indexOf(bot) + 1, "RuneScape");
+			toolBar.updateInputButton();
 			setTitle(null);
 		}
 	}

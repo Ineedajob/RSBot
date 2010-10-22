@@ -258,6 +258,8 @@ public class InterfaceExplorer extends Script implements PaintListener {
 				}
 				addInfo("Component ID: ", "" + iface.getComponentID());
 				addInfo("Component Stack Size: ", "" + iface.getComponentStackSize());
+				addInfo("Relative Location: ", "(" + iface.getRelativeX() + "," + iface.getRelativeY());
+				addInfo("Absolute Location: ", "(" + iface.getAbsoluteX() + "," + iface.getAbsoluteY());
 
 				infoArea.validate();
 				infoArea.repaint();

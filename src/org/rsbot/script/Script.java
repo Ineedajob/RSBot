@@ -266,7 +266,6 @@ public abstract class Script extends Methods implements EventListener, Runnable 
 		delegates.clear();
 		ctx.bot.getEventManager().removeListener(this);
 		ctx.bot.getScriptHandler().stopScript(id);
-		ctx.bot.inputMask = Environment.INPUT_KEYBOARD;
 		id = -1;
 	}
 

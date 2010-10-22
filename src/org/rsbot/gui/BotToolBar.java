@@ -135,12 +135,14 @@ public class BotToolBar extends JToolBar {
 
 	public void setInputState(int state) {
 		inputState = state;
-		userInputButton.setIcon(new ImageIcon(getInputImage(inputOverride, state)));
 	}
 
 	public void setOverrideInput(boolean selected) {
 		inputOverride = selected;
-		userInputButton.setIcon(new ImageIcon(getInputImage(selected, inputState)));
+	}
+
+	public void updateInputButton() {
+		userInputButton.setIcon(new ImageIcon(getInputImage(inputOverride, inputState)));
 	}
 
 	public void setScriptButton(int state) {

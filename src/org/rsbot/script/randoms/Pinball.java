@@ -20,8 +20,10 @@ public class Pinball extends Random {
 
 	private static final int[] OBJ_ACTIVATE = {15000, 15002, 15004, 15006, 15007, 15008};
 
+	private int continueCounter = 0;
+
     public boolean activateCondition() {
-        return game.isLoggedIn() && (objects.getNearest(OBJ_ACTIVATE) != null);
+        return game.isLoggedIn() && objects.getNearest(OBJ_ACTIVATE) != null;
     }
 
     private int getScore() {
@@ -38,10 +40,12 @@ public class Pinball extends Random {
         if (!activateCondition()) {
             return -1;
         }
-        if (interfaces.canContinue()) {
+        if (interfaces.canContinue() && continueCounter < 10) {
             interfaces.clickContinue();
+			continueCounter++;
             return random(1000, 1200);
         }
+		continueCounter = 0;
         if (getMyPlayer().isMoving() || (getMyPlayer().getAnimation() != -1)) {
             return random(1000, 1600);
         }
