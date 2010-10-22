@@ -37,7 +37,7 @@ import org.rsbot.script.wrappers.RSGroundItem;
 import org.rsbot.script.wrappers.RSItem;
 import org.rsbot.script.wrappers.RSNPC;
 
-@ScriptManifest(authors = "Foulwerp", name = "Fighter", description = "Basic Multipurpose Fighter...", version = 1.05)
+@ScriptManifest(authors = "Foulwerp", name = "Fighter", keywords = "Combat", description = "Basic Multipurpose Fighter...", version = 1.05)
 public class Fighter extends Script implements PaintListener {
 
 	private static final int[] skill = {0, 1, 2, 3, 4, 6};

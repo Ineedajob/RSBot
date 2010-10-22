@@ -31,7 +31,7 @@ import org.rsbot.script.ScriptManifest;
 import org.rsbot.script.methods.*;
 import org.rsbot.script.wrappers.*;
 
-@ScriptManifest(authors = "RawR", name = "Rawr Ivy Pro", version = 1.0, description = "The best Ivy Chopper out there.")
+@ScriptManifest(authors = "RawR", name = "Rawr Ivy Pro", keywords = "Woodcutting", version = 1.0, description = "The best Ivy Chopper out there.")
 public class RawrIvy extends Script implements PaintListener, ServerMessageListener {
 
 	public String LOCATION = "", STATE = "Loading.";

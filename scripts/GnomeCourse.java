@@ -11,6 +11,7 @@ import org.rsbot.script.methods.Skills;
 import org.rsbot.script.wrappers.RSModel;
 import org.rsbot.script.wrappers.RSObject;
 import org.rsbot.script.wrappers.RSTile;
+import org.rsbot.script.util.Timer;
 
 @ScriptManifest(authors = "Jacmob", keywords = "Agility", name = "Gnome Course", version = 2.1, description = "Standard gnome course. Eats common food.")
 public class GnomeCourse extends Script implements PaintListener {
@@ -214,7 +215,7 @@ public class GnomeCourse extends Script implements PaintListener {
 			g.setColor(GREEN);
 			g.drawString("GnomeCourse v2.1", x, y += 20);
 			g.drawString("GnomeCourse v2.1", x, y);
-			g.drawString("Runtime: " + getFormattedTime(
+			g.drawString("Runtime: " + Timer.format(
 					System.currentTimeMillis() - startTime) + ".", x, y += 20);
 
 			if (levelsGained == 1) {
@@ -262,42 +263,7 @@ public class GnomeCourse extends Script implements PaintListener {
 		log("Gained " + (skills.getCurrentExp(Skills.AGILITY) - startXp)
 				+ " XP (" + (skills.getRealLevel(Skills.AGILITY) -
 				Skills.getLevelAt(startXp)) + " levels) in "
-				+ getFormattedTime(System.currentTimeMillis() - startTime) + ".");
-	}
-
-	private String getFormattedTime(final long timeMillis) {
-		long millis = timeMillis;
-		final long seconds2 = millis / 1000;
-		final long hours = millis / (1000 * 60 * 60);
-		millis -= hours * 1000 * 60 * 60;
-		final long minutes = millis / (1000 * 60);
-		millis -= minutes * 1000 * 60;
-		final long seconds = millis / 1000;
-		String hoursString = "";
-		String minutesString = "";
-		String secondsString = seconds + "";
-		String type = "seconds";
-
-		if (minutes > 0) {
-			minutesString = minutes + ":";
-			type = "minutes";
-		} else if (hours > 0 && seconds2 > 0) {
-			minutesString = "0:";
-		}
-		if (hours > 0) {
-			hoursString = hours + ":";
-			type = "hours";
-		}
-		if (minutes < 10 && !type.equals("seconds")) {
-			minutesString = "0" + minutesString;
-		}
-		if (hours < 10 && type.equals("hours")) {
-			hoursString = "0" + hoursString;
-		}
-		if (seconds < 10 && !type.equals("seconds")) {
-			secondsString = "0" + secondsString;
-		}
-		return hoursString + minutesString + secondsString + " " + type;
+				+ Timer.format(System.currentTimeMillis() - startTime) + ".");
 	}
 
 	class CameraTurner implements Runnable {

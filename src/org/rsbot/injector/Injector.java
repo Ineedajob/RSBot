@@ -61,13 +61,21 @@ public class Injector {
 				e.printStackTrace();
 			}
 		} else {
-			hd = new HookData(download(GlobalConfiguration.Paths.URLs.UPDATE));
+			try {
+				hd = new HookData(download(GlobalConfiguration.Paths.URLs.UPDATE));
+			} catch (Exception e) {
+				log.severe("Unable to download hook data.");
+				log.severe("Please check your firewall and internet connection.");
+			}
 		}
 
 		world = 1 + new Random().nextInt(169);
 	}
 
 	public String generateTargetName() {
+		if (hd == null) {
+			return null;
+		}
 		String s = "";
 		for (byte b : hd.charData.i)
 			s += (char) hd.charData.c[b];
@@ -107,6 +115,10 @@ public class Injector {
 	public HashMap<String, byte[]> getClasses() {
 		synchronized (Injector.LOCK) {
 			try {
+				if (hd == null) {
+					return null;
+				}
+
 				ArrayList<ClassGen> classlist = new ArrayList<ClassGen>();
 
 				if (hd.version != getCachedVersion()) {

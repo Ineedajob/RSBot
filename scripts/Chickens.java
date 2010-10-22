@@ -15,7 +15,7 @@ import org.rsbot.script.wrappers.RSGroundItem;
 import org.rsbot.script.wrappers.RSItem;
 import org.rsbot.script.wrappers.RSNPC;
 
-@ScriptManifest(authors = {"Foulwerp"}, name = "Chickens", keywords = {"Chickens", "Combat", "Foulwerp"}, description = "Kills Chickens & Loots Feathers", version = 1.03)
+@ScriptManifest(authors = {"Foulwerp"}, name = "Chickens", keywords = {"Combat"}, description = "Kills Chickens & Loots Feathers", version = 1.03)
 public class Chickens extends Script implements PaintListener {
 
 	private static final DecimalFormat k = new DecimalFormat("#.#");
