@@ -213,8 +213,9 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
         	if (current != null) {
 				boolean override = !current.overrideInput;
         		current.overrideInput = override;
-        		toolBar.setOverrideInput(override);
 				menuBar.setOverrideInput(override);
+        		toolBar.setOverrideInput(override);
+				toolBar.updateInputButton();
 			}
         }
 	}

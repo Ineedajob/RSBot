@@ -30,8 +30,7 @@ public final class RSClassLoader extends ClassLoader {
             domain = new ProtectionDomain(codeSource, getPermissions());
             classes = injector.getClasses();
 			signlink = injector.findClass("Signlink").getClassName();
-        } catch (final Exception e) {
-            e.printStackTrace();
+        } catch (final Exception ignored) {
         }
     }
 

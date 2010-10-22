@@ -18,7 +18,7 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-@ScriptManifest(authors = {"joku.rules"}, keywords = "Development", name = "Interface Explorer", version = 0.2, description = "Fetches various interface data for developers.")
+@ScriptManifest(authors = {"joku.rules"}, keywords = "Development", name = "Interface Explorer", version = 0.3, description = "Fetches various interface data for developers.")
 public class InterfaceExplorer extends Script implements PaintListener {
 
 	private class InterfaceTreeModel implements TreeModel {
@@ -243,6 +243,7 @@ public class InterfaceExplorer extends Script implements PaintListener {
 				addInfo("Bounds Index: ", "" + iface.getBoundsArrayIndex());
 				addInfo("Model ID: ", "" + iface.getModelID());
 				addInfo("Texture ID: ", "" + iface.getBackgroundColor());
+				addInfo("Parent ID: ", "" + iface.getParentID());
 				addInfo("Text: ", "" + iface.getText());
 				addInfo("Tooltip: ", "" + iface.getTooltip());
 				addInfo("SelActionName: ", "" + iface.getSelectedActionName());
@@ -258,8 +259,8 @@ public class InterfaceExplorer extends Script implements PaintListener {
 				}
 				addInfo("Component ID: ", "" + iface.getComponentID());
 				addInfo("Component Stack Size: ", "" + iface.getComponentStackSize());
-				addInfo("Relative Location: ", "(" + iface.getRelativeX() + "," + iface.getRelativeY());
-				addInfo("Absolute Location: ", "(" + iface.getAbsoluteX() + "," + iface.getAbsoluteY());
+				addInfo("Relative Location: ", "(" + iface.getRelativeX() + "," + iface.getRelativeY() + ")");
+				addInfo("Absolute Location: ", "(" + iface.getAbsoluteX() + "," + iface.getAbsoluteY() + ")");
 
 				infoArea.validate();
 				infoArea.repaint();
