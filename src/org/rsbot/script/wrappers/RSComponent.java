@@ -770,7 +770,8 @@ public class RSComponent extends MethodProvider {
 	 * @return whether or not the component is valid
 	 */
 	public boolean isValid() {
-		return parInterface.isValid() && (parInterface.getChildrenInternal() != null);
+		return parInterface.isValid() && parInterface.getChildrenInternal() != null
+				&& getAbsoluteX() >= 0 && getAbsoluteY() >= 0;
 	}
 
     @Override

@@ -20,9 +20,9 @@ public class Pillory extends Random implements ServerMessageListener {
 
     public int fail = 0;
     private final int GameInterface = 189;
+    private String pilloryMessage = "Solve the Pillory";
     public boolean inCage = false;
     public RSTile myLoc;
-    private String pilloryMessage = "Solve the Pillory";
 
     public RSTile South = new RSTile(2606, 3105);
     RSTile cagetiles[] = {new RSTile(2608, 3105), new RSTile(2606, 3105), new RSTile(2604, 3105), new RSTile(3226, 3407), new RSTile(3228, 3407), new RSTile(3230, 3407), new RSTile(2685, 3489), new RSTile(2683, 3489), new RSTile(2681, 3489)};
@@ -32,11 +32,11 @@ public class Pillory extends Random implements ServerMessageListener {
         if (!game.isLoggedIn()) {
             return false;
         }
-        for (int i = 0; i < cagetiles.length; i++) {
-            if (getMyPlayer().getLocation().equals(cagetiles[i])) {
-                return true;
-            }
-        }
+		for (RSTile cagetile : cagetiles) {
+			if (getMyPlayer().getLocation().equals(cagetile)) {
+				return true;
+			}
+		}
         if (!inCage) {
             inCage = interfaces.getComponent(372, 3).getText().contains(
                     "Solve the pillory");
@@ -123,19 +123,15 @@ public class Pillory extends Random implements ServerMessageListener {
             camera.setAngle(360);
         }
         if (fail > 20) {
-            //log.info("Failed Wayyy to many Times..");
-            //log.info("Report this to illusion so He can Fix the Pillory.");
             shutdown();
         }
         if (myLoc == null) {
-            //log.info("getting Location..");
             myLoc = getMyPlayer().getLocation();
-            //log.info(myLoc.getX() + "," + myLoc.getY());
             return random(1000, 2000);
         }
         if (!getMyPlayer().getLocation().equals(myLoc)) {
-            //log.info(getMyPlayer().getLocation().toString());
             log.info("Solved It.");
+			myLoc = null;
             pilloryMessage = null;
             inCage = false;
             return -1;

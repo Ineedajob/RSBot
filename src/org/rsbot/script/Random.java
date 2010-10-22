@@ -8,11 +8,13 @@ import java.awt.*;
 
 public abstract class Random extends Methods implements PaintListener {
 
+    protected String name;
+
     private volatile boolean enabled = true;
 
 	private Script script;
 
-    protected String name;
+	private int timeout = random(240, 300);
 
     /**
      * Detects whether or not this anti-random should
@@ -49,7 +51,7 @@ public abstract class Random extends Methods implements PaintListener {
      *         the random and running script will be stopped.
      */
     public int getTimeout() {
-        return 0;
+        return timeout;
     }
     
     @Override
