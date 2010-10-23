@@ -41,7 +41,7 @@ public class ScapeRuneIsland extends Random {
 		}
 		if (interfaces.get(241).getComponent(4).getText().contains("catnap"))
 			finished = true;
-		if (clickContinue())
+		if (interfaces.clickContinue())
 			return random(500, 1000);
 		if (finished) {
 			RSObject portal = objects.getNearest(8987);
@@ -154,7 +154,7 @@ public class ScapeRuneIsland extends Random {
 			}
 		}
 
-		if (inventory.getCount(6200) > 0 && !clickContinue()) {
+		if (inventory.getCount(6200) > 0 && !interfaces.clickContinue()) {
 			final RSNPC cat = npcs.getNearest(2479);
 			if (cat != null) {
 				if (!calc.tileOnScreen(cat.getLocation())) {
@@ -170,7 +170,7 @@ public class ScapeRuneIsland extends Random {
 		}
 		RSNPC servant = npcs.getNearest(2481);
 		if (servant != null && direction == null && settings.getSetting(344) == 0
-				&& !clickContinue()) {
+				&& !interfaces.clickContinue()) {
 			if (!calc.tileOnScreen(servant.getLocation())) {
 				walking.walkTileMM(walking.getClosestTileOnMap(servant.getLocation()));
 				return 700;
@@ -190,19 +190,4 @@ public class ScapeRuneIsland extends Random {
 		return random(800, 1200);
 	}
 
-	public boolean clickContinue() {
-		RSInterface[] valid = interfaces.getAll();
-		for (RSInterface iface : valid) {
-			if (iface.getIndex() != 137) {
-				int len = iface.getChildCount();
-				for (int i = 0; i < len; i++) {
-					RSComponent child = iface.getComponent(i);
-					if (child.containsText("Click here to continue") && child.getAbsoluteY() > 5) {
-						return child.doAction("Continue");
-					}
-				}
-			}
-		}
-		return false;
-	}
 }

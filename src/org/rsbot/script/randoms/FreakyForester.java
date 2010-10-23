@@ -42,7 +42,7 @@ public class FreakyForester extends Random implements ServerMessageListener {
     public int getState() {
         if (done)
             return 3;
-        else if (IScanContinue())
+        else if (interfaces.canContinue())
             return 1;
         else if (phe == -1)
             return 0;
@@ -195,22 +195,4 @@ public class FreakyForester extends Random implements ServerMessageListener {
 
     }
 
-    private boolean IScanContinue() {
-        return ISgetContinueChildInterface() != null;
-    }
-
-    private RSComponent ISgetContinueChildInterface() {
-        RSInterface[] valid = interfaces.getAll();
-        for (RSInterface iface : valid) {
-            if (iface.getIndex() != 137) {
-                int len = iface.getChildCount();
-                for (int i = 0; i < len; i++) {
-                    RSComponent child = iface.getComponent(i);
-                    if (child.containsText("Click here to continue"))
-                        return child;
-                }
-            }
-        }
-        return null;
-    }
 }

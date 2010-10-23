@@ -2,6 +2,8 @@ package org.rsbot.script.randoms;
 
 import org.rsbot.script.Random;
 import org.rsbot.script.ScriptManifest;
+import org.rsbot.script.methods.Objects;
+import org.rsbot.script.wrappers.RSObject;
 import org.rsbot.script.wrappers.RSTile;
 
 import java.awt.*;
@@ -174,8 +176,9 @@ public class Maze extends Random {
                 if (((camera.getAngle() - turnCameraTo()) < 30) || ((camera.getAngle() - turnCameraTo()) > 30)) {
                     camera.setAngle(turnCameraTo());
                 }
-                if (atDoor(walkToTile, doorDir)) {
-                    return (random(400, 500));
+				RSObject obj = objects.getTopAt(walkToTile, Objects.TYPE_BOUNDARY);
+                if (obj != null && obj.doAction("Open") || atDoor(walkToTile, doorDir)) {
+                    return random(400, 500);
                 }
             }
         }

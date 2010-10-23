@@ -1,13 +1,3 @@
-import org.rsbot.event.listeners.PaintListener;
-import org.rsbot.script.Script;
-import org.rsbot.script.ScriptManifest;
-import org.rsbot.script.methods.Game;
-import org.rsbot.script.methods.Skills;
-import org.rsbot.script.util.WindowUtil;
-import org.rsbot.script.wrappers.*;
-import org.rsbot.util.GlobalConfiguration;
-
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -24,9 +14,19 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import javax.imageio.ImageIO;
+
+import org.rsbot.event.listeners.PaintListener;
+import org.rsbot.script.*;
+import org.rsbot.script.methods.Game;
+import org.rsbot.script.methods.Skills;
+import org.rsbot.script.wrappers.*;
+import org.rsbot.script.util.WindowUtil;
+import org.rsbot.util.GlobalConfiguration;
 
 
-@ScriptManifest(authors = {"Enfilade"}, keywords = {"fishing", "enfilade", "godless"}, name = "Godless Fisher", description = "Multiple locations and styles supported.")
+@ScriptManifest(authors = {"Enfilade"}, keywords = {"fishing", "enfilade", "godless"}, name = "Godless Fisher", version = 1.02,
+		description = "Supports multiple locations and styles.")
 public class GodlessFisher extends Script implements PaintListener,
 		MouseMotionListener, MouseListener {
 
@@ -40,6 +40,7 @@ public class GodlessFisher extends Script implements PaintListener,
 	private SpotInfo spots;
 	private FishingStyle style;
 	private InventoryHandler handler;
+	private Gear[] gear;
 
 	private ArrayList<RSTile> path;
 	private RSNPC fishingSpot;
@@ -48,6 +49,7 @@ public class GodlessFisher extends Script implements PaintListener,
 	private RSItem[] oldInventory;
 
 	private Timer timer = null;
+	private boolean drop;
 	private GFFrame gui;
 
 	private final int MINUTE = 60000;
@@ -104,72 +106,69 @@ public class GodlessFisher extends Script implements PaintListener,
 		public String getText() {
 			return "Godless Fisher";
 		}
-	};
-	private final PaintText STATE = new PaintText() {
-		public String getText() {
-			String s;
-			if (state == State.ANTIBAN)
-				s = afterAntiban.toString() + " (AB)";
-			else if (state == State.MOVING)
-				s = next.toString() + " (Moving)";
-			else
-				s = state.toString();
+	},
+			STATE = new PaintText() {
+				public String getText() {
+					String s = null;
+					if (state == State.ANTIBAN)
+						s = afterAntiban.toString() + " (AB)";
+					else if (state == State.MOVING)
+						s = next.toString() + " (Moving)";
+					else
+						s = state.toString();
 
-			if (antibanDesc == null)
-				return s;
-			return s + "\nAntiban: " + antibanDesc;
-		}
-	};
-
-	private final PaintText TIME_RUNNING = new PaintText() {
-		public String getText() {
-			long time = (System.currentTimeMillis() - startTime) / 1000;
-			return "Runtime: " + time / 3600 + ":"
-					+ (time / 60 % 60 < 10 ? "0" : "") + time / 60 % 60 + ":"
-					+ (time % 60 < 10 ? "0" : "") + time % 60;
-		}
-	};
-
-	private final PaintText CURRENT_LEVEL = new PaintText() {
-		public String getText() {
-			return "Fishing Level: " + skills.getCurrentLevel(Skills.FISHING);
-		}
-	};
-	private final PaintText CURRENT_XP = new PaintText() {
-		public String getText() {
-			return "Fishing XP: " + skills.getCurrentExp(Skills.FISHING);
-		}
-	};
-	private final PaintText LEVELS_GAINED = new PaintText() {
-		public String getText() {
-			return "Levels Gained: " + (skills.getCurrentLevel(Skills.FISHING) - startingLevel);
-		}
-	};
-	private final PaintText XP_GAINED = new PaintText() {
-		public String getText() {
-			return "XP Gained: " + (skills.getCurrentExp(Skills.FISHING) - startingXP);
-		}
-	};
-	private final PaintText XP_UNTIL_NEXT = new PaintText() {
-		public String getText() {
-			return "XP 'til next level: " + skills.getExpToNextLevel(Skills.FISHING);
-		}
-	};
-	private final PaintText FISH_CAUGHT = new PaintText() {
-		public String getText() {
-			Fish[] fish = style.getFish();
-			String s = "";
-			for (int i = 0; i < fish.length; i++) {
-				if (i > 0)
-					s += "\n";
-				s += fish[i].getPaintText();
-				if (i < fish.length - 1)
-					s += "\n";
-			}
-			return s;
-		}
-	};
-	private final PaintText XP_ESTIMATES = new PaintText() {
+					if (antibanDesc == null)
+						return s;
+					return s + "\nAntiban: " + antibanDesc;
+				}
+			},
+			TIME_RUNNING = new PaintText() {
+				public String getText() {
+					long time = (System.currentTimeMillis() - startTime) / 1000;
+					return "Runtime: " + time / 3600 + ":"
+							+ (time / 60 % 60 < 10 ? "0" : "") + time / 60 % 60 + ":"
+							+ (time % 60 < 10 ? "0" : "") + time % 60;
+				}
+			},
+			CURRENT_LEVEL = new PaintText() {
+				public String getText() {
+					return "Fishing Level: " + skills.getCurrentLevel(Skills.FISHING);
+				}
+			},
+			CURRENT_XP = new PaintText() {
+				public String getText() {
+					return "Fishing XP: " + skills.getCurrentExp(Skills.FISHING);
+				}
+			},
+			LEVELS_GAINED = new PaintText() {
+				public String getText() {
+					return "Levels Gained: " + (skills.getCurrentLevel(Skills.FISHING) - startingLevel);
+				}
+			},
+			XP_GAINED = new PaintText() {
+				public String getText() {
+					return "XP Gained: " + (skills.getCurrentExp(Skills.FISHING) - startingXP);
+				}
+			},
+			XP_UNTIL_NEXT = new PaintText() {
+				public String getText() {
+					return "XP 'til next level: " + skills.getExpToNextLevel(Skills.FISHING);
+				}
+			},
+			FISH_CAUGHT = new PaintText() {
+				public String getText() {
+					Fish[] fish = style.getFish();
+					String s = "";
+					for (int i = 0; i < fish.length; i++) {
+						if (i > 0)
+							s += "\n";
+						s += fish[i].getPaintText();
+						if (i < fish.length - 1)
+							s += "\n";
+					}
+					return s;
+				}
+			}, XP_ESTIMATES = new PaintText() {
 		public String getText() {
 			double xpPerHr = (int) ((skills.getCurrentExp(Skills.FISHING) - startingXP) /
 					(double) (System.currentTimeMillis() - startTime)
@@ -234,6 +233,7 @@ public class GodlessFisher extends Script implements PaintListener,
 					bank.close();
 				if (inventory.isFull()) {
 					state = State.HANDLING_INVENTORY;
+					drop = inventoryContainsUnwantedFish(style);
 					inventoryColumn = 0;
 					inventoryRow = 0;
 					fishingSpot = null;
@@ -268,6 +268,9 @@ public class GodlessFisher extends Script implements PaintListener,
 			case FISHING:
 				if (inventory.isFull()) {
 					state = State.HANDLING_INVENTORY;
+					drop = inventoryContainsUnwantedFish(style);
+					inventoryColumn = 0;
+					inventoryRow = 0;
 					fishingSpot = null;
 				} else if (!style.playerIsFishing(player) || spotMoved(true)) {
 					state = State.LOOKING;
@@ -279,7 +282,7 @@ public class GodlessFisher extends Script implements PaintListener,
 					startAntiban();
 				break;
 			case HANDLING_INVENTORY:
-				switch (handler.getType()) {
+				switch (drop ? InventoryHandler.DROPPER : handler.getType()) {
 					case InventoryHandler.DROPPER:
 						if (inventoryContainsUnwantedFish(style))
 							dropNextUnwantedFish();
@@ -287,11 +290,24 @@ public class GodlessFisher extends Script implements PaintListener,
 							state = State.LOOKING;
 						break;
 					case InventoryHandler.BOOTH:
-						if (inventoryContainsNoFish(style))
-							startWalking(area.getReversedGuides(), State.LOOKING);
-						else {
+						if (inventoryContainsNoFish(style)) {
+							if (spots.getOnScreenInArea(area, style) != null)
+								state = State.LOOKING;
+							else
+								startWalking(area.getReversedGuides(), State.LOOKING);
+						} else {
 							if (bank.isOpen()) {
-								bank.depositAllExcept(style.getGearIDs());
+								boolean gearInInventory = false;
+								outer:
+								for (RSItem i : inventory.getCachedItems())
+									for (int id : style.getGearIDs())
+										if (id == i.getID()) {
+											gearInInventory = true;
+											break outer;
+										}
+								if (gearInInventory)
+									bank.depositAllExcept(style.getGearIDs());
+								else bank.depositAll();
 								return random(100, 1000);
 							} else {
 								RSObject booth = objects.getNearest(handler.getID());
@@ -450,7 +466,7 @@ public class GodlessFisher extends Script implements PaintListener,
 				ImageIO.write((RenderedImage) img, "PNG", f);
 				return img;
 			}
-		} catch (IOException ignored) {
+		} catch (IOException e) {
 		}
 		return null;
 	}
@@ -476,7 +492,8 @@ public class GodlessFisher extends Script implements PaintListener,
 	private PaintIcon[] icons;
 	private final Rectangle GUIButtonRect = new Rectangle(GUI_BUTTON_X, GUI_BUTTON_Y, 24, 24);
 	private final Font font1 = new Font("Arial", 0, 9);
-	private final Color POLY_FILL = new Color(150, 0, 150, 80);
+	private final Color POLY_BORDER = new Color(150, 0, 150), POLY_FILL = new Color(150, 0, 150, 80);
+	private final Color IMG_FILL = new Color(150, 0, 150, 100);
 	private final Color BUTTON_IN = new Color(0, 0, 0, 80);
 	private Timer guiButtonTimer;
 	private Point cursor = new Point(-1, -1);
@@ -797,7 +814,7 @@ public class GodlessFisher extends Script implements PaintListener,
 			for (int i = 8; i < 16; i++)
 				result2 = (result2 << 8) | bytes[i];
 			return new java.util.Random(result1 - result2);
-		} catch (NoSuchAlgorithmException ignored) {
+		} catch (NoSuchAlgorithmException ex) {
 		}
 		return new java.util.Random();
 	}
@@ -900,6 +917,17 @@ public class GodlessFisher extends Script implements PaintListener,
 		return at;
 	}
 
+	private ArrayList<RSNPC> getNPCsAt(RSTile t, int id) {
+		ArrayList<RSNPC> at = new ArrayList<RSNPC>();
+		for (RSNPC r : npcs.getAll()) {
+			if (r == null || r.getLocation() == null)
+				continue;
+			if (r.getLocation().equals(t) && r.getID() == id)
+				at.add(r);
+		}
+		return at;
+	}
+
 	//<editor-fold defaultstate="collapsed" desc="Walking">
 
 	private Line[] reverse(Line[] lines) {
@@ -909,18 +937,56 @@ public class GodlessFisher extends Script implements PaintListener,
 		return rev;
 	}
 
+	private ArrayList<RSTile> straightPathTo(RSTile t, int variation) {
+		RSTile player = getMyPlayer().getLocation();
+		double xdist = t.getX() - player.getX();
+		double ydist = t.getY() - player.getY();
+		double dist = Math.sqrt(xdist * xdist + ydist * ydist);
+		xdist /= dist;
+		ydist /= dist;
+
+		Line l1 = new Line(player.getX() - (int) (ydist * variation), player.getY() + (int) (xdist * variation),
+				player.getX() + (int) (ydist * variation), player.getY() + (int) (xdist * variation));
+		Line l2 = new Line(t.getX() - (int) (ydist * variation), t.getY() + (int) (xdist * variation),
+				t.getX() + (int) (ydist * variation), t.getY() + (int) (xdist * variation));
+		return generatePath(new Line[]{l1, l2});
+	}
+
 	private int loc;
 
 	private void startWalking(Line[] guides, State nextState) {
 		state = State.WALKING_PATH;
 		next = nextState;
 		path = generatePath(guides);
+		boolean onScreen = false;
+		for (RSTile t : path)
+			if (calc.tileOnMap(t)) {
+				onScreen = true;
+				break;
+			}
+		if (!onScreen) {
+			int nearest = getNearestTile();
+			path.addAll(nearest, straightPathTo(path.get(nearest), 3));
+		}
 		locatePlayer();
 	}
 
-	private void locatePlayer() {
-		for (loc = path.size() - 1; loc >= 0 && !calc.tileOnMap(path.get(loc)); loc--) {
+	private int getNearestTile() {
+		int shortest = 0;
+		int shortestDist = calc.distanceTo(path.get(0)), dist;
+		for (int i = 1; i < path.size(); i++) {
+			dist = calc.distanceTo(path.get(i));
+			if (dist < shortestDist) {
+				shortestDist = dist;
+				shortest = i;
+			}
 		}
+		return shortest;
+	}
+
+	private void locatePlayer() {
+		for (loc = path.size() - 1; loc >= 0 && !calc.tileOnMap(path.get(loc)); loc--)
+			continue;
 		if (loc < 0)
 			loc = 0;
 	}
@@ -1050,6 +1116,18 @@ public class GodlessFisher extends Script implements PaintListener,
 			}
 		}
 		return entirePath;
+	}
+
+	public ArrayList<RSTile> cutUp(ArrayList<RSTile> tiles) {
+		ArrayList<RSTile> path = new ArrayList<RSTile>();
+		int index = 0;
+		while (index < tiles.size()) {
+			path.add(tiles.get(index));
+			index += random(8, 12);
+		}
+		if (!path.get(path.size() - 1).equals(tiles.get(tiles.size() - 1)))
+			path.add(tiles.get(tiles.size() - 1));
+		return path;
 	}
 
 	private class Line {
@@ -1306,30 +1384,30 @@ public class GodlessFisher extends Script implements PaintListener,
 		}
 
 		public boolean containsFishID(int id) {
-			for (Fish target : targets)
-				if (id == target.getID())
+			for (int i = 0; i < targets.length; i++)
+				if (id == targets[i].getID())
 					return true;
 			return false;
 		}
 
 		public boolean containsWantedFishID(int id) {
-			for (Fish target : targets)
-				if (id == target.getID() && target.shouldKeep())
+			for (int i = 0; i < targets.length; i++)
+				if (id == targets[i].getID() && targets[i].shouldKeep())
 					return true;
 			return false;
 		}
 
 		public boolean containsUnwantedFishID(int id) {
-			for (Fish target : targets)
-				if (id == target.getID() && !target.shouldKeep())
+			for (int i = 0; i < targets.length; i++)
+				if (id == targets[i].getID() && !targets[i].shouldKeep())
 					return true;
 			return false;
 		}
 
 		public void increment(int id) {
-			for (Fish target : targets)
-				if (id == target.getID()) {
-					target.incrementCount();
+			for (int i = 0; i < targets.length; i++)
+				if (id == targets[i].getID()) {
+					targets[i].incrementCount();
 					return;
 				}
 		}
@@ -1497,7 +1575,8 @@ public class GodlessFisher extends Script implements PaintListener,
 			TUNA = new Fish("Tuna", 359),
 			SWORDFISH = new Fish("Swordfish", 371),
 			CRAYFISH = new Fish("Crayfish", 13435),
-			SHARK = new Fish("Shark", 383);
+			SHARK = new Fish("Shark", 383),
+			PIKE = new Fish("Pike", 349);
 
 	private class Gear {
 		private int id, bait;
@@ -1538,6 +1617,7 @@ public class GodlessFisher extends Script implements PaintListener,
 
 	private final FishingStyle ROD = new FishingStyle("Rod Fishing", "Bait", new Fish[]{SARDINE, HERRING}, new int[]{622, 623}, NORMAL_ROD),
 			FLY = new FishingStyle("Fly Fishing", "Lure", new Fish[]{TROUT, SALMON}, new int[]{622, 623}, FLY_ROD),
+			PIKE_FISHING = new FishingStyle("River baiting", "Bait", "Lure", new Fish[]{PIKE}, new int[]{622, 623}, NORMAL_ROD),
 			CAGE = new FishingStyle("Lobster Caging", "Cage", new Fish[]{LOBSTER}, new int[]{619}, LOBSTER_CAGE),
 			NET = new FishingStyle("Small Net Fishing", "Net", new Fish[]{ANCHOVIES, SHRIMP}, new int[]{621}, SMALL_NET),
 			HARPOON = new FishingStyle("Harpooning", "Harpoon", "Cage", new Fish[]{TUNA, SWORDFISH}, new int[]{618, 10616, 5108}, NORMAL_HARPOON, CLAY_HARPOON, BARB_TAIL_HARPOON),
@@ -1553,23 +1633,23 @@ public class GodlessFisher extends Script implements PaintListener,
 					"Karamja (Stiles)",
 					new Line[]{
 							new Line(2924, 3180, 2925, 3180),
-							new Line(2924, 3174, 2925, 3174),
-							new Line(2923, 3172, 2924, 3174),
-							new Line(2921, 3172, 2921, 3176),
-							new Line(2915, 3172, 2912, 3174),
-							new Line(2910, 3171, 2910, 3172),
-							new Line(2904, 3171, 2901, 3173),
-							new Line(2892, 3162, 2888, 3166),
-							new Line(2880, 3151, 2875, 3156),
-							new Line(2866, 3147, 2866, 3148),
-							new Line(2852, 3141, 2852, 3144)
+							new Line(2924, 3175, 2925, 3172),
+							new Line(2921, 3175, 2921, 3172),
+							new Line(2915, 3176, 2913, 3169),
+							new Line(2909, 3173, 2908, 3171),
+							new Line(2897, 3170, 2901, 3168),
+							new Line(2886, 3165, 2893, 3162),
+							new Line(2875, 3158, 2880, 3151),
+							new Line(2866, 3151, 2865, 3147),
+							new Line(2851, 3145, 2851, 3141)
 					}, new InventoryHandler(InventoryHandler.NOTER, 11267),
 					new SpotInfo(CAGE, 324),
 					new SpotInfo(HARPOON, 324),
 					new SpotInfo(HAND, 324)),
 			new FishingArea(3238, 3241, 3239, 3256,
 					"Goblin Hut - Lumbridge",
-					new SpotInfo(FLY, 329)),
+					new SpotInfo(FLY, 329),
+					new SpotInfo(PIKE_FISHING, 329)),
 			new FishingArea(3238, 3146, 3248, 3158,
 					"Lumbridge Swamps",
 					new SpotInfo(NET, 4908),
@@ -1607,7 +1687,8 @@ public class GodlessFisher extends Script implements PaintListener,
 							new Line(3090, 3489, 3090, 3492),
 							new Line(3094, 3489, 3094, 3492)
 					}, new InventoryHandler(InventoryHandler.BOOTH, 26972),
-					new SpotInfo(FLY, 328)),
+					new SpotInfo(FLY, 328),
+					new SpotInfo(PIKE_FISHING, 328)),
 			new FishingArea(2598, 3419, 2605, 3426,
 					"Fishing Guild",
 					new Line[]{
@@ -1620,7 +1701,25 @@ public class GodlessFisher extends Script implements PaintListener,
 					new SpotInfo(HARPOON, 312),
 					new SpotInfo(SHARK_HARPOONING, 313),
 					new SpotInfo(HAND, 312),
-					new SpotInfo(HAND_SHARK, 313))
+					new SpotInfo(HAND_SHARK, 313)),
+			new FishingArea(2835, 3433, 2856, 3433,
+					"Catherby",
+					new Line[]{
+							new Line(2850, 3431, 2835, 3432),
+							new Line(2835, 3438, 2832, 3435),
+							new Line(2830, 3439, 2830, 3435),
+							new Line(2822, 3439, 2822, 3435),
+							new Line(2815, 3438, 2815, 3435),
+							new Line(2811, 3438, 2807, 3434),
+							new Line(2811, 3441, 2807, 3441)
+					}, new InventoryHandler(InventoryHandler.BOOTH, 2213),
+					new SpotInfo(NET, 320),
+					new SpotInfo(ROD, 320),
+					new SpotInfo(CAGE, 321),
+					new SpotInfo(HARPOON, 321),
+					new SpotInfo(SHARK_HARPOONING, 322),
+					new SpotInfo(HAND, 321),
+					new SpotInfo(HAND_SHARK, 322))
 	};
 
 	private class SpotInfo {
@@ -1822,7 +1921,7 @@ public class GodlessFisher extends Script implements PaintListener,
 				keyboard.pressKey(key);
 				Thread.sleep(holdWait);
 				keyboard.releaseKey(key);
-			} catch (InterruptedException ignored) {
+			} catch (InterruptedException e) {
 			}
 		}
 	}
@@ -1850,7 +1949,7 @@ public class GodlessFisher extends Script implements PaintListener,
 		public void run() {
 			try {
 				Thread.sleep(sleep);
-			} catch (InterruptedException ignored) {
+			} catch (InterruptedException e) {
 			}
 			setDuration(random(lo, hi));
 			reset();
@@ -2143,7 +2242,7 @@ public class GodlessFisher extends Script implements PaintListener,
 			area = AREAS[index];
 			spots = area.get(styleIndex);
 			style = spots.getStyle();
-			Gear[] gear = style.getGear();
+			gear = style.getGear();
 			handler = area.getHandler();
 			for (int i = 0; i < style.getFish().length; i++)
 				style.getFish()[i].setKeep((Boolean) fishTable.getValueAt(i, 1));

@@ -172,8 +172,8 @@ public class Pillory extends Random implements ServerMessageListener {
     }
 
     public void serverMessageRecieved(final ServerMessageEvent e) {
-        final String serverString = e.getMessage();
-        if (serverString.contains(pilloryMessage)) {
+        final String str = e.getMessage();
+        if (str != null && str.contains(pilloryMessage)) {
             inCage = true;
         }
 

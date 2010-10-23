@@ -13,7 +13,7 @@ public class ScriptHandler {
     private HashMap<Integer, Script> scripts = new HashMap<Integer, Script>();
     private HashMap<Integer, Thread> scriptThreads = new HashMap<Integer, Thread>();
 
-	private Set<ScriptListener> listeners = new HashSet<ScriptListener>();
+	private Set<ScriptListener> listeners = Collections.synchronizedSet(new HashSet<ScriptListener>());
     
     private Bot bot;
 
