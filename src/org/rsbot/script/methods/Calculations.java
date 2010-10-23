@@ -98,7 +98,7 @@ public class Calculations extends MethodProvider {
 		if (methods.game.isFixed()) {
 			return x > 4 && x < methods.game.getWidth() - 253 && y > 4 && y < methods.game.getHeight() - 169;
 		} else {
-			return x < methods.game.getWidth() - 260 && y < methods.game.getHeight() - 109;
+			return x > 0 && x < methods.game.getWidth() - 260 && y > 0 &&  y < methods.game.getHeight() - 109;
 		}
     }
 
@@ -391,7 +391,7 @@ public class Calculations extends MethodProvider {
 					return new Point((int) (_x - render.absoluteX1) + 4, (int) (_y - render.absoluteY1) + 4);
 				} else {
 					int sx = (int) (_x - render.absoluteX1), sy = (int) (_y - render.absoluteY1);
-					if (sx < methods.game.getWidth() - 260 && sy < methods.game.getHeight() - 109) {
+					if (sx >= 0 && sx < methods.game.getWidth() - 260 && sy >= 0 && sy < methods.game.getHeight() - 109) {
 						return new Point(sx, sy);
 					}
 				}

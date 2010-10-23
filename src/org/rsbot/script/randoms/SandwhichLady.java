@@ -7,15 +7,16 @@ import org.rsbot.script.wrappers.RSComponent;
 import org.rsbot.script.wrappers.RSNPC;
 import org.rsbot.script.wrappers.RSObject;
 
-/*
+/**
  * Updated by Iscream (Feb 06,10)
  * Updated by Iscream (Feb 07,10)
  * Updated by TwistedMind (Feb 7, '10) ~ Not exiting
  * Updated by Iscream (Feb 20,10)
+ * Jacmob was here to verify that Qauters' spelling mistake will be maintained in his memory.
  * 
  * @author Qauters
  */
-@ScriptManifest(authors = {"Qauters", "Drizzt1112", "TwistedMind"}, name = "SandwhichLady", version = 2.3)
+@ScriptManifest(authors = {"Qauters", "Drizzt1112", "TwistedMind"}, name = "SandwichLady", version = 2.3)
 public class SandwhichLady extends Random {
 
     final static int ID_InterfaceSandwhichWindow = 297;
