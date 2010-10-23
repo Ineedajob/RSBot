@@ -440,6 +440,7 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 	public void inputChanged(Bot bot, int mask) {
 		bot.inputMask = mask;
 		toolBar.setInputState(mask);
+		toolBar.updateInputButton();
 	}
 
 }

@@ -314,7 +314,7 @@ public class AutoSpinner extends Script implements PaintListener {
 			g.setColor(BG);
 			g.fill3DRect(x - 6, y, 211, 26, true);
 			g.setColor(TEXT);
-			g.drawString("AutoSpinner v2.0", x, y += 17);
+			g.drawString("AutoSpinner v2.1 by Jacmob", x, y += 17);
 
 			y += 20;
 			g.setColor(BG);

@@ -139,9 +139,9 @@ public class ScriptHandler {
         for (int i = 0; i < scripts.size(); i++) {
 			Script script = scripts.get(i);
             if (script != null && script.isActive()) {
-                //if (scriptThreads.get(i) == curThread) {
-                stopScript(i);
-                //}
+                if (scriptThreads.get(i) == curThread) {
+                	stopScript(i);
+                }
             }
         }
         if (curThread == null) {

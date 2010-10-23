@@ -51,6 +51,16 @@ public class MethodContext {
      */
     public final GrandExchange grandExchange = new GrandExchange();
 
+	/**
+	 * The singletion of Hiscores
+	 */
+	public final Hiscores hiscores = new Hiscores();
+
+	/**
+	 * The singleton of ClanChat
+	 */
+	public final ClanChat clanChat = new ClanChat(this);
+
     /**
      * The singleton of Camera
      */
