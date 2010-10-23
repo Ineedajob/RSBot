@@ -55,7 +55,7 @@ public class ImprovedRewardsBox extends Random {
 	private int XPSelection;
 
 	public boolean activateCondition() {
-		return game.isLoggedIn() && !getMyPlayer().isInCombat()
+		return game.isLoggedIn() && !getMyPlayer().isInCombat() && !bank.isOpen()
 				&& cachedInventoryContainedOneOf(BOX_ID, BOOK_KNOWLEDGE_ID, LAMP_ID, MYSTERY_BOX_ID);
 	}
 

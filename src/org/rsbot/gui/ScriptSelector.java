@@ -14,6 +14,7 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.JTableHeader;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Frame;
@@ -185,8 +186,11 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 		JScrollPane pane = new JScrollPane(table,
 				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		JTableHeader header = table.getTableHeader();
 		center.add(pane, BorderLayout.CENTER);
-		center.add(table.getTableHeader(), BorderLayout.NORTH);
+		if (header != null) {
+			center.add(header, BorderLayout.NORTH);
+		}
 
 		add(center, BorderLayout.CENTER);
 		add(toolBar, BorderLayout.SOUTH);

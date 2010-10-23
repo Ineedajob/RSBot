@@ -48,12 +48,12 @@ public class Walking extends MethodProvider {
         if (destination == lastDestination &&
                 methods.calc.distanceTo(lastStep) < 10) {
             lastStep = nextTile(lastPath);
-            return lastStep == null ? false : walkTileMM(lastStep);
+            return lastStep != null && walkTileMM(lastStep);
         }
         lastDestination = destination;
         lastPath = findPath(destination);
         lastStep = nextTile(lastPath);
-        return lastStep == null ? false : walkTileMM(lastStep);
+        return lastStep != null && walkTileMM(lastStep);
     }
 
     /**
@@ -421,10 +421,10 @@ public class Walking extends MethodProvider {
      */
     private RSTile[] cleanPath(RSTile[] path) {
         LinkedList<RSTile> tempPath = new LinkedList<RSTile>();
-        for (int i = 0; i < path.length; i++)
-            if (!tempPath.contains(path[i])) {
-                tempPath.add(path[i]);
-            }
+		for (RSTile tile : path)
+			if (!tempPath.contains(tile)) {
+				tempPath.add(tile);
+			}
         RSTile[] cleanedPath = new RSTile[tempPath.size()];
         for (int i = 0; i < tempPath.size(); i++) {
             cleanedPath[i] = tempPath.get(i);
@@ -574,7 +574,7 @@ public class Walking extends MethodProvider {
                 nodeArray[nodePath.size() - i - 1] = nodePath.get(i);
             }
             return nodeArray;
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         return null;
     }
@@ -582,14 +582,16 @@ public class Walking extends MethodProvider {
     /**
      * @param t The <tt>RSTile</tt> destination.
      * @return A fixed RSTile path to the given <tt>RSTile</tt>.
-     * @see #generateFixedPath(int, int)
      */
     private RSTile[] generateProperPath(RSTile t) {
         return generateProperPath(t.getX(), t.getY());
     }
 
     /**
-     * @return The distance between the starting <tt>WalkerNode</tt> and the ending X and Y values.
+	 * @param startNode Starting WalkerNode.
+     * @param endX Ending x value.
+	 * @param endY Ending y value.
+	 * @return The distance between the starting <tt>WalkerNode</tt> and the ending X and Y values.
      */
     private int distance(WalkerNode startNode, int endX, int endY) {
         int dx = startNode.x - endX;
@@ -620,8 +622,6 @@ public class Walking extends MethodProvider {
 
     /**
      * Adds all links to the <tt>ArrayList</tt> node.
-     *
-     * @see #node
      */
     private void loadLinks() {
         String[] matrix = Walker.getWalkerLinks().split(" ");

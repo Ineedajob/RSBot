@@ -1,9 +1,6 @@
 package org.rsbot.script.methods;
 
-import org.rsbot.script.Random;
-import org.rsbot.script.ScriptManifest;
 import org.rsbot.script.wrappers.RSPlayer;
-import org.rsbot.util.ScreenshotUtil;
 
 import java.util.logging.Logger;
 
@@ -56,6 +53,16 @@ public class Methods {
      * The singleton of GrandExchange
      */
     protected GrandExchange grandExchange;
+
+	/**
+	 * The singletion of Hiscores
+	 */
+	protected Hiscores hiscores;
+
+	/**
+	 * The singleton of ClanChat
+	 */
+	protected ClanChat clanChat;
 
     /**
      * The singleton of Camera
@@ -147,8 +154,6 @@ public class Methods {
 	 */
 	protected Environment env;
 
-    private MethodContext ctx;
-
     /**
      * For internal use only: initializes the
      * method providers.
@@ -163,6 +168,8 @@ public class Methods {
         this.players = ctx.players;
         this.store = ctx.store;
         this.grandExchange = ctx.grandExchange;
+		this.hiscores = ctx.hiscores;
+		this.clanChat = ctx.clanChat;
         this.camera = ctx.camera;
         this.npcs = ctx.npcs;
         this.game = ctx.game;
@@ -181,7 +188,6 @@ public class Methods {
         this.account = ctx.account;
         this.summoning = ctx.summoning;
 		this.env = ctx.env;
-        this.ctx = ctx;
     }
 
     /**

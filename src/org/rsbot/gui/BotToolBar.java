@@ -5,14 +5,7 @@ import java.awt.event.*;
 import java.io.File;
 import java.net.MalformedURLException;
 
-import javax.swing.Box;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JToolBar;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 import org.rsbot.script.methods.Environment;
@@ -79,6 +72,7 @@ public class BotToolBar extends JToolBar {
 		BotButton home = new BotButton("Home", ICON_HOME);
 		home.setVisible(false);
 
+		setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
 		setFloatable(false);
 		add(home);
 		add(new AddButton(listener));

@@ -13,7 +13,7 @@ import java.util.Set;
 /**
  * @author Jacmob
  */
-@ScriptManifest(name = "AutoEssence", authors = "Jacmob", keywords = "Mining", version = 1.0,
+@ScriptManifest(name = "AutoEssence", authors = "Jacmob", keywords = "Mining", version = 1.1,
 	description = "Varrock essence miner.")
 public class AutoEssence extends Script implements PaintListener {
 
@@ -55,6 +55,8 @@ public class AutoEssence extends Script implements PaintListener {
 
 		Color TEXT_COLOR = new Color(255, 255, 255, 255);
 
+		Color MINE_TEXT_COLOR = new Color(0, 0, 0, 255);
+
 	}
 
 	public static abstract class Action {
@@ -83,10 +85,14 @@ public class AutoEssence extends Script implements PaintListener {
 
 		public void process() {
 			if (bank.isOpen()) {
-				if (bank.getCount(Constants.ESSENCES) == 28) {
+				if (inventory.getCount(Constants.ESSENCES) == 28) {
 					bank.depositAll();
 				} else {
 					bank.depositAllExcept(Constants.PICKAXES);
+				}
+				sleep(400);
+				if (inventory.containsOneOf(Constants.ESSENCES)) {
+					sleep(400);
 				}
 			} else {
 				bank.open();
@@ -115,10 +121,15 @@ public class AutoEssence extends Script implements PaintListener {
 
 		public void process() {
 			RSNPC npc = npcs.getNearest(id);
-			if (npc != null && npc.doAction(action)) {
-				sleep(random(2500, 3300));
-				if (!getMyPlayer().isIdle()) {
-					sleep(500);
+			if (npc != null) {
+				if (!npc.isOnScreen()) {
+					camera.turnToCharacter(npc, 10);
+				} else if (npc.doAction(action)) {
+					sleep(1000);
+					if (!getMyPlayer().isIdle()) {
+						sleep(2000);
+					}
+					sleep(1000);
 				}
 			}
 		}
@@ -153,9 +164,9 @@ public class AutoEssence extends Script implements PaintListener {
 			if (obj != null) {
 				if (obj.isOnScreen()) {
 					if (obj.doAction(action)) {
-						sleep(random(2000, 3000));
+						sleep(1000);
 						if (getMyPlayer().isMoving()) {
-							sleep(1000);
+							sleep(2000);
 						}
 					} else if (fails > 5) {
 						camera.turnToObject(obj, 10);
@@ -201,12 +212,19 @@ public class AutoEssence extends Script implements PaintListener {
 		protected abstract boolean isTargetValid();
 
 		public void process() {
+			if (!walking.isRunEnabled() && walking.getEnergy() > 20) {
+				walking.setRun(true);
+				sleep(500);
+			}
 			RSTile tile = dest.getCentralTile();
 			if (last == null || getMyPlayer().isIdle() || (calc.distanceTo(last) < 10 && !dest.contains(last))) {
-				if (walking.walkTo(tile)) {
-					last = walking.getDestination();
-					sleep(random(1000, 1800));
+				if (!walking.walkTo(tile)) {
+					walking.walkTileOnScreen(calc.getTileOnScreen(tile));
 				}
+				last = walking.getDestination();
+				sleep(random(1000, 1800));
+			} else {
+				idle();
 			}
 		}
 
@@ -253,9 +271,14 @@ public class AutoEssence extends Script implements PaintListener {
 
 			public void process() {
 				RSObject obj = objects.getNearest(Constants.OPEN_DOOR);
-				if (obj != null && calc.distanceBetween(obj.getLocation(), Constants.DOOR_TILE) < 2
-						&& obj.doAction("Open")) {
-					sleep(random(1000, 2000));
+				if (obj != null && calc.distanceBetween(obj.getLocation(), Constants.DOOR_TILE) < 2) {
+					if (obj.isOnScreen()) {
+						if (obj.doAction("Open")) {
+							sleep(random(1000, 2000));
+						}
+					} else if (!Constants.DOOR_TILE.equals(walking.getDestination())) {
+						walking.walkTo(Constants.DOOR_TILE);
+					}
 				} else {
 					super.process();
 				}
@@ -269,9 +292,14 @@ public class AutoEssence extends Script implements PaintListener {
 
 			public void process() {
 				RSObject obj = objects.getNearest(Constants.OPEN_DOOR);
-				if (obj != null && calc.distanceBetween(obj.getLocation(), Constants.DOOR_TILE) < 2
-						&& obj.doAction("Open")) {
-					sleep(random(1000, 2000));
+				if (obj != null && calc.distanceBetween(obj.getLocation(), Constants.DOOR_TILE) < 2) {
+					if (obj.isOnScreen()) {
+						if (obj.doAction("Open")) {
+							sleep(random(1000, 2000));
+						}
+					} else if (!Constants.DOOR_TILE.equals(walking.getDestination())) {
+						walking.walkTo(Constants.DOOR_TILE);
+					}
 				} else {
 					super.process();
 				}
@@ -339,6 +367,7 @@ public class AutoEssence extends Script implements PaintListener {
 	}
 
 	public int loop() {
+		mouse.setSpeed(random(6, 8));
 		if (action != null) {
 			if (action.isValid()) {
 				action.process();
@@ -354,15 +383,20 @@ public class AutoEssence extends Script implements PaintListener {
 				}
 			}
 		}
-		return random(300, 600);
+		return random(300, 500);
 	}
 
 	public void onRepaint(Graphics g) {
 		if (action != null) {
 			action.paint(g);
-			g.setColor(Constants.TEXT_COLOR);
-			g.drawString(action.getDesc(), 20, 55);
-			g.drawString("Mined: " + mined, 20, 75);
+			if (inMine()) {
+				g.setColor(Constants.MINE_TEXT_COLOR);
+			} else {
+				g.setColor(Constants.TEXT_COLOR);
+			}
+			g.drawString("AutoEssence by Jacmob", 20, 55);
+			g.drawString(action.getDesc(), 20, 75);
+			g.drawString("Mined: " + mined, 20, 95);
 		}
 	}
 
@@ -392,6 +426,13 @@ public class AutoEssence extends Script implements PaintListener {
 				angle -= 359;
 			}
 			camera.setAngle(angle);
+		}
+		if (random(0, 50) == 0) {
+			if (random(0, 4) == 0) {
+				camera.setPitch(random(50, 80));
+			} else {
+				camera.setPitch(true);
+			}
 		}
 	}
 
