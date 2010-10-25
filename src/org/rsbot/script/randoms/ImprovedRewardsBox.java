@@ -228,7 +228,7 @@ public class ImprovedRewardsBox extends Random {
 			XPSelection = STRENGTH_ID;
 		} else if (a.equals("Defence")) {
 			XPSelection = DEFENCE_ID;
-		} else if (a.equals("Ranged")) {
+		} else if (a.equals("Range")) {
 			XPSelection = RANGED_ID;
 		} else if (a.equals("Prayer")) {
 			XPSelection = PRAYER_ID;
