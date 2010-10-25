@@ -64,13 +64,13 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 		this.bot = bot;
 		this.scripts = new ArrayList<ScriptDefinition>();
 		this.model = new ScriptTableModel(this.scripts);
-		load();
 	}
 
 	public void showGUI() {
 		init();
 		update();
 		setVisible(true);
+		load();
 	}
 
 	public void update() {
@@ -105,9 +105,6 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 
 		table = new JTable(model) {
 			public String getToolTipText(MouseEvent e) {
-				if (e.getPoint() == null) {
-					return super.getToolTipText(e);
-				}
 				int row = rowAtPoint(e.getPoint());
 				ScriptDefinition def = model.getDefinition(row);
 				if (def != null) {
@@ -189,7 +186,8 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 		toolBar.add(Box.createHorizontalStrut(5));
 		toolBar.add(submit);
 
-		JPanel center = new JPanel(new BorderLayout());
+		JPanel center = new JPanel();
+		center.setLayout(new BorderLayout());
 		JScrollPane pane = new JScrollPane(table,
 				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
