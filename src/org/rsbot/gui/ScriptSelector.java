@@ -64,9 +64,13 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 		this.bot = bot;
 		this.scripts = new ArrayList<ScriptDefinition>();
 		this.model = new ScriptTableModel(this.scripts);
-		init();
 		load();
+	}
+
+	public void showGUI() {
+		init();
 		update();
+		setVisible(true);
 	}
 
 	public void update() {
@@ -101,6 +105,9 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 
 		table = new JTable(model) {
 			public String getToolTipText(MouseEvent e) {
+				if (e.getPoint() == null) {
+					return super.getToolTipText(e);
+				}
 				int row = rowAtPoint(e.getPoint());
 				ScriptDefinition def = model.getDefinition(row);
 				if (def != null) {

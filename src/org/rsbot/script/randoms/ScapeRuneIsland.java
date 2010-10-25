@@ -7,6 +7,7 @@ import org.rsbot.script.wrappers.*;
 /*
  * Updated by Arbiter (Oct 19, 2010)
  * Updated by Jacmob (Oct 22, 2010)
+ * Updated by Jacmob (Oct 24, 2010)
  */
 @ScriptManifest(authors = "Arbiter", name = "ScapeRuneIsland", version = 2.0)
 public class ScapeRuneIsland extends Random {
@@ -92,7 +93,9 @@ public class ScapeRuneIsland extends Random {
 				}
 				inventory.getItem(6202).doAction("Use");
 				sleep(random(800, 1000));
-				pot.doAction("Use");
+				if (pot.doAction("Use")) {
+					sleep(1000);
+				}
 				return random(2000, 2400);
 			} else {
 				walking.walkTileMM(walking.getClosestTileOnMap(CENTER_TILE));
@@ -147,8 +150,15 @@ public class ScapeRuneIsland extends Random {
 				if (!calc.tileOnScreen(spot.getLocation())) {
 					camera.turnToTile(spot.getLocation());
 				}
+				if (!calc.tileOnScreen(spot.getLocation()) &&
+						walking.walkTileMM(spot.getLocation())) {
+					sleep(random(1000, 2000));
+					if (!calc.tileOnScreen(spot.getLocation())) {
+						sleep(1000);
+					}
+				}
 				tiles.doAction(spot.getLocation(), "Net");
-				return random(1000, 1200);
+				return random(2000, 2500);
 			} else {
 				walking.walkTileMM(walking.getClosestTileOnMap(CENTER_TILE));
 			}

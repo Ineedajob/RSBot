@@ -355,5 +355,13 @@ public class Summoning extends MethodProvider {
 
 	}
 
+	/**
+	 *
+	 *
+	 * @return <tt>true</tt> if a familiar is currently summoned; otherwise <tt>false</tt>.
+	 */
+	public boolean familiarExists() {
+		return methods.interfaces.getComponent(INTERFACE_TAB_SUMMONING, 3).getBackgroundColor() == 1802;
+	}
 
 }

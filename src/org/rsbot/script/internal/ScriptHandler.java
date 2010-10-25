@@ -119,13 +119,13 @@ public class ScriptHandler {
 
     public void runScript(Script script) {
 		script.init(bot.getMethodContext());
+		for (ScriptListener l : listeners) {
+			l.scriptStarted(this, script);
+		}
 		ScriptManifest prop = script.getClass().getAnnotation(ScriptManifest.class);
         Thread t = new Thread(script, "Script-" + prop.name());
 		addScriptToPool(script, t);
 		t.start();
-		for (ScriptListener l : listeners) {
-			l.scriptStarted(this, script);
-		}
     }
 
 	public void stopAllScripts() {

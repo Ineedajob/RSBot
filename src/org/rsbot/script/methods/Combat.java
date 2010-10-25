@@ -110,6 +110,15 @@ public class Combat extends MethodProvider {
 		return false;
 	}
 
+	/**
+	 * Returns true if the quick prayer interface has been used to activate prayers.
+	 *
+	 * @return <tt>true</tt> if quick prayer is on; otherwise <tt>false</tt>.
+	 */
+	public boolean isQuickPrayerOn() {
+		return methods.interfaces.getComponent(Game.INTERFACE_PRAYER_ORB, 2).getBackgroundColor() == 782;
+	}
+
     /**
      * Activates/deactivates a prayer via interfaces.
      *
@@ -176,10 +185,19 @@ public class Combat extends MethodProvider {
 	 */
 	public int getPrayerPoints() {
 		try {
-			return Integer.parseInt(methods.interfaces.get(749).getComponent(4).getText().trim());
+			return Integer.parseInt(methods.interfaces.get(Game.INTERFACE_PRAYER_ORB).getComponent(4).getText().trim());
 		} catch (NumberFormatException ex) {
 			return 0;
 		}
+	}
+
+	/**
+	 * Gets the current player's health as a percentage of full health.
+	 *
+	 * @return The current percentage health remaining.
+	 */
+	public int getHealth() {
+		return ((getLifePoints() * 10) / (methods.skills.getRealLevel(Skills.CONSTITUTION) * 10));
 	}
 
 }
