@@ -287,7 +287,7 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
         } else if (bot.getMethodContext() == null) {
 			JOptionPane.showMessageDialog(this, "The client is not currently loaded!");
 		} else {
-            new ScriptSelector(this, bot).setVisible(true);
+            new ScriptSelector(this, bot).showGUI();
         }
     }
 

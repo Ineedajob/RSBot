@@ -26,7 +26,7 @@ class RSCharacterModel extends RSModel {
 	/**
 	 * Performs a y rotation camera transform, where
 	 * the character's orientation is the rotation around
-	 * the y axis in jag units (0 - 16384).
+	 * the y axis in fixed point radians.
 	 *
 	 * [cos(t), 0, sin(t)
 	 *  0, 1, 0

@@ -23,6 +23,7 @@ public class LoginBot extends Random {
 	private static final int INTERFACE_PASSWORD_WINDOW = 62;
 	private static final int INTERFACE_BUTTON_LOGIN = 63;
 	private static final int INTERFACE_TEXT_RETURN = 15;
+	private static final int INTERFACE_BUTTON_BACK = 25;
 	private static final int INTERFACE_WELCOME_SCREEN = 906;
 	private static final int INTERFACE_WELCOME_SCREEN_BUTTON_PLAY_1 = 178;
 	private static final int INTERFACE_WELCOME_SCREEN_BUTTON_PLAY_2 = 180;
@@ -98,9 +99,14 @@ public class LoginBot extends Random {
 					log("Please verify that your RSBot account profile is correct.");
 					stopScript(false);
 				}
-				interfaces.get(INTERFACE_LOGIN_SCREEN).getComponent(25).doClick();
+				interfaces.get(INTERFACE_LOGIN_SCREEN).getComponent(INTERFACE_BUTTON_BACK).doClick();
 				invalidCount++;
-				return (random(500, 2000));
+				return random(500, 2000);
+			}
+			if (returnText.contains("error connecting")) {
+				interfaces.get(INTERFACE_LOGIN_SCREEN).getComponent(INTERFACE_BUTTON_BACK).doClick();
+				stopScript(false);
+				return random(500, 2000);
 			}
 			if (returnText.contains("full")) {
 				if (worldFullCount > 30) {

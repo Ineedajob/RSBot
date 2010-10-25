@@ -120,6 +120,7 @@ public abstract class Random extends Methods implements PaintListener {
         onFinish();
         log("Random event finished: " + name);
 		ctx.ctx.bot.getEventManager().removeListener(this);
+		sleep(1000);
 		ctx.ctx.bot.getEventManager().addListener(ctx);
 		for (Script s : ctx.delegates) {
 			ctx.ctx.bot.getEventManager().addListener(s);
