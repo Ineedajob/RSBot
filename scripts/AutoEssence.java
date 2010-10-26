@@ -2,6 +2,7 @@ import org.rsbot.event.listeners.PaintListener;
 import org.rsbot.script.Script;
 import org.rsbot.script.ScriptManifest;
 import org.rsbot.script.wrappers.*;
+import org.rsbot.script.util.Timer;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -13,8 +14,8 @@ import java.util.Set;
 /**
  * @author Jacmob
  */
-@ScriptManifest(name = "AutoEssence", authors = "Jacmob", keywords = "Mining", version = 1.1,
-	description = "Varrock essence miner.")
+@ScriptManifest(name = "AutoEssence", authors = "Jacmob", keywords = "Mining", version = 1.2,
+		description = "Varrock essence miner.")
 public class AutoEssence extends Script implements PaintListener {
 
 	public static interface Constants {
@@ -23,7 +24,7 @@ public class AutoEssence extends Script implements PaintListener {
 
 		RSArea MINE_AREA = new RSArea(2870, 4790, 2950, 4870);
 
-		RSArea AUBURY_AREA = new RSArea(new RSTile[] {
+		RSArea AUBURY_AREA = new RSArea(new RSTile[]{
 				new RSTile(3252, 3404),
 				new RSTile(3253, 3404),
 				new RSTile(3255, 3401),
@@ -47,7 +48,7 @@ public class AutoEssence extends Script implements PaintListener {
 
 		int[] ESSENCES = {RUNE_ESSENCE, PURE_ESSENCE};
 
-		int[] PICKAXES = {1265, 1267, 1269, 1296, 1273, 1271, 1275, 15259} ;
+		int[] PICKAXES = {1265, 1267, 1269, 1296, 1273, 1271, 1275, 15259};
 
 		Color PLAYER_FILL_COLOR = new Color(0, 255, 0, 50);
 
@@ -85,14 +86,25 @@ public class AutoEssence extends Script implements PaintListener {
 
 		public void process() {
 			if (bank.isOpen()) {
-				if (inventory.getCount(Constants.ESSENCES) == 28) {
+				if (inventory.getCount(Constants.ESSENCES) == 28 ||
+						!inventory.containsOneOf(Constants.PICKAXES)) {
 					bank.depositAll();
 				} else {
+					pickaxe = inventory.getItem(Constants.PICKAXES).getID();
+					log.info("Detected pickaxe in inventory. Script will withdraw if removed.");
 					bank.depositAllExcept(Constants.PICKAXES);
 				}
 				sleep(400);
 				if (inventory.containsOneOf(Constants.ESSENCES)) {
 					sleep(400);
+				}
+				if (pickaxe > 0 && !inventory.containsOneOf(Constants.PICKAXES)) {
+					bank.withdraw(pickaxe, 1);
+					sleep(2000);
+					if (!inventory.containsOneOf(Constants.PICKAXES)) {
+						log.warning("Unable to withdraw pickaxe.");
+						stopScript(false);
+					}
 				}
 			} else {
 				bank.open();
@@ -244,8 +256,8 @@ public class AutoEssence extends Script implements PaintListener {
 				Point py = calc.tileToScreen(t, 0, 1, 0);
 				Point pxy = calc.tileToScreen(t, 1, 1, 0);
 				if (pn.x > -1 && px.x > -1 && py.x > -1 && pxy.x > -1) {
-					g.fillPolygon(new int[] { py.x, pxy.x, px.x, pn.x },
-							new int[] { py.y, pxy.y, px.y, pn.y }, 4);
+					g.fillPolygon(new int[]{py.x, pxy.x, px.x, pn.x},
+							new int[]{py.y, pxy.y, px.y, pn.y}, 4);
 				}
 			}
 		}
@@ -257,9 +269,10 @@ public class AutoEssence extends Script implements PaintListener {
 	}
 
 	private Set<Action> actions;
+	private long startTime;
 	private Action action;
-	private boolean worn;
-	private int mined;
+	private int pickaxe = 0;
+	private int mined = 0;
 
 	public boolean onStart() {
 		actions = new HashSet<Action>();
@@ -363,6 +376,7 @@ public class AutoEssence extends Script implements PaintListener {
 		});
 		actions.add(new Bank(Constants.BANK_AREA));
 
+		startTime = System.currentTimeMillis();
 		return true;
 	}
 
@@ -395,8 +409,9 @@ public class AutoEssence extends Script implements PaintListener {
 				g.setColor(Constants.TEXT_COLOR);
 			}
 			g.drawString("AutoEssence by Jacmob", 20, 55);
-			g.drawString(action.getDesc(), 20, 75);
-			g.drawString("Mined: " + mined, 20, 95);
+			g.drawString(Timer.format(System.currentTimeMillis() - startTime), 20, 75);
+			g.drawString(action.getDesc(), 20, 95);
+			g.drawString("Mined: " + mined, 20, 115);
 		}
 	}
 

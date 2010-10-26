@@ -2,26 +2,27 @@ package org.rsbot.script.randoms;
 
 import org.rsbot.script.Random;
 import org.rsbot.script.ScriptManifest;
+import org.rsbot.script.wrappers.RSComponent;
 
 import java.util.LinkedList;
 import java.util.List;
 
 /**
  * Closes interfaces that scripts may open by mistake.
- * <p/>
- * Updated 23/09/10 by Aribter.
  */
-@ScriptManifest(authors = {"Jacmob", "HeyyamaN"}, name = "InterfaceCloser", version = 1.7)
+@ScriptManifest(authors = {"Jacmob", "HeyyamaN"}, name = "InterfaceCloser", version = 1.8)
 public class CloseAllInterface extends Random {
 	
 	static class ComponentDef {
 		
 		int parent;
 		int child;
-		
-		public ComponentDef(int parent, int child) {
+		boolean text;
+
+		public ComponentDef(int parent, int child, boolean text) {
 			this.parent = parent;
 			this.child = child;
+			this.text = text;
 		}
 		
 	}
@@ -37,6 +38,7 @@ public class CloseAllInterface extends Random {
         addChild(206, 16); // Price check
         addChild(266, 11); // Grove
         addChild(102, 13); // Death items
+        addChild(14, 88, true); // New pin
         addChild(14, 3); // Pin settings
         addChild(157, 13); // Quick chat help
         addChild(764, 2); // Objectives
@@ -45,7 +47,11 @@ public class CloseAllInterface extends Random {
     }
 
     private void addChild(int parent, int idx) {
-        components.add(new ComponentDef(parent, idx));
+        components.add(new ComponentDef(parent, idx, false));
+    }
+	
+	private void addChild(int parent, int idx, boolean text) {
+        components.add(new ComponentDef(parent, idx, text));
     }
 
     public boolean activateCondition() {
@@ -56,7 +62,8 @@ public class CloseAllInterface extends Random {
                 }
             }
             for (ComponentDef c : components) {
-                if (interfaces.getComponent(c.parent, c.child).isValid()) {
+				RSComponent comp = interfaces.getComponent(c.parent, c.child);
+                if (comp.isValid() && !(c.text && (comp.getText() == null || comp.getText().isEmpty()))) {
                     return true;
                 }
             }
