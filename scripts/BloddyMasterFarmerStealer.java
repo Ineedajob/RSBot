@@ -10,24 +10,17 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 
 import javax.imageio.ImageIO;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
@@ -112,50 +105,6 @@ public class BloddyMasterFarmerStealer extends Script implements PaintListener,
 			log("Unable to buffer cursor.");
 		} catch (IOException e) {
 			log("Unable to open cursor image.");
-		}
-		URLConnection url = null;
-		BufferedReader in = null;
-		BufferedWriter out = null;
-		try {
-			url = new URL(
-					"http://www.bloddyharry.webs.com/scripts/BloddyMasterFarmerStealerVERSION.txt")
-					.openConnection();
-			in = new BufferedReader(new InputStreamReader(url.getInputStream()));
-			if (Double.parseDouble(in.readLine()) > properties.version()) {
-				JOptionPane.showMessageDialog(null,
-						"Update found, please update.");
-				JOptionPane
-						.showMessageDialog(
-								null,
-								"Please choose 'BloddyMasterFarmerStealer.java' in your scripts folder and hit 'Open'");
-				JFileChooser fc = new JFileChooser();
-				if (fc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-					url = new URL(
-							"http://www.bloddyharry.webs.com/scripts/BloddyMasterFarmerStealer.java")
-							.openConnection();
-					in = new BufferedReader(new InputStreamReader(url
-							.getInputStream()));
-					out = new BufferedWriter(new FileWriter(fc
-							.getSelectedFile().getPath()));
-					String inp;
-					while ((inp = in.readLine()) != null) {
-						out.write(inp);
-						out.newLine();
-						out.flush();
-					}
-					log("Script successfully downloaded. Please recompile and reload your scripts!");
-					return false;
-				} else
-					log("Update canceled");
-			} else
-				log("You have the latest version :)");
-			if (in != null)
-				in.close();
-			if (out != null)
-				out.close();
-		} catch (IOException e) {
-			log("Problem getting version :/");
-			return false;
 		}
 		gui = new BloddyMasterFarmerGUI();
 		gui.setVisible(true);

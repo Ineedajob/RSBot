@@ -191,11 +191,7 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 		JScrollPane pane = new JScrollPane(table,
 				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		JTableHeader header = table.getTableHeader();
 		center.add(pane, BorderLayout.CENTER);
-		if (header != null) {
-			center.add(header, BorderLayout.NORTH);
-		}
 
 		add(center, BorderLayout.CENTER);
 		add(toolBar, BorderLayout.SOUTH);

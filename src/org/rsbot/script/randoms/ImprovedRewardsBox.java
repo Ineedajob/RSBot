@@ -7,7 +7,7 @@ import org.rsbot.script.wrappers.RSItem;
 
 import java.awt.Rectangle;
 
-@ScriptManifest(authors = {"Fred", "Arbiter"}, name = "Improved Rewards Box", version = 1.2)
+@ScriptManifest(authors = {"Fred", "Arbiter"}, name = "Improved Rewards Box", version = 1.3)
 public class ImprovedRewardsBox extends Random {
 
 	private static final int BOOK_KNOWLEDGE_ID = 11640;
@@ -114,6 +114,9 @@ public class ImprovedRewardsBox extends Random {
 	}
 
 	public int loop() {
+		if (getMyPlayer().isInCombat()) {
+			return -1;
+		}
 		String[] choices = getChoices();
 		if (interfaces.get(BOX_IF).isValid()) {
 			for (RSComponent child : interfaces.get(137).getComponents()) {
