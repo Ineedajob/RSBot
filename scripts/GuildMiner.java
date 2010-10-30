@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * @author Jacmob
  */
-@ScriptManifest(name = "GuildMiner", authors = "Jacmob", keywords = "Mining", version = 1.0,
+@ScriptManifest(name = "GuildMiner", authors = "Jacmob", keywords = "Mining", version = 1.1,
 		description = "Mining guild coal miner.")
 public class GuildMiner extends Script implements PaintListener {
 
@@ -98,6 +98,10 @@ public class GuildMiner extends Script implements PaintListener {
 					sleep(random(1000, 2000));
 				}
 			} else {
+				if (!walking.isRunEnabled() && walking.getEnergy() > 20) {
+					walking.setRun(true);
+					sleep(500);
+				}
 				RSTile dest = walking.getDestination();
 				if (dest == null || !GameConstants.BANK_AREA.contains(dest)) {
 					RSTile c = GameConstants.BANK_AREA.getCentralTile();

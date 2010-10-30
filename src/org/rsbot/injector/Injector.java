@@ -1,23 +1,14 @@
 package org.rsbot.injector;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintStream;
-import java.net.JarURLConnection;
-import java.net.SocketTimeoutException;
-import java.net.URL;
-import java.net.URLConnection;
+import java.io.*;
+import java.net.*;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Random;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
@@ -56,13 +47,13 @@ public class Injector {
 	public Injector() {
 		if (LOAD_LOCAL) {
 			try {
-				hd = new HookData(download(new File("info.dat").toURI().toURL().toString()));
+				hd = new HookData(download(new File("info.dat").toURI().toURL()));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		} else {
 			try {
-				hd = new HookData(download(GlobalConfiguration.Paths.URLs.UPDATE));
+				hd = new HookData(download(new URL(GlobalConfiguration.Paths.URLs.UPDATE)));
 			} catch (Exception e) {
 				log.severe("Unable to download hook data.");
 				log.severe("Please check your firewall and internet connection.");
@@ -392,6 +383,8 @@ public class Injector {
 				//Insert callback
 				insertCallback();
 
+				insertRXTEACallback();
+
 				//Return the classes
 				HashMap<String, byte[]> ret = new HashMap<String, byte[]>();
 				for (ClassGen cg : loaded) {
@@ -455,6 +448,151 @@ public class Injector {
 		} catch (IOException ignored) {
 		}
 	}
+
+	private void insertRXTEACallback() {
+		for (ClassGen cg : loaded) {
+			ConstantPoolGen cpg = cg.getConstantPool();
+			if (cpg.lookupString("m") != -1 && cpg.lookupString("_") != -1) {
+				for (Method m : cg.getMethods()) {
+					if (m.isStatic() && m.getReturnType().equals(Type.VOID)) {
+						InstructionSearcher s = new InstructionSearcher(cg, m);
+						if (s.nextLDC("m") != null && s.nextLDC("um") != null) {
+							s.setPosition(0);
+							s.nextPattern("ICONST MULTIANEWARRAY PUTSTATIC");
+							PUTSTATIC put_region_keys = (PUTSTATIC) s.next("PUTSTATIC");
+							if (put_region_keys != null) {
+								MethodGen mg = new MethodGen(m, cg.getClassName(), cg.getConstantPool());
+								InstructionList il = mg.getInstructionList();
+								InstructionList nil = new InstructionList();
+								InstructionFactory fac = new InstructionFactory(cg, cpg);
+
+								InstructionHandle[] handles = il.getInstructionHandles();
+								InstructionHandle inject = null;
+								ILOAD load = null;
+
+								for (int i = 0; i < handles.length; ++i) {
+									if (handles[i].getInstruction() instanceof LDC) {
+										LDC ldc = (LDC) handles[i].getInstruction();
+										if (ldc.getValue(cpg).equals("m")) {
+											for (int j = i - 1; j > 0; --j) {
+												if (handles[j].getInstruction() instanceof IASTORE) {
+													inject = handles[j];
+													i = j;
+													break;
+												}
+											}
+											for (int j = i - 1; j > 0; --j) {
+												if (handles[j].getInstruction() instanceof GETSTATIC) {
+													load = (ILOAD) handles[j + 1].getInstruction();
+													break;
+												}
+											}
+											break;
+										}
+									}
+								}
+
+								nil.append(new DUP());
+								nil.append(new DUP());
+								nil.append(new ICONST(-1));
+								nil.append(new IXOR());
+								nil.append(new SWAP());
+								nil.append(new SIPUSH((short) hd.version));
+								nil.append(new BIPUSH((byte) 16));
+								nil.append(new ISHL());
+								nil.append(new IOR());
+								nil.append(new SIPUSH((short) hd.version));
+								nil.append(fac.createGetStatic(put_region_keys.getClassName(cpg),
+										put_region_keys.getFieldName(cpg), new ArrayType(Type.INT, 2)));
+								nil.append(InstructionFactory.createLoad(Type.INT, load.getIndex()));
+								nil.append(InstructionFactory.createArrayLoad(new ArrayType(Type.INT, 1)));
+								nil.append(new DUP());
+								nil.append(new ICONST(0));
+								nil.append(InstructionFactory.createArrayLoad(Type.INT));
+								nil.append(new ICONST(-1));
+								nil.append(new IXOR());
+								nil.append(new SWAP());
+								nil.append(fac.createInvoke(
+										"org.rsbot.injector.Injector",
+										"visit_region_tinydec",
+										Type.VOID,
+										new Type[]{Type.INT, Type.INT, Type.INT, Type.INT, new ArrayType(Type.INT, 1)},
+										Constants.INVOKESTATIC));
+
+								il.insert(inject, nil);
+								mg.setMaxLocals();
+								mg.setMaxStack();
+								mg.update();
+								cg.replaceMethod(m, mg.getMethod());
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// --------------------
+
+	// this is a distributed effort at dumping xtea keys
+	// please respect this service, which will provide
+	// decrypted landscape files for various uses
+
+	private static final ExecutorService pool = Executors.newSingleThreadExecutor();
+	private static volatile boolean submit_enabled = true;
+
+	@SuppressWarnings("unused")
+	public static void visit_region_tinydec(
+			final int region,
+			final int id,
+			final int version,
+			final int key,
+			final int[] keys) {
+		if (!submit_enabled) {
+			return;
+		}
+		pool.submit(new Runnable() {
+			public void run() {
+				if (keys.length != 4) {
+					return;
+				}
+				try {
+					URL url = new URL(GlobalConfiguration.Paths.URLs.UPDATER + "xtea.php");
+					HttpURLConnection connect = (HttpURLConnection) url.openConnection();
+					connect.setRequestMethod("POST");
+					connect.setDoOutput(true);
+					connect.setDoInput(true);
+					connect.setUseCaches(false);
+					connect.setAllowUserInteraction(false);
+					StringBuilder write = new StringBuilder().
+							append("id=").append(id).
+							append("&ver=").append(version).
+							append("&reg=").append(region).
+							append("&key=").append(key).
+							append("&keys=");
+					for (int i = 0; i < keys.length; ++i) {
+						write.append(keys[i]);
+						if (i != 3) {
+							write.append('.');
+						}
+					}
+					Writer writer = new OutputStreamWriter(connect.getOutputStream(), "UTF-8");
+					writer.write(write.toString());
+					writer.flush();
+					writer.close();
+					BufferedReader in = new BufferedReader(new InputStreamReader(connect.getInputStream()));
+					String response;
+					if ((response = in.readLine()) != null && response.equals("stop")) {
+						submit_enabled = false;
+					}
+					connect.disconnect();
+				} catch (IOException ignored) {
+				}
+			}
+		});
+	}
+
+	// --------------------
 
 	private void insertCallback() {
 		ClassGen client = findClass("client");
@@ -763,27 +901,27 @@ public class Injector {
 	}
 
 	private boolean hackSignUID(String[] username) {
-		ClassGen CacheIOMaster = null;
-		ClassGen CacheIO = null;
+		ClassGen cgSeekableFile = null;
+		ClassGen cgFileOnDisk = null;
 
 		for (ClassGen cg : loaded) {
 			ConstantPoolGen cpg = cg.getConstantPool();
 			if (cpg.lookupUtf8(" in file ") != -1)
-				CacheIOMaster = cg;
+				cgSeekableFile = cg;
 			else if (cpg.lookupString("Warning! fileondisk ") != -1)
-				CacheIO = cg;
+				cgFileOnDisk = cg;
 		}
 
-		if (CacheIOMaster == null || CacheIO == null)
+		if (cgSeekableFile == null || cgFileOnDisk == null)
 			return false;
 
-		Field fCacheIO = null;
-		for (Field f : CacheIOMaster.getFields()) {
-			if (!f.isStatic() && f.getType().toString().equals(CacheIO.getClassName()))
-				fCacheIO = f;
+		Field fFileOnDisk = null;
+		for (Field f : cgSeekableFile.getFields()) {
+			if (!f.isStatic() && f.getType().toString().equals(cgFileOnDisk.getClassName()))
+				fFileOnDisk = f;
 		}
 
-		if (fCacheIO == null)
+		if (fFileOnDisk == null)
 			return false;
 
 		// patch part 1
@@ -811,15 +949,14 @@ public class Injector {
 							continue;
 						}
 						InvokeInstruction iv = (InvokeInstruction) s.current();
-
-						if (iv.getClassName(cg.getConstantPool()).equals(CacheIOMaster.getClassName())) {
+						if (iv.getClassName(cg.getConstantPool()).equals(cgSeekableFile.getClassName())) {
 							FieldInstruction fi = s.previousFieldInstruction();
 							InstructionFactory fac = new InstructionFactory(cg, cg.getConstantPool());
 							MethodGen mgn = new MethodGen(m, cg.getClassName(), cg.getConstantPool());
 							InstructionList il = mgn.getInstructionList();
 							il.insert(il.insert(
 									il.getInstructionHandles()[s.index()],
-									fac.createInvoke(CacheIOMaster.getClassName(), "fixFile", Type.VOID, Type.NO_ARGS, Constants.INVOKEVIRTUAL)),
+									fac.createInvoke(cgSeekableFile.getClassName(), "fixFile", Type.VOID, Type.NO_ARGS, Constants.INVOKEVIRTUAL)),
 									fac.createGetStatic(fi.getClassName(cg.getConstantPool()), fi.getFieldName(cg.getConstantPool()), fi.getFieldType(cg.getConstantPool())));
 							mgn.setMaxLocals();
 							mgn.setMaxStack();
@@ -837,83 +974,83 @@ public class Injector {
 
 		//patch part 2
 		InstructionList il2 = new InstructionList();
-		InstructionFactory fac2 = new InstructionFactory(CacheIOMaster, CacheIOMaster.getConstantPool());
+		InstructionFactory fac2 = new InstructionFactory(cgSeekableFile, cgSeekableFile.getConstantPool());
 		MethodGen mgff = new MethodGen(Constants.ACC_PUBLIC, // access flags
 				Type.VOID,			   // return type
 				Type.NO_ARGS, // argument types
 				new String[]{}, // arg names
-				"fixFile", CacheIOMaster.getClassName(),	// method, class
-				il2, CacheIOMaster.getConstantPool());
+				"fixFile", cgSeekableFile.getClassName(),	// method, class
+				il2, cgSeekableFile.getConstantPool());
 		il2.append(new ALOAD(0));
-		il2.append(fac2.createGetField(CacheIOMaster.getClassName(), fCacheIO.getName(), fCacheIO.getType()));
+		il2.append(fac2.createGetField(cgSeekableFile.getClassName(), fFileOnDisk.getName(), fFileOnDisk.getType()));
 		il2.append(fac2.createNew("java.lang.String"));
 		il2.append(new DUP());
 		il2.append(fac2.createGetStatic(username[0], username[1], Type.STRING));
 		il2.append(fac2.createInvoke(Type.STRING.getClassName(), "getBytes", new ArrayType(Type.BYTE, 1), Type.NO_ARGS, Constants.INVOKEVIRTUAL));
 		il2.append(fac2.createInvoke("java.lang.String", "<init>", Type.VOID, new Type[]{new ArrayType(Type.BYTE, 1)}, Constants.INVOKESPECIAL));
-		il2.append(fac2.createInvoke(CacheIO.getClassName(), "FixFile", Type.VOID, new Type[]{Type.STRING}, Constants.INVOKEVIRTUAL));
+		il2.append(fac2.createInvoke(cgFileOnDisk.getClassName(), "FixFile", Type.VOID, new Type[]{Type.STRING}, Constants.INVOKEVIRTUAL));
 		il2.append(new RETURN());
 
 		mgff.setMaxLocals();
 		mgff.setMaxStack();
-		CacheIOMaster.addMethod(mgff.getMethod());
+		cgSeekableFile.addMethod(mgff.getMethod());
 
 
 		//patch part 3
-		createMethodFixFile(CacheIO);
+		createMethodFixFile(cgFileOnDisk);
 
 		return true;
 	}
 
-	public static void createMethodFixFile(ClassGen CacheIO) {
+	public static void createMethodFixFile(ClassGen cgFileOnDisk) {
 		Field cFile = null;
 		Field cRAF = null;
-		for (Field f : CacheIO.getFields()) {
+		for (Field f : cgFileOnDisk.getFields()) {
 			if (f.getType().toString().equals("java.io.File")) cFile = f;
 			if (f.getType().toString().equals("java.io.RandomAccessFile")) cRAF = f;
 		}
 		if (cFile == null || cRAF == null) return;
 
 		InstructionList il = new InstructionList();
-		InstructionFactory fac = new InstructionFactory(CacheIO, CacheIO.getConstantPool());
+		InstructionFactory fac = new InstructionFactory(cgFileOnDisk, cgFileOnDisk.getConstantPool());
 		MethodGen ff = new MethodGen(Constants.ACC_PUBLIC, // access flags
 				Type.VOID,			   // return type
 				new Type[]{Type.STRING}, // argument types
 				new String[]{"username"}, // arg names
-				"FixFile", CacheIO.getClassName(),	// method, class
-				il, CacheIO.getConstantPool());
+				"FixFile", cgFileOnDisk.getClassName(),	// method, class
+				il, cgFileOnDisk.getConstantPool());
 		//add all the instructions
 		InstructionHandle instr1 = il.append(new ALOAD(0));
 		il.append(fac.createNew("java.io.File"));
 		il.append(new DUP());
 		il.append(new ALOAD(0));
-		il.append(fac.createGetField(CacheIO.getClassName(), cFile.getName(), cFile.getType()));
+		il.append(fac.createGetField(cgFileOnDisk.getClassName(), cFile.getName(), cFile.getType()));
 		il.append(fac.createInvoke("java.io.File", "getParent", Type.STRING, Type.NO_ARGS, Constants.INVOKEVIRTUAL));
 		il.append(fac.createNew("java.lang.StringBuilder"));
 		il.append(new DUP());
 		il.append(new ALOAD(1));
 		il.append(fac.createInvoke("java.lang.String", "valueOf", Type.STRING, new Type[]{Type.OBJECT}, Constants.INVOKESTATIC));
 		il.append(fac.createInvoke("java.lang.StringBuilder", "<init>", Type.VOID, new Type[]{Type.STRING}, Constants.INVOKESPECIAL));
-		il.append(new PUSH(CacheIO.getConstantPool(), ".dat"));
+		il.append(new PUSH(cgFileOnDisk.getConstantPool(), ".dat"));
 		il.append(fac.createInvoke("java.lang.StringBuilder", "append", Type.getType(StringBuilder.class), new Type[]{Type.STRING}, Constants.INVOKEVIRTUAL));
 		il.append(fac.createInvoke("java.lang.StringBuilder", "toString", Type.STRING, Type.NO_ARGS, Constants.INVOKEVIRTUAL));
 		il.append(fac.createInvoke("java.io.File", "<init>", Type.VOID, new Type[]{Type.STRING, Type.STRING}, Constants.INVOKESPECIAL));
-		il.append(fac.createPutField(CacheIO.getClassName(), cFile.getName(), cFile.getType()));
+		il.append(fac.createPutField(cgFileOnDisk.getClassName(), cFile.getName(), cFile.getType()));
 		il.append(new ALOAD(0));
-		il.append(fac.createGetField(CacheIO.getClassName(), cFile.getName(), cFile.getType()));
+		il.append(fac.createGetField(cgFileOnDisk.getClassName(), cFile.getName(), cFile.getType()));
 		il.append(fac.createInvoke("java.io.File", "createNewFile", Type.BOOLEAN, Type.NO_ARGS, Constants.INVOKEVIRTUAL));
 		il.append(new POP());
 		il.append(new ALOAD(0));
 		il.append(fac.createNew("java.io.RandomAccessFile"));
 		il.append(new DUP());
 		il.append(new ALOAD(0));
-		il.append(fac.createGetField(CacheIO.getClassName(), cFile.getName(), cFile.getType()));
-		il.append(new PUSH(CacheIO.getConstantPool(), "rw"));
+		il.append(fac.createGetField(cgFileOnDisk.getClassName(), cFile.getName(), cFile.getType()));
+		il.append(new PUSH(cgFileOnDisk.getConstantPool(), "rw"));
 		il.append(fac.createInvoke("java.io.RandomAccessFile", "<init>", Type.VOID, new Type[]{Type.getType(File.class), Type.STRING}, Constants.INVOKESPECIAL));
-		InstructionHandle instr2 = il.append(fac.createPutField(CacheIO.getClassName(), cRAF.getName(), cRAF.getType()));
+		InstructionHandle instr2 = il.append(fac.createPutField(cgFileOnDisk.getClassName(), cRAF.getName(), cRAF.getType()));
 		InstructionHandle instr3 = il.append(new ASTORE(2));
 		il.append(fac.createGetStatic("java.lang.System", "out", Type.getType(PrintStream.class)));
-		il.append(new PUSH(CacheIO.getConstantPool(), "###############\r\n# !! ERROR !! #\r\n###############"));
+		il.append(new PUSH(cgFileOnDisk.getConstantPool(), "###############\r\n# !! ERROR !! #\r\n###############"));
 		il.append(fac.createInvoke("java.io.PrintStream", "println", Type.VOID, new Type[]{Type.STRING}, Constants.INVOKEVIRTUAL));
 		il.append(new ALOAD(2));
 		il.append(fac.createInvoke("java.io.IOException", "printStackTrace", Type.VOID, Type.NO_ARGS, Constants.INVOKEVIRTUAL));
@@ -922,7 +1059,7 @@ public class Injector {
 		ff.addExceptionHandler(instr1, instr2, instr3, new ObjectType("java.io.IOException"));
 		ff.setMaxLocals();
 		ff.setMaxStack();
-		CacheIO.addMethod(ff.getMethod());
+		cgFileOnDisk.addMethod(ff.getMethod());
 	}
 
 	public ClassGen findClass(String className) {
@@ -939,41 +1076,13 @@ public class Injector {
 		return null;
 	}
 
-	private byte[] download(String address) {
-		ByteArrayOutputStream out = null;
-		InputStream in = null;
-		try {
-			URL url = new URL(address);
-			URLConnection urlc = url.openConnection();
-			urlc.setConnectTimeout(1000);
-			urlc.setReadTimeout(1000);
-
-			out = new ByteArrayOutputStream();
-			in = urlc.getInputStream();
-			byte[] buffer = new byte[1024];
-			int numRead;
-			while ((numRead = in.read(buffer)) != -1) {
-				out.write(buffer, 0, numRead);
-			}
-		} catch (SocketTimeoutException ste) {
-			//Socket timed out, so the server is down.
-		} catch (Exception exception) {
-			exception.printStackTrace();
-		} finally {
-			try {
-				if (in != null) {
-					in.close();
-				}
-				if (out != null) {
-					out.close();
-				}
-			} catch (IOException ignored) {
-			}
-		}
-		if (out != null)
-			return out.toByteArray();
-
-		return null;
+	private byte[] download(URL url) throws IOException {
+		URLConnection uc = url.openConnection();
+		DataInputStream di = new DataInputStream(uc.getInputStream());
+		byte[] buffer = new byte[uc.getContentLength()];
+		di.readFully(buffer);
+		di.close();
+		return buffer;
 	}
 
 	private void setSuperclassName(ClassGen cg, String name) {

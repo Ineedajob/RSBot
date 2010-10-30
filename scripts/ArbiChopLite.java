@@ -8,50 +8,79 @@ import org.rsbot.script.util.Timer;
 import org.rsbot.event.listeners.PaintListener;
 import org.rsbot.event.listeners.ServerMessageListener;
 import org.rsbot.event.events.ServerMessageEvent;
+import java.text.DecimalFormat;
 
-@ScriptManifest(authors = "Arbiter", keywords = "Woodcutting", name = "ArbiChop Draynor", version = 1.1, description = "Draynor willow chopper.")
+@ScriptManifest(authors = "Arbiter", keywords = "Woodcutting", name = "ArbiChop Lite", version = 1.2, description = "Start at Draynor. Auto-detecting Regular Tree and Willow Chopper.")
 public class ArbiChopLite extends Script implements PaintListener, ServerMessageListener {
 
 	private enum State {
-		WALK_TO_TREE, WALK_TO_BANK, BANK, CHOP, SLEEP
+		DROP, WALK_TO_TREE, WALK_TO_BANK, BANK, CHOP, SLEEP
 	}
 
-	public static RSTile BANK_TILE = new RSTile(3092, 3244);
-	public static RSTile TREE_TILE = new RSTile(3087, 3234);
+	private static final RSTile BANK_TILE = new RSTile(3092, 3244);
+	private static final RSTile TREE_TILE = new RSTile(3087, 3234);
 
-	public static int[] WILLOWS = {5551, 5552, 5553};
-	public static int[] HATCHETS = {6739, 1359, 1357, 1361, 1351, 1349, 1355, 1353};
+	private static final int[] WILLOWS = {5551, 5552, 5553};
+	private static final int[] REGULAR = {1276, 1278};
+	private static final int[] HATCHETS = {6739, 1359, 1357, 1361, 1351, 1349, 1355, 1353};
+
+	private static final DecimalFormat XP_FORMAT = new DecimalFormat("###,###,###");
 
 	public RSObject lastTree;
 
 	private int scriptStartXP = 0;
 	private int treesCut = 0;
 	private long scriptStartTime = 0;
+	private int random1 = random(25,75);
+	private int[] trees;
 
-	public boolean onStart() {
-		return true;
-	}
+	private boolean power, inventoryContains;
 
 	public int loop() {
+		antiBan();
 		mouse.setSpeed(random(5, 8));
+		if (skills.getCurrentLevel(Skills.WOODCUTTING) >= 30) {
+			trees = WILLOWS;
+			power = false;
+		} else {
+			trees = REGULAR;
+			power = true;
+		}
+		if (walking.getEnergy() > random(50,100) && !walking.isRunEnabled()) {
+			walking.setRun(true);
+			return random(1000,2000);
+		}
 		switch (getState()) {
 			case WALK_TO_TREE:
-				if (walking.getDestination() != null && calc.distanceBetween(walking.getDestination(), TREE_TILE) < random(2, 3))
+				RSObject tree = objects.getNearest(trees);
+				if (trees != WILLOWS && tree != null)
+				{
+					RSTile loc = walking.getClosestTileOnMap(tree.getLocation());
+					if (walking.getDestination() != null && calc.distanceBetween(walking.getDestination(), loc) < random(2, 3))
+						return random(50, 100);
+					if (calc.distanceTo(loc) < random(2, 3))
+						return random(50, 100);
+					walking.walkTileMM(loc, random(1, 3), random(1, 3));
+					break;
+				}
+				RSTile loc = walking.getClosestTileOnMap(TREE_TILE);
+				if (walking.getDestination() != null && calc.distanceBetween(walking.getDestination(), loc) < random(2, 3))
 					return random(50, 100);
-				if (calc.distanceTo(TREE_TILE) < random(2, 3))
+				if (calc.distanceTo(loc) < random(2, 3))
 					return random(50, 100);
-				walking.walkTileMM(walking.getClosestTileOnMap(TREE_TILE), random(1, 3), random(1, 3));
+				walking.walkTileMM(walking.getClosestTileOnMap(loc), random(1, 3), random(1, 3));
 				break;
 			case WALK_TO_BANK:
-				if (walking.getDestination() != null && calc.distanceBetween(walking.getDestination(), BANK_TILE) < random(2, 3))
+				loc = walking.getClosestTileOnMap(BANK_TILE);
+				if (walking.getDestination() != null && calc.distanceBetween(walking.getDestination(), loc) < random(2, 3))
 					return random(50, 100);
-				if (calc.distanceTo(BANK_TILE) < random(2, 3))
+				if (calc.distanceTo(loc) < random(2, 3))
 					return random(50, 100);
-				walking.walkTileMM(walking.getClosestTileOnMap(BANK_TILE), random(1, 3), random(1, 3));
+				walking.walkTileMM(walking.getClosestTileOnMap(loc), random(1, 3), random(1, 3));
 				break;
 			case CHOP:
-				RSObject t = objects.getNearest(WILLOWS);
-				if (t.doAction("Chop down Willow")) {
+				RSObject t = objects.getNearest(trees);
+				if (t.doAction("Chop down")) {
 					sleep(random(1000, 2000));
 					sleepForAnim(random(2000, 3000));
 				}
@@ -90,22 +119,96 @@ public class ArbiChopLite extends Script implements PaintListener, ServerMessage
 					}
 				}
 				break;
+			case DROP:
+				if (inventory.getCount(HATCHETS) == inventory.getCount())
+    			{
+    				inventoryContains = false;
+    				return random(1,10);
+    			}
+    			if (interfaces.get(94).getComponent(7).isValid() && interfaces.get(94).getComponent(7).getAbsoluteY() > 50)
+    			{
+    				interfaces.get(94).getComponent(3).doAction("Continue");
+    				return random(250,500);
+    			}
+    			if (inventory.contains(15289))
+    			{
+    				inventory.getItem(15289).doAction("Destroy");
+    				for (int i = 0; i < 100; i++)
+    				{
+    					if (interfaces.get(94).getComponent(7).isValid() && interfaces.get(94).getComponent(7).getAbsoluteY() > 50)
+    						return random(50,100);
+    					sleep(10,20);
+    				}
+    				return random(50,100);
+    			}
+    			if (inventory.contains(15290))
+    			{
+    				inventory.getItem(15290).doAction("Destroy");
+    				for (int i = 0; i < 100; i++)
+    				{
+    					if (interfaces.get(94).getComponent(7).isValid() && interfaces.get(94).getComponent(7).getAbsoluteY() > 50)
+    						return random(50,100);
+    					sleep(10,20);
+    				}
+    				return random(50,100);
+    			}
+    			boolean leftToRight = true;
+    			if (random(0,100) > random1)
+    				leftToRight = false;
+    			if (!leftToRight) {
+    				for (int c = 0; c < 4; c++) {
+    					for (int r = 0; r < 7; r++) {
+    						boolean found = false;
+    						for (int i = 0; i < HATCHETS.length && !found; i++) {
+    							found = HATCHETS[i] == inventory.getItems()[c + r * 4].getID();
+    						}
+    						if (!found) {
+    							inventory.dropItem(c, r);
+    						}
+    					}
+    				}
+    			} else {
+    				for (int r = 0; r < 7; r++) {
+    					for (int c = 0; c < 4; c++) {
+    						boolean found = false;
+    						for (int i = 0; i < HATCHETS.length && !found; i++) {
+    							found = HATCHETS[i] == inventory.getItems()[c + r * 4].getID();
+    						}
+    						if (!found) {
+    							inventory.dropItem(c, r);
+    						}
+    					}
+    				}
+    			}
+    			for (int i = 0; i < 100; i++)
+    			{
+    				if (inventory.getCount(HATCHETS) == inventory.getCount())
+    					break;
+    				sleep(10,15);
+    			}
+    			return (random(50,100));
 		}
 		return random(50, 100);
 	}
 
 	private State getState() {
 		try {
-			if (getMyPlayer().getAnimation() != -1 && lastTree != null && isTreeAlive() && inventory.getCount() < 28) {
+			if (inventoryContains) {
+				return State.DROP;
+			}
+			else if (getMyPlayer().getAnimation() != -1 && lastTree != null && isTreeAlive() && inventory.getCount() < 28) {
 				return State.SLEEP;
 			} else if (inventory.getCount() < 28) {
-				RSObject o = objects.getNearest(WILLOWS);
+				RSObject o = objects.getNearest(trees);
 				if (o != null && o.getModel() != null && o.getModel().getPoint() != null && calc.pointOnScreen(o.getModel().getPoint())) {
-					lastTree = objects.getNearest(WILLOWS);
+					lastTree = objects.getNearest(trees);
 					return State.CHOP;
 				} else {
 					return State.WALK_TO_TREE;
 				}
+			} else if (power) {
+				inventoryContains = true;
+				return State.DROP;
 			} else {
 				if (calc.tileOnScreen(npcs.getNearest("Banker").getLocation()))
 					return State.BANK;
@@ -119,8 +222,8 @@ public class ArbiChopLite extends Script implements PaintListener, ServerMessage
 
 	public boolean isTreeAlive() {
 		int id = objects.getTopAt(lastTree.getLocation()).getID();
-		for (int willow : WILLOWS) {
-			if (id == willow)
+		for (int tree : trees) {
+			if (id == tree)
 				return true;
 		}
 		return false;
@@ -170,27 +273,57 @@ public class ArbiChopLite extends Script implements PaintListener, ServerMessage
 
 			y += 20;
 			g.setColor(BG);
-			g.fill3DRect(x - 6, y, 211, 66, true);
+			if (levelsGained == 0)
+				g.fill3DRect(x - 6, y, 211, 66, true);
+			else
+				g.fill3DRect(x - 6, y, 211, 86, true);
 
 			y -= 3;
 			g.setColor(TEXT);
 			g.drawString("Runtime: " + Timer.format(System.currentTimeMillis() - scriptStartTime), x, y += 20);
-			g.drawString("Chopped: " + treesCut + " Willows", x, y += 20);
+			g.drawString("Chopped: " + treesCut + " Logs", x, y += 20);
 
-			if (levelsGained < 0) {
-				scriptStartXP = skills.getCurrentExp(Skills.WOODCUTTING);
-			} else if (levelsGained == 1) {
-				g.drawString("Gained: " + (skills.getCurrentExp(Skills.WOODCUTTING) - scriptStartXP)
-						+ " XP (" + levelsGained + " lvl)", x, y += 20);
-			} else {
-				g.drawString("Gained: " + (skills.getCurrentExp(Skills.WOODCUTTING) - scriptStartXP)
-						+ " XP (" + levelsGained + " lvls)", x, y += 20);
+			long hourly = 0;
+			if (System.currentTimeMillis() - scriptStartTime != 0)
+				hourly = (((long)skills.getCurrentExp(Skills.WOODCUTTING) - (long)scriptStartXP) * 3600 * 1000 / (System.currentTimeMillis() - scriptStartTime));
+			g.drawString("Gained: " + XP_FORMAT.format(skills.getCurrentExp(Skills.WOODCUTTING) - scriptStartXP) + " XP [ " + XP_FORMAT.format(hourly) + "/HR ]", x, y += 20);
+
+			if (levelsGained == 1)
+				g.drawString("1 Level Gained!", x, y += 20);
+			else if (levelsGained > 1)
+				g.drawString(levelsGained + " Levels Gained!", x, y += 20);
+		}
+	}
+
+	private void antiBan() {
+		int random = random(1, 10);
+		switch (random) {
+		case 1:
+			if (random(1, 10) != 1)
+				return;
+			mouse.move(random(10, 750), random(10, 495));
+			break;
+		case 2:
+			if (random(1, 20) != 1)
+				return;
+			int angle = camera.getAngle() + random(-90, 90);
+			if (angle < 0) {
+				angle = random(0, 10);
 			}
+			if (angle > 359) {
+				angle = random(0, 10);
+			}
+			camera.setAngle(angle);
+			break;
+		case 3:
+			if (random(1, 5) == 1)
+				mouse.moveSlightly();
 		}
 	}
 
 	public void onFinish() {
 		log("For universal woodcutting and more features purchase ArbiCHOP!");
+		log("www.ArbiBots.com");
 	}
 
 }

@@ -2,67 +2,73 @@ package org.rsbot.script.wrappers;
 
 import org.rsbot.script.methods.MethodContext;
 
+import java.lang.ref.SoftReference;
+
 /**
  * Represents a non-player character.
  */
 public class RSNPC extends RSCharacter {
 
-    private final org.rsbot.client.RSNPC npc;
+	private final SoftReference<org.rsbot.client.RSNPC> npc;
 
-    public RSNPC(final MethodContext ctx, final org.rsbot.client.RSNPC npc) {
-        super(ctx, npc);
-        c = npc;
-        this.npc = npc;
-    }
+	public RSNPC(final MethodContext ctx, final org.rsbot.client.RSNPC npc) {
+		super(ctx);
+		this.npc = new SoftReference<org.rsbot.client.RSNPC>(npc);
+	}
 
-    public String[] getActions() {
-        final org.rsbot.client.RSNPCDef def = getDefInternal();
-        if (def != null)
-            return def.getActions();
-        return new String[0];
-    }
+	protected org.rsbot.client.RSCharacter getAccessor() {
+		return npc.get();
+	}
 
-    public int getID() {
-        final org.rsbot.client.RSNPCDef def = getDefInternal();
-        if (def != null)
-            return def.getType();
-        return -1;
-    }
+	public String[] getActions() {
+		org.rsbot.client.RSNPCDef def = getDefInternal();
+		if (def != null)
+			return def.getActions();
+		return new String[0];
+	}
 
-    @Override
-    public String getName() {
-        final org.rsbot.client.RSNPCDef def = getDefInternal();
-        if (def != null)
-            return def.getName();
-        return "";
-    }
+	public int getID() {
+		org.rsbot.client.RSNPCDef def = getDefInternal();
+		if (def != null)
+			return def.getType();
+		return -1;
+	}
 
-    @Override
-    public int getLevel() {
-        final org.rsbot.client.RSNPCDef def = getDefInternal();
-        if (def != null)
-            return def.getLevel();
-        return -1;
-    }
+	@Override
+	public String getName() {
+		org.rsbot.client.RSNPCDef def = getDefInternal();
+		if (def != null)
+			return def.getName();
+		return "";
+	}
 
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder();
-        for (final String act : getActions()) {
-            sb.append(act);
-            sb.append(",");
-        }
-        if (sb.length() > 0) {
-            sb.setLength(sb.length() - 1);
-        }
-        return "NPC[" + getName() + "],actions=[" + sb.toString() + "]" + super.toString();
-    }
+	@Override
+	public int getLevel() {
+		org.rsbot.client.RSNPCDef def = getDefInternal();
+		if (def != null)
+			return def.getLevel();
+		return -1;
+	}
 
-    org.rsbot.client.RSNPCDef getDefInternal() {
-        if (npc == null)
-            return null;
-        else
-            return npc.getRSNPCDef();
-    }
-    
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		for (final String act : getActions()) {
+			sb.append(act);
+			sb.append(",");
+		}
+		if (sb.length() > 0) {
+			sb.setLength(sb.length() - 1);
+		}
+		return "NPC[" + getName() + "],actions=[" + sb.toString() + "]" + super.toString();
+	}
+
+	org.rsbot.client.RSNPCDef getDefInternal() {
+		org.rsbot.client.RSNPC c = npc.get();
+		if (c == null)
+			return null;
+		else
+			return c.getRSNPCDef();
+	}
+
 }

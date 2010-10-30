@@ -11,6 +11,7 @@ import org.rsbot.script.wrappers.RSObject;
  * Updated by Iscream (Feb 8, 10) Fixed some loop issues.
  * Updated by Iscream (Feb 09,10)
  * Updated by Iscream (Feb 17,10) Fixed Exiting Issues
+ * Updated by Arbiter (Oct 27,10)
  */
 
 @ScriptManifest(authors = {"Keilgo", "Taha", "Equilibrium", "Twistedmind"}, name = "CapnArnav", version = 0.9)
@@ -55,6 +56,9 @@ public class CapnArnav extends Random {
 
     @Override
     public int loop() {
+    	if (bank.isDepositOpen() || bank.isOpen())
+    		bank.close();
+
         final RSNPC captain = npcs.getNearest(CAPTAIN_ID);
 
         if (!activateCondition()) {
@@ -96,8 +100,8 @@ public class CapnArnav extends Random {
         }
         if (interfaces.get(185).isValid()) {
             log("Setting default position. Coins Coins Coins!");
-            while (!firstColFound) {
-                while (!thirdColFound) {
+            for (int i = 0; i < 100 && !firstColFound; i++) {
+            	for (int j = 0; j < 100 && !thirdColFound; j++) {
                     startValue3 = settings.getSetting(809);
                     sleep(random(500, 700));
                     mouse.click(random(295, 315), random(13, 33), true);
@@ -108,7 +112,7 @@ public class CapnArnav extends Random {
                     }
                 }
 
-                while (!secondColFound) {
+            	for (int j = 0; j < 100 && !secondColFound; j++) {
                     startValue2 = settings.getSetting(809);
                     sleep(random(500, 700));
                     mouse.click(random(203, 223), random(13, 33), true);
@@ -119,7 +123,7 @@ public class CapnArnav extends Random {
                     }
                 }
 
-                while (!firstColFound) {
+            	for (int j = 0; j < 100 && !firstColFound; j++) {
                     startValue1 = settings.getSetting(809);
                     sleep(random(500, 700));
                     mouse.click(random(117, 137), random(13, 33), true);
@@ -134,7 +138,7 @@ public class CapnArnav extends Random {
 
         if (interfaces.get(185).isValid()) {
             if (searchText(185, "Bar")) {
-                while (!reel1done) {
+            	for (int i = 0; i < 100 && !reel1done; i++) {
                     mouse.click(random(117, 137), random(13, 33), true);
                     sleep(random(800, 1000));
                     mouse.click(random(117, 137), random(13, 33), true);
@@ -143,7 +147,7 @@ public class CapnArnav extends Random {
                     reel1done = true;
                 }
 
-                while (!reel2done) {
+            	for (int i = 0; i < 100 && !reel2done; i++) {
                     mouse.click(random(203, 223), random(13, 33), true);
                     sleep(random(800, 1000));
                     mouse.click(random(203, 223), random(13, 33), true);
@@ -152,7 +156,7 @@ public class CapnArnav extends Random {
                     reel2done = true;
                 }
 
-                while (!reel3done) {
+            	for (int i = 0; i < 100 && !reel3done; i++) {
                     mouse.click(random(295, 315), random(13, 33), true);
                     sleep(random(800, 1000));
                     mouse.click(random(295, 315), random(13, 33), true);
@@ -170,17 +174,17 @@ public class CapnArnav extends Random {
 
         if (interfaces.get(185).isValid()) {
             if (searchText(185, "Coins")) {
-                while (!reel1done) {
+                if (!reel1done) {
                     log("Reel 1 Coins Found!");
                     reel1done = true;
                 }
 
-                while (!reel2done) {
+                if (!reel2done) {
                     log("Reel 2 Coins Found!");
                     reel2done = true;
                 }
 
-                while (!reel3done) {
+                if (!reel3done) {
                     log("Reel 3 Coins Found!");
                     reel3done = true;
                 }
@@ -194,21 +198,21 @@ public class CapnArnav extends Random {
 
         if (interfaces.get(185).isValid()) {
             if (searchText(185, "Bowl")) {
-                while (!reel1done) {
+            	for (int i = 0; i < 100 && !reel1done; i++) {
                     mouse.click(random(117, 137), random(13, 33), true);
                     sleep(random(800, 1000));
                     log("Reel 1 Bowl Found!");
                     reel1done = true;
                 }
 
-                while (!reel2done) {
+            	for (int i = 0; i < 100 && !reel2done; i++) {
                     mouse.click(random(203, 223), random(13, 33), true);
                     sleep(random(800, 1000));
                     log("Reel 2 Bowl Found!");
                     reel2done = true;
                 }
 
-                while (!reel3done) {
+            	for (int i = 0; i < 100 && !reel3done; i++) {
                     mouse.click(random(295, 315), random(13, 33), true);
                     sleep(random(800, 1000));
                     log("Reel 3 Bowl Found!");
@@ -224,21 +228,21 @@ public class CapnArnav extends Random {
 
         if (interfaces.get(185).isValid()) {
             if (searchText(185, "Ring")) {
-                while (!reel1done) {
+            	for (int i = 0; i < 100 && !reel1done; i++) {
                     mouse.click(random(117, 137), random(296, 316), true);
                     sleep(random(800, 1000));
                     log("Reel 1 Ring Found!");
                     reel1done = true;
                 }
 
-                while (!reel2done) {
+            	for (int i = 0; i < 100 && !reel2done; i++) {
                     mouse.click(random(203, 223), random(296, 316), true);
                     sleep(random(800, 1000));
                     log("Reel 2 Ring Found!");
                     reel2done = true;
                 }
 
-                while (!reel3done) {
+            	for (int i = 0; i < 100 && !reel3done; i++) {
                     mouse.click(random(295, 315), random(296, 316), true);
                     sleep(random(800, 1000));
                     log("Reel 3 Ring Found!");

@@ -115,7 +115,7 @@ public class Interfaces extends MethodProvider {
 	 */
 	public boolean clickContinue() {
 		RSComponent cont = getContinueComponent();
-		return cont == null || !cont.isValid() || cont.doClick(true);
+		return cont != null && cont.isValid() && cont.doClick(true);
 	}
 
 	/**

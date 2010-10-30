@@ -37,8 +37,6 @@ public class CharacterMovedEvent extends RSEvent {
             } else if (character instanceof org.rsbot.client.RSPlayer) {
                 final org.rsbot.client.RSPlayer player = (org.rsbot.client.RSPlayer) character;
                 wrapped = new org.rsbot.script.wrappers.RSPlayer(ctx, player);
-            } else {
-                wrapped = new org.rsbot.script.wrappers.RSCharacter(ctx, character);
             }
         }
         return wrapped;

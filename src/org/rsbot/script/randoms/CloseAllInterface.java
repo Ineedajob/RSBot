@@ -82,6 +82,9 @@ public class CloseAllInterface extends Random {
             if (interfaces.getComponent(c.parent, c.child).isValid()) {
             	interfaces.getComponent(c.parent, c.child).doClick();
                 sleep(random(500, 900));
+				if (random(0, 3) == 0) {
+					mouse.moveSlightly();
+				}
                 break;
             }
         }

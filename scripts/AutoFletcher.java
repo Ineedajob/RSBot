@@ -27,7 +27,7 @@ import org.rsbot.script.wrappers.RSObject;
  * 
  * @author Speed
  */
-@ScriptManifest(authors = "Speed", keywords = "Fletching", name = "AutoFletcher", version = 1.1, description = "Bow fletcher and stringer.")
+@ScriptManifest(authors = "Speed", keywords = "Fletching", name = "AutoFletcher", version = 1.2, description = "Bow fletcher and stringer.")
 public class AutoFletcher extends Script implements PaintListener, ServerMessageListener {
 
 	private static final int KNIFE_ID = 946, CLAY_KNIFE = 14111;
@@ -84,6 +84,10 @@ public class AutoFletcher extends Script implements PaintListener, ServerMessage
 			case CUT:
 				if (inventory.getCount() > 1) {
 					bank.depositAllExcept(item1);
+					sleep(200);
+					if (inventory.getCount() > 1) {
+						sleep(500);
+					}
 				} else {
 					if (bank.getCount(item2) < 27) {
 						log("Finished");
@@ -102,6 +106,10 @@ public class AutoFletcher extends Script implements PaintListener, ServerMessage
 			case STRING:
 				if (inventory.getCount() > 0) {
 					bank.depositAll();
+					sleep(200);
+					if (inventory.getCount() > 0) {
+						sleep(500);
+					}
 				} else {
 					if (bank.getCount(item1) < 14 || bank.getCount(item2) < 14) {
 						log("Finished");

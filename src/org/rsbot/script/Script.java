@@ -1,7 +1,6 @@
 package org.rsbot.script;
 
 import org.rsbot.script.internal.BreakHandler;
-import org.rsbot.script.methods.Environment;
 import org.rsbot.script.methods.MethodContext;
 import org.rsbot.script.methods.Methods;
 import org.rsbot.script.randoms.LoginBot;
@@ -274,7 +273,7 @@ public abstract class Script extends Methods implements EventListener, Runnable 
 			return false;
 		}
 		for (Random random : ctx.bot.getScriptHandler().getRandoms()) {
-			if (random.isEnabled() || !(ctx.bot.disableAutoLogin && random instanceof LoginBot)) {
+			if (random.isEnabled() && !(ctx.bot.disableAutoLogin && random instanceof LoginBot)) {
 				if (random.run(this)) {
 					return true;
 				}
