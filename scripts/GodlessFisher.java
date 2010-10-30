@@ -25,7 +25,8 @@ import org.rsbot.script.util.WindowUtil;
 import org.rsbot.util.GlobalConfiguration;
 
 
-@ScriptManifest(authors={"Enfilade"}, keywords={"fishing","enfilade","godless"}, name="Godless Fisher", version=1.04)
+@ScriptManifest(authors={"Enfilade"}, keywords={"fishing","enfilade"}, name="Godless Fisher", version=1.04,
+	description = "Supports multiple locations and styles.")
 public class GodlessFisher extends Script implements PaintListener,
     MouseMotionListener, MouseListener {
 

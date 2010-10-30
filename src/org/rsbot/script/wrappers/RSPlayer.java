@@ -1,6 +1,7 @@
 package org.rsbot.script.wrappers;
 
 import java.awt.*;
+import java.lang.ref.SoftReference;
 
 import org.rsbot.script.methods.MethodContext;
 
@@ -9,30 +10,35 @@ import org.rsbot.script.methods.MethodContext;
  */
 public class RSPlayer extends RSCharacter {
 
-    private org.rsbot.client.RSPlayer p;
+    private SoftReference<org.rsbot.client.RSPlayer> p;
 
     public RSPlayer(final MethodContext ctx, final org.rsbot.client.RSPlayer p) {
-        super(ctx, p);
-        this.p = p;
+        super(ctx);
+		this.p = new SoftReference<org.rsbot.client.RSPlayer>(p);
     }
 
+	protected org.rsbot.client.RSCharacter getAccessor() {
+		return p.get();
+	}
+
     public int getCombatLevel() {
-        return p.getLevel();
+        return p.get().getLevel();
     }
 
     @Override
     public String getName() {
-        return p.getName();
+        return p.get().getName();
     }
 
     public int getTeam() {
-        return p.getTeam();
+        return p.get().getTeam();
     }
 
     public boolean isIdle() {
         return !isMoving() && (getAnimation() == -1) && !isInCombat();
     }
 
+	@Override
     public boolean doAction(String action) {
         try {
             Point screenLoc;
@@ -69,4 +75,5 @@ public class RSPlayer extends RSCharacter {
     public String toString() {
         return "Player[" + getName() + "]" + super.toString();
     }
+
 }

@@ -9,7 +9,7 @@ import org.rsbot.script.wrappers.*;
  * Updated by Jacmob (Oct 22, 2010)
  * Updated by Jacmob (Oct 24, 2010)
  */
-@ScriptManifest(authors = "Arbiter", name = "ScapeRuneIsland", version = 2.0)
+@ScriptManifest(authors = "Arbiter", name = "ScapeRuneIsland", version = 2.1)
 public class ScapeRuneIsland extends Random {
 
 	public int[] STATUE_IDS = {8992, 8993, 8990, 8991};
@@ -18,6 +18,7 @@ public class ScapeRuneIsland extends Random {
 	public RSObject direction;
 	public boolean finished;
 	public boolean fishing;
+	public boolean forceTalk;
 
 	public boolean activateCondition() {
 		return calc.distanceTo(CENTER_TILE) < 50;
@@ -40,10 +41,36 @@ public class ScapeRuneIsland extends Random {
 		if (getMyPlayer().isMoving() || getMyPlayer().getAnimation() == 620) {
 			return random(550, 700);
 		}
-		if (interfaces.get(241).getComponent(4).getText().contains("catnap"))
+		if (interfaces.get(241).getComponent(4).isValid() && interfaces.get(241).getComponent(4).getText().contains("catnap"))
 			finished = true;
-		if (interfaces.clickContinue())
-			return random(500, 1000);
+		if (interfaces.get(64).getComponent(4).isValid() && interfaces.get(64).getComponent(4).getText().contains("fallen asleep"))
+			finished = true;
+		if (interfaces.get(242).getComponent(4).isValid() && interfaces.get(242).getComponent(4).getText().contains("Wait! Before"))
+			forceTalk = true;
+		if (interfaces.canContinue())
+			if (interfaces.clickContinue())
+				return random(500, 1000);
+		if (forceTalk) {
+			RSNPC servant = npcs.getNearest(2481);
+			if (servant != null && direction == null && settings.getSetting(344) == 0
+					&& !interfaces.canContinue()) {
+				if (!calc.tileOnScreen(servant.getLocation())) {
+					walking.walkTileMM(walking.getClosestTileOnMap(servant.getLocation()));
+					return 700;
+				}
+				if (servant.doAction("Talk-to"))
+					forceTalk = false;
+				return random(1000, 2000);
+			}
+			if (servant == null) {
+				servant = npcs.getNearest(2481);
+				if (servant == null) {
+					walking.walkTileMM(walking.getClosestTileOnMap(CENTER_TILE));
+					return random(1000, 2000);
+				}
+				return random(50, 100);
+			}
+		}
 		if (finished) {
 			RSObject portal = objects.getNearest(8987);
 			if (portal != null) {
@@ -115,7 +142,6 @@ public class ScapeRuneIsland extends Random {
 				walking.walkTileMM(walking.getClosestTileOnMap(CENTER_TILE));
 			}
 		}
-
 		if (interfaces.get(246).getComponent(5).containsText("contains")
 				&& settings.getSetting(334) == 1 && direction == null) {
 			sleep(2000);
@@ -138,7 +164,6 @@ public class ScapeRuneIsland extends Random {
 			log("Checking direction");
 			return random(2000, 3000);
 		}
-
 		if (direction != null && inventory.getCount(6200) < 1) {
 			sleep(random(1000, 1200));
 			if (!calc.tileOnScreen(direction.getLocation())) {
@@ -163,8 +188,7 @@ public class ScapeRuneIsland extends Random {
 				walking.walkTileMM(walking.getClosestTileOnMap(CENTER_TILE));
 			}
 		}
-
-		if (inventory.getCount(6200) > 0 && !interfaces.clickContinue()) {
+		if (inventory.getCount(6200) > 0 && !interfaces.canContinue()) {
 			final RSNPC cat = npcs.getNearest(2479);
 			if (cat != null) {
 				if (!calc.tileOnScreen(cat.getLocation())) {
@@ -180,7 +204,7 @@ public class ScapeRuneIsland extends Random {
 		}
 		RSNPC servant = npcs.getNearest(2481);
 		if (servant != null && direction == null && settings.getSetting(344) == 0
-				&& !interfaces.clickContinue()) {
+				&& !interfaces.canContinue()) {
 			if (!calc.tileOnScreen(servant.getLocation())) {
 				walking.walkTileMM(walking.getClosestTileOnMap(servant.getLocation()));
 				return 700;
@@ -199,5 +223,4 @@ public class ScapeRuneIsland extends Random {
 		log("Setting 344: " + settings.getSetting(344));
 		return random(800, 1200);
 	}
-
 }

@@ -475,7 +475,7 @@ public class Bank extends MethodProvider {
 							methods.camera.turnToCharacter(banker, 20);
 						}
 					} else if (bankChest != null) {
-						if (bankChest.doAction("Bank")) {
+						if (bankChest.doAction("Bank") || methods.menu.doAction("Use")) {
 							int count = 0;
 							while (!isOpen() && ++count < 10) {
 								sleep(random(200, 400));

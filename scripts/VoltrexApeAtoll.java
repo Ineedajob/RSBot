@@ -21,7 +21,7 @@ import org.rsbot.script.wrappers.RSObject;
 
 
 @ScriptManifest(authors = {"Voltrex"}, name = "Voltrex Ape Atoll Agility", version = 1.27,
-		description = "Trains at Ape Atoll; eats all food, and cuts pineapples if you have a knife.")
+		description = "Eats all food; cuts pineapples if you have a knife.")
 
 public class VoltrexApeAtoll extends Script implements PaintListener {
 
