@@ -826,10 +826,8 @@ public class AIOFiremaker extends Script implements PaintListener {
 			bankItem = bank.getItem(ID);
 			if (bankItem == null
 					|| bankItem.getComponent().getAbsoluteY() > 270
-					|| !bank.getItem(ID).doAction(all ? "Withdraw-All " + name
-					: "Withdraw-1 " + name)
-					&& !bank.getItem(ID).doAction(all ? "Withdraw-All " + name
-					: "Withdraw-1 " + name)) {
+					|| !bankItem.doAction(all ? "Withdraw-All " + name : "Withdraw-1 " + name)
+						&& !bankItem.doAction(all ? "Withdraw-All " + name : "Withdraw-1 " + name)) {
 				log.severe("Unable to withraw " + name
 						+ ". You will be logged out in ten seconds.");
 				sleep(random(9000, 11000));
@@ -838,10 +836,10 @@ public class AIOFiremaker extends Script implements PaintListener {
 				}
 				stopScript();
 			} else {
-				interfaces.getComponent(Bank.INTERFACE_BANK, 50).doClick();
+				interfaces.getComponent(Bank.INTERFACE_BANK, Bank.INTERFACE_BANK_TAB[0]).doClick();
 			}
 		} else {
-			bank.getItem(ID).doAction(all ? "Withdraw-All " + name : "Withdraw-1 " + name);
+			bankItem.doAction(all ? "Withdraw-All " + name : "Withdraw-1 " + name);
 		}
 	}
 

@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * @author Jacmob
  */
-@ScriptManifest(name = "GuildMiner", authors = "Jacmob", keywords = "Mining", version = 1.1,
+@ScriptManifest(name = "GuildMiner", authors = "Jacmob", keywords = "Mining", version = 1.2,
 		description = "Mining guild coal miner.")
 public class GuildMiner extends Script implements PaintListener {
 
@@ -120,8 +120,8 @@ public class GuildMiner extends Script implements PaintListener {
 
 	public class BasicMiningStrategy implements Strategy {
 
-		public static final int DIST_EXPONENT = 5;
-		public static final int MAX_OTHER_DIST = 15;
+		public static final int DIST_EXPONENT = 2;
+		public static final int MAX_OTHER_DIST = 10;
 		public static final int MY_PLAYER_WEIGHT = 2;
 
 		private RSArea area;
@@ -266,7 +266,8 @@ public class GuildMiner extends Script implements PaintListener {
 		}
 
 		private boolean accept(RSObject rock) {
-			if (rock.equals(last)) {
+			if (last != null && (rock.equals(last) ||
+					objects.getTopAt(last.getLocation()).getID() == last.getID())) {
 				for (int i = 1; ; ++i) {
 					if (!getMyPlayer().isIdle()) {
 						return false;

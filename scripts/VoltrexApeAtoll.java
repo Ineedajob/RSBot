@@ -1,6 +1,4 @@
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Font;
+import java.awt.*;
 import java.io.IOException;
 import java.awt.Image;
 import java.net.URL;
@@ -8,8 +6,11 @@ import java.net.URL;
 import java.net.MalformedURLException;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
 
 import org.rsbot.event.listeners.PaintListener;
 import org.rsbot.script.Script;
@@ -20,8 +21,8 @@ import org.rsbot.script.wrappers.RSArea;
 import org.rsbot.script.wrappers.RSObject;
 
 
-@ScriptManifest(authors = {"Voltrex"}, name = "Voltrex Ape Atoll Agility", version = 1.27,
-		description = "Eats all food; cuts pineapples if you have a knife.")
+@ScriptManifest(authors = {"Voltrex"}, name = "Voltrex Ape Atoll Agility", version = 1.31,
+		description = "Eats all food, and cuts pineapples if you have a knife.")
 
 public class VoltrexApeAtoll extends Script implements PaintListener {
 
@@ -32,6 +33,7 @@ public class VoltrexApeAtoll extends Script implements PaintListener {
 	private final ScriptManifest properties = getClass().getAnnotation(ScriptManifest.class);
 	private final int pineapple = 2114;
 	private final int knife = 946;
+	private final int[] dropItems = {2313, 1923};
 	private final int[] food = {1895, 1893, 1891, 4293, 2142, 291, 2140, 3228, 9980,
 			7223, 6297, 6293, 6295, 6299, 7521, 9988, 7228, 2878, 7568, 2343,
 			1861, 13433, 315, 325, 319, 3144, 347, 355, 333, 339, 351, 329,
@@ -51,25 +53,34 @@ public class VoltrexApeAtoll extends Script implements PaintListener {
 	private long scriptStartTime = 0;
 	private int runEnergy = random(40, 95);
 	private boolean setAltitude = true;
+
+	// Paint
 	private int startXP = 0;
 	private int startLvl = 0;
 	private int laps = 0;
 	private boolean lapStarted;
-
 	private String status = "";
 	private Image BKG;
 	private BufferedImage normal = null;
 	private BufferedImage clicked = null;
 
+	// GUI
+	private boolean waitGUI = true;
+	ApeAtollGUI gui;
+	private boolean safeLogOut;
+	private boolean pickFruits;
+	private int MouseSpeed;
+
 	private State getState() {
-		if (!inventory.contains(knife) && !inventory.containsOneOf(food) && combat.getHealth() < 10) {
+		if (safeLogOut && combat.getLifePoints() < 8 && !inventory.containsOneOf(food)) {
 			log.info("Health is too low and out of food...");
+			log.info("Health (" + combat.getLifePoints() + " hp) percentage remaining: " + combat.getHealth() + "%. Logged out to prevent dieing.");
 			return State.error;
 		}
-		if (inventory.contains(knife) && inventory.contains(pineapple)) {
+		if (inventory.contains(knife) && inventory.contains(pineapple) && inventory.getCount() <= 24) {
 			return State.cutpineapple;
 		}
-		if (inventory.contains(knife) && inventory.getCount(food) < 4 && new RSArea(new RSTile(2764, 2737), new RSTile(2779, 2752)).contains(players.getMyPlayer().getLocation()) && game.getPlane() != 2) {
+		if (pickFruits && inventory.getCount() < 28 && inventory.contains(knife) && inventory.getCount(food) < 4 && new RSArea(new RSTile(2764, 2737), new RSTile(2779, 2752)).contains(players.getMyPlayer().getLocation()) && game.getPlane() != 2) {
 			return State.getpineapple;
 		}
 		if (players.getMyPlayer().getLocation().equals(new RSTile(2755, 2742)) || players.getMyPlayer().getLocation().equals(new RSTile(2756, 2742)))
@@ -94,7 +105,17 @@ public class VoltrexApeAtoll extends Script implements PaintListener {
 	// ON START
 	//*******************************************************//
 	public boolean onStart() {
-		log("Starting up...");
+		log("Starting up, this may take a minute...");
+
+
+		// GUI settings:
+		gui = new ApeAtollGUI();
+		gui.setVisible(true);
+		while (waitGUI) {
+			sleep(100);
+		}
+		// END: GUI settigns
+
 
 		try {
 			BKG = ImageIO.read(new URL("http://i54.tinypic.com/2egcfaw.jpg"));
@@ -113,10 +134,11 @@ public class VoltrexApeAtoll extends Script implements PaintListener {
 			log.info("Unable to open cursor image.");
 		}
 		scriptStartTime = System.currentTimeMillis();
-		mouse.setSpeed(random(4, 5));
+		mouse.setSpeed(MouseSpeed);
 		camera.setPitch(true);
 
 		log("You are using Voltrex Ape Atoll agility course.");
+
 		return true;
 	}
 
@@ -143,6 +165,12 @@ public class VoltrexApeAtoll extends Script implements PaintListener {
 		eat();
 
 		startRunning(runEnergy);
+
+		if (inventory.containsOneOf(dropItems)) {
+			while (inventory.containsOneOf(dropItems)) {
+				inventory.getItem(dropItems).doAction("Drop");
+			}
+		}
 
 		switch (getState()) {
 			case stone:
@@ -191,7 +219,8 @@ public class VoltrexApeAtoll extends Script implements PaintListener {
 		final RSTile stone = new RSTile(2754, 2742);
 
 		if (calc.tileOnScreen(stone)) {
-			mouse.click(calc.tileToScreen(stone), 1, 1, true, 10);
+			// mouse.click(calc.tileToScreen(stone), 1, 1, true, 10);
+			onTile(stone, "Stepping stone", "Jump-to", 0.5, 0.4, 0);
 			sleep(random(500, 700));
 			if (!players.getMyPlayer().getLocation().equals(new RSTile(2755, 2742))) {
 				sleep(random(700, 1500));
@@ -270,19 +299,22 @@ public class VoltrexApeAtoll extends Script implements PaintListener {
 
 		final RSTile walkHere = new RSTile(2751, 2731);
 
-		// if(!players.getMyPlayer().getLocation().equals(walkHere)){
-		if (!new RSArea(new RSTile(2749, 2730), new RSTile(2751, 2733)).contains(players.getMyPlayer().getLocation())) {
-			status = "Walking to rope...";
-			walkTile(walkHere);
-			camera.setAngle(random(1, 360));
-			sleep(random(200, 400));
-		} else {
-			if (onTile(rope, "Rope", "Swing", 0.5, 0.6, 0))
-				status = "Swinging rope...";
-			sleep(random(50, 200));
-			camera.setAngle(random(1, 50));
-			mouse.move(random(50, 700), random(50, 450), 2, 2);
-			sleep(random(100, 400));
+		if (players.getMyPlayer().getAnimation() != 3488) {
+			// if(!players.getMyPlayer().getLocation().equals(walkHere)){
+			if (!new RSArea(new RSTile(2749, 2730), new RSTile(2751, 2733)).contains(players.getMyPlayer().getLocation())) {
+				status = "Walking to rope...";
+				walkTile(walkHere);
+				mouse.move(random(220, 340), random(130, 200), 2, 2);
+				camera.setAngle(random(1, 360));
+				sleep(random(200, 400));
+			} else {
+				if (onTile(rope, "Rope", "Swing", 0.5, 0.6, 0))
+					status = "Swinging rope...";
+				sleep(random(50, 200));
+				camera.setAngle(random(1, 70));
+				mouse.move(random(330, 422), random(95, 122), 2, 2);
+				sleep(random(100, 400));
+			}
 		}
 
 		while (players.getMyPlayer().isMoving() || players.getMyPlayer().getAnimation() == 3488)
@@ -296,6 +328,8 @@ public class VoltrexApeAtoll extends Script implements PaintListener {
 
 		if (tree != null) {
 			tree.doAction("Climb-down");
+			sleep(random(300, 500));
+			mouse.move(random(550, 670), random(20, 120), 2, 2);
 			sleep(random(500, 1500));
 			if (lapStarted) {
 				laps++;
@@ -529,9 +563,9 @@ public class VoltrexApeAtoll extends Script implements PaintListener {
 		g.setColor(new Color(0, 0, 0, 175));
 		g.fillRoundRect(7, 345, 506, 129, 7, 7);
 
-		g.drawImage(BKG, 90, 310, null);
+		g.drawImage(BKG, 90, 10, null);
 		g.setColor(new Color(70, 50, 10, 255));
-		g.drawString("v" + properties.version(), 321, 340);
+		g.drawString("v" + properties.version(), 321, 40);
 
 
 		g.setColor(new Color(139, 0, 0, 175)); // red1
@@ -576,5 +610,235 @@ public class VoltrexApeAtoll extends Script implements PaintListener {
 
 	}
 
-}
 
+	//*******************************************************//
+	// GUI
+	//*******************************************************//
+	public class ApeAtollGUI extends JFrame {
+		public ApeAtollGUI() {
+			initComponents();
+		}
+
+		private void button1ActionPerformed(ActionEvent e) {
+			safeLogOut = checkBox1.isSelected();
+			pickFruits = checkBox2.isSelected();
+			int mouseSpeedTemp = (int) slider1.getValue();
+
+			if (mouseSpeedTemp == 100) {
+				MouseSpeed = 2;
+			} else if (mouseSpeedTemp == 90) {
+				MouseSpeed = 3;
+			} else if (mouseSpeedTemp == 80) {
+				MouseSpeed = 4;
+			} else if (mouseSpeedTemp == 70) {
+				MouseSpeed = 5;
+			} else if (mouseSpeedTemp == 60) {
+				MouseSpeed = 6;
+			} else if (mouseSpeedTemp == 50) {
+				MouseSpeed = 7;
+			} else if (mouseSpeedTemp == 40) {
+				MouseSpeed = 8;
+			} else if (mouseSpeedTemp == 30) {
+				MouseSpeed = 9;
+			} else if (mouseSpeedTemp == 20) {
+				MouseSpeed = 10;
+			} else if (mouseSpeedTemp == 10) {
+				MouseSpeed = 12;
+			}
+
+			waitGUI = false;
+			dispose();
+		}
+
+		private void initComponents() {
+			// JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
+			// Generated using JFormDesigner Evaluation license - Jhon Nyboy
+			tabbedPane1 = new JTabbedPane();
+			panel1 = new JPanel();
+			checkBox1 = new JCheckBox();
+			checkBox2 = new JCheckBox();
+			separator1 = new JSeparator();
+			checkBox3 = new JCheckBox();
+			slider1 = new JSlider();
+			label4 = new JLabel();
+			label5 = new JLabel();
+			label6 = new JLabel();
+			scrollPane1 = new JScrollPane();
+			editorPane1 = new JEditorPane();
+			label1 = new JLabel();
+			label2 = new JLabel();
+			label3 = new JLabel();
+			button1 = new JButton();
+			scrollPane2 = new JScrollPane();
+			editorPane2 = new JEditorPane();
+
+			//======== this ========
+			Container contentPane = getContentPane();
+			contentPane.setLayout(null);
+
+			//======== tabbedPane1 ========
+			{
+
+				//======== panel1 ========
+				{
+
+
+					panel1.setLayout(null);
+
+					//---- checkBox1 ----
+					checkBox1.setText("Log out when low HP and out of food");
+					checkBox1.setSelected(true);
+					panel1.add(checkBox1);
+					checkBox1.setBounds(new Rectangle(new Point(5, 5), checkBox1.getPreferredSize()));
+
+					//---- checkBox2 ----
+					checkBox2.setText("Pick pineapples (have a knife in inventory)");
+					checkBox2.setSelected(true);
+					panel1.add(checkBox2);
+					checkBox2.setBounds(new Rectangle(new Point(5, 30), checkBox2.getPreferredSize()));
+					panel1.add(separator1);
+					separator1.setBounds(20, 60, 225, 2);
+
+					//---- checkBox3 ----
+					checkBox3.setText("Check for updates on startup");
+					checkBox3.setEnabled(false);
+					panel1.add(checkBox3);
+					checkBox3.setBounds(new Rectangle(new Point(5, 70), checkBox3.getPreferredSize()));
+
+					//---- slider1 ----
+					slider1.setSnapToTicks(true);
+					slider1.setPaintTicks(true);
+					slider1.setPaintLabels(true);
+					slider1.setMinimum(10);
+					slider1.setMajorTickSpacing(10);
+					slider1.setValue(60);
+					panel1.add(slider1);
+					slider1.setBounds(10, 170, 240, slider1.getPreferredSize().height);
+
+					//---- label4 ----
+					label4.setText("Mouse speed:");
+					label4.setFont(label4.getFont().deriveFont(label4.getFont().getStyle() | Font.BOLD));
+					panel1.add(label4);
+					label4.setBounds(new Rectangle(new Point(5, 135), label4.getPreferredSize()));
+
+					//---- label5 ----
+					label5.setText("Slow");
+					panel1.add(label5);
+					label5.setBounds(new Rectangle(new Point(5, 155), label5.getPreferredSize()));
+
+					//---- label6 ----
+					label6.setText("Fast");
+					panel1.add(label6);
+					label6.setBounds(new Rectangle(new Point(230, 155), label6.getPreferredSize()));
+
+					{ // compute preferred size
+						Dimension preferredSize = new Dimension();
+						for (int i = 0; i < panel1.getComponentCount(); i++) {
+							Rectangle bounds = panel1.getComponent(i).getBounds();
+							preferredSize.width = Math.max(bounds.x + bounds.width, preferredSize.width);
+							preferredSize.height = Math.max(bounds.y + bounds.height, preferredSize.height);
+						}
+						Insets insets = panel1.getInsets();
+						preferredSize.width += insets.right;
+						preferredSize.height += insets.bottom;
+						panel1.setMinimumSize(preferredSize);
+						panel1.setPreferredSize(preferredSize);
+					}
+				}
+				tabbedPane1.addTab("Options", panel1);
+
+
+				//======== scrollPane1 ========
+				{
+
+					//---- editorPane1 ----
+					editorPane1.setEditable(false);
+					editorPane1.setText("Start AT the course with a Monkey Greegree\nequipted(must be a ninja greegree). If you enabled the option 'Pick pineapples', then you must have a\nknife in your inventory.");
+					scrollPane1.setViewportView(editorPane1);
+				}
+				tabbedPane1.addTab("Instructions", scrollPane1);
+
+			}
+			contentPane.add(tabbedPane1);
+			tabbedPane1.setBounds(0, 0, 270, 265);
+
+			//---- label1 ----
+			label1.setText("Ape Atoll course");
+			label1.setFont(label1.getFont().deriveFont(label1.getFont().getStyle() | Font.BOLD, label1.getFont().getSize() + 2f));
+			contentPane.add(label1);
+			label1.setBounds(new Rectangle(new Point(275, 20), label1.getPreferredSize()));
+
+			//---- label2 ----
+			label2.setText("by Voltrex");
+			contentPane.add(label2);
+			label2.setBounds(new Rectangle(new Point(275, 35), label2.getPreferredSize()));
+
+			//---- label3 ----
+			label3.setText("Version " + properties.version());
+			contentPane.add(label3);
+			label3.setBounds(new Rectangle(new Point(275, 60), label3.getPreferredSize()));
+
+			//---- button1 ----
+			button1.setText("Start Script");
+			button1.setFont(button1.getFont().deriveFont(button1.getFont().getStyle() | Font.BOLD));
+			button1.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					button1ActionPerformed(e);
+				}
+			});
+			contentPane.add(button1);
+			button1.setBounds(new Rectangle(new Point(280, 235), button1.getPreferredSize()));
+
+			//======== scrollPane2 ========
+			{
+
+				//---- editorPane2 ----
+				editorPane2.setEditable(false);
+				editorPane2.setText("1.30: New GUI");
+				scrollPane2.setViewportView(editorPane2);
+			}
+			contentPane.add(scrollPane2);
+			scrollPane2.setBounds(275, 75, 110, 155);
+
+			{ // compute preferred size
+				Dimension preferredSize = new Dimension();
+				for (int i = 0; i < contentPane.getComponentCount(); i++) {
+					Rectangle bounds = contentPane.getComponent(i).getBounds();
+					preferredSize.width = Math.max(bounds.x + bounds.width, preferredSize.width);
+					preferredSize.height = Math.max(bounds.y + bounds.height, preferredSize.height);
+				}
+				Insets insets = contentPane.getInsets();
+				preferredSize.width += insets.right;
+				preferredSize.height += insets.bottom;
+				contentPane.setMinimumSize(preferredSize);
+				contentPane.setPreferredSize(preferredSize);
+			}
+			pack();
+			setLocationRelativeTo(getOwner());
+			// JFormDesigner - End of component initialization  //GEN-END:initComponents
+		}
+
+		// JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
+		// Generated using JFormDesigner Evaluation license - Jhon Nyboy
+		private JTabbedPane tabbedPane1;
+		private JPanel panel1;
+		private JCheckBox checkBox1;
+		private JCheckBox checkBox2;
+		private JSeparator separator1;
+		private JCheckBox checkBox3;
+		private JSlider slider1;
+		private JLabel label4;
+		private JLabel label5;
+		private JLabel label6;
+		private JScrollPane scrollPane1;
+		private JEditorPane editorPane1;
+		private JLabel label1;
+		private JLabel label2;
+		private JLabel label3;
+		private JButton button1;
+		private JScrollPane scrollPane2;
+		private JEditorPane editorPane2;
+		// JFormDesigner - End of variables declaration  //GEN-END:variables
+	}
+
+}

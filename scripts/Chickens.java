@@ -111,7 +111,7 @@ public class Chickens extends Script implements PaintListener {
 			return random(400, 600);
 		}
 		if (!chicken.isOnScreen()) {
-			turnTo(camera.getAngleToCharacter(chicken), chicken);
+			turnTo(camera.getCharacterAngle(chicken), chicken);
 			if (!chicken.isOnScreen()) {
 				walking.walkTileMM(walking.getClosestTileOnMap(chicken.getLocation()));
 				return random(800, 1000);

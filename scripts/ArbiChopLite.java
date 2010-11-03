@@ -10,7 +10,7 @@ import org.rsbot.event.listeners.ServerMessageListener;
 import org.rsbot.event.events.ServerMessageEvent;
 import java.text.DecimalFormat;
 
-@ScriptManifest(authors = "Arbiter", keywords = "Woodcutting", name = "ArbiChop Lite", version = 1.2, description = "Start at Draynor. Auto-detecting Regular Tree and Willow Chopper.")
+@ScriptManifest(authors = "Arbiter", keywords = "Woodcutting", name = "ArbiChop Lite", version = 1.3, description = "Start at Draynor. Auto-detecting Regular Tree and Willow Chopper.")
 public class ArbiChopLite extends Script implements PaintListener, ServerMessageListener {
 
 	private enum State {
@@ -37,8 +37,9 @@ public class ArbiChopLite extends Script implements PaintListener, ServerMessage
 	private boolean power, inventoryContains;
 
 	public int loop() {
+		try {
 		antiBan();
-		mouse.setSpeed(random(5, 8));
+		mouse.setSpeed(random(6, 8));
 		if (skills.getCurrentLevel(Skills.WOODCUTTING) >= 30) {
 			trees = WILLOWS;
 			power = false;
@@ -61,7 +62,7 @@ public class ArbiChopLite extends Script implements PaintListener, ServerMessage
 					if (calc.distanceTo(loc) < random(2, 3))
 						return random(50, 100);
 					walking.walkTileMM(loc, random(1, 3), random(1, 3));
-					break;
+					return random(50,100);
 				}
 				RSTile loc = walking.getClosestTileOnMap(TREE_TILE);
 				if (walking.getDestination() != null && calc.distanceBetween(walking.getDestination(), loc) < random(2, 3))
@@ -69,7 +70,7 @@ public class ArbiChopLite extends Script implements PaintListener, ServerMessage
 				if (calc.distanceTo(loc) < random(2, 3))
 					return random(50, 100);
 				walking.walkTileMM(walking.getClosestTileOnMap(loc), random(1, 3), random(1, 3));
-				break;
+				return random(50,100);
 			case WALK_TO_BANK:
 				loc = walking.getClosestTileOnMap(BANK_TILE);
 				if (walking.getDestination() != null && calc.distanceBetween(walking.getDestination(), loc) < random(2, 3))
@@ -77,14 +78,22 @@ public class ArbiChopLite extends Script implements PaintListener, ServerMessage
 				if (calc.distanceTo(loc) < random(2, 3))
 					return random(50, 100);
 				walking.walkTileMM(walking.getClosestTileOnMap(loc), random(1, 3), random(1, 3));
-				break;
+				return random(50,100);
 			case CHOP:
+				if (bank.isOpen()) {
+					bank.close();
+					return random(500,1000);
+				}
 				RSObject t = objects.getNearest(trees);
-				if (t.doAction("Chop down")) {
+				if (!power && t.doAction("Chop down Willow")) {
 					sleep(random(1000, 2000));
 					sleepForAnim(random(2000, 3000));
 				}
-				break;
+				else if (power && t.doAction("Chop down Tree")) {
+					sleep(random(1000, 2000));
+					sleepForAnim(random(2000, 3000));
+				}
+				return random(50,100);
 			case BANK:
 				if (bank.isOpen() && interfaces.get(762).getComponent(9).getAbsoluteY() > 50) {
 					if (!inventory.containsOneOf(HATCHETS)) {
@@ -92,7 +101,7 @@ public class ArbiChopLite extends Script implements PaintListener, ServerMessage
 							for (int i = 0; i < 20; i++) {
 								sleep(50, 100);
 								if (inventory.getCount() == 0) {
-									break;
+									return random(50,100);
 								}
 							}
 						}
@@ -112,13 +121,15 @@ public class ArbiChopLite extends Script implements PaintListener, ServerMessage
 				}
 				RSNPC bankPerson = npcs.getNearest("Banker");
 				if (bankPerson.doAction("Bank Banker")) {
-					for (int i = 0; i < 100; i++) {
+					for (int i = 0; i < 50; i++) {
+						while (getMyPlayer().isMoving())
+							sleep(random(1,50));
 						if (bank.isOpen() && interfaces.get(762).getComponent(9).getAbsoluteY() > 50 && inventory.getCount() == 28)
-							break;
+							return random(50,100);
 						sleep(random(20, 30));
 					}
 				}
-				break;
+				return random(50,100);
 			case DROP:
 				if (inventory.getCount(HATCHETS) == inventory.getCount())
     			{
@@ -183,11 +194,12 @@ public class ArbiChopLite extends Script implements PaintListener, ServerMessage
     			for (int i = 0; i < 100; i++)
     			{
     				if (inventory.getCount(HATCHETS) == inventory.getCount())
-    					break;
+    					return random(50,100);
     				sleep(10,15);
     			}
     			return (random(50,100));
 		}
+		} catch (Exception e) {}
 		return random(50, 100);
 	}
 
@@ -235,8 +247,8 @@ public class ArbiChopLite extends Script implements PaintListener, ServerMessage
 		int anim = -1;
 
 		while (System.currentTimeMillis() - start < timeout) {
-			if ((anim = myPlayer.getAnimation()) != -1) {
-				break;
+			if ((anim = myPlayer.getAnimation()) != -1 || !isTreeAlive()) {
+				return random(50,100);
 			}
 			sleep(random(5, 15));
 		}

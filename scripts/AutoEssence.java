@@ -14,13 +14,15 @@ import java.util.Set;
 /**
  * @author Jacmob
  */
-@ScriptManifest(name = "AutoEssence", authors = "Jacmob", keywords = "Mining", version = 1.2,
-		description = "Varrock essence miner.")
+@ScriptManifest(name = "AutoEssence", authors = "Jacmob", keywords = "Mining", version = 1.3,
+		description = "Varrock and Yanille essence miner.")
 public class AutoEssence extends Script implements PaintListener {
 
 	public static interface Constants {
 
-		RSArea BANK_AREA = new RSArea(3250, 3419, 3257, 3423);
+		RSArea VARROCK_BANK_AREA = new RSArea(3250, 3419, 3257, 3423);
+
+		RSArea YANILLE_BANK_AREA = new RSArea(2609, 3095, 2613, 3089);
 
 		RSArea MINE_AREA = new RSArea(2870, 4790, 2950, 4870);
 
@@ -32,15 +34,32 @@ public class AutoEssence extends Script implements PaintListener {
 				new RSTile(3252, 3399)
 		});
 
-		RSTile DOOR_TILE = new RSTile(3253, 3398);
+		RSArea WIZARD_TOWER_AREA = new RSArea(new RSTile[]{
+				new RSTile(2597, 3089),
+				new RSTile(2597, 3087),
+				new RSTile(2592, 3082),
+				new RSTile(2589, 3083),
+				new RSTile(2585, 3086),
+				new RSTile(2585, 3089),
+				new RSTile(2589, 3093),
+				new RSTile(2592, 3093)
+		});
+
+		RSTile VARROCK_DOOR_TILE = new RSTile(3253, 3398);
+
+		int VARROCK_OPEN_DOOR = 24381;
+
+		RSTile WIZARD_TOWER_DOOR_TILE = new RSTile(2598, 3087);
+
+		int[] WIZARD_TOWER_DOORS = {1600, 1601};
+
+		int AUBURY = 553;
+
+		int DISTENTOR = 462;
 
 		int ROCK = 2491;
 
 		int PORTAL = 2492;
-
-		int OPEN_DOOR = 24381;
-
-		int AUBURY = 553;
 
 		int RUNE_ESSENCE = 1436;
 
@@ -230,7 +249,9 @@ public class AutoEssence extends Script implements PaintListener {
 			}
 			RSTile tile = dest.getCentralTile();
 			if (last == null || getMyPlayer().isIdle() || (calc.distanceTo(last) < 10 && !dest.contains(last))) {
-				if (!walking.walkTo(tile)) {
+				if (calc.tileOnMap(tile)) {
+					walking.walkTileMM(tile);
+				} else if (!walking.walkTo(tile)) {
 					walking.walkTileOnScreen(calc.getTileOnScreen(tile));
 				}
 				last = walking.getDestination();
@@ -277,41 +298,44 @@ public class AutoEssence extends Script implements PaintListener {
 	public boolean onStart() {
 		actions = new HashSet<Action>();
 
-		actions.add(new WalkToArea(Constants.BANK_AREA, "bank") {
+		// Varrock
+
+		actions.add(new WalkToArea(Constants.VARROCK_BANK_AREA, "Varrock east bank") {
 			protected boolean isTargetValid() {
-				return !canMine() && inVarrock() && !inBank();
+				return !canMine() && inVarrock();
 			}
 
 			public void process() {
-				RSObject obj = objects.getNearest(Constants.OPEN_DOOR);
-				if (obj != null && calc.distanceBetween(obj.getLocation(), Constants.DOOR_TILE) < 2) {
+				RSObject obj = objects.getNearest(Constants.VARROCK_OPEN_DOOR);
+				if (obj != null && calc.distanceBetween(obj.getLocation(), Constants.VARROCK_DOOR_TILE) < 2) {
 					if (obj.isOnScreen()) {
 						if (obj.doAction("Open")) {
 							sleep(random(1000, 2000));
 						}
-					} else if (!Constants.DOOR_TILE.equals(walking.getDestination())) {
-						walking.walkTo(Constants.DOOR_TILE);
+					} else if (!Constants.VARROCK_DOOR_TILE.equals(walking.getDestination())) {
+						walking.walkTo(Constants.VARROCK_DOOR_TILE);
 					}
 				} else {
 					super.process();
 				}
 			}
 		});
+
 		actions.add(new WalkToArea(Constants.AUBURY_AREA, "Aubury") {
 
 			protected boolean isTargetValid() {
-				return canMine() && inVarrock() && !inShop();
+				return canMine() && inVarrock();
 			}
 
 			public void process() {
-				RSObject obj = objects.getNearest(Constants.OPEN_DOOR);
-				if (obj != null && calc.distanceBetween(obj.getLocation(), Constants.DOOR_TILE) < 2) {
+				RSObject obj = objects.getNearest(Constants.VARROCK_OPEN_DOOR);
+				if (obj != null && calc.distanceBetween(obj.getLocation(), Constants.VARROCK_DOOR_TILE) < 2) {
 					if (obj.isOnScreen()) {
 						if (obj.doAction("Open")) {
 							sleep(random(1000, 2000));
 						}
-					} else if (!Constants.DOOR_TILE.equals(walking.getDestination())) {
-						walking.walkTo(Constants.DOOR_TILE);
+					} else if (!Constants.VARROCK_DOOR_TILE.equals(walking.getDestination())) {
+						walking.walkTo(Constants.VARROCK_DOOR_TILE);
 					}
 				} else {
 					super.process();
@@ -319,6 +343,7 @@ public class AutoEssence extends Script implements PaintListener {
 			}
 
 		});
+
 		actions.add(new NPCAction(Constants.AUBURY, "Teleport") {
 			public String getDesc() {
 				return "Teleporing to mine.";
@@ -328,6 +353,91 @@ public class AutoEssence extends Script implements PaintListener {
 				return canMine() && inShop();
 			}
 		});
+
+		actions.add(new Bank(Constants.VARROCK_BANK_AREA));
+
+		// Yanille
+
+		actions.add(new WalkToArea(Constants.YANILLE_BANK_AREA, "Yanille bank") {
+			protected boolean isTargetValid() {
+				return !canMine() && inYanille();
+			}
+
+			public void process() {
+				if (inTower()) {
+					if (calc.distanceTo(Constants.WIZARD_TOWER_DOOR_TILE) > 5) {
+						if (!getMyPlayer().isMoving()) {
+							walking.walkTileOnScreen(Constants.WIZARD_TOWER_DOOR_TILE);
+							sleep(500);
+						}
+					} else {
+						RSObject door = objects.getNearest(Constants.WIZARD_TOWER_DOORS);
+						if (door != null && calc.distanceTo(door.getLocation()) < 5) {
+							if (door.isOnScreen() && door.doAction("Open")) {
+								sleep(1000);
+								if (inTower()) {
+									sleep(1000);
+								}
+							} else {
+								camera.turnToObject(door);
+							}
+						}
+					}
+				} else {
+					super.process();
+				}
+			}
+		});
+
+		actions.add(new WalkToArea(Constants.WIZARD_TOWER_AREA, "Wizard's Tower") {
+
+			protected boolean isTargetValid() {
+				return canMine() && inYanille();
+			}
+
+			public void process() {
+				if (calc.distanceTo(Constants.WIZARD_TOWER_DOOR_TILE) < 10) {
+					RSObject obj = objects.getNearest(Constants.WIZARD_TOWER_DOORS);
+					if (obj != null && calc.distanceTo(obj.getLocation()) < 10) {
+						if (obj.isOnScreen() && obj.doAction("Open")) {
+							sleep(1500);
+							if (getMyPlayer().isMoving()) {
+								sleep(1000);
+							}
+							if (!inTower()) {
+								sleep(1000);
+							}
+						} else if (!getMyPlayer().isMoving()) {
+							if (walking.getDestination() == null) {
+								walking.walkTileOnScreen(obj.getLocation());
+							} else {
+								camera.turnToObject(obj);
+							}
+						}
+					} else if (!getMyPlayer().isMoving()) {
+						walking.walkTileMM(Constants.WIZARD_TOWER_DOOR_TILE);
+					}
+				} else if (!getMyPlayer().isMoving()) {
+					walking.walkTileMM(Constants.WIZARD_TOWER_DOOR_TILE);
+				}
+			}
+
+		});
+
+		actions.add(new NPCAction(Constants.DISTENTOR, "Teleport") {
+			public String getDesc() {
+				return "Teleporing to mine.";
+			}
+
+			public boolean isValid() {
+				return canMine() && inTower();
+			}
+		});
+
+		actions.add(new Bank(Constants.YANILLE_BANK_AREA));
+
+		// Global
+
 		actions.add(new ObjectAction(Constants.PORTAL, "Enter") {
 			public String getDesc() {
 				return "Leaving mine.";
@@ -374,7 +484,6 @@ public class AutoEssence extends Script implements PaintListener {
 			}
 
 		});
-		actions.add(new Bank(Constants.BANK_AREA));
 
 		startTime = System.currentTimeMillis();
 		return true;
@@ -452,15 +561,19 @@ public class AutoEssence extends Script implements PaintListener {
 	}
 
 	private boolean inVarrock() {
-		return calc.distanceTo(Constants.BANK_AREA.getCentralTile()) < 200;
+		return calc.distanceTo(Constants.VARROCK_BANK_AREA.getCentralTile()) < 200;
+	}
+
+	private boolean inYanille() {
+		return calc.distanceTo(Constants.YANILLE_BANK_AREA.getCentralTile()) < 200;
 	}
 
 	private boolean inShop() {
 		return Constants.AUBURY_AREA.contains(getMyPlayer().getLocation());
 	}
 
-	private boolean inBank() {
-		return Constants.BANK_AREA.contains(getMyPlayer().getLocation());
+	private boolean inTower() {
+		return Constants.WIZARD_TOWER_AREA.contains(getMyPlayer().getLocation());
 	}
 
 	private boolean inMine() {

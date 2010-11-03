@@ -25,8 +25,8 @@ import org.rsbot.script.util.WindowUtil;
 import org.rsbot.util.GlobalConfiguration;
 
 
-@ScriptManifest(authors={"Enfilade"}, keywords={"fishing","enfilade"}, name="Godless Fisher", version=1.04,
-	description = "Supports multiple locations and styles.")
+@ScriptManifest(authors={"Enfilade"}, keywords={"fishing","enfilade","godless"}, name="Godless Fisher", version=1.041,
+	description = "Multiple locations and styles supported.")
 public class GodlessFisher extends Script implements PaintListener,
     MouseMotionListener, MouseListener {
 
@@ -216,12 +216,13 @@ public class GodlessFisher extends Script implements PaintListener,
             lastAntiban = -1;
         }
         checkForNewFish();
-        if(failsafe < System.currentTimeMillis()) {
+        /* FAIL-SAFE TEMPORARILY REMOVED
+         if(failsafe < System.currentTimeMillis()) {
             log("10 minutes have passed without catching a fish..");
             log("Logging out to keep your account safe.");
             game.logout(true);
             return -1;
-        }
+        }*/
         RSPlayer player = getMyPlayer();
         RSCharacter interacting = player.getInteracting();
         switch(state) {

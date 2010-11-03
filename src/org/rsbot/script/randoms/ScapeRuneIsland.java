@@ -9,7 +9,7 @@ import org.rsbot.script.wrappers.*;
  * Updated by Jacmob (Oct 22, 2010)
  * Updated by Jacmob (Oct 24, 2010)
  */
-@ScriptManifest(authors = "Arbiter", name = "ScapeRuneIsland", version = 2.1)
+@ScriptManifest(authors = "Arbiter", name = "ScapeRuneIsland", version = 2.2)
 public class ScapeRuneIsland extends Random {
 
 	public int[] STATUE_IDS = {8992, 8993, 8990, 8991};
@@ -52,8 +52,7 @@ public class ScapeRuneIsland extends Random {
 				return random(500, 1000);
 		if (forceTalk) {
 			RSNPC servant = npcs.getNearest(2481);
-			if (servant != null && direction == null && settings.getSetting(344) == 0
-					&& !interfaces.canContinue()) {
+			if (servant != null && direction == null && settings.getSetting(344) == 0) {
 				if (!calc.tileOnScreen(servant.getLocation())) {
 					walking.walkTileMM(walking.getClosestTileOnMap(servant.getLocation()));
 					return 700;
@@ -188,7 +187,7 @@ public class ScapeRuneIsland extends Random {
 				walking.walkTileMM(walking.getClosestTileOnMap(CENTER_TILE));
 			}
 		}
-		if (inventory.getCount(6200) > 0 && !interfaces.canContinue()) {
+		if (inventory.getCount(6200) > 0) {
 			final RSNPC cat = npcs.getNearest(2479);
 			if (cat != null) {
 				if (!calc.tileOnScreen(cat.getLocation())) {
@@ -203,8 +202,7 @@ public class ScapeRuneIsland extends Random {
 			return random(1900, 2200);
 		}
 		RSNPC servant = npcs.getNearest(2481);
-		if (servant != null && direction == null && settings.getSetting(344) == 0
-				&& !interfaces.canContinue()) {
+		if (servant != null && direction == null && settings.getSetting(344) == 0) {
 			if (!calc.tileOnScreen(servant.getLocation())) {
 				walking.walkTileMM(walking.getClosestTileOnMap(servant.getLocation()));
 				return 700;

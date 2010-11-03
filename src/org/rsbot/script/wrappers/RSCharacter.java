@@ -137,7 +137,12 @@ public abstract class RSCharacter extends MethodProvider {
 
 	public Point getScreenLocation() {
 		org.rsbot.client.RSCharacter c = getAccessor();
-		return methods.calc.groundToScreen(c.getX(), c.getY(), -c.getHeight() / 2);
+		RSModel model = getModel();
+		if (model == null) {
+			return methods.calc.groundToScreen(c.getX(), c.getY(), -c.getHeight() / 2);
+		} else {
+			return model.getPoint();
+		}
 	}
 
 	public boolean isInCombat() {
@@ -153,7 +158,12 @@ public abstract class RSCharacter extends MethodProvider {
 	}
 
 	public boolean isOnScreen() {
-		return methods.calc.tileOnScreen(getLocation());
+		RSModel model = getModel();
+		if (model == null) {
+			return methods.calc.tileOnScreen(getLocation());
+		} else {
+			return methods.calc.pointOnScreen(model.getPoint());
+		}
 	}
 
 	public boolean isValid() {

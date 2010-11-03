@@ -53,8 +53,11 @@ public class Walking extends MethodProvider {
         lastDestination = destination;
         lastPath = findPath(destination);
         lastStep = nextTile(lastPath);
-        return lastStep != null && walkTileMM(lastStep);
-    }
+		RSTile dest = getDestination();
+		return (dest == null || (methods.players.getMyPlayer().isMoving() &&
+					methods.calc.distanceBetween(dest, lastStep) <= 1)) &&
+				lastStep != null && walkTileMM(lastStep);
+	}
 
     /**
      * Returns the closest tile on the minimap to a given tile.

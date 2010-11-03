@@ -2,6 +2,7 @@ package org.rsbot.script.methods;
 
 import org.rsbot.script.wrappers.RSComponent;
 import org.rsbot.script.wrappers.RSItem;
+import org.rsbot.script.wrappers.RSItemDef;
 import org.rsbot.script.wrappers.RSObject;
 
 import java.awt.*;
@@ -386,8 +387,10 @@ public class Inventory extends MethodProvider {
 		RSItem[] items = getItems();
 		int slot = -1;
 		for (RSItem item : items) {
-			if (item.getDefinition().getName().contains(name)) {
+			RSItemDef def = item.getDefinition();
+			if (def != null && def.getName().contains(name)) {
 				slot = item.getID();
+				break;
 			}
 		}
 		return slot;
@@ -512,11 +515,11 @@ public class Inventory extends MethodProvider {
 	public int getCount(boolean includeStacks) {
 		int count = 0;
 		RSItem[] items = getItems();
-		for (int off = 0; off < items.length; off++) {
-			int item = items[off].getID();
-			if (item != -1) {
+		for (RSItem item : items) {
+			int iid = item.getID();
+			if (iid != -1) {
 				if (includeStacks) {
-					count += items[off].getStackSize();
+					count += item.getStackSize();
 				} else {
 					++count;
 				}

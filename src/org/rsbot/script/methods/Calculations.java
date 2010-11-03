@@ -52,8 +52,9 @@ public class Calculations extends MethodProvider {
      * @see #tileToMinimap(RSTile)
      */
     public boolean tileOnMap(RSTile t) {
-        Point p = tileToMinimap(t);
-        return p != null && p.x != -1 && p.y != -1;
+        //Point p = tileToMinimap(t);
+        //return p != null && p.x != -1 && p.y != -1;
+		return distanceTo(t) < 15;
     }
     
     /**
@@ -135,6 +136,19 @@ public class Calculations extends MethodProvider {
             return null;
         }
     }
+
+	/**
+	 * Returns the angle to a given tile in degrees anti-clockwise
+	 * from the positive x axis (where the x-axis is from west to east).
+	 *
+	 * @param t The target tile
+	 * @return The angle in degrees
+	 */
+	public int angleToTile(RSTile t) {
+		RSTile me = methods.players.getMyPlayer().getLocation();
+		int angle = (int) Math.toDegrees(Math.atan2(t.getY() - me.getY(), t.getX() - me.getX()));
+		return angle >= 0 ? angle : 360 + angle;
+	}
 
     /**
      * Returns the screen location of a Tile with given 3D x, y and height offset values.

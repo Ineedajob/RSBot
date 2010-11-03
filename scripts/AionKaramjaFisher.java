@@ -260,7 +260,7 @@ public class AionKaramjaFisher extends Script implements ActionListener,
 							pitch.pause = true;
 							RSNPC npc = getFishingSpot(true);
 							if (npc != null) {
-								camera.setAngle(camera.getAngleToTile(npc.getLocation()));
+								camera.setAngle(camera.getTileAngle(npc.getLocation()));
 								if (npc.isOnScreen()) {
 									break;
 								}
@@ -657,7 +657,7 @@ public class AionKaramjaFisher extends Script implements ActionListener,
 		waitToMove(random(650, 900));
 		while (getMyPlayer().isMoving()) {
 			if (random(0, 20) == random(5, 8))
-				camera.setAngle(camera.getAngleToTile(npc.getLocation()));
+				camera.setAngle(camera.getTileAngle(npc.getLocation()));
 			if (npc.isOnScreen()) break;
 			sleep(5, 15);
 		}
