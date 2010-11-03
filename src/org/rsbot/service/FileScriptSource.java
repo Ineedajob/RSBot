@@ -68,7 +68,7 @@ public class FileScriptSource implements ScriptSource {
 		Enumeration<JarEntry> entries = jar.entries();
 		while (entries.hasMoreElements()) {
 			JarEntry e = entries.nextElement();
-			String name = e.getName();
+			String name = e.getName().replace('/', '.');
 			String ext = ".class";
 			if (name.endsWith(ext) && !name.contains("$")) {
 				load(loader, scripts, name.substring(0, name.length() - ext.length()));

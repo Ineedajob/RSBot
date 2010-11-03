@@ -13,11 +13,25 @@ import org.rsbot.script.wrappers.RSObject;
 import org.rsbot.script.wrappers.RSTile;
 import org.rsbot.script.util.Timer;
 
-@ScriptManifest(authors = "Jacmob", keywords = "Agility", name = "Gnome Course", version = 2.1, description = "Standard gnome course. Eats common food.")
+@ScriptManifest(authors = "Jacmob", keywords = "Agility", name = "Gnome Course", version = 2.2, description = "Standard gnome course. Eats common food.")
 public class GnomeCourse extends Script implements PaintListener {
 
 	public static final int[] FOOD = new int[]{
-			333, 385, 379, 285, 373, 365, 7946, 361, 397, 391, 1963, 329, 2118};
+			1895, 1893, 1891, 4293, 2142, 291, 2140, 3228, 9980,
+			7223, 6297, 6293, 6295, 6299, 7521, 9988, 7228, 2878, 7568, 2343,
+			1861, 13433, 315, 325, 319, 3144, 347, 355, 333, 339, 351, 329,
+			3381, 361, 10136, 5003, 379, 365, 373, 7946, 385, 397, 391, 3369,
+			3371, 3373, 2309, 2325, 2333, 2327, 2331, 2323, 2335, 7178, 7180,
+			7188, 7190, 7198, 7200, 7208, 7210, 7218, 7220, 2003, 2011, 2289,
+			2291, 2293, 2295, 2297, 2299, 2301, 2303, 1891, 1893, 1895, 1897,
+			1899, 1901, 7072, 7062, 7078, 7064, 7084, 7082, 7066, 7068, 1942,
+			6701, 6703, 7054, 6705, 7056, 7060, 2130, 1985, 1993, 1989, 1978,
+			5763, 5765, 1913, 5747, 1905, 5739, 1909, 5743, 1907, 1911, 5745,
+			2955, 5749, 5751, 5753, 5755, 5757, 5759, 5761, 2084, 2034, 2048,
+			2036, 2217, 2213, 2205, 2209, 2054, 2040, 2080, 2277, 2225, 2255,
+			2221, 2253, 2219, 2281, 2227, 2223, 2191, 2233, 2092, 2032, 2074,
+			2030, 2281, 2235, 2064, 2028, 2187, 2185, 2229, 6883, 1971, 4608,
+			1883, 1885, 15272, 2118, 2116};
 	public static final int[] ENERGY_POTIONS = new int[]{
 			3014, 3012, 3010, 3008, 3022, 3020, 3018, 3016};
 
@@ -40,7 +54,11 @@ public class GnomeCourse extends Script implements PaintListener {
 		}
 	});
 	public static final Obstacle OBSTACLE_NET = new Obstacle(2474, 3425, 50, "Climb-over");
-	public static final Obstacle OBSTACLE_BRANCH = new Obstacle(2473, 3422, 120, "Climb");
+	public static final Obstacle OBSTACLE_BRANCH = new Obstacle(2473, 3422, 120, "Climb", new Obstacle.PassedListener() {
+		public void onPassed(GnomeCourse ctx) {
+			ctx.turner.setTarget(OBSTACLE_ROPE);
+		}
+	});
 	public static final Obstacle OBSTACLE_ROPE = new Obstacle(2478, 3420, 0, "Walk-on", new Obstacle.PassedListener() {
 		public void onPassed(GnomeCourse ctx) {
 			if (ctx.random(0, 10) != 0) {
@@ -213,8 +231,8 @@ public class GnomeCourse extends Script implements PaintListener {
 			}
 
 			g.setColor(GREEN);
-			g.drawString("GnomeCourse v2.1", x, y += 20);
-			g.drawString("GnomeCourse v2.1", x, y);
+			g.drawString("GnomeCourse v2.2", x, y += 20);
+			g.drawString("GnomeCourse v2.2", x, y);
 			g.drawString("Runtime: " + Timer.format(
 					System.currentTimeMillis() - startTime) + ".", x, y += 20);
 
@@ -277,7 +295,7 @@ public class GnomeCourse extends Script implements PaintListener {
 			running = true;
 			while (running) {
 				synchronized (targetLock) {
-					if (target != null && !target.isOnScreen(GnomeCourse.this)) {
+					if (target != null) {
 						char key = KeyEvent.VK_RIGHT;
 						keyboard.pressKey(key);
 						int i = 60;
@@ -306,7 +324,7 @@ public class GnomeCourse extends Script implements PaintListener {
 				this.target = target;
 			}
 		}
-		
+
 		public Obstacle getTarget() {
 			return target;
 		}
@@ -369,8 +387,8 @@ public class GnomeCourse extends Script implements PaintListener {
 			if (o != null && o.getModel() != null) {
 				ctx.model = o.getModel();
 				ctx.color = new Color(ctx.random(100, 255),
-								ctx.random(100, 255),
-								ctx.random(100, 255), 123);
+						ctx.random(100, 255),
+						ctx.random(100, 255), 123);
 				ctx.mouse.move(o.getModel().getPoint());
 				ctx.sleep(ctx.random(5, 50));
 				if (ctx.menu.contains(action) && (!ctx.getMyPlayer().isIdle() || ctx.turner.getTarget() != null)) {

@@ -145,7 +145,7 @@ public class Fighter extends Script implements PaintListener {
 					return random(400, 600);
 				}
 				if (!npc.isOnScreen()) {
-					turnTo(camera.getAngleToCharacter(npc), npc);
+					turnTo(camera.getCharacterAngle(npc), npc);
 					if (!npc.isOnScreen()) {
 						walking.walkTileMM(walking.getClosestTileOnMap(npc.getLocation()));
 						return random(800, 1000);

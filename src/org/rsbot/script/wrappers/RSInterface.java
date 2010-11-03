@@ -188,7 +188,16 @@ public class RSInterface extends MethodProvider implements Iterable<RSComponent>
         boolean[] validArray = methods.client.getValidRSInterfaceArray();
         if (idx >= 0 && validArray != null && idx < validArray.length && validArray[idx]) {
 			org.rsbot.client.RSInterface[][] inters = methods.client.getRSInterfaceCache();
-			return idx < inters.length && inters[idx] != null;
+			if (idx < inters.length && inters[idx] != null) {
+				RSComponent[] children = getComponents();
+				int count = 0;
+				for (RSComponent child : children) {
+					if (child.getBoundsArrayIndex() == -1) {
+						++count;
+					}
+				}
+				return count != children.length;
+			}
 		}
 		return false;
     }

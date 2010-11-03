@@ -1,5 +1,7 @@
 package org.rsbot.script;
 
+import org.rsbot.event.EventMulticaster;
+import org.rsbot.event.listeners.PaintListener;
 import org.rsbot.script.internal.BreakHandler;
 import org.rsbot.script.methods.MethodContext;
 import org.rsbot.script.methods.Methods;
@@ -17,8 +19,9 @@ public abstract class Script extends Methods implements EventListener, Runnable 
 	Set<Script> delegates = new HashSet<Script>();
 	MethodContext ctx;
 
-	private volatile boolean active = false;
+	private volatile boolean running = false;
 	private volatile boolean paused = false;
+	private volatile boolean random = false;
 
 	private int id = -1;
 	private long lastNotice;
@@ -114,7 +117,7 @@ public abstract class Script extends Methods implements EventListener, Runnable 
 		if (id != this.id) {
 			throw new IllegalStateException("Invalid id!");
 		}
-		this.active = false;
+		this.running = false;
 	}
 
 	/**
@@ -135,16 +138,14 @@ public abstract class Script extends Methods implements EventListener, Runnable 
 	 * @param paused <tt>true</tt> to pause; <tt>false</tt> to resume.
 	 */
 	public final void setPaused(boolean paused) {
+		if (running && !random) {
+			if (paused) {
+				blockEvents(true);
+			} else {
+				unblockEvents();
+			}
+		}
 		this.paused = paused;
-	}
-
-	/**
-	 * Returns whether or not this script is running.
-	 *
-	 * @return <tt>true</tt> if active; otherwise <tt>false</tt>.
-	 */
-	public final boolean isActive() {
-		return active;
 	}
 
 	/**
@@ -154,6 +155,25 @@ public abstract class Script extends Methods implements EventListener, Runnable 
 	 */
 	public final boolean isPaused() {
 		return paused;
+	}
+
+	/**
+	 * Returns whether or not this script has started and not stopped.
+	 *
+	 * @return <tt>true</tt> if running; otherwise <tt>false</tt>.
+	 */
+	public final boolean isRunning() {
+		return running;
+	}
+
+	/**
+	 * Returns whether or not the loop of this script is able to
+	 * receive control (i.e. not paused, stopped or in random).
+	 *
+	 * @return <tt>true</tt> if active; otherwise <tt>false</tt>.
+	 */
+	public final boolean isActive() {
+		return running && !paused && !random;
 	}
 
 	/**
@@ -178,7 +198,7 @@ public abstract class Script extends Methods implements EventListener, Runnable 
 		if (game.isLoggedIn() && logout) {
 			game.logout(false);
 		}
-		this.active = false;
+		this.running = false;
 	}
 
 	public final void run() {
@@ -190,12 +210,12 @@ public abstract class Script extends Methods implements EventListener, Runnable 
 			log.log(Level.SEVERE, "Error starting script: ", ex);
 		}
 		if (start) {
-			active = true;
+			running = true;
 			ctx.bot.getEventManager().addListener(this);
 			menu.setupListener();
 			log.info("Script started.");
 			try {
-				while (active) {
+				while (running) {
 					if (!paused) {
 						if (account.isTakingBreaks()) {
 							BreakHandler h = ctx.bot.getBreakHandler();
@@ -253,7 +273,7 @@ public abstract class Script extends Methods implements EventListener, Runnable 
 			} catch (Throwable t) {
 				onFinish();
 			}
-			active = false;
+			running = false;
 			log.info("Script stopped.");
 		} else {
 			log.severe("Failed to start up.");
@@ -274,12 +294,39 @@ public abstract class Script extends Methods implements EventListener, Runnable 
 		}
 		for (Random random : ctx.bot.getScriptHandler().getRandoms()) {
 			if (random.isEnabled() && !(ctx.bot.disableAutoLogin && random instanceof LoginBot)) {
-				if (random.run(this)) {
+				if (random.activateCondition()) {
+					this.random = true;
+					blockEvents(false);
+					random.run(this);
+					unblockEvents();
+					this.random = false;
 					return true;
 				}
 			}
 		}
 		return false;
+	}
+
+	private void blockEvents(boolean paint) {
+		for (Script s : delegates) {
+			ctx.bot.getEventManager().removeListener(s);
+			if (paint && s instanceof PaintListener) {
+				ctx.bot.getEventManager().addListener(s, EventMulticaster.PAINT_EVENT);
+			}
+		}
+		ctx.bot.getEventManager().removeListener(this);
+		if (paint && this instanceof PaintListener) {
+			ctx.bot.getEventManager().addListener(this, EventMulticaster.PAINT_EVENT);
+		}
+	}
+
+	private void unblockEvents() {
+		for (Script s : delegates) {
+			ctx.bot.getEventManager().removeListener(s);
+			ctx.bot.getEventManager().addListener(s);
+		}
+		ctx.bot.getEventManager().removeListener(this);
+		ctx.bot.getEventManager().addListener(this);
 	}
 
 }

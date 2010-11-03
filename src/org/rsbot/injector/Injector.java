@@ -460,6 +460,10 @@ public class Injector {
 							s.setPosition(0);
 							s.nextPattern("ICONST MULTIANEWARRAY PUTSTATIC");
 							PUTSTATIC put_region_keys = (PUTSTATIC) s.next("PUTSTATIC");
+							if (s.nextFieldInstruction(put_region_keys.getClassName(cpg),
+									put_region_keys.getFieldName(cpg)) == null) {
+								continue;
+							}
 							if (put_region_keys != null) {
 								MethodGen mg = new MethodGen(m, cg.getClassName(), cg.getConstantPool());
 								InstructionList il = mg.getInstructionList();
@@ -533,10 +537,6 @@ public class Injector {
 	}
 
 	// --------------------
-
-	// this is a distributed effort at dumping xtea keys
-	// please respect this service, which will provide
-	// decrypted landscape files for various uses
 
 	private static final ExecutorService pool = Executors.newSingleThreadExecutor();
 	private static volatile boolean submit_enabled = true;

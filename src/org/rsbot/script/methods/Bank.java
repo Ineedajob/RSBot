@@ -198,7 +198,7 @@ public class Bank extends MethodProvider {
 			outer:
 			for (int i = 0; i < 28; i++) {
 				RSItem item = methods.inventory.getItemAt(i);
-				if (item.getID() != -1) {
+				if (item != null && item.getID() != -1) {
 					for (int id : items) {
 						if (item.getID() == id) {
 							continue outer;
@@ -220,7 +220,7 @@ public class Bank extends MethodProvider {
 			outer:
 			for (int i = 0; i < 28; i++) {
 				RSComponent item = methods.interfaces.get(11).getComponent(17).getComponent(i);
-				int id = item.getComponentID();
+				int id = item == null ? -1 : item.getComponentID();
 				if (id != -1) {
 					for (int iid : items) {
 						if (iid == id) {

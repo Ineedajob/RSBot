@@ -138,7 +138,7 @@ public class ScriptHandler {
         Thread curThread = Thread.currentThread();
         for (int i = 0; i < scripts.size(); i++) {
 			Script script = scripts.get(i);
-            if (script != null && script.isActive()) {
+            if (script != null && script.isRunning()) {
                 if (scriptThreads.get(i) == curThread) {
                 	stopScript(i);
                 }

@@ -27,6 +27,7 @@ public class BotPanel extends JPanel {
 		setSize(new Dimension(BotGUI.PANEL_WIDTH, BotGUI.PANEL_HEIGHT));
 		setMinimumSize(new Dimension(BotGUI.PANEL_WIDTH, BotGUI.PANEL_HEIGHT));
 		setPreferredSize(new Dimension(BotGUI.PANEL_WIDTH, BotGUI.PANEL_HEIGHT));
+		setBackground(Color.black);
 		addComponentListener(new ComponentAdapter() {
 			public void componentResized(ComponentEvent evt) {
 				if (bot != null) {
@@ -118,13 +119,11 @@ public class BotPanel extends JPanel {
 	}
 
 	public void paintComponent(Graphics g) {
-		super.paintComponents(g);
+		super.paintComponent(g);
 		if (bot == null) {
 			g.setColor(new Color(240, 240, 240));
 			g.fillRect(0, 0, getWidth(), getHeight());
 		} else {
-			g.setColor(Color.BLACK);
-			g.fillRect(0, 0, getWidth(), getHeight());
 			g.drawImage(bot.getImage(), offX, 0, null);
 		}
 	}

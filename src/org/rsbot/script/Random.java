@@ -83,10 +83,7 @@ public abstract class Random extends Methods implements PaintListener {
 		script.stopScript(logout);
 	}
 
-    public final boolean run(Script ctx) {
-        if (!activateCondition()) {
-            return false;
-        }
+    public final void run(Script ctx) {
 		script = ctx;
         name = getClass().getAnnotation(ScriptManifest.class).name();
 		ctx.ctx.bot.getEventManager().removeListener(ctx);
@@ -95,12 +92,12 @@ public abstract class Random extends Methods implements PaintListener {
 		}
 		ctx.ctx.bot.getEventManager().addListener(this);
         log("Random event started: " + name);
-        int timeout = getTimeout();
+        long timeout = getTimeout();
         if (timeout > 0) {
             timeout *= 1000;
             timeout += System.currentTimeMillis();
         }
-        while (ctx.isActive()) {
+        while (ctx.isRunning()) {
             try {
                 int wait = loop();
                 if (wait == -1) {
@@ -125,7 +122,6 @@ public abstract class Random extends Methods implements PaintListener {
 		for (Script s : ctx.delegates) {
 			ctx.ctx.bot.getEventManager().addListener(s);
 		}
-		return true;
 	}
 
 	public final void onRepaint(Graphics g) {
