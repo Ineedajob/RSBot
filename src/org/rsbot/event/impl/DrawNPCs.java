@@ -31,7 +31,7 @@ public class DrawNPCs implements PaintListener {
                 continue;
             }
             final RSNPC npc = new RSNPC(ctx, ((RSNPCNode) node).getRSNPC());
-            final Point location = npc.getScreenLocation();
+            final Point location = ctx.calc.tileToScreen(npc.getLocation(), -npc.getHeight() / 2);
             if (!ctx.calc.pointOnScreen(location)) {
                 continue;
             }

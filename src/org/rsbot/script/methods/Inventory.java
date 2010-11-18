@@ -48,7 +48,7 @@ public class Inventory extends MethodProvider {
 	 * @param items The item IDs to drop
 	 */
 	public void dropAllExcept(boolean leftToRight, int... items) {
-		while (getCountExcept(items) != 0) {
+		if (getCountExcept(items) != 0) {
 			if (!leftToRight) {
 				for (int c = 0; c < 4; c++) {
 					for (int r = 0; r < 7; r++) {
@@ -97,14 +97,9 @@ public class Inventory extends MethodProvider {
 	 * @param row The row the item is in.
 	 */
 	public void dropItem(int col, int row) {
-		if (methods.interfaces.get(210).getComponent(2).getText().equals(
-				"Click here to continue")) {
+		if (methods.interfaces.canContinue()) {
+			methods.interfaces.clickContinue();
 			sleep(random(800, 1300));
-			if (methods.interfaces.get(210).getComponent(2).getText().equals(
-					"Click here to continue")) {
-				methods.interfaces.get(210).getComponent(2).doClick();
-				sleep(random(150, 200));
-			}
 		}
 		if (methods.game.getCurrentTab() != Game.TAB_INVENTORY
 				&& !methods.interfaces.get(Bank.INTERFACE_BANK).isValid()

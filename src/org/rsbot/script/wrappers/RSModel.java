@@ -15,7 +15,29 @@ import org.rsbot.script.methods.MethodProvider;
  * @author Jacmob
  */
 public abstract class RSModel extends MethodProvider {
-	
+
+	/**
+	 * Identifies a model.
+	 */
+	public static interface Identifier {
+		public boolean matches(RSModel m);
+	}
+
+	/**
+	 * Returns an identifier that matches against the array
+	 * of vertex A indices for each face.
+	 * 
+	 * @param vertex_a The array of indices for A vertices.
+	 * @return The vertex index based model identifier.
+	 */
+	public static Identifier newIdentifier(final short[] vertex_a) {
+		return new Identifier() {
+			public boolean matches(RSModel m) {
+				return Arrays.equals(m.indices1, vertex_a);
+			}
+		};
+	}
+
 	protected int[] xPoints;
 	protected int[] yPoints;
 	protected int[] zPoints;
@@ -83,7 +105,7 @@ public abstract class RSModel extends MethodProvider {
 		}
 		return polygons.toArray(new Polygon[polygons.size()]);
 	}
-	
+
 	/**
 	 * Returns true if the provided object is an RSModel
 	 * with the same x, y and z points as this model.
@@ -96,7 +118,8 @@ public abstract class RSModel extends MethodProvider {
 	public boolean equals(Object o) {
 		if (o instanceof RSModel) {
 			RSModel m = (RSModel) o;
-			return Arrays.equals(xPoints, m.xPoints) &&
+			return Arrays.equals(indices1, m.indices1) &&
+				   Arrays.equals(xPoints, m.xPoints) &&
 				   Arrays.equals(yPoints, m.yPoints) &&
 				   Arrays.equals(zPoints, m.zPoints);
 		}

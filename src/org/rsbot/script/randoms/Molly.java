@@ -13,6 +13,7 @@ import java.util.ArrayList;
  * Updated by Iscream (Jan 31, 10)
  * Updated by Iscream (Feb 20, 10)
  * Updated by Jacmob (Oct 24, 10)
+ * Updated by Arbiter (Nov 11, 10)
  *
  * @author PwnZ
  */
@@ -24,6 +25,7 @@ public class Molly extends Random {
 	static final int DOOR_ID = 14982;
 	static final int MOLLY_CHATBOX_INTERFACEGROUP = 228;
 	static final int MOLLY_CHATBOX_NOTHANKS = 3;
+	static final int MOLLY_CHATBOX_SKIP = 2;
 	static final int CONTROL_INTERFACEGROUP = 240;
 	static final int CONTROLS_GRAB = 28;
 	static final int CONTROLS_UP = 29;
@@ -83,6 +85,11 @@ public class Molly extends Random {
 			setCamera();
 			interfaces.clickContinue();
 			return random(500, 800);
+		}
+		final RSComponent skipInterface = interfaces.get(Molly.MOLLY_CHATBOX_INTERFACEGROUP).getComponent(Molly.MOLLY_CHATBOX_SKIP);
+		if ((skipInterface != null) && skipInterface.isValid() && skipInterface.getAbsoluteY() > 5 && skipInterface.containsText("Yes, I")) {
+			skipInterface.doClick();
+			return random(600, 1000);
 		}
 		final RSComponent noThanksInterface = interfaces.get(Molly.MOLLY_CHATBOX_INTERFACEGROUP).getComponent(Molly.MOLLY_CHATBOX_NOTHANKS);
 		if ((noThanksInterface != null) && noThanksInterface.isValid() && noThanksInterface.getAbsoluteY() > 5) {
