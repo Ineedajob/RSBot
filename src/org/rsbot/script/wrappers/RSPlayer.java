@@ -52,17 +52,14 @@ public class RSPlayer extends RSCharacter {
                 }
                 methods.mouse.move(screenLoc);
             }
-            screenLoc = getScreenLocation();
-            if (!methods.mouse.getLocation().equals(screenLoc))
-                return false;
             String[] items = methods.menu.getItems();
             if (items.length <= 1)
                 return false;
             if (items[0].toLowerCase().contains(action.toLowerCase())) {
-                methods.mouse.click(screenLoc, true);
+                methods.mouse.click(true);
                 return true;
             } else {
-                methods.mouse.click(screenLoc, false);
+                methods.mouse.click(false);
                 return methods.menu.doAction(action);
             }
         } catch (Exception e) {

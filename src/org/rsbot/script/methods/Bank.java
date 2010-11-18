@@ -2,7 +2,7 @@ package org.rsbot.script.methods;
 
 import org.rsbot.script.wrappers.*;
 
-import java.awt.*;
+import java.awt.Point;
 
 /**
  * Bank related operations.
@@ -66,16 +66,14 @@ public class Bank extends MethodProvider {
 	 */
 	public boolean close() {
 		if (isOpen()) {
-			methods.interfaces
-					.getComponent(INTERFACE_BANK, INTERFACE_BANK_BUTTON_CLOSE)
-					.doClick();
+			methods.interfaces.getComponent(INTERFACE_BANK,
+					INTERFACE_BANK_BUTTON_CLOSE).doClick();
 			sleep(random(500, 600));
 			return !isOpen();
 		}
 		if (isDepositOpen()) {
-			methods.interfaces
-					.getComponent(INTERFACE_DEPOSIT_BOX, INTERFACE_DEPOSIT_BOX_BUTTON_CLOSE)
-					.doClick();
+			methods.interfaces.getComponent(INTERFACE_DEPOSIT_BOX,
+					INTERFACE_DEPOSIT_BOX_BUTTON_CLOSE).doClick();
 			sleep(random(500, 600));
 			return !isDepositOpen();
 		}
@@ -85,73 +83,65 @@ public class Bank extends MethodProvider {
 	/**
 	 * If bank is open, deposits specified amount of an item into the bank. Supports deposit boxes.
 	 *
-	 * @param itemID		  The ID of the item.
-	 * @param numberToDeposit The amount to deposit. 0 deposits All. 1,5,10 deposit
-	 *                        corresponding amount while other numbers deposit X.
+	 * @param itemID The ID of the item.
+	 * @param number The amount to deposit. 0 deposits All. 1,5,10 deposit
+	 *               corresponding amount while other numbers deposit X.
 	 * @return <tt>true</tt> if successful; otherwise <tt>false</tt>.
 	 */
-	public boolean deposit(final int itemID, final int numberToDeposit) {
-		if (isOpen()) {
-			RSItem item = methods.inventory.getItem(itemID);
-			if (numberToDeposit < 0)
-				throw new IllegalArgumentException("numberToDepsoit < 0 ("
-						+ numberToDeposit + ")");
-			final int inventoryCount = methods.inventory.getCount(true);
-			switch (numberToDeposit) {
+	public boolean deposit(int itemID, int number) {
+		if (isOpen() || isDepositOpen()) {
+			if (number < 0) {
+				throw new IllegalArgumentException("number < 0 (" + number + ")");
+			}
+			RSComponent item = null;
+			int itemCount = 0;
+			int invCount = isOpen() ? methods.inventory.getCount(true) : getBoxCount();
+
+			if (!isOpen()) {
+				boolean match = false;
+				for (int i = 0; i < 28; i++) {
+					RSComponent comp = methods.interfaces.get(11).getComponent(17).getComponent(i);
+					if (comp.getComponentID() == itemID) {
+						itemCount += comp.getComponentStackSize();
+						if (!match) {
+							item = comp;
+							match = true;
+						}
+					}
+					if (itemCount > 1) {
+						break;
+					}
+				}
+			} else {
+				item = methods.inventory.getItem(itemID).getComponent();
+				itemCount = methods.inventory.getCount(true, itemID);
+			}
+
+			// If it's null, then it is most likely not in the inventory
+			if (item == null) {
+				return true;
+			}
+
+			switch (number) {
 				case 0: // Deposit All
-					item.doAction("Deposit-All");
+					item.doAction(itemCount > 1 ? "Deposit-All" : "Deposit");
 					break;
-				case 1: // Deposit 1
-					item.doAction("Deposit-1");
-					break;
-				case 5: // Deposit 5
-					item.doAction("Deposit-5");
-					break;
-				case 10: // Deposit 10
-					item.doAction("Deposit-10");
+				case 1:
+				case 5:
+					item.doAction("Deposit-" + number);
 					break;
 				default: // Deposit x
-					if (!item.doAction("Deposit-" + numberToDeposit)) {
+					if (!item.doAction("Deposit-" + number)) {
 						if (item.doAction("Deposit-X")) {
 							sleep(random(1000, 1300));
-							methods.inputManager.sendKeys("" + numberToDeposit, true);
+							methods.inputManager.sendKeys(String.valueOf(number), true);
 						}
 					}
 					break;
 			}
-			return (methods.inventory.getCount(true) < inventoryCount)
-					|| (methods.inventory.getCount() == 0);
-		}
-		if (isDepositOpen()) {
-			for (int i = 0; i < 28; i++) {
-				RSComponent item = methods.interfaces.get(11).getComponent(17).getComponent(i);
-				int id = item.getComponentID();
-				if (id == itemID) {
-					switch (numberToDeposit) {
-						case 0: // Deposit All
-							item.doAction("Deposit-All");
-							break;
-						case 1: // Deposit 1
-							item.doAction("Deposit-1");
-							break;
-						case 5: // Deposit 5
-							item.doAction("Deposit-5");
-							break;
-						case 10: // Deposit 10
-							item.doAction("Deposit-10");
-							break;
-						default: // Deposit x
-							if (item.doAction("Deposit-" + numberToDeposit)) {
-								if (item.doAction("Deposit-X")) {
-									sleep(random(1000, 1300));
-									methods.inputManager.sendKeys("" + numberToDeposit, true);
-								}
-							}
-							break;
-					}
-					return true;
-				}
-			}
+			sleep(300);
+			int cInvCount = isOpen() ? methods.inventory.getCount(true) : getBoxCount();
+			return cInvCount < invCount || cInvCount == 0;
 		}
 		return false;
 	}
@@ -171,6 +161,44 @@ public class Bank extends MethodProvider {
 	}
 
 	/**
+	 * Deposits all items in inventory except for the given IDs. Supports deposit boxes.
+	 *
+	 * @param items The items not to deposit.
+	 * @return true on success.
+	 */
+	public boolean depositAllExcept(int... items) {
+		if (isOpen() || isDepositOpen()) {
+			boolean deposit = true;
+			int invCount = isOpen() ? methods.inventory.getCount(true) : getBoxCount();
+			outer:
+			for (int i = 0; i < 28; i++) {
+				RSComponent item = isOpen() ? methods.inventory.getItemAt(i).getComponent()
+						: methods.interfaces.get(11).getComponent(17).getComponent(i);
+				if (item != null && item.getComponentID() != -1) {
+					for (int id : items) {
+						if (item.getComponentID() == id) {
+							continue outer;
+						}
+					}
+					for (int tries = 0; tries < 5; tries++) {
+						deposit(item.getComponentID(), 0);
+						sleep(random(600, 900));
+						int cInvCount = isOpen() ? methods.inventory.getCount(true)
+								: getBoxCount();
+						if (cInvCount < invCount) {
+							invCount = cInvCount;
+							continue outer;
+						}
+					}
+					deposit = false;
+				}
+			}
+			return deposit;
+		}
+		return false;
+	}
+
+	/**
 	 * Deposit everything your player has equipped. Supports deposit boxes.
 	 *
 	 * @return <tt>true</tt> on success.
@@ -183,65 +211,6 @@ public class Bank extends MethodProvider {
 		}
 		return isDepositOpen() && methods.interfaces.getComponent(INTERFACE_DEPOSIT_BOX,
 				INTERFACE_DEPOSIT_BUTTON_DEPOSIT_WORN_ITEMS).doClick();
-	}
-
-	/**
-	 * Deposits all items in inventory except for the given IDs. Supports deposit boxes.
-	 *
-	 * @param items The items not to deposit.
-	 * @return true on success.
-	 */
-	public boolean depositAllExcept(final int... items) {
-		boolean deposit = true;
-		if (isOpen()) {
-			int inventoryCount = methods.inventory.getCount();
-			outer:
-			for (int i = 0; i < 28; i++) {
-				RSItem item = methods.inventory.getItemAt(i);
-				if (item != null && item.getID() != -1) {
-					for (int id : items) {
-						if (item.getID() == id) {
-							continue outer;
-						}
-					}
-					for (int tries = 0; tries < 5; tries++) {
-						item.doAction("Deposit-All");
-						sleep(random(500, 700));
-						if (methods.inventory.getCount() < inventoryCount) {
-							inventoryCount = methods.inventory.getCount();
-							continue outer;
-						}
-					}
-					deposit = false;
-				}
-			}
-		} else if (isDepositOpen()) {
-			int depositBoxCount = getBoxCount();
-			outer:
-			for (int i = 0; i < 28; i++) {
-				RSComponent item = methods.interfaces.get(11).getComponent(17).getComponent(i);
-				int id = item == null ? -1 : item.getComponentID();
-				if (id != -1) {
-					for (int iid : items) {
-						if (iid == id) {
-							continue outer;
-						}
-					}
-					for (int tries = 0; tries < 5; tries++) {
-						item.doAction("Deposit-All");
-						sleep(random(500, 700));
-						if (getBoxCount() < depositBoxCount) {
-							depositBoxCount = getBoxCount();
-							continue outer;
-						}
-					}
-					deposit = false;
-				}
-			}
-		} else {
-			return false;
-		}
-		return deposit;
 	}
 
 	/**
@@ -651,6 +620,7 @@ public class Bank extends MethodProvider {
 				.getSetting(Settings.SETTING_BANK_TOGGLE_WITHDRAW_MODE) == 1;
 	}
 
+
 	/**
 	 * Tries to withdraw an item.
 	 * <p/>
@@ -661,45 +631,41 @@ public class Bank extends MethodProvider {
 	 * @return <tt>true</tt> on success.
 	 */
 	public boolean withdraw(final int itemID, final int count) {
-		if (count < 0)
-			throw new IllegalArgumentException("count < 0 (" + count + ")");
-		if (!isOpen())
-			return false;
-		final RSItem item = getItem(itemID);
-		if (item == null || !item.isComponentValid())
-			return false;
-		final int inventoryCount = methods.inventory.getCount(true);
-		switch (count) {
-			case 0: // Withdraw All
-				item.doAction("Withdraw-All");
-				break;
-			case 1: // Withdraw 1
-				item.doClick(true);
-				break;
-			case 5: // Withdraw 5
-			case 10: // Withdraw 10
-				item.doAction("Withdraw-" + count);
-				break;
-			default: // Withdraw x
-				if (item.doClick(false)) {
-					sleep(random(600, 900));
-					if (methods.menu.contains("Withdraw-" + count)) {
-						if (methods.menu.doAction("Withdraw-" + count)) {
-							sleep(random(100, 200));
-							return true;
+		if (isOpen()) {
+			if (count < 0) {
+				throw new IllegalArgumentException("count < 0 (" + count + ")");
+			}
+
+			RSComponent item = getItem(itemID).getComponent();
+			if (item == null) {
+				return false;
+			}
+
+			int invCount = methods.inventory.getCount(true);
+			switch (count) {
+				case 0: // All
+					item.doAction("Withdraw-All");
+					break;
+				case 1:
+					item.doClick(true);
+					break;
+				case 5:
+				case 10:
+					item.doAction("Withdraw-" + count);
+					break;
+				default:
+					if (!item.doAction("Withdraw-" + count)) {
+						if (item.doAction("Withdraw-X")) {
+							sleep(random(1000, 1300));
+							methods.inputManager.sendKeys(String.valueOf(count), true);
 						}
-						return false;
 					}
-					if (item.doAction("Withdraw-X")) {
-						sleep(random(1000, 1300));
-						methods.inputManager.sendKeys("" + count, true);
-					}
-					sleep(random(100, 200));
-				}
-				break;
+			}
+			sleep(random(500, 700));
+			int cInvCount = methods.inventory.getCount(true);
+			return cInvCount < invCount || cInvCount == 28;
 		}
-		return (methods.inventory.getCount(true) > inventoryCount)
-				|| (methods.inventory.getCount(true) == 28);
+		return false;
 	}
 
 	/**

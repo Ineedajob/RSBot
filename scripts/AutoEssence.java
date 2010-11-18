@@ -205,7 +205,8 @@ public class AutoEssence extends Script implements PaintListener {
 					} else {
 						++fails;
 					}
-				} else if (!getMyPlayer().isMoving() && walking.walkTo(obj.getLocation())) {
+				} else if (!getMyPlayer().isMoving() && (walking.walkTo(obj.getLocation()) ||
+								walking.walkTileMM(walking.getClosestTileOnMap(obj.getLocation())))) {
 					sleep(random(1000, 1800));
 				}
 			}

@@ -1,4 +1,3 @@
-
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -25,8 +24,8 @@ import org.rsbot.script.util.WindowUtil;
 import org.rsbot.util.GlobalConfiguration;
 
 
-@ScriptManifest(authors={"Enfilade"}, keywords={"fishing","enfilade","godless"}, name="Godless Fisher", version=1.041,
-	description = "Multiple locations and styles supported.")
+@ScriptManifest(authors={"Enfilade"}, keywords={"fishing","enfilade","godless"}, name="Godless Fisher", version=1.051,
+	description = "Supports multiple locations. Use fixed graphics mode.")
 public class GodlessFisher extends Script implements PaintListener,
     MouseMotionListener, MouseListener {
 
@@ -241,7 +240,7 @@ public class GodlessFisher extends Script implements PaintListener,
                     inventoryRow = 0;
                     fishingSpot = null;
                 } else if(style.playerIsFishing(player) && interacting instanceof RSNPC
-                        /*&& ((RSNPC)interacting).getID() == spots.getID()*/) {
+                        && ((RSNPC)interacting).getID() == spots.getID()) {
                     state = State.FISHING;
                     fishingSpot = (RSNPC)interacting;
                     fishingSpotTile = fishingSpot.getLocation();
@@ -381,17 +380,18 @@ public class GodlessFisher extends Script implements PaintListener,
                 }
                 break;
             case WALKING_PATH:
-                if(!style.playerIsFishing(player) && player.getAnimation() >= 0
-                        && walking.getEnergy() < 100)
+                /*if(!style.playerIsFishing(player) && player.getAnimation() >= 0
+                        && walking.getEnergy() < 98)
                     startAntiban();
-                else if(!walking.isRunEnabled()) {
-                    if(walking.getEnergy() >= energyThreshold) {
+                else */if(!walking.isRunEnabled() && walking.getEnergy() >= energyThreshold) {
+                    //if(walking.getEnergy() >= energyThreshold) {
                         interfaces.get(RUN_ID).getComponent(RUN_CHILD_ID).doAction("turn run mode on");
                         return random(500, 1000);
+                        /*return random(500, 1000);
                     } else {
                         interfaces.get(RUN_ID).getComponent(RUN_CHILD_ID).doAction("rest");
                         return random(3000, 5000);
-                    }
+                    }*/
                 } else {
                     int whatHappened = step(path);
                     if(whatHappened != REACHED_END) {
@@ -611,13 +611,10 @@ public class GodlessFisher extends Script implements PaintListener,
             Point last = null, p;
             g.setColor(Color.ORANGE);
             for(RSTile t : path) {
-                if(calc.tileOnMap(t)) {
-                    p = calc.tileToMinimap(t);
-                    if(last != null)
-                        g.drawLine(p.x, p.y, last.x, last.y);
-                    last = p;
-                } else
-                    last = null;
+                p = tileToMinimap(t);
+                if(last != null)
+                    g.drawLine(p.x, p.y, last.x, last.y);
+                last = p;
             }
         }
         int h = 0;
@@ -975,10 +972,14 @@ public class GodlessFisher extends Script implements PaintListener,
         xdist /= dist;
         ydist /= dist;
 
-        Line l1 = new Line(player.getX() - (int)(ydist*variation), player.getY() + (int)(xdist*variation),
-                player.getX() + (int)(ydist*variation), player.getY() + (int)(xdist*variation));
-        Line l2 = new Line(t.getX() - (int)(ydist*variation), t.getY() + (int)(xdist*variation),
-                t.getX() + (int)(ydist*variation), t.getY() + (int)(xdist*variation));
+        //log(xdist + ", " + ydist);
+
+        Line l1 = new Line(player.getX() - (int)Math.round(ydist*variation), player.getY() + (int)Math.round(xdist*variation),
+                player.getX() + (int)Math.round(ydist*variation), player.getY() + (int)Math.round(xdist*variation));
+        Line l2 = new Line(t.getX() - (int)Math.round(ydist*variation), t.getY() + (int)Math.round(xdist*variation),
+                t.getX() + (int)Math.round(ydist*variation), t.getY() + (int)Math.round(xdist*variation));
+        //log(l2.x + ", " + l2.y + " " + l2.x2 + ", " + l2.y2);
+        //log(l1.x + ", " + l1.y + " " + l1.x2 + ", " + l1.y2);
         return generatePath(new Line[]{l1, l2});
     }
 
@@ -995,7 +996,13 @@ public class GodlessFisher extends Script implements PaintListener,
             }
         if(!onScreen) {
             int nearest = getNearestTile();
-            path.addAll(nearest, straightPathTo(path.get(nearest), 3));
+            //ArrayList<RSTile> aStarPath = generatePath(getMyPlayer().getLocation(),
+                    //path.get(nearest));
+            //if(aStarPath == null) {
+                //log("Lost!");
+                path.addAll(nearest, straightPathTo(path.get(nearest), 5));
+            //} else
+                //path.addAll(nearest, aStarPath);
         }
         locatePlayer();
     }
@@ -1158,6 +1165,157 @@ public class GodlessFisher extends Script implements PaintListener,
         return path;
     }
 
+    //<editor-fold defaultstate="collapsed" desc="A*">
+    public int[][] blocks;
+    public int baseX,  baseY;
+
+    private void validate(RSTile start){
+        if(game.getBaseX() != baseX ||
+                game.getBaseY() != baseY){
+            baseX = game.getBaseX();
+            baseY = game.getBaseY();
+            blocks = walking.getCollisionFlags(game.getPlane()).clone();
+        }
+    }
+
+    private boolean contains(RSTile t){
+        int x = t.getX()-baseX;
+        int y = t.getY()-baseY;
+        return (x >= 0 || x < 104 || y >= 0 || y < 104);
+    }
+
+    private ArrayList<RSTile> generatePath(RSTile cur, RSTile dest) {
+        validate(cur);
+        if(!contains(dest))
+            return null;
+        ArrayList<PathTile> closed = new ArrayList<PathTile>(), open = new ArrayList<PathTile>();
+        int curX = cur.getX() - baseX,
+                curY = cur.getY() - baseY,
+                destX = dest.getX() - baseX,
+                destY = dest.getY() - baseY;
+        PathTile current = new PathTile(curX, curY),
+                destination = new PathTile(destX, destY);
+        open.add(current);
+        boolean found = false;
+        while (open.size() > 0 && !found) {
+            current = cheapestTile(open);
+            closed.add(current);
+            open.remove(open.indexOf(current));
+            for (PathTile t : adjacentTilesTo(current)) {
+                if (!closed.contains(t)) {
+                    int index = open.indexOf(t);
+                    if (index < 0) {
+                        t.parent = current;
+                        t.gScore = current.gScore + calculateGCost(t, current);
+                        t.fScore = t.gScore + calculateHCost(t, destination);
+                        open.add(t);
+                    } else {
+                        PathTile old = open.get(index);
+                        if (current.gScore + calculateGCost(old, current) < old.gScore) {
+                            old.parent = current;
+                            old.gScore = current.gScore + calculateGCost(old, current);
+                            old.fScore = old.gScore + calculateHCost(old, destination);
+                        }
+                    }
+                }
+            }
+            if (closed.contains(destination))
+                found = true;
+        }
+        if (found)
+            return solve(closed.get(closed.size() - 1), baseX, baseY);
+        return null;
+    }
+
+    private ArrayList<RSTile> solve(PathTile pathEnd, int baseX, int baseY) {
+        ArrayList<RSTile> reversedPath = new ArrayList<RSTile>();
+        PathTile p = pathEnd;
+        while (p.parent != null)
+            reversedPath.add(reversedPath.size(), p.toRSTile(baseX, baseY));
+        return reversedPath;
+    }
+
+    private LinkedList<PathTile> adjacentTilesTo(PathTile t) {
+        LinkedList<PathTile> adjacent = new LinkedList<PathTile>();
+        int curX = t.x, curY = t.y;
+        if (curX > 0 && curY < 103 && (blocks[curX - 1][curY + 1] & 0x1280138) == 0 && (blocks[curX - 1][curY] & 0x1280108) == 0 && (blocks[curX][curY + 1] & 0x1280120) == 0)
+            adjacent.add(new PathTile(curX - 1, curY + 1));
+        if (curY < 103 && (blocks[curX][curY + 1] & 0x1280120) == 0)
+            adjacent.add(new PathTile(curX, curY + 1));
+        if (curX > 0 && curY < 103 && (blocks[curX - 1][curY + 1] & 0x1280138) == 0 && (blocks[curX - 1][curY] & 0x1280108) == 0 && (blocks[curX][curY + 1] & 0x1280120) == 0)
+            adjacent.add(new PathTile(curX + 1, curY + 1));
+        if (curX > 0 && (blocks[curX - 1][curY] & 0x1280108) == 0)
+            adjacent.add(new PathTile(curX - 1, curY));
+        if (curX < 103 && (blocks[curX + 1][curY] & 0x1280180) == 0)
+            adjacent.add(new PathTile(curX + 1, curY));
+        if (curX > 0 && curY > 0 && (blocks[curX - 1][curY - 1] & 0x128010e) == 0 && (blocks[curX - 1][curY] & 0x1280108) == 0 && (blocks[curX][curY - 1] & 0x1280102) == 0)
+            adjacent.add(new PathTile(curX - 1, curY - 1));
+        if (curY > 0 && (blocks[curX][curY - 1] & 0x1280102) == 0)
+            adjacent.add(new PathTile(curX, curY - 1));
+        if (curX < 103 && curY > 0 && (blocks[curX + 1][curY - 1] & 0x1280183) == 0 && (blocks[curX + 1][curY] & 0x1280180) == 0 && (blocks[curX][curY - 1] & 0x1280102) == 0)
+            adjacent.add(new PathTile(curX + 1, curY - 1));
+        return adjacent;
+    }
+
+    private PathTile cheapestTile(ArrayList<PathTile> open) {
+        PathTile c = null;
+        for (PathTile t : open)
+            if (c == null || t.fScore < c.fScore)
+                c = t;
+        return c;
+    }
+
+    private int calculateGCost(PathTile from, PathTile to) {
+        return (int)(Math.sqrt(Math.pow(from.getX() - to.getX(), 2) + Math.pow(from.getY() - to.getY(), 2))*10);
+    }
+
+    private int calculateHCost(PathTile to, PathTile from) {
+        return Math.abs(to.getX() - from.getX()) + Math.abs(to.getY() - from.getY())*10;
+    }
+
+    /*private boolean canReach(RSTile t) {
+        validate(getMyPlayer().getLocation());
+        int x = t.getX() - baseX, y = t.getY() - baseY;
+        return (x >= 0 | x < 104 || y >= 0 || y < 104) && map[x][y];
+    }*/
+
+    private class PathTile {
+
+        public PathTile(int x, int y) {
+            this.x = x;
+            this.y = y;
+            fScore = gScore = 0;
+        }
+
+        public boolean isValid() {
+            return !(x < 0 || y < 0 || x >= 104 || y >= 104);
+        }
+
+        public RSTile toRSTile(int baseX, int baseY) {
+            return new RSTile(x + baseX, y + baseY);
+        }
+
+        public int getX() {
+            return x;
+        }
+
+        public int getY() {
+            return y;
+        }
+
+        public boolean equals(Object o) {
+            if(o == null || !(o instanceof PathTile))
+                return false;
+            PathTile another = (PathTile)o;
+            return x == another.getX() && y == another.getY();
+        }
+        private int x,  y;
+        public PathTile parent;
+        public int gScore,  fScore;
+    }
+
+    //</editor-fold>
+
     private class Line {
         private int x, y, xdist, ydist, x2, y2, centerX, centerY;
         private RSTile t1, t2;
@@ -1195,13 +1353,13 @@ public class GodlessFisher extends Script implements PaintListener,
         public RSTile getTile2() { return t2; }
 
         public void drawTo(Graphics g, Line line) {
-            if(!calc.tileOnMap(t1) || !calc.tileOnMap(t2))
-                return;
-            if(calc.tileOnMap(line.getTile1()) && calc.tileOnMap(line.getTile2())) {
-                Point p1 = calc.tileToMinimap(t1);
-                Point p2 = calc.tileToMinimap(t2);
-                Point p3 = calc.tileToMinimap(line.getTile2());
-                Point p4 = calc.tileToMinimap(line.getTile1());
+            //if(!calc.tileOnMap(t1) || !calc.tileOnMap(t2))
+                //return;
+            //if(calc.tileOnMap(line.getTile1()) && calc.tileOnMap(line.getTile2())) {
+                Point p1 = tileToMinimap(t1);
+                Point p2 = tileToMinimap(t2);
+                Point p3 = tileToMinimap(line.getTile2());
+                Point p4 = tileToMinimap(line.getTile1());
                 GeneralPath path = new GeneralPath();
                 path.moveTo(p1.x, p1.y);
                 path.lineTo(p2.x, p2.y);
@@ -1211,7 +1369,7 @@ public class GodlessFisher extends Script implements PaintListener,
                 g.setColor(POLY_FILL);
                 ((Graphics2D)g).fill(path);
                 ((Graphics2D)g).draw(path);
-            }
+            //}
         }
 
         public int getX() {
@@ -1588,6 +1746,44 @@ public class GodlessFisher extends Script implements PaintListener,
         }
     }
 
+    /*private RSTile minimapToTile(Point p) {
+        RSTile player = getMyPlayer().getLocation();
+        Point a = calc.tileToMinimap(player);
+        Point b = calc.tileToMinimap(new RSTile(player.getX(), player.getY() + 16));
+        Point c = calc.tileToMinimap(new RSTile(player.getX() + 16, player.getY()));
+
+        double bDistX = (b.x - a.x)/16.0;
+        double bDistY = (b.y - a.y)/16.0;
+
+        double cDistX = (c.x - a.x)/16.0;
+        double cDistY = (c.y - a.y)/16.0;
+
+        int xDist = (int)Math.round(p.x - a.x);
+        int yDist = (int)Math.round(p.y - a.y);
+
+        return new RSTile(player.getX() + (int)Math.round(xDist/cDistX + yDist/bDistX),
+                player.getY() + (int)Math.round(yDist/bDistY + xDist/cDistY));
+    }*/
+
+    private Point tileToMinimap(RSTile t) {
+        RSTile player = getMyPlayer().getLocation();
+        Point a = calc.tileToMinimap(player);
+        Point b = calc.tileToMinimap(new RSTile(player.getX(), player.getY() + 16));
+        Point c = calc.tileToMinimap(new RSTile(player.getX() + 16, player.getY()));
+
+        double bDistX = (b.x - a.x)/16.0;
+        double bDistY = (b.y - a.y)/16.0;
+
+        double cDistX = (c.x - a.x)/16.0;
+        double cDistY = (c.y - a.y)/16.0;
+
+        int xDist = t.getX() - player.getX();
+        int yDist = t.getY() - player.getY();
+
+        return new Point(a.x + (int)Math.round(cDistX*xDist + bDistX*yDist),
+                a.y + (int)Math.round(bDistY*yDist + cDistY*xDist));
+    }
+
     private final Gear
             NORMAL_ROD = new Gear(307, 313),
             FLY_ROD = new Gear(309, 314),
@@ -1626,7 +1822,7 @@ public class GodlessFisher extends Script implements PaintListener,
                 new Line(2886, 3165, 2893, 3162),
                 new Line(2875, 3158, 2880, 3151),
                 new Line(2866, 3151, 2865, 3147),
-                new Line(2851, 3145, 2851, 3141)
+                new Line(2852, 3144, 2851, 3141)
             }, new InventoryHandler(InventoryHandler.NOTER, 11267),
             new SpotInfo(CAGE, 324),
             new SpotInfo(HARPOON, 324),
@@ -1691,12 +1887,12 @@ public class GodlessFisher extends Script implements PaintListener,
          new FishingArea(2835, 3433, 2856, 3433,
             "Catherby",
             new Line[] {
-                new Line(2850, 3431, 2835, 3432),
-                new Line(2835, 3438, 2832, 3435),
-                new Line(2830, 3439, 2830, 3435),
-                new Line(2822, 3439, 2822, 3435),
-                new Line(2815, 3438, 2815, 3435),
-                new Line(2811, 3438, 2807, 3434),
+                new Line(2840, 3432, 2834, 3433),
+                new Line(2831, 3439, 2831, 3435),
+                new Line(2821, 3439, 2821, 3435),
+                new Line(2818, 3438, 2818, 3435),
+                new Line(2812, 3436, 2811, 3433),
+                new Line(2810, 3438, 2807, 3438),
                 new Line(2811, 3441, 2807, 3441)
             }, new InventoryHandler(InventoryHandler.BOOTH, 2213),
             new SpotInfo(NET, 320),
@@ -2258,35 +2454,35 @@ public class GodlessFisher extends Script implements PaintListener,
 
     }
 
-}
+    private class Timer {
 
-class Timer {
+        private long endTime, time;
 
-    private long endTime, time;
+        public Timer(long time) {
+            this.time = time;
+            endTime = System.currentTimeMillis() + time;
+        }
 
-    public Timer(long time) {
-        this.time = time;
-        endTime = System.currentTimeMillis() + time;
+        public boolean isUp() {
+            return endTime < System.currentTimeMillis();
+        }
+
+        public void reset() {
+            endTime = System.currentTimeMillis() + time;
+        }
+
+        public void setDuration(long duration) {
+            time = duration;
+        }
+
     }
 
-    public boolean isUp() {
-        return endTime < System.currentTimeMillis();
+    private enum State {
+        LOOKING("Looking for a spot"), FISHING("Fishing"), WALKING_PATH("Walking Path"),
+        HANDLING_INVENTORY("Handling Inventory"), ANTIBAN("Antiban"), MOVING("Waiting to stop moving");
+        private String desc;
+        State(String desc) { this.desc = desc; }
+        public String toString() { return desc; }
     }
 
-    public void reset() {
-        endTime = System.currentTimeMillis() + time;
-    }
-
-    public void setDuration(long duration) {
-        time = duration;
-    }
-
-}
-
-enum State {
-    LOOKING("Looking for a spot"), FISHING("Fishing"), WALKING_PATH("Walking Path"),
-    HANDLING_INVENTORY("Handling Inventory"), ANTIBAN("Antiban"), MOVING("Waiting to stop moving");
-    private String desc;
-    State(String desc) { this.desc = desc; }
-    public String toString() { return desc; }
 }

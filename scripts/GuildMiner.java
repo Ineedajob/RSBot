@@ -158,8 +158,8 @@ public class GuildMiner extends Script implements PaintListener {
 					} else if (calc.distanceTo(rock) < 8) {
 						walking.walkTileOnScreen(rock.getLocation());
 						sleep(500);
-					} else {
-						walking.walkTileMM(walking.getClosestTileOnMap(rock.getLocation()));
+					} else if (walking.walkTo(rock.getLocation()) ||
+							walking.walkTileMM(walking.getClosestTileOnMap(rock.getLocation()))) {
 						sleep(500);
 					}
 				} else if (random(0, 4) == 0 && rocks.length > 1 &&!rocks[1].equals(over)) {

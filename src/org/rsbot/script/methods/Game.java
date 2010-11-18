@@ -164,6 +164,20 @@ public class Game extends MethodProvider {
         methods.interfaces.getComponent(iTab.getID()).doClick();
     }
 
+	/**
+	 * Closes the currently open tab if in resizable mode.
+	 */
+	public void closeTab() {
+		int tab = getCurrentTab();
+		if (isFixed() || tab == TAB_LOGOUT) {
+			return;
+		}
+		org.rsbot.client.RSInterface iTab = methods.gui.getTab(tab);
+        if (iTab != null) {
+            methods.interfaces.getComponent(iTab.getID()).doClick();
+        }
+	}
+
     /**
      * Click chat button.
      *
