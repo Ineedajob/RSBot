@@ -33,11 +33,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  * @author Jacmob
  */
-@ScriptManifest(name = "AIO Chopper", authors = {"Jacmob"}, keywords = "Woodcutting", version = 1.0,
+@ScriptManifest(name = "AIO Chopper", authors = {"Jacmob"}, keywords = "Woodcutting", version = 1.1,
 		description = "Select options in the GUI")
 public class AIOChopper extends Script implements PaintListener {
 
@@ -80,8 +83,8 @@ public class AIOChopper extends Script implements PaintListener {
 	public final Color BG = new Color(0, 100, 0, 150);
 	public final Color DROP = new Color(0, 20, 0, 255);
 	public final Color TEXT = new Color(0, 255, 0, 255);
-	public final Color FOCUS_PRIMARY = new Color(0, 255, 0, 100);
-	public final Color FOCUS_SECONDARY = new Color(0, 0, 255, 100);
+	public final Color FOCUS_PRIMARY = new Color(0, 255, 0, 50);
+	public final Color FOCUS_SECONDARY = new Color(0, 0, 255, 50);
 
 	/* Properties */
 
@@ -89,16 +92,20 @@ public class AIOChopper extends Script implements PaintListener {
 
 	/* Script State */
 
+	private Action action;
 	private int nextMinRunEnergy;
 	private boolean checkLocation;
 	private Location currentLocation;
 	private Tree[] currentTrees;
 	private Tree currentTree;
 	private Tree nextTree;
+	private boolean approached;
+	private int hatchet;
 
 	private int nestsCollected;
 	private int startExperience;
 	private long startTime;
+	private Set<Particle> particles;
 
 	private boolean hoveredNext;
 	private boolean targetedCurrent;
@@ -107,6 +114,7 @@ public class AIOChopper extends Script implements PaintListener {
 
 	private Location[] selectedLocs;
 	private boolean powerChop;
+	private boolean paintEffects;
 
 	/* Overriding Methods */
 
@@ -123,6 +131,7 @@ public class AIOChopper extends Script implements PaintListener {
 			return false;
 
 		powerChop = frame.isPowerChopSelected();
+		paintEffects = frame.isPaintEffectsSelected();
 		title = new StringBuilder().
 				append(properties.name()).append(" by Jacmob v").
 				append(properties.version()).toString();
@@ -154,7 +163,7 @@ public class AIOChopper extends Script implements PaintListener {
 				return 500;
 			}
 		}
-		switch (getAction()) {
+		switch (action = getAction()) {
 			case WALK_TO_TREES:
 				walkTo(currentLocation.treeArea);
 				break;
@@ -174,36 +183,41 @@ public class AIOChopper extends Script implements PaintListener {
 					loadNextTree();
 				}
 				boolean newTree = false;
-				if ((currentTree == null || !currentTree.isStanding()) && nextTree.isStanding()) {
+				if (currentTree == null || !currentTree.isStanding() && (
+						nextTree.isStanding() || !approached)) {
 					currentTree = nextTree;
 					loadNextTree();
 					newTree = true;
+					approached = true;
 				}
 				if (!powerChop) {
 					nest();
 				}
 				if (currentTree != null && (newTree || !isChopping())) {
 					RSObject obj = getObject(currentTree);
-					if (currentTree.isStanding()) {
-						if (obj != null) {
-							if (obj.isOnScreen()) {
-								if (chopTree(obj)) {
-									hoveredNext = false;
-									targetedCurrent = false;
-									sleep(1000);
-								} else if (random(0, 5) == 0) {
-									camera.turnToObject(obj, 10);
-								}
-							} else if (calc.distanceTo(obj.getLocation()) > 5) {
-								walking.walkTileMM(walking.getClosestTileOnMap(obj.getLocation()));
-								sleep(500);
-							} else if (!targetedCurrent) {
+					if (obj == null) {
+						idle();
+					} else if (currentTree.isStanding()) {
+						approached = false;
+						if (obj.isOnScreen()) {
+							if (chopTree(obj)) {
+								hoveredNext = false;
+								targetedCurrent = false;
+								sleep(1000);
+							} else if (random(0, 5) == 0) {
 								camera.turnToObject(obj, 10);
-								targetedCurrent = true;
-							} else {
-								walking.walkTileOnScreen(obj.getLocation());
-								sleep(500);
 							}
+						} else if (calc.distanceTo(obj.getLocation()) > 5) {
+							if (!walking.walkTo(obj.getLocation()) && !getMyPlayer().isMoving()) {
+								walking.walkTileMM(walking.getClosestTileOnMap(obj.getLocation()));
+							}
+							sleep(500);
+						} else if (!targetedCurrent) {
+							camera.turnToObject(obj, 10);
+							targetedCurrent = true;
+						} else {
+							walking.walkTileOnScreen(obj.getLocation());
+							sleep(500);
 						}
 					} else if (!targetedCurrent) {
 						camera.turnToObject(obj, 10);
@@ -222,13 +236,14 @@ public class AIOChopper extends Script implements PaintListener {
 				}
 				if (!hoveredNext && random(0, 4) == 0 && nextTree != null) {
 					RSObject obj = getObject(nextTree);
-					if (obj != null && !obj.isOnScreen()) {
-						camera.turnToObject(obj, 10);
+					if (obj != null) {
+						if (!obj.isOnScreen()) {
+							camera.turnToObject(obj, 10);
+						} else if (random(0, 4) != 0) {
+							obj.doHover();
+						}
+						hoveredNext = true;
 					}
-					if (random(0, 4) != 0 && obj.isOnScreen()) {
-						obj.doHover();
-					}
-					hoveredNext = true;
 				}
 				break;
 			case DROP:
@@ -239,8 +254,22 @@ public class AIOChopper extends Script implements PaintListener {
 				break;
 			case BANK:
 				if (bank.isOpen()) {
-					if (bank.depositAll()) {
-						sleep(500);
+					if (hatchet > 0 && !inventory.containsOneOf(AXE_IDS)) {
+						bank.withdraw(hatchet, 1);
+						sleep(2000);
+						if (!inventory.containsOneOf(AXE_IDS)) {
+							log.warning("Unable to withdraw hatchet.");
+							stopScript(false);
+						}
+					}
+					if (!inventory.containsOneOf(AXE_IDS)) {
+						bank.depositAll();
+					} else {
+						if (hatchet == 0) {
+							log.info("Detected hatchet in inventory. Script will withdraw if removed.");
+						}
+						hatchet = inventory.getItem(AXE_IDS).getID();
+						bank.depositAllExcept(AXE_IDS);
 					}
 				} else if (bank.open()) {
 					sleep(500);
@@ -255,28 +284,58 @@ public class AIOChopper extends Script implements PaintListener {
 			return;
 		}
 
-		// Scene
+		if (paintEffects) {
 
-		if (currentTree != null) {
-			RSObject obj = objects.getTopAt(currentTree.location);
-			RSModel model = obj == null ? null : obj.getModel();
-			if (model != null) {
-				g.setColor(FOCUS_PRIMARY);
-				for (Polygon p : model.getTriangles()) {
-					g.fillPolygon(p);
-				}
-			}
-		}
+			// Scene
 
-		if (nextTree != null) {
-			RSObject obj = objects.getTopAt(nextTree.location);
-			RSModel model = obj == null ? null : obj.getModel();
-			if (model != null) {
-				g.setColor(FOCUS_SECONDARY);
-				for (Polygon p : model.getTriangles()) {
-					g.fillPolygon(p);
+			if (action == Action.CHOP) {
+
+				if (currentTree != null) {
+					RSObject obj = objects.getTopAt(currentTree.location);
+					RSModel model = obj == null ? null : obj.getModel();
+					if (model != null) {
+						g.setColor(FOCUS_PRIMARY);
+						for (Polygon p : model.getTriangles()) {
+							g.fillPolygon(p);
+						}
+						Point pt = model.getPoint();
+						Particle pl = Particle.newParticle(pt.x, pt.y);
+						pl.g = random(200, 255);
+						particles.add(pl);
+					}
 				}
+
+				if (nextTree != null) {
+					RSObject obj = objects.getTopAt(nextTree.location);
+					RSModel model = obj == null ? null : obj.getModel();
+					if (model != null) {
+						g.setColor(FOCUS_SECONDARY);
+						for (Polygon p : model.getTriangles()) {
+							g.fillPolygon(p);
+						}
+						Point pt = model.getPoint();
+						Particle pl = Particle.newParticle(pt.x, pt.y);
+						pl.b = random(200, 255);
+						particles.add(pl);
+					}
+				}
+
+				Iterator<Particle> i = particles.iterator();
+				while (i.hasNext()) {
+					Particle p = i.next();
+					if (p.a <= 0 || p.x < 0) {
+						i.remove();
+					} else {
+						g.setColor(new Color(p.r, p.g, p.b, p.a));
+						g.fillOval(p.x - p.rad, p.y - p.rad, p.rad * 2, p.rad * 2);
+						p.a -= 10;
+						p.y += 1;
+						p.x += p.v;
+					}
+				}
+
 			}
+
 		}
 
 		// Text
@@ -295,7 +354,7 @@ public class AIOChopper extends Script implements PaintListener {
 		g.fill3DRect(x - 7, y += vspace, 211, 62, true);
 
 		g.setColor(TEXT);
-		g.drawString(Timer.format(System.currentTimeMillis() - startTime), x, y += vspace);
+		g.drawString(Timer.format(System.currentTimeMillis() - startTime) + " - " + format(action), x, y += vspace);
 		g.drawString("XP Gained: " + (skills.getCurrentExp(Skills.WOODCUTTING) - startExperience), x, y += vspace);
 		g.drawString(powerChop ? "Dropping Logs" : ("Nests Collected: " + nestsCollected), x, y += vspace);
 	}
@@ -415,7 +474,7 @@ public class AIOChopper extends Script implements PaintListener {
 				!area.contains(getMyPlayer().getLocation())) {
 			RSTile dest = walking.getDestination();
 			return dest != null && getMyPlayer().isMoving() &&
-					area.contains(dest) && calc.distanceTo(dest) < 10;
+					area.contains(dest) && calc.distanceTo(dest) < 8;
 		}
 		return true;
 	}
@@ -424,8 +483,10 @@ public class AIOChopper extends Script implements PaintListener {
 		nextMinRunEnergy = 20;
 		checkLocation = true;
 		nestsCollected = 0;
+		hatchet = 0;
 		startExperience = skills.getCurrentExp(Skills.WOODCUTTING);
 		startTime = System.currentTimeMillis();
+		particles = new HashSet<Particle>();
 	}
 
 	private void loadLocation() {
@@ -512,6 +573,17 @@ public class AIOChopper extends Script implements PaintListener {
 		return trees;
 	}
 
+	private String format(Object o) {
+		String s = o.toString();
+		s = s.trim().toLowerCase().replace('_', ' ');
+		int i = -1;
+		do {
+			s = s.substring(0, i + 1) + s.substring(i + 1, i + 2).toUpperCase() + s.substring(i + 2);
+			i++;
+		} while ((i = s.indexOf(' ', i)) != -1);
+		return s;
+	}
+
 	/* Classes */
 
 	private class Tree {
@@ -519,12 +591,14 @@ public class AIOChopper extends Script implements PaintListener {
 		private final TreeType type;
 		private final RSTile location;
 
-		private long fallTime = Long.MAX_VALUE;
-		private boolean fallen = false;
+		private long fallTime;
+		private boolean fallen;
 
 		public Tree(TreeType type, RSTile location) {
 			this.type = type;
 			this.location = location;
+			this.fallTime = Long.MAX_VALUE - random(0, 1000);
+			this.fallen = false;
 		}
 
 		public boolean isStanding() {
@@ -542,6 +616,26 @@ public class AIOChopper extends Script implements PaintListener {
 
 		public String toString() {
 			return type + "@" + location;
+		}
+
+	}
+
+	private static class Particle {
+
+		private int r, g, b, a, x, y, v, rad;
+
+		public static Particle newParticle(int x, int y) {
+			Particle p = new Particle();
+			int random = (int) (Math.random() * 0xffffff);
+			p.rad = ((random >> 1) & 1) + 1;
+			p.v = (random & 3) - 1;
+			p.x = x;
+			p.y = y;
+			p.r = random & 0xff;
+			p.g = (random >> 8) & 0xff;
+			p.b = (random >> 16) & 0xff;
+			p.a = 200;
+			return p;
 		}
 
 	}
@@ -597,6 +691,7 @@ public class AIOChopper extends Script implements PaintListener {
 		private JComboBox locationBox;
 		private JComboBox typeBox;
 		private JCheckBox powerChop;
+		private JCheckBox paintEffects;
 		private String[] typesModel;
 
 		/**
@@ -660,6 +755,10 @@ public class AIOChopper extends Script implements PaintListener {
 
 		public boolean isPowerChopSelected() {
 			return powerChop.isSelected();
+		}
+
+		public boolean isPaintEffectsSelected() {
+			return paintEffects.isSelected();
 		}
 
 		private void createChildren() {
@@ -748,6 +847,12 @@ public class AIOChopper extends Script implements PaintListener {
 					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 					new Insets(0, 0, 0, 0), 0, 0));
 
+			paintEffects = new JCheckBox("Paint Effects");
+
+			settingsPanel.add(paintEffects, new GridBagConstraints(1, 3, 1, 1, 0.0, 0.0,
+					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+					new Insets(0, 0, 0, 0), 0, 0));
+
 			locationBox.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					if (locationBox.getSelectedItem().toString().equals(OPTION_OTHER)) {
@@ -794,7 +899,9 @@ public class AIOChopper extends Script implements PaintListener {
 			updateButton.setFont(updateButton.getFont().deriveFont(updateButton.getFont().getStyle() | Font.BOLD));
 			updatesPane.setEditable(false);
 			updatesPane.setContentType("text/html");
-			updatesPane.setText("<html><body style='padding:5px; font-family: Arial; font-size: 9px;'>More features and locations will come with bot updates.</body></html>");
+			updatesPane.setText("<html><body style='padding:5px; font-family: Arial; font-size: 9px;'>" +
+					"<strong>v1.1</strong><br />Paint updated; effects optional.<br />Inventory hatchet support.<br />Preemptive movement updated." +
+					"<br /><strong>v1.0</strong><br />More features and locations will come with bot updates.</body></html>");
 
 			updatesBar.add(updateLabel);
 			updatesBar.addSeparator();

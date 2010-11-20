@@ -69,6 +69,10 @@ public abstract class RSCharacter extends MethodProvider {
 		return getAccessor().getAnimation();
 	}
 
+	public int getGraphic() {
+		return getAccessor().getGraphic();
+	}
+
 	public int getHeight() {
 		return getAccessor().getHeight();
 	}

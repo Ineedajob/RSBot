@@ -282,7 +282,7 @@ public class GlobalConfiguration {
     	}
     	StringBuilder buf = new StringBuilder(125);
     	buf.append("Mozilla/5.0 (").append(plat).append("; U; ").append(os);
-    	buf.append("; en-US) AppleWebKit/534.4 (KHTML, like Gecko) Chrome/6.0.481.0 Safari/534.4");
+    	buf.append("; en-US) AppleWebKit/534.7 (KHTML, like Gecko) Chrome/7.0.517.44 Safari/534.7");
     	return buf.toString();
     }
 

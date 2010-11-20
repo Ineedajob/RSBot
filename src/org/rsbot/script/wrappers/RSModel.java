@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import org.rsbot.client.Model;
 import org.rsbot.script.methods.MethodContext;
 import org.rsbot.script.methods.MethodProvider;
+import org.rsbot.script.util.Filter;
 
 /**
  * A screen space model.
@@ -17,22 +18,16 @@ import org.rsbot.script.methods.MethodProvider;
 public abstract class RSModel extends MethodProvider {
 
 	/**
-	 * Identifies a model.
-	 */
-	public static interface Identifier {
-		public boolean matches(RSModel m);
-	}
-
-	/**
-	 * Returns an identifier that matches against the array
-	 * of vertex A indices for each face.
+	 * Returns an filter that matches against the array
+	 * of point indices for the A vertices of each triangle.
+	 * Use in scripts is discouraged.
 	 * 
 	 * @param vertex_a The array of indices for A vertices.
-	 * @return The vertex index based model identifier.
+	 * @return The vertex point index based model filter.
 	 */
-	public static Identifier newIdentifier(final short[] vertex_a) {
-		return new Identifier() {
-			public boolean matches(RSModel m) {
+	public static Filter<RSModel> newVertexFilter(final short[] vertex_a) {
+		return new Filter<RSModel>() {
+			public boolean accept(RSModel m) {
 				return Arrays.equals(m.indices1, vertex_a);
 			}
 		};

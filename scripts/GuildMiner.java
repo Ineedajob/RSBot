@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * @author Jacmob
  */
-@ScriptManifest(name = "GuildMiner", authors = "Jacmob", keywords = "Mining", version = 1.2,
+@ScriptManifest(name = "GuildMiner", authors = "Jacmob", keywords = "Mining", version = 1.3,
 		description = "Mining guild coal miner.")
 public class GuildMiner extends Script implements PaintListener {
 
@@ -63,8 +63,10 @@ public class GuildMiner extends Script implements PaintListener {
 					if (count == 28 || !inventory.containsOneOf(GameConstants.PICKAXES)) {
 						bank.depositAll();
 					} else {
+						if (pickaxe == 0) {
+							log.info("Detected pickaxe in inventory. Script will withdraw if removed.");
+						}
 						pickaxe = inventory.getItem(GameConstants.PICKAXES).getID();
-						log.info("Detected pickaxe in inventory. Script will withdraw if removed.");
 						bank.depositAllExcept(GameConstants.PICKAXES);
 					}
 					banked += count - counted;
@@ -211,10 +213,13 @@ public class GuildMiner extends Script implements PaintListener {
 				return new RSObject[]{rocks.get(lowest_ptr)};
 			}
 			RSObject[] nearest = new RSObject[] {rocks.get(lowest_ptr), rocks.get(next_ptr)};
-			if (nearest[1].equals(last)) {
+			if (nearest[1] != null && nearest[1].equals(last)) {
 				RSObject temp = nearest[0];
 				nearest[0] = nearest[1];
 				nearest[1] = temp;
+			}
+			if (nearest[0] == null) {
+				return new RSObject[0];
 			}
 			return nearest;
 		}

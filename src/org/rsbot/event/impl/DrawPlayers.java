@@ -37,13 +37,19 @@ public class DrawPlayers implements PaintListener {
             render.setColor(Color.RED);
             render.fillRect((int) location.getX() - 1, (int) location.getY() - 1, 2, 2);
             String s = "" + player.getName() + " (" + player.getCombatLevel() + ")";
-            render.setColor(player.isInCombat() ? Color.red : player.isMoving() ? Color.green : Color.WHITE);
+            render.setColor(player.isInCombat() ? Color.RED : player.isMoving() ? Color.GREEN : Color.WHITE);
             render.drawString(s, location.x - metrics.stringWidth(s) / 2, location.y - metrics.getHeight() / 2);
-
-            if (player.getAnimation() != -1) {
-                s = "(" + player.getAnimation() + ")";
+			String msg = player.getMessage();
+			boolean raised = false;
+            if (player.getAnimation() != -1 || player.getGraphic() != -1) {
+                s = "(A: " + player.getAnimation() + " | G: " + player.getGraphic() + ")";
                 render.drawString(s, location.x - metrics.stringWidth(s) / 2, location.y - metrics.getHeight() * 3 / 2);
+				raised = true;
             }
+			if (msg != null) {
+				render.setColor(Color.ORANGE);
+				render.drawString(msg, location.x - metrics.stringWidth(msg) / 2, location.y - metrics.getHeight() * (raised ? 5 : 3) / 2);
+			}
         }
     }
 }
