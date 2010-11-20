@@ -138,7 +138,7 @@ public class BotStub implements AppletStub, AppletContext {
             if (versionFile.exists() && !versionFile.delete()) {
                 log.warning("Unable to clear cache.");
             }
-        } else {
+        } else if (!target.equals("tbi")) {
             log.info("Attempting to show: " + url.toString() + " [" + target + "]");
         }
     }

@@ -1,3 +1,4 @@
+
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -24,8 +25,8 @@ import org.rsbot.script.util.WindowUtil;
 import org.rsbot.util.GlobalConfiguration;
 
 
-@ScriptManifest(authors={"Enfilade"}, keywords={"fishing","enfilade","godless"}, name="Godless Fisher", version=1.051,
-	description = "Supports multiple locations. Use fixed graphics mode.")
+@ScriptManifest(authors={"Enfilade"}, keywords={"fishing","enfilade","godless"}, name="Godless Fisher", version=1.11,
+	description = "Multiple locations and styles supported.")
 public class GodlessFisher extends Script implements PaintListener,
     MouseMotionListener, MouseListener {
 
@@ -47,8 +48,8 @@ public class GodlessFisher extends Script implements PaintListener,
     private int inventoryRow, inventoryColumn;
     private RSItem[] oldInventory;
 
-    private Timer timer = null;
-    private boolean drop;
+    private Timer timer = null, inventoryTimer = null;
+    private boolean drop, clickedStiles;
     private GFFrame gui;
     private long failsafe;
 
@@ -367,10 +368,16 @@ public class GodlessFisher extends Script implements PaintListener,
                         else if(!inventoryContainsNoFish(style)) {
                             RSNPC noter = npcs.getNearest(handler.getID());
                             if(noter != null && noter.isOnScreen()) {
-                                if(noter.doAction("exchange")) {
+                                if(inventoryTimer != null && !inventoryTimer.isUp())
+                                    return random(100, 200);
+                                if(doAction(noter, "exchange")) {
                                     state = State.MOVING;
                                     next = State.HANDLING_INVENTORY;
-                                    return random(1000, 2000);
+                                    clickedStiles = true;
+                                    Point p = getFirstTileOnMap();
+                                    if(p != null)
+                                        mouse.move(p);
+                                    return 100;
                                 }
                             } else
                                 startWalking(area.getGuides(), State.HANDLING_INVENTORY);
@@ -404,8 +411,13 @@ public class GodlessFisher extends Script implements PaintListener,
                 }
                 break;
             case MOVING:
-                if(!player.isMoving() || (check && goalOnScreen()))
+                if(!player.isMoving() || (check && goalOnScreen())) {
                     state = next;
+                    if(clickedStiles) {
+                        inventoryTimer = new Timer(random(1500, 3000));
+                        clickedStiles = false;
+                    }
+                }
                 break;
             //<editor-fold defaultstate="collapsed" desc="antiban">
             case ANTIBAN:
@@ -955,6 +967,33 @@ public class GodlessFisher extends Script implements PaintListener,
         return at;
     }
 
+    private boolean doAction(RSNPC npc, String action) {
+		for (int i = 0; i < 20; i++) {
+			if (!calc.pointOnScreen(npc.getScreenLocation()))
+				return false;
+            Point p = null;
+            RSModel m = npc.getModel();
+            if(m != null && m.getTriangles().length > 0)
+                p = getRandomPoint(m);
+            if(p == null)
+                p = new Point((int) Math.round(npc.getScreenLocation().getX()) + random(-5, 5), (int) Math.round(npc.getScreenLocation().getY()) + random(-5, 5));
+			mouse.move(p);
+			String[] items = menu.getItems();
+			if (items.length > 0 && items[0].toLowerCase().startsWith(action.toLowerCase())) {
+				mouse.click(true);
+				return true;
+			} else {
+				String[] menuItems = menu.getItems();
+				for (String item : menuItems) {
+					if (item.toLowerCase().contains(action.toLowerCase())) {
+						mouse.click(false);
+						return menu.doAction(action);
+					}
+				}
+			}
+		}
+		return false;
+	}
     //<editor-fold defaultstate="collapsed" desc="Walking">
 
     private Line[] reverse(Line[] lines) {
@@ -1025,6 +1064,13 @@ public class GodlessFisher extends Script implements PaintListener,
             continue;
         if(loc < 0)
             loc = 0;
+    }
+
+    private Point getFirstTileOnMap() {
+        for(int i = 0; i < path.size(); i++)
+            if(calc.tileOnMap(path.get(i)))
+                return calc.tileToMinimap(path.get(i));
+        return null;
     }
 
     private final int DID_NOTHING = 0, CLICKED_A_TILE = 1, REACHED_END = 2;
@@ -1460,11 +1506,6 @@ public class GodlessFisher extends Script implements PaintListener,
         }
 
         public boolean clickFishingSpot(RSNPC spot) {
-            //log("Attempting to click!");
-            if(!spot.isOnScreen()) {
-                //log("wasn't on screen!");
-                return false;
-            }
             while(menu.isOpen()) {
                 int def = mouse.getSpeed();
                 mouse.setSpeed(random(6, 12));
@@ -1472,61 +1513,59 @@ public class GodlessFisher extends Script implements PaintListener,
                 mouse.setSpeed(def);
                 sleep(random(5,30));
             }
-            //Point p;
-            //if(spot.getModel().getTriangles().length == 0)
-                Point p = calc.tileToScreen(spot.getLocation());
-            //else
-                //p = getRandomPoint(spot.getModel());
-            if(!calc.pointOnScreen(p)) {
-                //log("Point to click was offscreen!");
-                return false;
-            }
-            Point p2 = new Point(p.x, p.y);
-            do {
-                p2.x = random(Math.max(4, p.x - 5), Math.min(516, p.x + 5));
-                p2.y = random(Math.max(4, p.y-5), Math.min(338, p.y + 5));
-            } while(!calc.pointOnScreen(p2));
-            mouse.move(p2);
-            sleep(random(30, 100));
-            String[] actions = menu.getItems();
-            if(actions.length == 0) {
-                //log("No actions!");
-                return false;
-            }
-            //for(int i = 0; i < 20 && ((actions = menu.getActions()) == null || actions.length == 0); i++)
-                //sleep(5,20);
-            if(actionBefore == null && actions[0].toLowerCase().contains(action)) {
-                mouse.click(true);
-                return true;
-            }
-            mouse.click(false);
-            ArrayList<Integer> occuring = new ArrayList<Integer>();
-            if(actionBefore == null) {
-                for(int i = 0; i < actions.length; i++)
-                    if(actions[i].toLowerCase().contains(action))
-                        occuring.add(i);
-                if(occuring.size() == 0) {
-                    //log("No matches found!");
+            int limit = random(10, 20);
+            attemptLoop:
+            for(int attempts = 0; attempts < limit; attempts++) {
+                if(!spot.isOnScreen())
                     return false;
+                Point p = null;
+                RSModel m = spot.getModel();
+                if(m != null)
+                    p = getRandomPoint(spot.getModel());
+                if(p == null)
+                    p = calc.tileToScreen(spot.getLocation());
+
+                if(!calc.pointOnScreen(p))
+                    return false;
+                Point p2 = new Point(p.x, p.y);
+                do {
+                    p2.x = random(Math.max(4, p.x - 5), Math.min(516, p.x + 5));
+                    p2.y = random(Math.max(4, p.y-5), Math.min(338, p.y + 5));
+                } while(!calc.pointOnScreen(p2));
+                mouse.move(p2);
+                sleep(random(30, 100));
+                String[] actions = menu.getItems();
+                if(actions.length < 3)
+                    return false;
+                if(actionBefore == null && actions[0].toLowerCase().contains(action)) {
+                    mouse.click(true);
+                    return true;
                 }
+                ArrayList<Integer> occuring = new ArrayList<Integer>();
+                if(actionBefore == null) {
+                    for(int i = 0; i < actions.length; i++)
+                        if(actions[i].toLowerCase().contains(action))
+                            occuring.add(i);
+                    if(occuring.size() == 0)
+                        continue attemptLoop;
+                    mouse.click(false);
+                    sleep(random(50, 250));
+                    return menu.clickIndex(occuring.get(random(0, occuring.size())));
+                }
+                String lastAction = actions[0].toLowerCase(), a;
+                for(int i = 1; i < actions.length; i++) {
+                    a = actions[i].toLowerCase();
+                    if(a.contains(action) && lastAction.contains(actionBefore))
+                        occuring.add(i);
+                    lastAction = a;
+                }
+                if(occuring.size() == 0)
+                    continue;
+                mouse.click(false);
+                sleep(random(25,100));
                 return menu.clickIndex(occuring.get(random(0, occuring.size())));
             }
-            if(actions.length < 2) {
-                //log("Not enough options!");
-                return false;
-            }
-            String lastAction = actions[0].toLowerCase(), a;
-            for(int i = 1; i < actions.length; i++) {
-                a = actions[i].toLowerCase();
-                if(a.contains(action) && lastAction.contains(actionBefore))
-                    occuring.add(i);
-                lastAction = a;
-            }
-            if(occuring.size() == 0) {
-                //log("No matches!");
-                return false;
-            }
-            return menu.clickIndex(occuring.get(random(0, occuring.size())));
+            return false;
         }
 
         public boolean fishingSpotIsTarget(RSNPC npc, SpotInfo spots) {
@@ -1810,7 +1849,21 @@ public class GodlessFisher extends Script implements PaintListener,
 
     private final InventoryHandler DROPPER = new InventoryHandler();
     private final FishingArea[] AREAS = {
-        new FishingArea(2922, 3176, 2927, 3182,
+         new FishingArea(2598, 3419, 2605, 3426,
+            "Fishing Guild",
+            new Line[] {
+                new Line(2600, 3423, 2602, 3420),
+                new Line(2598, 3421, 2598, 3420),
+                new Line(2594, 3421, 2594, 3420),
+                new Line(2590, 3424, 2590, 3420),
+                new Line(2585, 3423, 2585, 3421)
+            }, new InventoryHandler(InventoryHandler.BOOTH, 49018),
+            new SpotInfo(CAGE, 312),
+            new SpotInfo(HARPOON, 312),
+            new SpotInfo(SHARK_HARPOONING, 313),
+            new SpotInfo(HAND, 312),
+            new SpotInfo(HAND_SHARK, 313)),
+        new FishingArea(2922, 3176, 2927, 3182, 29,
                 "Karamja (Stiles)",
             new Line[] {
                 new Line(2924, 3180, 2925, 3180),
@@ -1823,6 +1876,24 @@ public class GodlessFisher extends Script implements PaintListener,
                 new Line(2875, 3158, 2880, 3151),
                 new Line(2866, 3151, 2865, 3147),
                 new Line(2852, 3144, 2851, 3141)
+            }, new InventoryHandler(InventoryHandler.NOTER, 11267),
+            new SpotInfo(CAGE, 324),
+            new SpotInfo(HARPOON, 324),
+            new SpotInfo(HAND, 324)),
+        new FishingArea(2922, 3176, 2927, 3182,
+                "Karamja (Stiles - Safe Path)",
+            new Line[] {
+                new Line(2925, 3180, 2924, 3180),
+                new Line(2925, 3173, 2924, 3174),
+                new Line(2918, 3172, 2918, 3178),
+                new Line(2912, 3170, 2912, 3173),
+                new Line(2906, 3167, 2897, 3170),
+                new Line(2900, 3153, 2895, 3157),
+                new Line(2891, 3143, 2889, 3148),
+                new Line(2878, 3139, 2880, 3147),
+                new Line(2868, 3145, 2869, 3149),
+                new Line(2859, 3144, 2859, 3148),
+                new Line(2851, 3141, 2853, 3144)
             }, new InventoryHandler(InventoryHandler.NOTER, 11267),
             new SpotInfo(CAGE, 324),
             new SpotInfo(HARPOON, 324),
@@ -1870,20 +1941,6 @@ public class GodlessFisher extends Script implements PaintListener,
             }, new InventoryHandler(InventoryHandler.BOOTH, 26972),
             new SpotInfo(FLY, 328),
             new SpotInfo(PIKE_FISHING, 328)),
-         new FishingArea(2598, 3419, 2605, 3426,
-            "Fishing Guild",
-            new Line[] {
-                new Line(2600, 3423, 2602, 3420),
-                new Line(2598, 3421, 2598, 3420),
-                new Line(2594, 3421, 2594, 3420),
-                new Line(2590, 3424, 2590, 3420),
-                new Line(2585, 3423, 2585, 3421)
-            }, new InventoryHandler(InventoryHandler.BOOTH, 49018),
-            new SpotInfo(CAGE, 312),
-            new SpotInfo(HARPOON, 312),
-            new SpotInfo(SHARK_HARPOONING, 313),
-            new SpotInfo(HAND, 312),
-            new SpotInfo(HAND_SHARK, 313)),
          new FishingArea(2835, 3433, 2856, 3433,
             "Catherby",
             new Line[] {
@@ -2021,6 +2078,7 @@ public class GodlessFisher extends Script implements PaintListener,
         private SpotInfo[] spots;
         private String name;
         private InventoryHandler handler;
+        private int requiredCombatLevelForSafety;
 
         public FishingArea(int w, int s, int e, int n, String name,
                 SpotInfo ... spots) {
@@ -2037,6 +2095,17 @@ public class GodlessFisher extends Script implements PaintListener,
             this.spots = spots;
             this.handler = handler;
             this.guides = guides;
+            reverse = reverse(guides);
+        }
+
+        public FishingArea(int w, int s, int e, int n, int levelRequired, String name, Line[] guides,
+                InventoryHandler handler, SpotInfo ... spots) {
+            super(new RSTile(w, s), new RSTile(e, n));
+            this.name = name;
+            this.spots = spots;
+            this.handler = handler;
+            this.guides = guides;
+            requiredCombatLevelForSafety = levelRequired;
             reverse = reverse(guides);
         }
 
@@ -2061,7 +2130,10 @@ public class GodlessFisher extends Script implements PaintListener,
     }
     //</editor-fold>
     public Point getRandomPoint(RSModel m) {
-        Polygon p = m.getTriangles()[random(0, m.getTriangles().length)];
+        Polygon[] triangles = m.getTriangles();
+        if(triangles.length == 0)
+            return null;
+        Polygon p = triangles[random(0, triangles.length)];
         double a = Math.random();
         double b = Math.random();
         if(a + b >= 1) {
@@ -2131,9 +2203,10 @@ public class GodlessFisher extends Script implements PaintListener,
     private int getClosestArea() {
         int shortest = -1, shortestDist = Integer.MAX_VALUE, dist;
         RSTile t = getMyPlayer().getLocation();
+        int cbLevel = getMyPlayer().getCombatLevel();
         for(int i = 0; i < AREAS.length; i++) {
             dist = calc.distanceTo(AREAS[i].getNearestTile(t));
-            if(shortestDist > dist) {
+            if(shortestDist > dist && cbLevel >= AREAS[i].requiredCombatLevelForSafety) {
                 shortestDist = dist;
                 shortest = i;
             }

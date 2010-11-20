@@ -155,13 +155,13 @@ public class ImprovedRewardsBox extends Random {
 			RSComponent[] scrollbar = interfaces.get(BOX_IF).getComponent(BOX_SCROLLBAR_IF).getComponents();
 			if (scrollbarTopLength > 0) {
 				mouse.move(scrollbar[1].getAbsoluteX() + random(1, 7),
-						scrollbar[1].getAbsoluteY() + random(-15, 15));
+						scrollbar[1].getAbsoluteY() + random(0, 20));
 				mouse.drag((int) mouse.getLocation().getX(),
 						(int) mouse.getLocation().getY() - scrollbarTopLength);
 			}
 			if (getBoxArea(selection[optionSelected]).y > 278) {
 				mouse.move(scrollbar[1].getAbsoluteX() + random(1, 7),
-						scrollbar[1].getAbsoluteY() + random(-15, 15));
+						scrollbar[1].getAbsoluteY() + random(20, 30));
 				int toDragtoY = (int) (mouse.getLocation().getY() + (Double
 						.parseDouble(Integer
 								.toString((getBoxArea(selection[optionSelected]).y

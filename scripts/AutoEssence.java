@@ -109,8 +109,10 @@ public class AutoEssence extends Script implements PaintListener {
 						!inventory.containsOneOf(Constants.PICKAXES)) {
 					bank.depositAll();
 				} else {
+					if (pickaxe == 0) {
+						log.info("Detected pickaxe in inventory. Script will withdraw if removed.");
+					}
 					pickaxe = inventory.getItem(Constants.PICKAXES).getID();
-					log.info("Detected pickaxe in inventory. Script will withdraw if removed.");
 					bank.depositAllExcept(Constants.PICKAXES);
 				}
 				sleep(400);
