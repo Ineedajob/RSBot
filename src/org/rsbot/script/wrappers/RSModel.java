@@ -18,8 +18,8 @@ import org.rsbot.script.util.Filter;
 public abstract class RSModel extends MethodProvider {
 
 	/**
-	 * Returns an filter that matches against the array
-	 * of point indices for the A vertices of each triangle.
+	 * Returns a filter that matches against the array of
+	 * point indices for the A vertices of each triangle.
 	 * Use in scripts is discouraged.
 	 * 
 	 * @param vertex_a The array of indices for A vertices.

@@ -4,10 +4,7 @@ import org.rsbot.bot.Bot;
 import org.rsbot.script.Script;
 import org.rsbot.script.internal.ScriptHandler;
 import org.rsbot.script.internal.event.ScriptListener;
-import org.rsbot.service.FileScriptSource;
-import org.rsbot.service.ScriptDefinition;
-import org.rsbot.service.ScriptSource;
-import org.rsbot.service.ServiceException;
+import org.rsbot.service.*;
 import org.rsbot.util.GlobalConfiguration;
 
 import javax.swing.*;
@@ -39,6 +36,7 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 	private static final ScriptSource SRC_SOURCES;
 	private static final ScriptSource SRC_PRECOMPILED;
 	private static final ScriptSource SRC_BUNDLED;
+	private static final ScriptSource SRC_DRM;
 
 	static {
 		SRC_SOURCES = new FileScriptSource(new File(GlobalConfiguration.Paths.getScriptsSourcesDirectory()));
@@ -48,6 +46,7 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 		} else {
 			SRC_BUNDLED = new FileScriptSource(new File("." + File.separator + GlobalConfiguration.Paths.SCRIPTS_NAME_SRC));
 		}
+		SRC_DRM = new ScriptBoxSource(LoginDialog.CREDENTIALS);
 	}
 
 	private Bot bot;
@@ -56,7 +55,7 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 	private JComboBox accounts;
 	private ScriptTableModel model;
 	private List<ScriptDefinition> scripts;
-	private JButton submit, connect;
+	private JButton submit;
 
 	public ScriptSelector(Frame frame, Bot bot) {
 		super(frame, "Script Selector");
@@ -77,13 +76,13 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 		submit.setEnabled(available && table.getSelectedRow() != -1);
 		table.setEnabled(available);
 		search.setEnabled(available);
-		connect.setEnabled(false/*available*/);
 		accounts.setEnabled(available);
 		table.clearSelection();
 	}
 
 	private void load() {
 		scripts.clear();
+		scripts.addAll(SRC_DRM.list());
 		scripts.addAll(SRC_BUNDLED.list());
 		scripts.addAll(SRC_PRECOMPILED.list());
 		scripts.addAll(SRC_SOURCES.list());
@@ -153,11 +152,10 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 				new ImageIcon(GlobalConfiguration.getImage(
 						GlobalConfiguration.Paths.Resources.ICON_START,
 						GlobalConfiguration.Paths.ICON_START)));
-		connect = new JButton(
+		JButton connect = new JButton(
 				new ImageIcon(GlobalConfiguration.getImage(
 						GlobalConfiguration.Paths.Resources.ICON_DISCONNECT,
 						GlobalConfiguration.Paths.ICON_DISCONNECT)));
-		connect.setEnabled(false);
 		submit.setEnabled(false);
 		submit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
@@ -170,6 +168,13 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 				} catch (ServiceException e) {
 					e.printStackTrace();
 				}
+			}
+		});
+
+		connect.setEnabled(false);
+		connect.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+
 			}
 		});
 
