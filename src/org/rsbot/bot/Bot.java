@@ -78,6 +78,7 @@ public class Bot {
             public void run() {
                 setClient((Client) loader.getClient());
                 resize(size.width, size.height);
+				methods.menu.setupListener();
             }
         });
         sh = new ScriptHandler(this);

@@ -139,6 +139,10 @@ public abstract class RSCharacter extends MethodProvider {
 		return -1; // should be overridden too
 	}
 
+	public int getOrientation() {
+		return (int) (270 - (getAccessor().getOrientation() & 0x3fff) / 45.51) % 360;
+	}
+
 	public Point getScreenLocation() {
 		org.rsbot.client.RSCharacter c = getAccessor();
 		RSModel model = getModel();

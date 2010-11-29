@@ -31,11 +31,7 @@ import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author Jacmob
@@ -177,8 +173,10 @@ public class AIOChopper extends Script implements PaintListener {
 					} else {
 						currentTrees = getLocalTrees(currentLocation.treeType);
 					}
+				} else {
+					updateTrees();
 				}
-				updateTrees();
+
 				if (nextTree == null || !nextTree.isStanding()) {
 					loadNextTree();
 				}
@@ -373,8 +371,9 @@ public class AIOChopper extends Script implements PaintListener {
 		if (dest != null && getMyPlayer().isMoving() && calc.distanceTo(dest) > 8) {
 			return;
 		}
-		walking.walkTileMM(walking.getClosestTileOnMap(area.getCentralTile()));
-		sleep(500);
+		if (walking.walkTileMM(walking.getClosestTileOnMap(area.getCentralTile()))) {
+			sleep(500);
+		}
 	}
 
 	private void nest() {
@@ -462,7 +461,7 @@ public class AIOChopper extends Script implements PaintListener {
 			else
 				return Action.WALK_TO_BANK;
 		} else {
-			if (!inArea(currentLocation.treeArea))
+			if (currentLocation != null && !inArea(currentLocation.treeArea))
 				return Action.WALK_TO_TREES;
 			else
 				return Action.CHOP;

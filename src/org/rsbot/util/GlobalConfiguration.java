@@ -175,6 +175,8 @@ public class GlobalConfiguration {
 
     public static final String NAME_LOWERCASE = NAME.toLowerCase();
 
+	public static final String SITE_NAME = "Powerbot";
+
     private static final OperatingSystem CURRENT_OS;
 
     public static boolean RUNNING_FROM_JAR = false;

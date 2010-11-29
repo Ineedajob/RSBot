@@ -212,7 +212,6 @@ public abstract class Script extends Methods implements EventListener, Runnable 
 		if (start) {
 			running = true;
 			ctx.bot.getEventManager().addListener(this);
-			menu.setupListener();
 			log.info("Script started.");
 			try {
 				while (running) {

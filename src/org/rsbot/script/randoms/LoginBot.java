@@ -10,24 +10,24 @@ import java.awt.*;
 /**
  * @author Iscream
  */
-@ScriptManifest(authors = {"Iscream"}, name = "Login", version = 1.2)
+@ScriptManifest(authors = {"Iscream"}, name = "Login", version = 1.3)
 public class LoginBot extends Random {
 
 	private static final int INTERFACE_MAIN = 905;
 	private static final int INTERFACE_MAIN_CHILD = 59;
 	private static final int INTERFACE_MAIN_CHILD_COMPONENT_ID = 4;
 	private static final int INTERFACE_LOGIN_SCREEN = 596;
-	private static final int INTERFACE_USERNAME = 59;
-	private static final int INTERFACE_USERNAME_WINDOW = 55;
-	private static final int INTERFACE_PASSWORD = 73;
-	private static final int INTERFACE_PASSWORD_WINDOW = 62;
-	private static final int INTERFACE_BUTTON_LOGIN = 63;
-	private static final int INTERFACE_TEXT_RETURN = 15;
-	private static final int INTERFACE_BUTTON_BACK = 25;
+	private static final int INTERFACE_USERNAME = 65;
+	private static final int INTERFACE_USERNAME_WINDOW = 37;
+	private static final int INTERFACE_PASSWORD = 71;
+	private static final int INTERFACE_PASSWORD_WINDOW = 39;
+	private static final int INTERFACE_BUTTON_LOGIN = 42;
+	private static final int INTERFACE_TEXT_RETURN = 11;
+	private static final int INTERFACE_BUTTON_BACK = 55;
 	private static final int INTERFACE_WELCOME_SCREEN = 906;
-	private static final int INTERFACE_WELCOME_SCREEN_BUTTON_PLAY_1 = 178;
-	private static final int INTERFACE_WELCOME_SCREEN_BUTTON_PLAY_2 = 180;
-	private static final int INTERFACE_WELCOME_SCREEN_TEXT_RETURN = 36;
+	private static final int INTERFACE_WELCOME_SCREEN_BUTTON_PLAY_1 = 145;
+	private static final int INTERFACE_WELCOME_SCREEN_BUTTON_PLAY_2 = 155;
+	private static final int INTERFACE_WELCOME_SCREEN_TEXT_RETURN = 221;
 
 	private static final int INDEX_LOGGED_OUT = 3;
 	private static final int INDEX_LOBBY = 7;
@@ -67,10 +67,10 @@ public class LoginBot extends Random {
 				returnText = interfaces.get(INTERFACE_WELCOME_SCREEN).
 						getComponent(INTERFACE_WELCOME_SCREEN_TEXT_RETURN).getText().toLowerCase();
 
-				if (returnText.contains("members")) {
+				if (returnText.contains("member")) {
 					log("Unable to login to a members world. Stopping script.");
-					RSComponent back_button1 = interfaces.get(INTERFACE_WELCOME_SCREEN).getComponent(38);
-					RSComponent back_button2 = interfaces.get(INTERFACE_WELCOME_SCREEN).getComponent(41);
+					RSComponent back_button1 = interfaces.get(INTERFACE_WELCOME_SCREEN).getComponent(228);
+					RSComponent back_button2 = interfaces.get(INTERFACE_WELCOME_SCREEN).getComponent(231);
 					mouse.click(back_button1.getAbsoluteX(),back_button1.getAbsoluteY(),
 							back_button2.getAbsoluteX() + back_button2.getWidth() - back_button1.getAbsoluteX(),
 							back_button1.getHeight(),true);
