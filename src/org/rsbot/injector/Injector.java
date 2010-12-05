@@ -17,11 +17,7 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 import com.sun.org.apache.bcel.internal.Constants;
-import com.sun.org.apache.bcel.internal.classfile.ClassParser;
-import com.sun.org.apache.bcel.internal.classfile.ConstantClass;
-import com.sun.org.apache.bcel.internal.classfile.ConstantUtf8;
-import com.sun.org.apache.bcel.internal.classfile.Field;
-import com.sun.org.apache.bcel.internal.classfile.Method;
+import com.sun.org.apache.bcel.internal.classfile.*;
 import com.sun.org.apache.bcel.internal.generic.*;
 import org.rsbot.client.Model;
 import org.rsbot.client.ModelCapture;
@@ -288,26 +284,29 @@ public class Injector {
 				c_masterxy.replaceMethod(m_masterxy, mgn.getMethod());
 
 				//Inject server message listener
-				ClassGen c_sml = findClass(hd.serverMessageListener.class_name);
-				Method m_sml = c_sml.containsMethod(hd.serverMessageListener.method_name, hd.serverMessageListener.method_signature);
-				fac = new InstructionFactory(c_sml, c_sml.getConstantPool());
-				mgn = new MethodGen(m_sml, c_sml.getClassName(), c_sml.getConstantPool());
-				il = mgn.getInstructionList();
-				ih = il.getInstructionHandles();
 
-				ih_append = ih[hd.serverMessageListener.append_index];
-				ih_append = il.append(ih_append, fac.createGetStatic("client", "callback",
-						Type.getType(org.rsbot.client.Callback.class)));
-				ih_append = il.append(ih_append, new ALOAD(hd.serverMessageListener.aload));
-				il.append(ih_append, fac.createInvoke(ACCESSOR_PACKAGE + "Callback",
-						"notifyServerMessage", Type.VOID, new Type[]{Type.STRING},
-						Constants.INVOKEINTERFACE));
+				//ClassGen c_sml = findClass(hd.serverMessageListener.class_name);
+				//Method m_sml = c_sml.containsMethod(hd.serverMessageListener.method_name, hd.serverMessageListener.method_signature);
+				//fac = new InstructionFactory(c_sml, c_sml.getConstantPool());
+				//mgn = new MethodGen(m_sml, c_sml.getClassName(), c_sml.getConstantPool());
+				//il = mgn.getInstructionList();
+				//ih = il.getInstructionHandles();
 
-				mgn.setInstructionList(il);
-				mgn.setMaxLocals();
-				mgn.setMaxStack();
-				mgn.update();
-				c_sml.replaceMethod(m_sml, mgn.getMethod());
+				// this is currently disabled; due to be replaced by MessageEvent system.
+
+				//ih_append = ih[hd.serverMessageListener.append_index];
+				//ih_append = il.append(ih_append, fac.createGetStatic("client", "callback",
+				//		Type.getType(org.rsbot.client.Callback.class)));
+				//ih_append = il.append(ih_append, new ALOAD(hd.serverMessageListener.aload));
+				//il.append(ih_append, fac.createInvoke(ACCESSOR_PACKAGE + "Callback",
+				//		"notifyServerMessage", Type.VOID, new Type[]{Type.STRING},
+				//		Constants.INVOKEINTERFACE));
+
+				//mgn.setInstructionList(il);
+				//mgn.setMaxLocals();
+				//mgn.setMaxStack();
+				//mgn.update();
+				//c_sml.replaceMethod(m_sml, mgn.getMethod());
 
 				//RSObjects
 				for (String RSObject : hd.rsObjects.object_class_names) {
@@ -831,7 +830,6 @@ public class Injector {
 
 		for (ClassGen cg : loaded) {
 			if (cg.getClassName().equals(modelName)) {
-				ConstantPoolGen cpg = cg.getConstantPool();
 				for (Method m : cg.getMethods()) {
 					if (!m.isStatic() && !m.isAbstract() && m.getReturnType().equals(Type.VOID)) {
 						QIS searcher = new QIS(cg, m);

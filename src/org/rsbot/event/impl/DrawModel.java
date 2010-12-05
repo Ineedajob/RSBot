@@ -32,7 +32,7 @@ public class DrawModel implements PaintListener {
 
     public void onRepaint(Graphics render) {
         /*StatusQueue snl = new StatusQueue(ctx.client.getRSInteractingDefList());
-        for (StatusNode sn = snl.getHead(); sn != null; sn = snl.getNext()) {
+        for (StatusNode sn = snl.getTail(); sn != null; sn = snl.getNext()) {
             //See if it's an RSInteractableDef, since users reported it sometimes failed.
             //In my opinion that shouldn't be possible, unless the list doesn't work properly.
             //However better check then spitting out errors.

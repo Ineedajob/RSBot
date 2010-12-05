@@ -4,7 +4,7 @@ public interface MRUNodes {
 
     int getInitialCount();
 
-    NodeSubList getList();
+    NodeSubQueue getList();
 
     NodeCache getNodeCache();
 

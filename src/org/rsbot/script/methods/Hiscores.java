@@ -6,9 +6,6 @@ import java.io.InputStreamReader;
 
 import java.net.URL;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 /**
  * This class is used to fetch the stats of another player.
  * <p/>
@@ -23,9 +20,6 @@ public class Hiscores extends MethodProvider {
 
     private static final String HOST = "http://hiscore.runescape.com";
     private static final String GET = "/index_lite.ws?player=";
-
-    private static final Logger LOG = Logger.getLogger(
-            Hiscores.class.getName());
 
     public Hiscores() {
         super(null);
@@ -55,8 +49,7 @@ public class Hiscores extends MethodProvider {
                 }
                 br.close();
                 return new Stats(username, exps, lvls, ranks);
-            } catch (IOException e) {
-                LOG.log(Level.SEVERE, e.getMessage(), e);
+            } catch (IOException ignored) {
             }
         }
         return null;

@@ -1,19 +1,21 @@
 package org.rsbot.script.internal.wrappers;
 
+import org.rsbot.client.NodeDeque;
+
 public class Deque {
 
-	private final org.rsbot.client.NodeList nl;
+	private final NodeDeque nl;
 	private org.rsbot.client.Node current;
 
-	public Deque(org.rsbot.client.NodeList nl) {
+	public Deque(NodeDeque nl) {
 		this.nl = nl;
 	}
 
 	public int size() {
 		int size = 0;
-		org.rsbot.client.Node node = nl.getHead().getPrevious();
+		org.rsbot.client.Node node = nl.getTail().getPrevious();
 
-		while (node != nl.getHead()) {
+		while (node != nl.getTail()) {
 			node = node.getPrevious();
 			size++;
 		}
@@ -22,9 +24,9 @@ public class Deque {
 	}
 
 	public org.rsbot.client.Node getHead() {
-		org.rsbot.client.Node node = nl.getHead().getNext();
+		org.rsbot.client.Node node = nl.getTail().getNext();
 
-		if (node == nl.getHead()) {
+		if (node == nl.getTail()) {
 			current = null;
 			return null;
 		}
@@ -34,9 +36,9 @@ public class Deque {
 	}
 
 	public org.rsbot.client.Node getTail() {
-		org.rsbot.client.Node node = nl.getHead().getPrevious();
+		org.rsbot.client.Node node = nl.getTail().getPrevious();
 
-		if (node == nl.getHead()) {
+		if (node == nl.getTail()) {
 			current = null;
 			return null;
 		}
@@ -48,7 +50,7 @@ public class Deque {
 	public org.rsbot.client.Node getNext() {
 		org.rsbot.client.Node node = current;
 
-		if (node == nl.getHead()) {
+		if (node == nl.getTail()) {
 			current = null;
 			return null;
 		}

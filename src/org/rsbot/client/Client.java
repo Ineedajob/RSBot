@@ -1,16 +1,19 @@
 package org.rsbot.client;
 
-import java.awt.Canvas;
-import java.awt.Rectangle;
-
 import org.rsbot.client.input.Keyboard;
 import org.rsbot.client.input.Mouse;
+
+import java.awt.*;
 
 public interface Client {
 
     ChatLine[] getChatLines();
 
-    NodeList getActionDataList();
+	boolean isMenuCollapsed();
+
+	NodeDeque getMenuItems();
+
+    NodeSubQueue getCollapsedMenuItems();
 
     int getBaseX();
 

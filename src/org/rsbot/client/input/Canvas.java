@@ -1,16 +1,13 @@
 package org.rsbot.client.input;
 
-import java.awt.AWTEvent;
-import java.awt.Graphics;
-import java.awt.GraphicsConfiguration;
-import java.awt.Image;
-import java.awt.event.FocusEvent;
-import java.awt.image.BufferedImage;
-
-import javax.swing.SwingUtilities;
-
 import org.rsbot.Application;
 import org.rsbot.bot.Bot;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.FocusEvent;
+import java.awt.image.*;
+import java.util.Hashtable;
 
 public class Canvas extends java.awt.Canvas {
 
@@ -67,6 +64,21 @@ public class Canvas extends java.awt.Canvas {
 	}
 
 	@Override
+	public final boolean isShowing() {
+		return visible;
+	}
+
+	@Override
+	public final boolean isDisplayable() {
+		return true;
+	}
+
+	@Override
+	public final Dimension getSize() {
+		return Application.getPanelSize();
+	}
+
+	@Override
 	public final void setVisible(boolean visible) {
 		super.setVisible(visible);
 		this.visible = visible;
@@ -89,7 +101,12 @@ public class Canvas extends java.awt.Canvas {
 		// This is caused by the character loader, which creates
 		// character sprites using this method (which will return
 		// null as long as this canvas is not really displayed).
-		return new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+		int[] pixels = new int[height * width];
+		DataBufferInt databufferint = new DataBufferInt(pixels, pixels.length);
+		DirectColorModel directcolormodel = new DirectColorModel(32, 0xff0000, 0xff00, 255);
+		WritableRaster writableraster = Raster.createWritableRaster(
+				directcolormodel.createCompatibleSampleModel(width, height), databufferint, null);
+		return new BufferedImage(directcolormodel, writableraster, false, new Hashtable());
 	}
 
 	@Override
