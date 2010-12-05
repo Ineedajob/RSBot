@@ -1,5 +1,6 @@
 package org.rsbot.bot;
 
+import org.rsbot.Application;
 import org.rsbot.injector.Injector;
 import org.rsbot.client.Loader;
 import org.rsbot.util.GlobalConfiguration;
@@ -27,6 +28,8 @@ public class RSLoader extends Applet implements Runnable, Loader {
 
 	private String targetName;
 
+	private Canvas canvas = new org.rsbot.client.input.Canvas();
+
 	/**
 	 * The game class loader
 	 */
@@ -37,6 +40,10 @@ public class RSLoader extends Applet implements Runnable, Loader {
 		if (client != null) {
 			client.destroy();
 		}
+	}
+
+	public boolean isShowing() {
+		return true;
 	}
 
 	public Applet getClient() {
@@ -132,6 +139,10 @@ public class RSLoader extends Applet implements Runnable, Loader {
 		if (client != null) {
 			client.update(graphics);
 		}
+	}
+
+	public final Dimension getSize() {
+		return Application.getPanelSize();
 	}
 
 }
