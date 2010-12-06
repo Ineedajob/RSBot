@@ -53,7 +53,7 @@ public class Players extends MethodProvider {
 		org.rsbot.client.RSPlayer[] array = methods.client.getRSPlayerArray();
 		Set<RSPlayer> players = new HashSet<RSPlayer>();
 		for (int index : indices) {
-			if (index != 0) {
+			if (index != 0 && array[index] != null) {
 				RSPlayer player = new RSPlayer(methods, array[index]);
 				if (filter.accept(player)) {
 					players.add(player);

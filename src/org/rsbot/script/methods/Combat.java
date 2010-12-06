@@ -252,7 +252,7 @@ public class Combat extends MethodProvider {
 	 * @return The current percentage health remaining.
 	 */
 	public int getHealth() {
-		return ((getLifePoints() * 10) / (methods.skills.getRealLevel(Skills.CONSTITUTION) * 10));
+		return ((getLifePoints() * 10) / methods.skills.getRealLevel(Skills.CONSTITUTION));
 	}
 
 }

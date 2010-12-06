@@ -13,10 +13,10 @@ import org.rsbot.script.methods.Bank;
 
 import org.rsbot.script.util.Timer;
 
-import org.rsbot.event.events.ServerMessageEvent;
+import org.rsbot.event.events.MessageEvent;
 
 import org.rsbot.event.listeners.PaintListener;
-import org.rsbot.event.listeners.ServerMessageListener;
+import org.rsbot.event.listeners.MessageListener;
 import org.rsbot.script.methods.Game;
 
 import org.rsbot.script.wrappers.RSArea;
@@ -29,8 +29,7 @@ import org.rsbot.script.wrappers.RSTile;
 name = "Aion's Air Crafter",
 version = 0.1,
 description = "Either wear an air tiara or have an air talisman in your inventory.")
-public class AionAirCrafter extends Script implements PaintListener,
-        ServerMessageListener {
+public class AionAirCrafter extends Script implements PaintListener, MessageListener {
 
     public static interface Constants {
 
@@ -489,7 +488,7 @@ public class AionAirCrafter extends Script implements PaintListener,
         g.drawOval(mPoint.x - 9, mPoint.y - 9, 18, 18);
     }
 
-    public void serverMessageRecieved(ServerMessageEvent e) {
+    public void messageReceived(MessageEvent e) {
         String message = e.getMessage().toLowerCase();
         if (message.contains("bind the temple")) {
             runesCrafted += inventory.getCount(Constants.ITEM_RUNE_ESS);

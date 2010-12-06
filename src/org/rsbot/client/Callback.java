@@ -6,7 +6,7 @@ public interface Callback {
 
     public Bot getBot();
 
-    public void notifyServerMessage(String s);
+    public void notifyMessage(int id, String sender, String msg);
 
     public void rsCharacterMoved(RSCharacter c, int i);
 

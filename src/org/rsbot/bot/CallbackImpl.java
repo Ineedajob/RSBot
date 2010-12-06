@@ -4,6 +4,7 @@ import org.rsbot.client.Callback;
 import org.rsbot.client.Render;
 import org.rsbot.client.RenderData;
 import org.rsbot.event.events.CharacterMovedEvent;
+import org.rsbot.event.events.MessageEvent;
 import org.rsbot.event.events.ServerMessageEvent;
 import org.rsbot.script.methods.MethodContext;
 
@@ -19,9 +20,14 @@ public class CallbackImpl implements Callback {
         return bot;
     }
 
-    public void notifyServerMessage(final String s) {
-    	ServerMessageEvent e = new ServerMessageEvent(s);
-        bot.getEventManager().dispatchEvent(e);
+	@SuppressWarnings("deprecation")
+    public void notifyMessage(final int id, final String sender, final String msg) {
+		MessageEvent m = new MessageEvent(sender, id, msg);
+        bot.getEventManager().dispatchEvent(m);
+		if (id == MessageEvent.MESSAGE_SERVER) {
+			ServerMessageEvent e = new ServerMessageEvent(msg);
+			bot.getEventManager().dispatchEvent(e);
+		}
     }
 
     public void rsCharacterMoved(final org.rsbot.client.RSCharacter c, final int i) {

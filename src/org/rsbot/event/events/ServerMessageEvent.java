@@ -8,6 +8,7 @@ import org.rsbot.event.listeners.ServerMessageListener;
 /**
  * A server message event.
  */
+@Deprecated
 public class ServerMessageEvent extends RSEvent {
 
     private static final long serialVersionUID = -2786472026976811201L;

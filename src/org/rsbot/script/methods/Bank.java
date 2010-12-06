@@ -127,6 +127,8 @@ public class Bank extends MethodProvider {
 					item.doAction(itemCount > 1 ? "Deposit-All" : "Deposit");
 					break;
 				case 1:
+					item.doAction("Deposit");
+					break;
 				case 5:
 					item.doAction("Deposit-" + number);
 					break;

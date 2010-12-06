@@ -40,11 +40,11 @@ public class Menu extends MethodProvider {
 				return false;
 			if (idx == 0) {
 				methods.mouse.click(true);
+				return true;
 			} else {
 				methods.mouse.click(false);
-				clickIndex(idx);
+				return clickIndex(idx);
 			}
-			return true;
 		} else {
 			if (idx == -1) {
 				while (isOpen()) {
@@ -53,8 +53,7 @@ public class Menu extends MethodProvider {
 				}
 				return false;
 			} else {
-				clickIndex(idx);
-				return true;
+				return clickIndex(idx);
 			}
 		}
 	}

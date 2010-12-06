@@ -297,7 +297,6 @@ public class Game extends MethodProvider {
      * @return <tt>true</tt> if the player was logged out.
      */
     public boolean logout(boolean lobby) {
-        int i;
         if (methods.bank.isOpen()) {
             methods.bank.close();
             sleep(random(200, 400));
@@ -320,19 +319,14 @@ public class Game extends MethodProvider {
         if (!isOnLogoutTab()) {
 			int idx = methods.client.getGUIRSInterfaceIndex();
             //Logout button in the top right hand corner
-            methods.interfaces.getComponent(idx, isFixed() ? 178 : 170).doClick();
+            methods.interfaces.getComponent(idx, isFixed() ? 180 : 171).doClick();
             int timesToWait = 0;
             while (!isOnLogoutTab() && timesToWait < 5) {
                 sleep(random(200, 400));
                 timesToWait++;
             }
         }
-        if (!lobby) {
-            i = 7;
-        } else {
-            i = 6;
-        }
-        methods.interfaces.getComponent(182, i).doClick();
+        methods.interfaces.getComponent(182, lobby ? 1 : 6).doClick();
         //Final logout button in the logout tab
         sleep(random(1500, 2000));
         return !isLoggedIn();

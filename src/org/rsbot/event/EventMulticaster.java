@@ -16,10 +16,7 @@ import java.util.EventObject;
 import java.util.List;
 
 import org.rsbot.event.events.RSEvent;
-import org.rsbot.event.listeners.CharacterMovedListener;
-import org.rsbot.event.listeners.PaintListener;
-import org.rsbot.event.listeners.ServerMessageListener;
-import org.rsbot.event.listeners.TextPaintListener;
+import org.rsbot.event.listeners.*;
 
 public class EventMulticaster implements EventListener {
 
@@ -31,7 +28,8 @@ public class EventMulticaster implements EventListener {
     public static final long MOUSE_WHEEL_EVENT = 0x04;
 
     public static final long CHARACTER_MOVED_EVENT = 0x400;
-    public static final long SERVER_MESSAGE_EVENT = 0x800;
+    public static final long SERVER_MESSAGE_EVENT = 0x600;
+    public static final long MESSAGE_EVENT = 0x800;
     public static final long PAINT_EVENT = 0x1000;
     public static final long TEXT_PAINT_EVENT = 0x2000;
 
@@ -67,6 +65,9 @@ public class EventMulticaster implements EventListener {
         }
         if (el instanceof ServerMessageListener) {
             mask |= EventMulticaster.SERVER_MESSAGE_EVENT;
+        }
+		if (el instanceof MessageListener) {
+            mask |= EventMulticaster.MESSAGE_EVENT;
         }
         if (el instanceof PaintListener) {
             mask |= EventMulticaster.PAINT_EVENT;

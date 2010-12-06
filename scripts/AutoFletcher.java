@@ -10,9 +10,9 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
-import org.rsbot.event.events.ServerMessageEvent;
+import org.rsbot.event.events.MessageEvent;
 import org.rsbot.event.listeners.PaintListener;
-import org.rsbot.event.listeners.ServerMessageListener;
+import org.rsbot.event.listeners.MessageListener;
 import org.rsbot.script.Script;
 import org.rsbot.script.ScriptManifest;
 import org.rsbot.script.methods.Skills;
@@ -28,7 +28,7 @@ import org.rsbot.script.wrappers.RSObject;
  * @author Speed
  */
 @ScriptManifest(authors = "Speed", keywords = "Fletching", name = "AutoFletcher", version = 1.2, description = "Bow fletcher and stringer.")
-public class AutoFletcher extends Script implements PaintListener, ServerMessageListener {
+public class AutoFletcher extends Script implements PaintListener, MessageListener {
 
 	private static final int KNIFE_ID = 946, CLAY_KNIFE = 14111;
 	private static final int BOWSTRING_ID = 1777;
@@ -262,7 +262,7 @@ public class AutoFletcher extends Script implements PaintListener, ServerMessage
 		return false;
 	}
 
-	public void serverMessageRecieved(final ServerMessageEvent e) {
+	public void messageReceived(final MessageEvent e) {
 
 	}
 
