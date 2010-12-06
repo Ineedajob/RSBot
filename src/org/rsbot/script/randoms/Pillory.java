@@ -1,7 +1,7 @@
 package org.rsbot.script.randoms;
 
-import org.rsbot.event.events.ServerMessageEvent;
-import org.rsbot.event.listeners.ServerMessageListener;
+import org.rsbot.event.events.MessageEvent;
+import org.rsbot.event.listeners.MessageListener;
 import org.rsbot.script.Random;
 import org.rsbot.script.ScriptManifest;
 import org.rsbot.script.wrappers.RSObject;
@@ -16,7 +16,7 @@ import java.awt.*;
  * @author Pwnaz0r
  */
 @ScriptManifest(authors = {"illusion", "Pwnaz0r"}, name = "Pillory", version = 3.8)
-public class Pillory extends Random implements ServerMessageListener {
+public class Pillory extends Random implements MessageListener {
 
     public int fail = 0;
     private final int GameInterface = 189;
@@ -25,7 +25,7 @@ public class Pillory extends Random implements ServerMessageListener {
     public RSTile myLoc;
 
     public RSTile South = new RSTile(2606, 3105);
-    RSTile cagetiles[] = {new RSTile(2608, 3105), new RSTile(2606, 3105), new RSTile(2604, 3105), new RSTile(3226, 3407), new RSTile(3228, 3407), new RSTile(3230, 3407), new RSTile(2685, 3489), new RSTile(2683, 3489), new RSTile(2681, 3489)};
+    RSTile[] cagetiles = {new RSTile(2608, 3105), new RSTile(2606, 3105), new RSTile(2604, 3105), new RSTile(3226, 3407), new RSTile(3228, 3407), new RSTile(3230, 3407), new RSTile(2685, 3489), new RSTile(2683, 3489), new RSTile(2681, 3489)};
 
     @Override
     public boolean activateCondition() {
@@ -123,7 +123,7 @@ public class Pillory extends Random implements ServerMessageListener {
             camera.setAngle(360);
         }
         if (fail > 20) {
-            shutdown();
+            stopScript(false);
         }
         if (myLoc == null) {
             myLoc = getMyPlayer().getLocation();
@@ -171,15 +171,11 @@ public class Pillory extends Random implements ServerMessageListener {
         return -1;
     }
 
-    public void serverMessageRecieved(final ServerMessageEvent e) {
+    public void messageReceived(final MessageEvent e) {
         final String str = e.getMessage();
         if (str != null && str.contains(pilloryMessage)) {
             inCage = true;
         }
 
-    }
-
-    public void shutdown() {
-        System.exit(1);
     }
 }

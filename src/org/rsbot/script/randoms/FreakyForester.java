@@ -1,7 +1,7 @@
 package org.rsbot.script.randoms;
 
-import org.rsbot.event.events.ServerMessageEvent;
-import org.rsbot.event.listeners.ServerMessageListener;
+import org.rsbot.event.events.MessageEvent;
+import org.rsbot.event.listeners.MessageListener;
 import org.rsbot.script.Random;
 import org.rsbot.script.ScriptManifest;
 import org.rsbot.script.methods.Equipment;
@@ -10,9 +10,10 @@ import org.rsbot.script.wrappers.*;
 
 /**
  * @version 2.3 - 15/4/10 Fix by Iscream
+ * @version 2.4 - 6/12/10 Fix by Arbiter
  */
-@ScriptManifest(authors = {"Pwnaz0r", "Taha", "zqqou", "Zach"}, name = "FreakyForester", version = 2.3)
-public class FreakyForester extends Random implements ServerMessageListener {
+@ScriptManifest(authors = {"Pwnaz0r", "Taha", "zqqou", "Zach"}, name = "FreakyForester", version = 2.4)
+public class FreakyForester extends Random implements MessageListener {
 
     private RSNPC forester;
     private static final int FORESTER_ID = 2458;
@@ -84,20 +85,23 @@ public class FreakyForester extends Random implements ServerMessageListener {
             return (random(100, 500));
         }
 
-        if ((inventory.getCount(false) == 28) && !inventory.containsAll(6178)) {
-            final RSObject Deposit = objects.getNearest(32931);
-            if ((!calc.tileOnScreen(Deposit.getLocation()) && ((calc.distanceTo(walking.getDestination())) < 8)) || (calc.distanceTo(walking.getDestination()) > 40)) {
-                if (!walking.walkTileMM(walking.randomizeTile(Deposit.getLocation(), 3, 3))) {
-                    walking.walkPathMM(walking.findPath(walking.randomizeTile(Deposit.getLocation(), 3, 3)));
+        if (bank.isDepositOpen() || (inventory.getCount(false) == 28) && !inventory.containsAll(6178)) {
+        	if (bank.isDepositOpen() && bank.getBoxCount() == 28) {
+        		interfaces.get(11).getComponent(17).getComponent(random(21,27)).doAction("Deposit");
+        		return random(1000,1500);
+        	}
+        	else if (bank.isDepositOpen()) {
+        		bank.close();
+        		return random(1000,1500);
+        	}
+            final RSObject box = objects.getNearest(32931);
+            if ((!calc.tileOnScreen(box.getLocation()) && ((calc.distanceTo(walking.getDestination())) < 8)) || (calc.distanceTo(walking.getDestination()) > 40)) {
+                if (!walking.walkTileMM(walking.randomizeTile(box.getLocation(), 3, 3))) {
+                    walking.walkPathMM(walking.findPath(walking.randomizeTile(box.getLocation(), 3, 3)));
                 }
                 sleep(random(1200, 1400));
             }
-            if (Deposit.doAction("Deposit")) {
-                sleep(random(1800, 2000));
-                mouse.click(410 + random(2, 4), 235 + random(2, 1), false);
-                menu.doAction("Deposit-1");
-                sleep(random(1200, 1400));
-                mouse.click(435 + random(2, 4), 40 + random(2, 1), true);
+            if (box.doAction("Deposit")) {
                 return random(800, 1200);
             }
         }
@@ -187,7 +191,7 @@ public class FreakyForester extends Random implements ServerMessageListener {
         return false;
     }
 
-    public void serverMessageRecieved(final ServerMessageEvent e) {
+    public void messageReceived(final MessageEvent e) {
         final String serverString = e.getMessage();
         if (serverString.contains("no ammo left")) {
             unequip = true;

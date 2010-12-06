@@ -26,9 +26,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JSpinner;
 import javax.swing.event.MouseInputListener;
 
-import org.rsbot.event.events.ServerMessageEvent;
+import org.rsbot.event.events.MessageEvent;
 import org.rsbot.event.listeners.PaintListener;
-import org.rsbot.event.listeners.ServerMessageListener;
+import org.rsbot.event.listeners.MessageListener;
 import org.rsbot.script.Script;
 import org.rsbot.script.ScriptManifest;
 import org.rsbot.script.methods.Game;
@@ -43,7 +43,7 @@ import org.rsbot.script.wrappers.RSObject;
 import org.rsbot.script.wrappers.RSTile;
 
 @ScriptManifest(authors = "vilon", name = "Voluntary Thieve", keywords = "Thieving", version = 1.12, description = "Blackjacks/pickpockets the trainers and volunteers in the Thieves' Guild.")
-public final class VoluntaryThieve extends Script implements MouseInputListener, PaintListener, ServerMessageListener {
+public final class VoluntaryThieve extends Script implements MouseInputListener, PaintListener, MessageListener {
 
 	/**
 	 * The <tt>Action</tt>-class is used to represent an actual in-game action.
@@ -2449,7 +2449,7 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 	 */
 	private boolean isStartupActionsDone;
 
-	public void serverMessageRecieved(ServerMessageEvent e) {
+	public void messageReceived(MessageEvent e) {
 		final String message = e.getMessage();
 		if (message != null) {
 			if (message.contains("attempt to"))

@@ -299,8 +299,9 @@ public class Inventory extends MethodProvider {
 	 * @return The item, or <tt>null</tt> if not found.
 	 */
 	public RSItem getItemAt(int index) {
-		return 0 <= index && index < 28 ?
-				new RSItem(methods, getInterface().getComponent(index)) : null;
+		RSComponent comp = getInterface().getComponent(index);
+		return 0 <= index && index < 28 && comp != null ?
+				new RSItem(methods, comp) : null;
 	}
 
 	/**

@@ -25,7 +25,7 @@ import org.rsbot.script.util.WindowUtil;
 import org.rsbot.util.GlobalConfiguration;
 
 
-@ScriptManifest(authors={"Enfilade"}, keywords={"fishing","enfilade","godless"}, name="Godless Fisher", version=1.11,
+@ScriptManifest(authors={"Enfilade"}, keywords={"fishing","enfilade","godless"}, name="Godless Fisher", version=1.12,
 	description = "Multiple locations and styles supported.")
 public class GodlessFisher extends Script implements PaintListener,
     MouseMotionListener, MouseListener {
@@ -241,7 +241,8 @@ public class GodlessFisher extends Script implements PaintListener,
                     inventoryRow = 0;
                     fishingSpot = null;
                 } else if(style.playerIsFishing(player) && interacting instanceof RSNPC
-                        && ((RSNPC)interacting).getID() == spots.getID()) {
+                        && ((RSNPC)interacting).getID() == spots.getID()
+                        /*&& fishingSpot != null*/) {
                     state = State.FISHING;
                     fishingSpot = (RSNPC)interacting;
                     fishingSpotTile = fishingSpot.getLocation();

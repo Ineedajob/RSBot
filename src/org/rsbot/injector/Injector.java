@@ -283,30 +283,30 @@ public class Injector {
 				mgn.update();
 				c_masterxy.replaceMethod(m_masterxy, mgn.getMethod());
 
-				//Inject server message listener
+				//Inject message listener
 
-				//ClassGen c_sml = findClass(hd.serverMessageListener.class_name);
-				//Method m_sml = c_sml.containsMethod(hd.serverMessageListener.method_name, hd.serverMessageListener.method_signature);
-				//fac = new InstructionFactory(c_sml, c_sml.getConstantPool());
-				//mgn = new MethodGen(m_sml, c_sml.getClassName(), c_sml.getConstantPool());
-				//il = mgn.getInstructionList();
-				//ih = il.getInstructionHandles();
+				ClassGen c_sml = findClass(hd.messageEvent.class_name);
+				Method m_sml = c_sml.containsMethod(hd.messageEvent.method_name, hd.messageEvent.method_signature);
+				fac = new InstructionFactory(c_sml, c_sml.getConstantPool());
+				mgn = new MethodGen(m_sml, c_sml.getClassName(), c_sml.getConstantPool());
+				il = mgn.getInstructionList();
+				ih = il.getInstructionHandles();
 
-				// this is currently disabled; due to be replaced by MessageEvent system.
+				ih_append = ih[hd.messageEvent.append_index];
+				ih_append = il.append(ih_append, fac.createGetStatic("client", "callback",
+						Type.getType(org.rsbot.client.Callback.class)));
+				ih_append = il.append(ih_append, new ILOAD(hd.messageEvent.id));
+				ih_append = il.append(ih_append, new ALOAD(hd.messageEvent.sender));
+				ih_append = il.append(ih_append, new ALOAD(hd.messageEvent.message));
+				il.append(ih_append, fac.createInvoke(ACCESSOR_PACKAGE + "Callback",
+						"notifyMessage", Type.VOID, new Type[]{Type.INT, Type.STRING, Type.STRING},
+						Constants.INVOKEINTERFACE));
 
-				//ih_append = ih[hd.serverMessageListener.append_index];
-				//ih_append = il.append(ih_append, fac.createGetStatic("client", "callback",
-				//		Type.getType(org.rsbot.client.Callback.class)));
-				//ih_append = il.append(ih_append, new ALOAD(hd.serverMessageListener.aload));
-				//il.append(ih_append, fac.createInvoke(ACCESSOR_PACKAGE + "Callback",
-				//		"notifyServerMessage", Type.VOID, new Type[]{Type.STRING},
-				//		Constants.INVOKEINTERFACE));
-
-				//mgn.setInstructionList(il);
-				//mgn.setMaxLocals();
-				//mgn.setMaxStack();
-				//mgn.update();
-				//c_sml.replaceMethod(m_sml, mgn.getMethod());
+				mgn.setInstructionList(il);
+				mgn.setMaxLocals();
+				mgn.setMaxStack();
+				mgn.update();
+				c_sml.replaceMethod(m_sml, mgn.getMethod());
 
 				//RSObjects
 				for (String RSObject : hd.rsObjects.object_class_names) {

@@ -192,11 +192,13 @@ public abstract class Script extends Methods implements EventListener, Runnable 
 	 */
 	public void stopScript(boolean logout) {
 		log.info("Script stopping...");
-		if (bank.isOpen()) {
-			bank.close();
-		}
-		if (game.isLoggedIn() && logout) {
-			game.logout(false);
+		if (logout) {
+			if (bank.isOpen()) {
+				bank.close();
+			}
+			if (game.isLoggedIn()) {
+				game.logout(false);
+			}
 		}
 		this.running = false;
 	}

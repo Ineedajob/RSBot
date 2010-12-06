@@ -23,16 +23,16 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.WindowConstants;
 
-import org.rsbot.event.events.ServerMessageEvent;
+import org.rsbot.event.events.MessageEvent;
 import org.rsbot.event.listeners.PaintListener;
-import org.rsbot.event.listeners.ServerMessageListener;
+import org.rsbot.event.listeners.MessageListener;
 import org.rsbot.script.Script;
 import org.rsbot.script.ScriptManifest;
 import org.rsbot.script.methods.*;
 import org.rsbot.script.wrappers.*;
 
 @ScriptManifest(authors = "RawR", name = "Rawr Ivy Pro", keywords = "Woodcutting", version = 1.0, description = "The best Ivy Chopper out there.")
-public class RawrIvy extends Script implements PaintListener, ServerMessageListener {
+public class RawrIvy extends Script implements PaintListener, MessageListener {
 
 	public String LOCATION = "", STATE = "Loading.";
 	public int AMOUNT_CHOPPED = 0, NESTS_COLLECTED = 0;
@@ -136,7 +136,7 @@ public class RawrIvy extends Script implements PaintListener, ServerMessageListe
 		log.info("Ending WC Level : " + skills.getCurrentLevel(Skills.WOODCUTTING) + ".");
 	}
 
-	public void serverMessageRecieved(final ServerMessageEvent e) {
+	public void messageReceived(final MessageEvent e) {
 		final String message = e.getMessage();
 		if (message.contains("chop away some")) AMOUNT_CHOPPED++;
 	}

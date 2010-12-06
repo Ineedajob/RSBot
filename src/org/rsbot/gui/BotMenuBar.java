@@ -54,7 +54,7 @@ public class BotMenuBar extends JMenuBar {
         DEBUG_MAP.put("Settings", DrawSettings.class);
 
         // Other
-        DEBUG_MAP.put("Server Messages", ServerMessageLogger.class);
+        DEBUG_MAP.put("Log Messages", MessageLogger.class);
         
         TITLES = new String[]{"File", "Edit", "View", "Help"};
         ELEMENTS = new String[][]{

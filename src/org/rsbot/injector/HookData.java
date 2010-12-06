@@ -64,12 +64,14 @@ class HookData {
 		String renderData_field_signature;
 	}
 
-	static class ServerMessageListenerData {
+	static class MessageEventData {
 		String class_name;
 		String method_name;
 		String method_signature;
 		int append_index;
-		int aload;
+		int id;
+		int sender;
+		int message;
 	}
 
 	private static class Stream {
@@ -104,7 +106,7 @@ class HookData {
     ArrayList<StaticFieldData> staticFields = new ArrayList<StaticFieldData>();
 
     MasterXYData masterXY = new MasterXYData();
-    ServerMessageListenerData serverMessageListener = new ServerMessageListenerData();
+    MessageEventData messageEvent = new MessageEventData();
     RSObjectsData rsObjects = new RSObjectsData();
     RenderData render = new RenderData();
     CharData charData = new CharData();
@@ -162,11 +164,13 @@ class HookData {
         masterXY.iload_y = s_data.readByte();
 
         //Read server message listener info
-        serverMessageListener.class_name = s_data.readString();
-        serverMessageListener.method_name = s_data.readString();
-        serverMessageListener.method_signature = s_data.readString();
-        serverMessageListener.append_index = s_data.readWord();
-        serverMessageListener.aload = s_data.readByte();
+        messageEvent.class_name = s_data.readString();
+        messageEvent.method_name = s_data.readString();
+        messageEvent.method_signature = s_data.readString();
+        messageEvent.append_index = s_data.readWord();
+        messageEvent.id = s_data.readByte();
+        messageEvent.sender = s_data.readByte();
+        messageEvent.message = s_data.readByte();
 
         //Read RSObjects info
         rsObjects.method_name = s_data.readString();
