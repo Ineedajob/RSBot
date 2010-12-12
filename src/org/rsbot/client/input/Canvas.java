@@ -64,17 +64,15 @@ public class Canvas extends java.awt.Canvas {
 	}
 
 	@Override
-	public final boolean isShowing() {
-		return visible;
-	}
-
-	@Override
 	public final boolean isDisplayable() {
 		return true;
 	}
 
 	@Override
 	public final Dimension getSize() {
+		if (bot != null) {
+			return bot.getLoader().getSize();
+		}
 		return Application.getPanelSize();
 	}
 

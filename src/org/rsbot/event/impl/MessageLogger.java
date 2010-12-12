@@ -11,9 +11,9 @@ public class MessageLogger implements MessageListener {
 
     public void messageReceived(final MessageEvent e) {
 		if (e.getSender().equals("")) {
-			log.info(e.getMessage());
+			log.info("[" + e.getID() + "] " + e.getMessage());
 		} else {
-			log.info(e.getSender() + ": " + e.getMessage());
+			log.info("[" + e.getID() + "] " + e.getSender() + ": " + e.getMessage());
 		}
     }
 }

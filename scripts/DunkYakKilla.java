@@ -1,6 +1,7 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -8,6 +9,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Point;
+import java.awt.Polygon;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -24,10 +26,12 @@ import java.util.Properties;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle;
 import javax.swing.SwingConstants;
@@ -43,7 +47,7 @@ import org.rsbot.script.wrappers.RSNPC;
 import org.rsbot.script.wrappers.RSTile;
 import org.rsbot.util.GlobalConfiguration;
 
-@ScriptManifest(authors = "Dunnkers", name = "DunkYakKilla", keywords = "Combat", version = 1.2, description = "Kills yaks on Neitiznot.")
+@ScriptManifest(authors = "Dunnkers", name = "DunkYakKilla", keywords = "Combat", version = 1.4, description = "Kills yaks on Neitiznot.")
 public class DunkYakKilla extends Script implements PaintListener {
 
 	/* MISC */
@@ -52,11 +56,14 @@ public class DunkYakKilla extends Script implements PaintListener {
 	public long startTime = System.currentTimeMillis();
 	public String status = "";
 	public int kills = 0;
-	public skillInfo infoSkill;
+	public int MS = 4;
+	public SkillInfo infoSkill;
 	public int curAFKT;
 	public long curAFKST;
 	public boolean curAFK = false, run = false;
 	private Properties settingsFile;
+	public boolean killCounted = false;
+	boolean menuContained = false;
 
 	/* IDS */
 	public int YAKDEADANIMATIONID = 5784;
@@ -65,13 +72,16 @@ public class DunkYakKilla extends Script implements PaintListener {
 	public int[] ATTACK = { 125, 123, 121, 2428 }, STRENGTH = { 119, 117, 115,
 			113 }, DEFENCE = { 137, 135, 133, 2432 }, SUPERATTACK = { 149, 147,
 			145, 2436 }, SUPERSTRENGTH = { 161, 159, 157, 2440 },
-			SUPERDEFENCE = { 167, 165, 163, 2442 };
+			SUPERDEFENCE = { 167, 165, 163, 2442 }, RANGED = { 173, 171, 169,
+					2444 };
 
 	/* SETTINGS */
 	public int pouchID = 12029, pouchCost = 10, foodID = 7946, eatPercent = 50,
 			foodHeal = 16;
 	public boolean useAttack = false, useStrength = false, useDefence = false,
-			superAttack = false, superStrength = false, superDefence = false;
+			superAttack = false, superStrength = false, superDefence = false,
+			useRanged = false;
+	public boolean mouseFollow = true;
 
 	public boolean onStart() {
 		VERSION = getClass().getAnnotation(ScriptManifest.class).version();
@@ -88,8 +98,8 @@ public class DunkYakKilla extends Script implements PaintListener {
 			STRENGTH = SUPERSTRENGTH;
 		if (superDefence)
 			DEFENCE = SUPERDEFENCE;
-		infoSkill = new skillInfo();
-		mouse.setSpeed(5);
+		infoSkill = new SkillInfo();
+		mouse.setSpeed(MS);
 		return run;
 	}
 
@@ -111,18 +121,21 @@ public class DunkYakKilla extends Script implements PaintListener {
 				&& inventory.containsOneOf(STRENGTH)
 				&& !isSkillBoosted(Skills.STRENGTH) || useDefence
 				&& inventory.containsOneOf(DEFENCE)
-				&& !isSkillBoosted(Skills.DEFENSE)) {
+				&& !isSkillBoosted(Skills.DEFENSE) || useRanged
+				&& !isSkillBoosted(Skills.RANGE)
+				&& inventory.containsOneOf(RANGED)) {
 			return state.POTIONS;
 		}
-		if (inventory.contains(pouchID) && !summoning.isFamiliarSummoned()
+		if (pouchID != 0 && inventory.contains(pouchID)
+				&& !summoning.isFamiliarSummoned()
 				&& summoning.getSummoningPoints() >= pouchCost) {
 			return state.FAMILIAR;
 		}
 		if (needAttack()) {
 			return state.ATTACK;
 		}
-		if (getMyPlayer().getInteracting() != null) {
-			if (getMyPlayer().getInteracting().getHPPercent() < 10) {
+		if (players.getMyPlayer().getInteracting() != null) {
+			if (players.getMyPlayer().getInteracting().getHPPercent() < 30) {
 				return state.FIND;
 			}
 		}
@@ -130,11 +143,6 @@ public class DunkYakKilla extends Script implements PaintListener {
 	}
 
 	public int loop() {
-		if (getMyPlayer().getInteracting() != null) {
-			if (getMyPlayer().getInteracting().getAnimation() == YAKDEADANIMATIONID) {
-				kills++;
-			}
-		}
 		switch (getState()) {
 		case EAT:
 			status = "Eating food...";
@@ -154,6 +162,8 @@ public class DunkYakKilla extends Script implements PaintListener {
 				potions = STRENGTH;
 			if (useDefence && !isSkillBoosted(Skills.DEFENSE))
 				potions = DEFENCE;
+			if (useRanged && !isSkillBoosted(Skills.RANGE))
+				potions = RANGED;
 			int id = 0;
 			for (int potion : potions) {
 				if (inventory.contains(potion)) {
@@ -176,32 +186,36 @@ public class DunkYakKilla extends Script implements PaintListener {
 			try {
 				inventory.getItem(pouchID).doAction("Summon");
 			} catch (Exception e) {
-				e.printStackTrace();
 			}
 			sleep(random(1000, 2000));
 			break;
 		case ATTACK:
 			status = "Attacking...";
-			RSNPC toAttack = getNPCToAttack();
-			if (toAttack != null) {
-				if (toAttack.isOnScreen()) {
-					toAttack.doAction("Attack");
-				} else {
-					if (calc.distanceTo(toAttack) > 5) {
-						walking.walkTileMM(toAttack.getLocation());
-					}
-					camera.turnToCharacter(toAttack);
-				}
+			if (menuContains("Attack Yak")) {
+				mouse.click(true);
+				sleep(random(500, 1000));
 			} else {
-				if (random(0, 3) == 2) {
-					RSTile[] area = { new RSTile(2327, 3792),
-							new RSTile(2323, 3795), new RSTile(2320, 3794),
-							new RSTile(2323, 3792), new RSTile(2323, 3795) };
-					walking.walkTileMM(area[random(0, area.length)]);
-					sleep(random(1000, 2000));
+				RSNPC toAttack = getNPCToAttack();
+				if (toAttack != null) {
+					if (toAttack.isOnScreen()) {
+						toAttack.doAction("Attack");
+						sleep(random(500, 1000));
+					} else {
+						new turnToYak().start();
+						if (calc.distanceTo(toAttack) > 5) {
+							walking.walkTileMM(toAttack.getLocation());
+						}
+					}
+				} else {
+					if (random(0, 3) == 2) {
+						RSTile[] area = { new RSTile(2327, 3792),
+								new RSTile(2323, 3795), new RSTile(2320, 3794),
+								new RSTile(2323, 3792), new RSTile(2323, 3795) };
+						walking.walkTileMM(area[random(0, area.length)]);
+						sleep(random(1000, 2000));
+					}
 				}
 			}
-			sleep(random(100, 1000));
 			break;
 		case FIND:
 			status = "Finding new opponent...";
@@ -209,15 +223,14 @@ public class DunkYakKilla extends Script implements PaintListener {
 			if (nextOpponent != null) {
 				if (!nextOpponent.isOnScreen()) {
 					camera.turnToCharacter(nextOpponent);
-				} else {
-					Point p = nextOpponent.getScreenLocation();
-					if (calc.pointOnScreen(p)) {
-						mouse
-								.move(p.x - random(-10, 10), p.y
-										- random(-10, 10));
+				} else if (mouseFollow) {
+					if (!menuContains("Attack")) {
+						Point p = nextOpponent.getScreenLocation();
+						if (calc.pointOnScreen(p)) {
+							mouse.move(p.x, p.y);
+						}
 					}
 				}
-				sleep(random(1000, 2000));
 			}
 			break;
 		case NONE:
@@ -301,8 +314,7 @@ public class DunkYakKilla extends Script implements PaintListener {
 				"Runtime: "
 						+ timeFormat((int) (System.currentTimeMillis() - startTime)),
 				"Status: " + status, "Kills: " + numberFormat(kills) };
-		drawColumn(g, list, 7, 337 - 4 - (list.length * (g.getFontMetrics()
-				.getHeight() - 3)), -3, false);
+		drawColumn(g, list, 7, 337, -3, false, true);
 		ArrayList<String> infoSkillsRaw = new ArrayList<String>();
 		for (int i = 0; i < infoSkill.skillAmount; i++) {
 			if (infoSkill.getExpGained(i) > 0) {
@@ -317,8 +329,7 @@ public class DunkYakKilla extends Script implements PaintListener {
 		}
 		String[] infoSkills = toArray(infoSkillsRaw);
 		g.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		drawColumn(g, infoSkills, 515, 337 - 4 - (infoSkills.length * (g
-				.getFontMetrics().getHeight() - 3)), -3, true);
+		drawColumn(g, infoSkills, 515, 337, -3, true, true);
 		g.setColor(setAlpha(Color.GREEN, 150));
 		RSNPC[] a = npcs.getAll(new Filter<RSNPC>() {
 			public boolean accept(RSNPC v) {
@@ -326,8 +337,12 @@ public class DunkYakKilla extends Script implements PaintListener {
 			}
 		});
 		for (RSNPC b : a) {
-			Point l = b.getScreenLocation();
+			Point l = calc.tileToScreen(b.getLocation(), -b.getHeight() / 2);
+			if (!calc.pointOnScreen(l))
+				continue;
 			g.drawOval(l.x - 5, l.y - 5, 10, 10);
+			g.setColor(setAlpha(Color.GREEN, 150));
+			// drawModel(g, b);
 		}
 		g.setColor(Color.YELLOW);
 		if (curAFK) {
@@ -338,19 +353,34 @@ public class DunkYakKilla extends Script implements PaintListener {
 							+ secondFormat((int) (curAFKT - (System
 									.currentTimeMillis() - curAFKST))) });
 		}
+		RSCharacter opponent = players.getMyPlayer().getInteracting();
+		if (opponent != null) {
+			if (opponent.getAnimation() == YAKDEADANIMATIONID && !killCounted) {
+				kills++;
+				killCounted = true;
+			}
+		}
+		if (opponent == null || opponent.getHPPercent() > 1) {
+			killCounted = false;
+		}
 	}
 
 	/* VOIDS */
 	public void drawColumn(Graphics g, String[] column, int x, int y,
-			int offset, boolean alignRight) {
+			int offset, boolean reverseHorizontal, boolean reverseVertical) {
 		int h = g.getFontMetrics().getHeight(), xp = x;
-		y += h;
+		h += offset;
+		if (reverseVertical) {
+			y -= (column.length - 1) * h;
+		} else {
+			y += h;
+		}
 		for (int i = 0; i < column.length; i++) {
 			x = xp;
-			if (alignRight)
+			if (reverseHorizontal) {
 				x += -g.getFontMetrics().stringWidth(column[i]);
-			y += offset;
-			g.drawString(column[i], x, (y + h * i));
+			}
+			g.drawString(column[i], x, y + (h * i));
 		}
 	}
 
@@ -374,9 +404,16 @@ public class DunkYakKilla extends Script implements PaintListener {
 		}
 	}
 
+	public void drawModel(Graphics g, RSNPC o) {
+		Polygon[] model = o.getModel().getTriangles();
+		for (Polygon p : model) {
+			g.drawPolygon(p);
+		}
+	}
+
 	/* BOOLEANS */
 	public boolean needAttack() {
-		RSCharacter opponent = getMyPlayer().getInteracting();
+		RSCharacter opponent = players.getMyPlayer().getInteracting();
 		return opponent == null
 				|| opponent.getAnimation() == YAKDEADANIMATIONID;
 	}
@@ -388,6 +425,19 @@ public class DunkYakKilla extends Script implements PaintListener {
 
 	public boolean isSkillBoosted(int skill) {
 		return skills.getRealLevel(skill) != skills.getCurrentLevel(skill);
+	}
+
+	public boolean menuContains(String action) {
+		try {
+			String[] actions = menu.getItems();
+			for (String a : actions) {
+				if (a.contains(action)) {
+					return true;
+				}
+			}
+		} catch (Exception e) {
+		}
+		return false;
 	}
 
 	/* INTS */
@@ -519,7 +569,7 @@ public class DunkYakKilla extends Script implements PaintListener {
 		return getPerMin(amount, startTime) * 60;
 	}
 
-	public class skillInfo {
+	public class SkillInfo {
 
 		public int skillAmount = Skills.SKILL_NAMES.length - 1;
 		public int[] expStarts = new int[skillAmount];
@@ -553,6 +603,13 @@ public class DunkYakKilla extends Script implements PaintListener {
 		}
 	}
 
+	public class turnToYak extends Thread {
+
+		public void run() {
+			camera.turnToCharacter(getNPCToAttack());
+		}
+	}
+
 	public class DunkYakKillaGUI extends JFrame {
 
 		private static final long serialVersionUID = 1L;
@@ -571,6 +628,13 @@ public class DunkYakKilla extends Script implements PaintListener {
 		private JComboBox defence;
 		private JTextField food;
 		private JTextField pouch;
+		private JSlider mousespeed;
+		private JLabel label8;
+		private JLabel label9;
+		private JLabel label10;
+		private JCheckBox mousefollow;
+		private JLabel label11;
+		private JComboBox ranged;
 		private JPanel buttonBar;
 		private JButton okButton;
 		private JButton cancelButton;
@@ -609,6 +673,17 @@ public class DunkYakKilla extends Script implements PaintListener {
 				}
 				if (settingsFile.getProperty("foodID") != null) {
 					food.setText(settingsFile.getProperty("foodID"));
+				}
+				if (settingsFile.getProperty("mouseSpeed") != null) {
+					mousespeed.setValue(Integer.parseInt(settingsFile
+							.getProperty("mouseSpeed")));
+				}
+				if (settingsFile.getProperty("mouseFollow") != null) {
+					mousefollow.setSelected(settingsFile.getProperty(
+							"mouseFollow").equals("true"));
+				}
+				if (settingsFile.getProperty("ranged") != null) {
+					ranged.setSelectedItem(settingsFile.getProperty("ranged"));
 				}
 			}
 		}
@@ -652,6 +727,15 @@ public class DunkYakKilla extends Script implements PaintListener {
 				pouchID = 0;
 				settingsFile.remove("pouchID");
 			}
+			MS = mousespeed.getValue();
+			settingsFile.setProperty("mouseSpeed", "" + MS);
+			mouseFollow = mousefollow.isSelected();
+			settingsFile.setProperty("mouseFollow", "" + mouseFollow);
+			String range = ranged.getSelectedItem().toString();
+			settingsFile.setProperty("ranged", range);
+			if (!range.equals("Dont use")) {
+				useRanged = true;
+			}
 		}
 
 		public boolean loadSettingsFile(Properties f) {
@@ -693,6 +777,13 @@ public class DunkYakKilla extends Script implements PaintListener {
 			defence = new JComboBox();
 			food = new JTextField();
 			pouch = new JTextField();
+			mousespeed = new JSlider();
+			label8 = new JLabel();
+			label9 = new JLabel();
+			label10 = new JLabel();
+			mousefollow = new JCheckBox();
+			label11 = new JLabel();
+			ranged = new JComboBox();
 			buttonBar = new JPanel();
 			okButton = new JButton();
 			cancelButton = new JButton();
@@ -714,6 +805,7 @@ public class DunkYakKilla extends Script implements PaintListener {
 				{
 					contentPanel.setInheritsPopupMenu(true);
 					contentPanel.setBackground(Color.white);
+					contentPanel.setPreferredSize(new Dimension(190, 300));
 
 					// ---- title ----
 					title.setText("DunkYakKilla");
@@ -755,6 +847,36 @@ public class DunkYakKilla extends Script implements PaintListener {
 					// ---- defence ----
 					defence.setModel(new DefaultComboBoxModel(model));
 
+					// ---- mousespeed ----
+					mousespeed.setBackground(Color.white);
+					mousespeed.setMaximum(8);
+					mousespeed.setValue(4);
+					mousespeed.setPaintLabels(true);
+					mousespeed.setSnapToTicks(true);
+					mousespeed.setMajorTickSpacing(1);
+					mousespeed.setMinimum(2);
+
+					// ---- label8 ----
+					label8.setText("Mouse speed");
+					label8.setHorizontalAlignment(SwingConstants.CENTER);
+
+					// ---- label9 ----
+					label9.setText("Fast");
+
+					// ---- label10 ----
+					label10.setText("Slow");
+
+					// ---- mousefollow ----
+					mousefollow.setText("Follow next target with mouse");
+					mousefollow.setSelected(true);
+
+					// ---- label11 ----
+					label11.setText("Ranged potion:");
+
+					// ---- ranged ----
+					ranged.setModel(new DefaultComboBoxModel(new String[] {
+							"Dont use", "Normal" }));
+
 					GroupLayout contentPanelLayout = new GroupLayout(
 							contentPanel);
 					contentPanel.setLayout(contentPanelLayout);
@@ -769,33 +891,12 @@ public class DunkYakKilla extends Script implements PaintListener {
 															contentPanelLayout
 																	.createParallelGroup()
 																	.addGroup(
-																			GroupLayout.Alignment.TRAILING,
 																			contentPanelLayout
 																					.createSequentialGroup()
 																					.addGroup(
 																							contentPanelLayout
-																									.createParallelGroup(
-																											GroupLayout.Alignment.TRAILING)
+																									.createParallelGroup()
 																									.addGroup(
-																											GroupLayout.Alignment.LEADING,
-																											contentPanelLayout
-																													.createSequentialGroup()
-																													.addComponent(
-																															label3,
-																															GroupLayout.PREFERRED_SIZE,
-																															81,
-																															GroupLayout.PREFERRED_SIZE)
-																													.addGap(
-																															18,
-																															18,
-																															18)
-																													.addComponent(
-																															defence,
-																															GroupLayout.PREFERRED_SIZE,
-																															GroupLayout.DEFAULT_SIZE,
-																															GroupLayout.PREFERRED_SIZE))
-																									.addGroup(
-																											GroupLayout.Alignment.LEADING,
 																											contentPanelLayout
 																													.createSequentialGroup()
 																													.addComponent(
@@ -809,11 +910,10 @@ public class DunkYakKilla extends Script implements PaintListener {
 																															18)
 																													.addComponent(
 																															strength,
-																															GroupLayout.PREFERRED_SIZE,
-																															GroupLayout.DEFAULT_SIZE,
-																															GroupLayout.PREFERRED_SIZE))
+																															0,
+																															71,
+																															Short.MAX_VALUE))
 																									.addGroup(
-																											GroupLayout.Alignment.LEADING,
 																											contentPanelLayout
 																													.createSequentialGroup()
 																													.addComponent(
@@ -827,58 +927,112 @@ public class DunkYakKilla extends Script implements PaintListener {
 																															18)
 																													.addComponent(
 																															attack,
+																															0,
+																															71,
+																															Short.MAX_VALUE))
+																									.addComponent(
+																											title,
+																											GroupLayout.Alignment.TRAILING,
+																											GroupLayout.DEFAULT_SIZE,
+																											170,
+																											Short.MAX_VALUE)
+																									.addGroup(
+																											contentPanelLayout
+																													.createSequentialGroup()
+																													.addComponent(
+																															label3,
 																															GroupLayout.PREFERRED_SIZE,
-																															GroupLayout.DEFAULT_SIZE,
-																															GroupLayout.PREFERRED_SIZE)))
+																															81,
+																															GroupLayout.PREFERRED_SIZE)
+																													.addGap(
+																															18,
+																															18,
+																															18)
+																													.addGroup(
+																															contentPanelLayout
+																																	.createParallelGroup()
+																																	.addComponent(
+																																			ranged,
+																																			0,
+																																			71,
+																																			Short.MAX_VALUE)
+																																	.addComponent(
+																																			defence,
+																																			0,
+																																			71,
+																																			Short.MAX_VALUE))))
+																					.addGap(
+																							10,
+																							10,
+																							10))
+																	.addGroup(
+																			contentPanelLayout
+																					.createSequentialGroup()
+																					.addComponent(
+																							label11)
 																					.addContainerGap(
-																							13,
+																							106,
+																							Short.MAX_VALUE))
+																	.addGroup(
+																			contentPanelLayout
+																					.createSequentialGroup()
+																					.addComponent(
+																							label6)
+																					.addContainerGap(
+																							22,
 																							Short.MAX_VALUE))
 																	.addGroup(
 																			contentPanelLayout
 																					.createSequentialGroup()
 																					.addGroup(
 																							contentPanelLayout
-																									.createParallelGroup(
-																											GroupLayout.Alignment.TRAILING)
+																									.createParallelGroup()
 																									.addComponent(
-																											label6,
-																											GroupLayout.Alignment.LEADING)
-																									.addGroup(
-																											contentPanelLayout
-																													.createSequentialGroup()
-																													.addGroup(
-																															contentPanelLayout
-																																	.createParallelGroup()
-																																	.addComponent(
-																																			label5,
-																																			GroupLayout.PREFERRED_SIZE,
-																																			55,
-																																			GroupLayout.PREFERRED_SIZE)
-																																	.addComponent(
-																																			label4))
-																													.addPreferredGap(
-																															LayoutStyle.ComponentPlacement.RELATED,
-																															13,
-																															Short.MAX_VALUE)
-																													.addGroup(
-																															contentPanelLayout
-																																	.createParallelGroup(
-																																			GroupLayout.Alignment.LEADING,
-																																			false)
-																																	.addComponent(
-																																			pouch)
-																																	.addComponent(
-																																			food,
-																																			GroupLayout.DEFAULT_SIZE,
-																																			71,
-																																			Short.MAX_VALUE))))
+																											label5,
+																											GroupLayout.PREFERRED_SIZE,
+																											55,
+																											GroupLayout.PREFERRED_SIZE)
+																									.addComponent(
+																											label4))
+																					.addPreferredGap(
+																							LayoutStyle.ComponentPlacement.RELATED,
+																							13,
+																							Short.MAX_VALUE)
+																					.addGroup(
+																							contentPanelLayout
+																									.createParallelGroup(
+																											GroupLayout.Alignment.LEADING,
+																											false)
+																									.addComponent(
+																											pouch)
+																									.addComponent(
+																											food,
+																											GroupLayout.PREFERRED_SIZE,
+																											71,
+																											GroupLayout.PREFERRED_SIZE))
 																					.addContainerGap())
 																	.addGroup(
-																			GroupLayout.Alignment.TRAILING,
 																			contentPanelLayout
 																					.createSequentialGroup()
 																					.addComponent(
-																							title,
+																							label9)
+																					.addPreferredGap(
+																							LayoutStyle.ComponentPlacement.RELATED)
+																					.addComponent(
+																							label8,
+																							GroupLayout.DEFAULT_SIZE,
+																							118,
+																							Short.MAX_VALUE)
+																					.addPreferredGap(
+																							LayoutStyle.ComponentPlacement.RELATED)
+																					.addComponent(
+																							label10)
+																					.addContainerGap())
+																	.addGroup(
+																			contentPanelLayout
+																					.createSequentialGroup()
+																					.addComponent(
+																							mousespeed,
 																							GroupLayout.DEFAULT_SIZE,
 																							170,
 																							Short.MAX_VALUE)
@@ -887,14 +1041,19 @@ public class DunkYakKilla extends Script implements PaintListener {
 																			contentPanelLayout
 																					.createSequentialGroup()
 																					.addComponent(
+																							mousefollow)
+																					.addContainerGap(
+																							9,
+																							Short.MAX_VALUE))
+																	.addGroup(
+																			contentPanelLayout
+																					.createSequentialGroup()
+																					.addComponent(
 																							label7,
 																							GroupLayout.DEFAULT_SIZE,
-																							160,
+																							170,
 																							Short.MAX_VALUE)
-																					.addGap(
-																							20,
-																							20,
-																							20)))));
+																					.addContainerGap()))));
 					contentPanelLayout
 							.setVerticalGroup(contentPanelLayout
 									.createParallelGroup()
@@ -943,6 +1102,19 @@ public class DunkYakKilla extends Script implements PaintListener {
 																			GroupLayout.PREFERRED_SIZE))
 													.addPreferredGap(
 															LayoutStyle.ComponentPlacement.RELATED)
+													.addGroup(
+															contentPanelLayout
+																	.createParallelGroup(
+																			GroupLayout.Alignment.BASELINE)
+																	.addComponent(
+																			label11)
+																	.addComponent(
+																			ranged,
+																			GroupLayout.PREFERRED_SIZE,
+																			GroupLayout.DEFAULT_SIZE,
+																			GroupLayout.PREFERRED_SIZE))
+													.addPreferredGap(
+															LayoutStyle.ComponentPlacement.RELATED)
 													.addComponent(label6)
 													.addPreferredGap(
 															LayoutStyle.ComponentPlacement.RELATED)
@@ -971,11 +1143,33 @@ public class DunkYakKilla extends Script implements PaintListener {
 																			GroupLayout.DEFAULT_SIZE,
 																			GroupLayout.PREFERRED_SIZE))
 													.addPreferredGap(
-															LayoutStyle.ComponentPlacement.RELATED,
+															LayoutStyle.ComponentPlacement.RELATED)
+													.addGroup(
+															contentPanelLayout
+																	.createParallelGroup(
+																			GroupLayout.Alignment.BASELINE)
+																	.addComponent(
+																			label9)
+																	.addComponent(
+																			label10)
+																	.addComponent(
+																			label8))
+													.addPreferredGap(
+															LayoutStyle.ComponentPlacement.RELATED)
+													.addComponent(
+															mousespeed,
+															GroupLayout.PREFERRED_SIZE,
 															GroupLayout.DEFAULT_SIZE,
-															Short.MAX_VALUE)
+															GroupLayout.PREFERRED_SIZE)
+													.addPreferredGap(
+															LayoutStyle.ComponentPlacement.RELATED)
+													.addComponent(mousefollow)
+													.addPreferredGap(
+															LayoutStyle.ComponentPlacement.RELATED)
 													.addComponent(label7)
-													.addContainerGap()));
+													.addContainerGap(
+															GroupLayout.DEFAULT_SIZE,
+															Short.MAX_VALUE)));
 				}
 				dialogPane.add(contentPanel, BorderLayout.NORTH);
 
