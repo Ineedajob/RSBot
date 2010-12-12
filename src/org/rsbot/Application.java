@@ -56,10 +56,7 @@ public class Application {
 			private final Logger log = Logger.getLogger("EXCEPTION");
 
 			public void uncaughtException(final Thread t, final Throwable e) {
-				if (!(e instanceof IllegalComponentStateException)) {
-					log.logp(Level.SEVERE, "EXCEPTION", "", "Unhandled exception in thread " + t.getName() + ": ", e);
-				}
-				System.out.println(e);
+				log.logp(Level.SEVERE, "EXCEPTION", "", "Unhandled exception in thread " + t.getName() + ": ", e);
 			}
 
 		});

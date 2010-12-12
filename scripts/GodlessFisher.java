@@ -25,8 +25,7 @@ import org.rsbot.script.util.WindowUtil;
 import org.rsbot.util.GlobalConfiguration;
 
 
-@ScriptManifest(authors={"Enfilade"}, keywords={"fishing","enfilade","godless"}, name="Godless Fisher", version=1.12,
-	description = "Multiple locations and styles supported.")
+@ScriptManifest(authors={"Enfilade"}, keywords={"fishing","enfilade","godless"}, name="Godless Fisher", version=1.13)
 public class GodlessFisher extends Script implements PaintListener,
     MouseMotionListener, MouseListener {
 
@@ -1491,8 +1490,15 @@ public class GodlessFisher extends Script implements PaintListener,
             this.targets = targets;
             this.gear = gear;
             gearIDs = new int[gear.length];
-            for(int i = 0; i < gearIDs.length; i++)
-                gearIDs[i] = gear[i].id;
+            if(gear.length == 1 && gear[0].bait > 0) {
+                gearIDs = new int[2];
+                gearIDs[0] = gear[0].id;
+                gearIDs[1] = gear[0].bait;
+            } else {
+                gearIDs = new int[gear.length];
+                for(int i = 0; i < gearIDs.length; i++)
+                    gearIDs[i] = gear[i].id;
+            }
             this.actionBefore = actionBefore.toLowerCase();
         }
 

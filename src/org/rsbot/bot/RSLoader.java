@@ -28,7 +28,7 @@ public class RSLoader extends Applet implements Runnable, Loader {
 
 	private String targetName;
 
-	private Canvas canvas = new org.rsbot.client.input.Canvas();
+	private Dimension size = Application.getPanelSize();
 
 	/**
 	 * The game class loader
@@ -141,8 +141,13 @@ public class RSLoader extends Applet implements Runnable, Loader {
 		}
 	}
 
+	public final void setSize(int width, int height) {
+		super.setSize(width, height);
+		size = new Dimension(width, height);
+	}
+
 	public final Dimension getSize() {
-		return Application.getPanelSize();
+		return size;
 	}
 
 }

@@ -107,6 +107,7 @@ public class Menu extends MethodProvider {
 
 		if (methods.client.isMenuCollapsed()) {
 			//Queue menu = new Queue(methods.client.getCollapsedMenuItems());
+			return new String[] {"Cancel"};
 		} else {
 			Deque menu = new Deque(methods.client.getMenuItems());
 

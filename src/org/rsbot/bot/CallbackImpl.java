@@ -24,7 +24,7 @@ public class CallbackImpl implements Callback {
     public void notifyMessage(final int id, final String sender, final String msg) {
 		MessageEvent m = new MessageEvent(sender, id, msg);
         bot.getEventManager().dispatchEvent(m);
-		if (id == MessageEvent.MESSAGE_SERVER) {
+		if (id == MessageEvent.MESSAGE_SERVER || id == MessageEvent.MESSAGE_ACTION) {
 			ServerMessageEvent e = new ServerMessageEvent(msg);
 			bot.getEventManager().dispatchEvent(e);
 		}
