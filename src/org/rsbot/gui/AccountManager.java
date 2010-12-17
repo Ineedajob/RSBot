@@ -1,27 +1,25 @@
 package org.rsbot.gui;
 
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.*;
-import java.util.logging.Logger;
+import org.rsbot.util.GlobalConfiguration;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.table.*;
-
-import org.rsbot.util.GlobalConfiguration;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableColumnModel;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.*;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.logging.Logger;
 
 /**
  * @author Tekk
@@ -330,7 +328,10 @@ public class AccountManager extends JDialog implements ActionListener {
 		if (name.charAt(0) > 91) {
 			name = (char) (name.charAt(0) - 32) + name.substring(1);
 		}
-		return name.replaceAll("\\s", "_");
+		if (!name.contains("@")) {
+			name = name.replaceAll("\\s", "_");
+		}
+		return name;
 	}
 
 	/**

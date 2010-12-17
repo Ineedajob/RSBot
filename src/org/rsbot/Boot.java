@@ -16,8 +16,9 @@ public class Boot {
 					location + "\" org.rsbot.Application");
 		} else {
 			Runtime.getRuntime().exec(new String[] { "/bin/sh",
-					"-c", "java " + memory + " -classpath \"" +
-					location + "\" org.rsbot.Application"});
+					"-c", "java " + memory + " -Xdock:name=\"RSBot\"" +
+							" -Xdock:icon=resources/images/icon.png" +
+							"  -classpath \"" + location + "\" org.rsbot.Application"});
 		}
 	}
 	

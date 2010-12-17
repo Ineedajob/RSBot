@@ -51,10 +51,11 @@ public abstract class Script extends Methods implements EventListener, Runnable 
 	}
 
 	/**
-	 * The main loop. Called if you return true from main. Called until you
-	 * return a negative number. Avoid causing execution to pause using sleep()
-	 * within this method in favor of returning the number of milliseconds to
-	 * sleep. This ensures that pausing and anti-randoms perform normally.
+	 * The main loop. Called if you return true from onStart, then continuously until
+	 * a negative integer is returned or the script stopped externally. When this script
+	 * is paused this method will not be called until the script is resumed. Avoid causing
+	 * execution to pause using sleep() within this method in favor of returning the number
+	 * of milliseconds to sleep. This ensures that pausing and anti-randoms perform normally.
 	 *
 	 * @return The number of milliseconds that the manager should sleep before
 	 *         calling it again. Returning a negative number will deactivate the script.

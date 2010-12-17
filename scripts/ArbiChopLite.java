@@ -6,12 +6,12 @@ import org.rsbot.script.methods.Skills;
 import org.rsbot.script.wrappers.*;
 import org.rsbot.script.util.Timer;
 import org.rsbot.event.listeners.PaintListener;
-import org.rsbot.event.listeners.ServerMessageListener;
-import org.rsbot.event.events.ServerMessageEvent;
+import org.rsbot.event.listeners.MessageListener;
+import org.rsbot.event.events.MessageEvent;
 import java.text.DecimalFormat;
 
 @ScriptManifest(authors = "Arbiter", keywords = "Woodcutting", name = "ArbiChop Lite", version = 1.3, description = "Start at Draynor. Auto-detecting Regular Tree and Willow Chopper.")
-public class ArbiChopLite extends Script implements PaintListener, ServerMessageListener {
+public class ArbiChopLite extends Script implements PaintListener, MessageListener {
 
 	private enum State {
 		DROP, WALK_TO_TREE, WALK_TO_BANK, BANK, CHOP, SLEEP
@@ -256,9 +256,9 @@ public class ArbiChopLite extends Script implements PaintListener, ServerMessage
 	}
 
 
-	public void serverMessageRecieved(final ServerMessageEvent arg0) {
-		final String serverString = arg0.getMessage();
-		if (serverString.contains("get some"))
+	public void messageReceived(final MessageEvent evt) {
+		final String serverString = evt.getMessage();
+		if (evt.getID() == MessageEvent.MESSAGE_ACTION && serverString.contains("get some"))
 			treesCut++;
 	}
 

@@ -1,12 +1,10 @@
 package org.rsbot.client;
 
 /**
- * Global interface for Render, implemented in both the low detail and high
- * detail Render classes.
+ * GraphicsToolkit
  */
 public interface Render {
 
-    // Absolute coordinates, float because of the HD
     float getAbsoluteX1();
 
     float getAbsoluteX2();
@@ -15,13 +13,12 @@ public interface Render {
 
     float getAbsoluteY2();
 
-    // x and y multipliers
     int getXMultiplier();
 
     int getYMultiplier();
 
-    // zNear and zFar
     int getZFar();
 
     int getZNear();
+
 }

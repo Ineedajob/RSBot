@@ -4,9 +4,8 @@ import org.rsbot.client.MenuItemNode;
 import org.rsbot.event.EventMulticaster;
 import org.rsbot.event.listeners.PaintListener;
 import org.rsbot.script.internal.wrappers.Deque;
-import org.rsbot.script.wrappers.RSTile;
 
-import java.awt.Graphics;
+import java.awt.*;
 import java.util.LinkedList;
 import java.util.regex.Pattern;
 
@@ -43,6 +42,7 @@ public class Menu extends MethodProvider {
 				return true;
 			} else {
 				methods.mouse.click(false);
+				idx = getIndex(action);
 				return clickIndex(idx);
 			}
 		} else {
@@ -82,10 +82,10 @@ public class Menu extends MethodProvider {
 			String[] items = getItems();
 			if (items.length <= i)
 				return false;
-			RSTile menu = getLocation();
+			Point menu = getLocation();
 			int xOff = random(4, items[i].length() * 4);
 			int yOff = 21 + 15 * i + random(3, 12);
-			methods.mouse.move(menu.getX() + xOff, menu.getY() + yOff, 2, 2);
+			methods.mouse.move(menu.x + xOff, menu.y + yOff, 2, 2);
 			if (!isOpen())
 				return false;
 			methods.mouse.click(true);
@@ -106,13 +106,21 @@ public class Menu extends MethodProvider {
 		LinkedList<String> actionsList = new LinkedList<String>();
 
 		if (methods.client.isMenuCollapsed()) {
-			//Queue menu = new Queue(methods.client.getCollapsedMenuItems());
+			/*Queue groups = new Queue(methods.client.getCollapsedMenuItems());
+
+			for (MenuGroupNode g = (MenuGroupNode) groups.getHead(); g != null; g = (MenuGroupNode) groups.getNext()) {
+				Queue items = new Queue(g.getItems());
+
+				for (MenuItemNode item = (MenuItemNode) items.getHead(); item != null; item = (MenuItemNode) items.getNext()) {
+					actionsList.add(item.getAction());
+				}
+			}*/
 			return new String[] {"Cancel"};
 		} else {
-			Deque menu = new Deque(methods.client.getMenuItems());
+			Deque items = new Deque(methods.client.getMenuItems());
 
-			for (MenuItemNode adn = (MenuItemNode) menu.getHead(); adn != null; adn = (MenuItemNode) menu.getNext()) {
-				actionsList.add(adn.getAction());
+			for (MenuItemNode item = (MenuItemNode) items.getHead(); item != null; item = (MenuItemNode) items.getNext()) {
+				actionsList.add(item.getAction());
 			}
 		}
 
@@ -180,16 +188,14 @@ public class Menu extends MethodProvider {
 	/**
 	 * Returns the location of the menu. Returns null if not open.
 	 *
-	 * @return The RSTile over which the menu is currently located.
+	 * @return The screen space point if open; otherwise null.
 	 */
-	public RSTile getLocation() {
+	public Point getLocation() {
 		if (!isOpen())
 			return null;
 		int x = methods.client.getMenuX();
 		int y = methods.client.getMenuY();
-		x += 4;
-		y += 4;
-		return new RSTile(x, y);
+		return new Point(x + 4, y + 4);
 	}
 
 	/**

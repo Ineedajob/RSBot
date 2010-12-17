@@ -108,50 +108,51 @@ public class RSComponent extends MethodProvider {
 	 * @return <tt>true</tt> if the component was clicked.
 	 */
 	public boolean doClick(boolean leftClick) {
-		if (!isValid())
+		if (!isValid()) {
 			return false;
-		Rectangle pos = getArea();
-		if (pos.x == -1 || pos.y == -1 || pos.width == -1 || pos.height == -1)
+		}
+
+		Rectangle rect = getArea();
+		if (rect.x == -1 || rect.y == -1 || rect.width == -1 || rect.height == -1) {
 			return false;
-		Point p = methods.mouse.getLocation();
-		int px = (int) p.getX();
-		int py = (int) p.getY();
-		if (px > pos.x && px < pos.x + pos.width && py > pos.y && py < pos.y + pos.height) {
+		}
+		if (rect.contains(methods.mouse.getLocation())) {
 			methods.mouse.click(true);
 			return true;
 		}
-		int dx = (int) (pos.getWidth() - 4) / 2;
-		int dy = (int) (pos.getHeight() - 4) / 2;
-		if (random(0, 10) != 0) {
-			dx /= 2;
-			dy /= 2;
-		}
-		int midx = (int) (pos.getMinX() + pos.getWidth() / 2);
-		int midy = (int) (pos.getMinY() + pos.getHeight() / 2);
-		methods.mouse.click(midx + random(-dx, dx), midy + random(-dy, dy), leftClick);
+
+		int min_x = rect.x + 1, min_y = rect.y + 1;
+		int max_x = min_x + rect.width - 2, max_y = min_y + rect.height - 2;
+
+		methods.mouse.click(random(min_x, max_x, rect.width / 3),
+				random(min_y, max_y, rect.height / 3), leftClick);
 		return true;
 	}
 
 	/**
-	 * Moves the mouse to a random place on this component.
+	 * Moves the mouse over this component (with normally distributed randomness)
+	 * if it is not already.
 	 *
 	 * @return <tt>true</tt> if the mouse was moved; otherwise <tt>false</tt>.
 	 */
 	public boolean doHover() {
-		if (!isValid())
+		if (!isValid()) {
 			return false;
-		Rectangle pos = getArea();
-		if (pos.x == -1 || pos.y == -1 || pos.width == -1 || pos.height == -1)
-			return false;
-		int dx = (int) (pos.getWidth() - 4) / 2;
-		int dy = (int) (pos.getHeight() - 4) / 2;
-		if (random(0, 10) != 0) {
-			dx /= 2;
-			dy /= 2;
 		}
-		int midx = (int) (pos.getMinX() + pos.getWidth() / 2);
-		int midy = (int) (pos.getMinY() + pos.getHeight() / 2);
-		methods.mouse.move(midx + random(-dx, dx), midy + random(-dy, dy));
+
+		Rectangle rect = getArea();
+		if (rect.x == -1 || rect.y == -1 || rect.width == -1 || rect.height == -1) {
+			return false;
+		}
+		if (rect.contains(methods.mouse.getLocation())) {
+			return false;
+		}
+
+		int min_x = rect.x + 1, min_y = rect.y + 1;
+		int max_x = min_x + rect.width - 2, max_y = min_y + rect.height - 2;
+
+		methods.mouse.move(random(min_x, max_x, rect.width / 3),
+				random(min_y, max_y, rect.height / 3));
 		return true;
 	}
 

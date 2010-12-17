@@ -1,5 +1,6 @@
 package org.rsbot.script.methods;
 
+import org.rsbot.client.HashTable;
 import org.rsbot.script.internal.wrappers.Deque;
 import org.rsbot.script.util.Filter;
 import org.rsbot.script.wrappers.RSItem;
@@ -140,7 +141,7 @@ public class GroundItems extends MethodProvider {
 		}
 		List<RSGroundItem> list = new ArrayList<RSGroundItem>();
 
-		org.rsbot.client.NodeCache itemNC = methods.client.getRSItemNodeCache();
+		HashTable itemNC = methods.client.getRSItemNodeCache();
 		int id = x | y << 14 | methods.client.getPlane() << 28;
 
 		org.rsbot.client.NodeListCache itemNLC = (org.rsbot.client.NodeListCache) methods.nodes.lookup(itemNC, id);

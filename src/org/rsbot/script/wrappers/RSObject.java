@@ -2,7 +2,6 @@ package org.rsbot.script.wrappers;
 
 import java.awt.Point;
 
-import org.rsbot.client.LDModel;
 import org.rsbot.client.Model;
 import org.rsbot.client.RSAnimable;
 import org.rsbot.script.methods.MethodContext;
@@ -68,7 +67,7 @@ public class RSObject extends MethodProvider {
 	 */
 	public RSObjectDef getDef() {
 		org.rsbot.client.Node ref = methods.nodes
-				.lookup(methods.client.getRSObjectDefFactory(), getID());
+				.lookup(methods.client.getRSObjectDefLoader(), getID());
 		if (ref != null) {
 			if (ref instanceof org.rsbot.client.HardReference) {
 				return new RSObjectDef((org.rsbot.client.RSObjectDef)
