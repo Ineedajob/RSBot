@@ -61,6 +61,12 @@ public interface Client {
 
     int getMenuY();
 
+	int getSubMenuX();
+
+	int getSubMenuY();
+
+	int getSubMenuWidth();
+
     int getMinimapAngle();
 
     float getMinimapOffset();
@@ -89,11 +95,11 @@ public interface Client {
 
     RSInterface[][] getRSInterfaceCache();
 
-    NodeCache getRSInterfaceNC();
+    HashTable getRSInterfaceNC();
 
-    NodeCache getRSItemNodeCache();
+    HashTable getRSItemNodeCache();
 
-    NodeCache getRSNPCNC();
+    HashTable getRSNPCNC();
 
     int getRSNPCCount();
 
@@ -133,11 +139,9 @@ public interface Client {
 
     boolean isSpellSelected();
 
-    RSItemDefFactory getRSItemDefFactory();
+    RSItemDefLoader getRSItemDefLoader();
     
-    RSNPCDefFactory getRSNPCDefFactory();
-    
-    RSObjectDefFactory getRSObjectDefFactory();
+    RSObjectDefLoader getRSObjectDefLoader();
 
     void setCallback(Callback cb);
 

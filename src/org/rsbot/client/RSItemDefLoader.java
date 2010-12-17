@@ -1,6 +1,6 @@
 package org.rsbot.client;
 
-public interface RSItemDefFactory extends DefFactory {
+public interface RSItemDefLoader extends DefLoader {
 
     boolean isMembers();
 

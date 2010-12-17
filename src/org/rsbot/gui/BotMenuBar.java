@@ -1,23 +1,13 @@
 package org.rsbot.gui;
 
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JSeparator;
-
 import org.rsbot.bot.Bot;
 import org.rsbot.event.impl.*;
 import org.rsbot.event.listeners.PaintListener;
 import org.rsbot.event.listeners.TextPaintListener;
+
+import javax.swing.*;
+import java.awt.event.ActionListener;
+import java.util.*;
 
 public class BotMenuBar extends JMenuBar {
 	
@@ -40,6 +30,7 @@ public class BotMenuBar extends JMenuBar {
         DEBUG_MAP.put("Mouse Position", TMousePosition.class);
         DEBUG_MAP.put("User Input Allowed", TUserInputAllowed.class);
         DEBUG_MAP.put("Menu Actions", TMenuActions.class);
+        DEBUG_MAP.put("Menu", TMenu.class);
         DEBUG_MAP.put("FPS", TFPS.class);
 
         // Paint

@@ -25,9 +25,9 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 
-import org.rsbot.event.events.ServerMessageEvent;
+import org.rsbot.event.events.MessageEvent;
 import org.rsbot.event.listeners.PaintListener;
-import org.rsbot.event.listeners.ServerMessageListener;
+import org.rsbot.event.listeners.MessageListener;
 import org.rsbot.script.Script;
 import org.rsbot.script.ScriptManifest;
 import org.rsbot.script.methods.Game;
@@ -36,8 +36,7 @@ import org.rsbot.script.wrappers.RSObject;
 import org.rsbot.script.wrappers.RSTile;
 
 @ScriptManifest(authors = "Bloddyharry", name = "Master Farmer Stealer", keywords = "Thieving", version = 2.4, description = "Made by BloddyHarry. Settings in GUI.")
-public class BloddyMasterFarmerStealer extends Script implements PaintListener,
-		ServerMessageListener {
+public class BloddyMasterFarmerStealer extends Script implements PaintListener, MessageListener {
 
 	final ScriptManifest properties = getClass().getAnnotation(
 			ScriptManifest.class);
@@ -619,7 +618,9 @@ public class BloddyMasterFarmerStealer extends Script implements PaintListener,
 		}
 	}
 
-	public void serverMessageRecieved(ServerMessageEvent e) {
+	public void messageReceived(MessageEvent e) {
+		if (e.getID() != MessageEvent.MESSAGE_ACTION)
+			return;
 		final String serverString = e.getMessage();
 		if (serverString.contains("You pick the")) {
 			pickpockets++;

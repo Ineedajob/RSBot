@@ -11,12 +11,12 @@ public class Bank extends MethodProvider {
 
 	public static final int[] BANKERS = {44, 45, 494, 495, 499, 958, 1036,
 			2271, 2354, 2355, 3824, 5488, 5901, 5912, 5913, 6362, 6532, 6533,
-			6534, 6535, 7605, 8948, 14367,};
+			6534, 6535, 7605, 8948, 9710, 14367};
 	public static final int[] BANK_BOOTHS = {2213, 4483, 6084, 11402, 11758,
 			12759, 14367, 19230, 24914, 25808, 26972, 27663, 29085, 34752,
-			35647,};
-	public static final int[] BANK_CHESTS = {4483, 12308, 21301, 27663, 42192,};
-	public static final int[] BANK_DEPOSIT_BOX = {9398, 20228, 26969, 36788,};
+			35647};
+	public static final int[] BANK_CHESTS = {4483, 12308, 21301, 27663, 42192};
+	public static final int[] BANK_DEPOSIT_BOX = {9398, 20228, 26969, 36788};
 
 	public static final int[] DO_NOT_DEPOSIT = new int[]{
 			1265, 1267, 1269, 1273, 1271, 1275, 1351, 590, 303};
@@ -44,10 +44,8 @@ public class Bank extends MethodProvider {
 	public static final int INTERFACE_COLLECTION_BOX = 105;
 	public static final int INTERFACE_COLLECTION_BOX_CLOSE = 13;
 
-	public static final int[] INTERFACE_BANK_TAB = {61, 59, 57, 55, 53, 51,
-			49, 47, 45};
-	public static final int[] INTERFACE_BANK_TAB_FIRST_ITEM = {78, 79, 80, 81,
-			82, 83, 84, 85, 86};
+	public static final int[] INTERFACE_BANK_TAB = {63, 61, 59, 57, 55, 53, 51, 49, 47};
+	public static final int[] INTERFACE_BANK_TAB_FIRST_ITEM = {78, 79, 80, 81, 82, 83, 84, 85, 86};
 
 	public static final int INTERFACE_DEPOSIT_BOX = 11;
 	public static final int INTERFACE_DEPOSIT_BOX_BUTTON_CLOSE = 15;
@@ -634,18 +632,17 @@ public class Bank extends MethodProvider {
 	 */
 	public boolean withdraw(final int itemID, final int count) {
 		if (isOpen()) {
-			if (count < 0) {
-				throw new IllegalArgumentException("count < 0 (" + count + ")");
-			}
-
-			RSComponent item = getItem(itemID).getComponent();
-			if (item == null) {
+			if (count < 0)
+				throw new IllegalArgumentException("count (" + count + ") < 0");
+			RSItem rsi = getItem(itemID);
+			if (rsi == null)
 				return false;
-			}
-
+			RSComponent item = rsi.getComponent();
+			if (item == null)
+				return false;
 			int invCount = methods.inventory.getCount(true);
 			switch (count) {
-				case 0: // All
+				case 0:
 					item.doAction("Withdraw-All");
 					break;
 				case 1:
@@ -659,13 +656,13 @@ public class Bank extends MethodProvider {
 					if (!item.doAction("Withdraw-" + count)) {
 						if (item.doAction("Withdraw-X")) {
 							sleep(random(1000, 1300));
-							methods.inputManager.sendKeys(String.valueOf(count), true);
+							methods.keyboard.sendText(String.valueOf(count), true);
 						}
 					}
 			}
-			sleep(random(500, 700));
-			int cInvCount = methods.inventory.getCount(true);
-			return cInvCount < invCount || cInvCount == 28;
+			sleep(random(1000, 1300));
+			int newInvCount = methods.inventory.getCount(true);
+			return newInvCount > invCount || newInvCount == 28;
 		}
 		return false;
 	}

@@ -1,15 +1,13 @@
 package org.rsbot.event.impl;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Polygon;
-import java.util.HashMap;
-
 import org.rsbot.bot.Bot;
 import org.rsbot.event.listeners.PaintListener;
 import org.rsbot.script.methods.MethodContext;
 import org.rsbot.script.wrappers.RSModel;
 import org.rsbot.script.wrappers.RSObject;
+
+import java.awt.*;
+import java.util.HashMap;
 
 //Draws a nice wire frame on interactable objects on screen.
 //Thanks to Kosaki for his initial idea and part of this code:)
@@ -99,6 +97,9 @@ public class DrawModel implements PaintListener {
     			for (Polygon polygon : model.getTriangles()) {
     				render.drawPolygon(polygon);
     			}
+				render.setColor(Color.GREEN);
+				Point p = model.getPoint();
+				render.fillOval(p.x - 1, p.y - 1, 2, 2);
     		}
     	}
     	

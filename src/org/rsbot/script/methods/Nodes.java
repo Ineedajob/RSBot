@@ -1,6 +1,7 @@
 package org.rsbot.script.methods;
 
-import org.rsbot.client.DefFactory;
+import org.rsbot.client.DefLoader;
+import org.rsbot.client.HashTable;
 import org.rsbot.client.Node;
 
 /**
@@ -19,12 +20,12 @@ public class Nodes extends MethodProvider {
 	 * @param id The id of the node
 	 * @return A <tt>Node</tt> object corresponding to the ID in the nodecache.
 	 */
-	public Node lookup(final org.rsbot.client.NodeCache nc, final long id) {
+	public Node lookup(final HashTable nc, final long id) {
 		try {
-			if ((nc == null) || (nc.getCache() == null) || (id < 0))
+			if ((nc == null) || (nc.getBuckets() == null) || (id < 0))
 				return null;
 
-			final Node n = nc.getCache()[(int) (id & nc.getCache().length - 1)];
+			final Node n = nc.getBuckets()[(int) (id & nc.getBuckets().length - 1)];
 			for (Node node = n.getPrevious(); node != n; node = node
 					.getPrevious()) {
 				if (node.getID() == id)
@@ -38,13 +39,13 @@ public class Nodes extends MethodProvider {
 	/**
 	 * 
 	 * @param id The id of the node
-	 * @return A <tt>Node</tt> object corresponding to the ID in the factory.
+	 * @return A <tt>Node</tt> object corresponding to the ID in the loader.
 	 */
-	public Node lookup(final DefFactory factory, final long id) {
-		if ((factory == null) || (factory.getMRUNodes() == null)) {
+	public Node lookup(final DefLoader loader, final long id) {
+		if ((loader == null) || (loader.getCache() == null)) {
 			return null;
 		}
-		return lookup(factory.getMRUNodes().getNodeCache(), id);
+		return lookup(loader.getCache().getTable(), id);
 	}
 
 }

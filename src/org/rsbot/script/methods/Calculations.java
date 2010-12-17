@@ -99,7 +99,7 @@ public class Calculations extends MethodProvider {
 		if (methods.game.isFixed()) {
 			return x > 4 && x < methods.game.getWidth() - 253 && y > 4 && y < methods.game.getHeight() - 169;
 		} else {
-			return x > 0 && x < methods.game.getWidth() - 260 && y > 0 &&  y < methods.game.getHeight() - 109;
+			return x > 0 && x < methods.game.getWidth() - 260 && y > 0 && y < methods.game.getHeight() - 129;
 		}
     }
 

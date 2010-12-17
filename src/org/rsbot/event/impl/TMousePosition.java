@@ -1,12 +1,12 @@
 package org.rsbot.event.impl;
 
-import java.awt.Graphics;
-
-import org.rsbot.client.Client;
 import org.rsbot.bot.Bot;
+import org.rsbot.client.Client;
 import org.rsbot.client.input.Mouse;
 import org.rsbot.event.listeners.TextPaintListener;
 import org.rsbot.util.StringUtil;
+
+import java.awt.*;
 
 public class TMousePosition implements TextPaintListener {
 	
@@ -22,7 +22,7 @@ public class TMousePosition implements TextPaintListener {
             final int mouse_x = mouse.getX();
             final int mouse_y = mouse.getY();
             String off = mouse.isPresent() ? "" : " (off)";
-            StringUtil.drawLine(render, idx++, "Mouse Position " + mouse_x + "," + mouse_y + off);
+            StringUtil.drawLine(render, idx++, "Mouse Position: (" + mouse_x + "," + mouse_y + ")" + off);
         }
 
         return idx;

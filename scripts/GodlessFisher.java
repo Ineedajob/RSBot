@@ -1,4 +1,14 @@
 
+import org.rsbot.event.listeners.PaintListener;
+import org.rsbot.script.Script;
+import org.rsbot.script.ScriptManifest;
+import org.rsbot.script.methods.Game;
+import org.rsbot.script.methods.Skills;
+import org.rsbot.script.util.WindowUtil;
+import org.rsbot.script.wrappers.*;
+import org.rsbot.util.GlobalConfiguration;
+
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -15,17 +25,10 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.LinkedList;
-import javax.imageio.ImageIO;
-import org.rsbot.event.listeners.PaintListener;
-import org.rsbot.script.*;
-import org.rsbot.script.methods.Game;
-import org.rsbot.script.methods.Skills;
-import org.rsbot.script.wrappers.*;
-import org.rsbot.script.util.WindowUtil;
-import org.rsbot.util.GlobalConfiguration;
 
 
-@ScriptManifest(authors={"Enfilade"}, keywords={"fishing","enfilade","godless"}, name="Godless Fisher", version=1.13)
+@ScriptManifest(authors={"Enfilade"}, keywords={"fishing","enfilade","godless"},
+name="Godless Fisher", description="A fisher with multiple locations", version=1.2)
 public class GodlessFisher extends Script implements PaintListener,
     MouseMotionListener, MouseListener {
 
@@ -52,6 +55,9 @@ public class GodlessFisher extends Script implements PaintListener,
     private GFFrame gui;
     private long failsafe;
 
+    private int energyThreshold;
+    private java.util.Random unique, r = new java.util.Random();
+
     private final int MINUTE = 60000;
     private int antiban, antibanState, lastAntiban;
     private String antibanDesc;
@@ -59,7 +65,7 @@ public class GodlessFisher extends Script implements PaintListener,
     private final LinkedList<Click> clicks = new LinkedList<Click>();
     private final AntibanTimer[] antibans = {
         new AntibanTimer("Take small breaks", "Taking a short break", MINUTE*15, MINUTE*30),
-        new AntibanTimer("Look offscreen", "Looking away", 5000, 30000),
+        new AntibanGTimer("Look offscreen", "Looking away", 1000, 30000, 10000, 16000),
         new AntibanTimer("Check fishing XP", "Checking fishing XP", 10*MINUTE, 30*MINUTE),
         new AntibanTimer("Click skills tab", "Opening skills tab", 5*MINUTE, 45*MINUTE),
         new AntibanTimer("Move mouse", "Moving mouse", 5000, MINUTE*2),
@@ -81,9 +87,6 @@ public class GodlessFisher extends Script implements PaintListener,
             WIGGLE_MOUSE = 7,
             PUT_HAND_ON_MOUSE = 8;
 
-    private int energyThreshold;
-    private java.util.Random unique;
-
     private int startingXP, startingLevel;
     private long startTime;
     public boolean onStart() {
@@ -101,7 +104,11 @@ public class GodlessFisher extends Script implements PaintListener,
         return true;
     }
 
-    private final PaintText WATERMARK = new PaintText() { public String getText() { return "Godless Fisher"; } },
+    private final PaintText WATERMARK = new PaintText() {
+                public String getText() {
+                    return "Godless Fisher " + GodlessFisher.class.getAnnotation(ScriptManifest.class).version();
+                }
+            },
             STATE = new PaintText() {
                 public String getText() {
                     String s = null;
@@ -239,6 +246,9 @@ public class GodlessFisher extends Script implements PaintListener,
                     inventoryColumn = 0;
                     inventoryRow = 0;
                     fishingSpot = null;
+                } else if(fishingSpot != null && timer != null && getMyPlayer().isMoving()) {
+                    timer.reset();
+                    startAntiban();
                 } else if(style.playerIsFishing(player) && interacting instanceof RSNPC
                         && ((RSNPC)interacting).getID() == spots.getID()
                         /*&& fishingSpot != null*/) {
@@ -254,7 +264,7 @@ public class GodlessFisher extends Script implements PaintListener,
                     if(fishingSpot.isOnScreen()) {
                         if(style.clickFishingSpot(fishingSpot)) {
                             fishingSpotTile = fishingSpot.getLocation();
-                            timer = new Timer(random(2000, 3500));
+                            timer = new Timer(random(1000, 2500));
                         } else {
                             fishingSpot = null;
                             return random(100, 300);
@@ -275,9 +285,11 @@ public class GodlessFisher extends Script implements PaintListener,
                     inventoryColumn = 0;
                     inventoryRow = 0;
                     fishingSpot = null;
+                    style.resetExpecting();
                 } else if(!style.playerIsFishing(player) || spotMoved(true)) {
                     state = State.LOOKING;
                     fishingSpot = null;
+                    style.resetExpecting();
                     return random(1000, 4000);
                 } else if(interfaces.get(LEVEL_UP_ID).isValid())
                     interfaces.get(LEVEL_UP_ID).getComponent(LEVEL_UP_CHILD_ID).doClick();
@@ -287,9 +299,26 @@ public class GodlessFisher extends Script implements PaintListener,
             case HANDLING_INVENTORY:
                 switch(drop ? InventoryHandler.DROPPER : handler.getType()) {
                     case InventoryHandler.DROPPER:
-                        if(inventoryContainsUnwantedFish(style))
-                            dropNextUnwantedFish();
-                        else
+                        RSItem fish;
+                        if(inventoryContainsUnwantedFish(style)) {
+                            if((fish = getNextUnwantedFish()) != null) {
+                                if(!fish.getComponent().getArea().contains(mouse.getLocation()))
+                                    fish.getComponent().doHover();
+                                mouse.click(false);
+                                Point p = mouse.getLocation();
+                                mouse.click(gaussianRandom(p.x, 3),
+                                        Math.min(418, p.y) + random(39, 53, 46, 8), true);
+                                inventoryRow++;
+                                if(inventoryRow >= 7) {
+                                    inventoryRow = 0;
+                                    inventoryColumn++;
+                                    if(inventoryColumn >= 4) {
+                                        inventoryColumn = 0;
+                                        state = State.LOOKING;
+                                    }
+                                }
+                            }
+                        } else
                             state = State.LOOKING;
                         break;
                     case InventoryHandler.BOOTH:
@@ -361,9 +390,7 @@ public class GodlessFisher extends Script implements PaintListener,
                         }
                         break;
                     case InventoryHandler.NOTER:
-                        if(inventoryContainsUnwantedFish(style))
-                            dropNextUnwantedFish();
-                        else if(!inventory.isFull())
+                        if(!inventory.isFull())
                             state = State.LOOKING;
                         else if(!inventoryContainsNoFish(style)) {
                             RSNPC noter = npcs.getNearest(handler.getID());
@@ -453,12 +480,12 @@ public class GodlessFisher extends Script implements PaintListener,
                             case 0:
                                 mouse.moveRandomly(10, 100);
                                 antibanState = random(0, 2);
-                                return random(100, 1000);
+                                return random(0, 1000, 50, 400);
                             case 1:
                                 return finishAntiban(50, 250);
                         }
                     case MOVE_MOUSE:
-                        mouse.move(random(0, game.getWidth()), random(0, game.getHeight()));
+                        mouse.move(random(0, game.getWidth(), game.getWidth()/2, 150), random(0, game.getHeight(), game.getHeight()/2, 150));
                         return finishAntiban(50, 5000);
                     case CHECKING_FISHING_SKILL:
                         switch(antibanState) {
@@ -886,17 +913,18 @@ public class GodlessFisher extends Script implements PaintListener,
         return null;
     }
 
-    private void dropNextUnwantedFish() {
-        RSItem item = inventory.getItems()[inventoryRow*4+inventoryColumn];
-        if(item != null && style.containsUnwantedFishID(item.getID()))
-            item.doAction("drop");
-        inventoryRow++;
-        if(inventoryRow >= 7) {
+    private RSItem getNextUnwantedFish() {
+        RSItem item;
+        for(; inventoryColumn < 4; inventoryColumn++) {
+            for(; inventoryRow < 7; inventoryRow++) {
+                item = inventory.getItems()[inventoryRow*4+inventoryColumn];
+                if(item != null && style.containsUnwantedFishID(item.getID())) {
+                    return item;
+                }
+            }
             inventoryRow = 0;
-            inventoryColumn++;
-            if(inventoryColumn >= 4)
-                inventoryColumn = 0;
         }
+        return null;
     }
 
     private boolean inventoryContainsNoFish(FishingStyle style) {
@@ -1643,6 +1671,11 @@ public class GodlessFisher extends Script implements PaintListener,
                 }
         }
 
+        public void resetExpecting() {
+            for(Fish f : targets)
+                f.expectingCatch = false;
+        }
+
         /*public int getBaitID() {
             if(this == ROD)
                 return 313;
@@ -1686,26 +1719,56 @@ public class GodlessFisher extends Script implements PaintListener,
         }
     }
 
+    private class Catch {
+        public long catchTime, timeTaken;
+        public Catch(long catchTime, long timeTaken) {
+            this.catchTime = catchTime;
+            this.timeTaken = timeTaken;
+        }
+    }
+
     private class Fish {
 
         private int id, count, price = -1, min = -1, max = -1;
         private GELookupThread looker;
         private boolean keep;
         private String name;
+        private boolean expectingCatch;
+        private LinkedList<Catch> catches;
+        private long lastCatch;
         private Fish(String name, int id) {
             this.name = name;
             this.id = id;
             keep = true;
+            catches = new LinkedList<Catch>();
         }
         public int getID() { return id; }
         public String getName() { return name; }
         public String toString() { return name; }
         public boolean shouldKeep() { return keep; }
         public void setKeep(boolean b) { keep = b; }
-        public void incrementCount() { count++; }
+        public void incrementCount() {
+            count++;
+            /*long currentTime = System.currentTimeMillis();
+            while(!catches.isEmpty() && currentTime - catches.peek().catchTime > 3600000)
+                catches.pop();
+            if(expectingCatch)
+                catches.add(new Catch(currentTime, currentTime - lastCatch));
+            lastCatch = currentTime;
+            expectingCatch = true;*/
+        }
         public int getCount() { return count; }
         public String getPaintText() {
+
+            /*long total = 0;
+            for(Catch c : catches)
+                total += c.timeTaken;
+            int size = catches.size();
+            String text = "N/A";
+            if(size > 0)
+                text = "" + (total / size);*/
             return name + ":\n-Caught: " + count +
+                    //"\n-Time per catch: " + total +
                     "\n-Min / Mid / Max: " +
                         shorthand(getMinPrice()) + " / " +
                         shorthand(getMarketPrice()) + " / " +
@@ -2173,7 +2236,7 @@ public class GodlessFisher extends Script implements PaintListener,
         }
     }
     private class AntibanTimer extends Timer implements Runnable {
-        private int lo, hi, sleep;
+        protected int lo, hi, sleep;
         private String desc, paintDesc;
         private boolean enabled;
         public AntibanTimer(String desc, String paintDesc, int lo, int hi) {
@@ -2198,6 +2261,34 @@ public class GodlessFisher extends Script implements PaintListener,
         public boolean isUp() { return super.isUp() && enabled; }
         public String toString() { return desc; }
         public String getPaintDescription() { return paintDesc; }
+    }
+
+    private class AntibanGTimer extends AntibanTimer {
+        private int mean, sd;
+        public AntibanGTimer(String desc, String paintDesc, int lo, int hi, int mean, int sd) {
+            super(desc, paintDesc, lo, hi);
+            this.mean = mean;
+            this.sd = sd;
+        }
+        public void run() {
+            try { Thread.sleep(sleep); } catch(InterruptedException e) {}
+            setDuration(random(lo, hi, mean, sd));
+            reset();
+        }
+    }
+
+    private int gaussianRandom(int mean, int sd) { return gaussianRandom(r, mean, sd); }
+
+    private int gaussianRandom(java.util.Random r, int mean, int sd) {
+        return (int)(r.nextGaussian()*sd + mean);
+    }
+
+    private int random(int lo, int hi, int mean, int sd) {
+        int rand;
+        do {
+            rand = (int)(r.nextGaussian()*sd + mean);
+        } while(rand < lo || rand >= hi);
+        return rand;
     }
 
     private Object[][] getAntibans() {

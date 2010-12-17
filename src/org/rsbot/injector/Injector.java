@@ -1,27 +1,25 @@
 package org.rsbot.injector;
 
-import java.io.*;
-import java.net.*;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Random;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-import java.util.jar.JarOutputStream;
-import java.util.logging.Logger;
-
-import javax.swing.JOptionPane;
-
 import com.sun.org.apache.bcel.internal.Constants;
 import com.sun.org.apache.bcel.internal.classfile.*;
 import com.sun.org.apache.bcel.internal.generic.*;
 import org.rsbot.client.Model;
 import org.rsbot.client.ModelCapture;
 import org.rsbot.util.GlobalConfiguration;
+
+import javax.swing.*;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.JarURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.jar.JarOutputStream;
+import java.util.logging.Logger;
 
 import static org.rsbot.injector.HookData.*;
 

@@ -40,7 +40,7 @@ public class RSItem extends MethodProvider {
      */
     public RSItemDef getDefinition() {
         try {
-            org.rsbot.client.Node ref = methods.nodes.lookup(methods.client.getRSItemDefFactory(), id);
+            org.rsbot.client.Node ref = methods.nodes.lookup(methods.client.getRSItemDefLoader(), id);
 
             if(ref != null) {
                 if(ref instanceof HardReference) {

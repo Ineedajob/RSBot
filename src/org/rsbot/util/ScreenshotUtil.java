@@ -44,9 +44,15 @@ public class ScreenshotUtil {
 		final Graphics2D graphics = bufferedImage.createGraphics();
 
 		if (hideUsername) {
-			graphics.setColor(Color.black);
-			graphics.fill(new Rectangle(9, 459, 100, 15));
-			graphics.dispose();
+			if(bot.getMethodContext().game.isFixed()) {
+				graphics.setColor(Color.black);
+				graphics.fill(new Rectangle(9, 459, 100, 15));
+				graphics.dispose();
+			} else {
+				graphics.setColor(Color.black);
+				graphics.drawRect(8, 555, 100, 15);
+				graphics.dispose();
+			}
 		}
 		return source;
 	}

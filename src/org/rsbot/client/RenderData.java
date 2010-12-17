@@ -1,8 +1,7 @@
 package org.rsbot.client;
 
 /**
- * Global interface for RenderData, implemented in both the low detail and high
- * detail RenderData classes.
+ * Viewport
  */
 public interface RenderData {
 

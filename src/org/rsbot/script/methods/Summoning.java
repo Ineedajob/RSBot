@@ -195,6 +195,15 @@ public class Summoning extends MethodProvider {
 	}
 
 	/**
+	 * Does a action in the summoning skill bubble.
+	 *
+	 * @return <tt>true</tt> if action is performed.
+	 */
+	public boolean doAction(String act) {
+		return methods.interfaces.get(INTERFACE_TAB_SUMMONING).getComponent(5).isValid() &&
+				methods.interfaces.get(INTERFACE_TAB_SUMMONING).getComponent(5).doAction(act);
+	}
+	/**
 	 * Presses attack in the summoning tab.
 	 *
 	 * @return <tt>true</tt> if the action was performed.

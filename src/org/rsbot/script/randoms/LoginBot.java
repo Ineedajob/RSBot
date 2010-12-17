@@ -28,6 +28,8 @@ public class LoginBot extends Random {
 	private static final int INTERFACE_WELCOME_SCREEN_BUTTON_PLAY_1 = 145;
 	private static final int INTERFACE_WELCOME_SCREEN_BUTTON_PLAY_2 = 155;
 	private static final int INTERFACE_WELCOME_SCREEN_TEXT_RETURN = 221;
+	private static final int INTERFACE_GRAPHICS_NOTICE = 976;
+	private static final int INTERFACE_GRAPHICS_LEAVE_ALONE = 6;
 
 	private static final int INDEX_LOGGED_OUT = 3;
 	private static final int INDEX_LOBBY = 7;
@@ -40,7 +42,7 @@ public class LoginBot extends Random {
 	}
 
 	public int loop() {
-		String username = account.getName().replaceAll("_", " ").toLowerCase().trim();
+		String username = account.getName().toLowerCase().trim();
 		String returnText = interfaces.get(INTERFACE_LOGIN_SCREEN).
 				getComponent(INTERFACE_TEXT_RETURN).getText().toLowerCase();
 		int textlength;
@@ -71,9 +73,9 @@ public class LoginBot extends Random {
 					log("Unable to login to a members world. Stopping script.");
 					RSComponent back_button1 = interfaces.get(INTERFACE_WELCOME_SCREEN).getComponent(228);
 					RSComponent back_button2 = interfaces.get(INTERFACE_WELCOME_SCREEN).getComponent(231);
-					mouse.click(back_button1.getAbsoluteX(),back_button1.getAbsoluteY(),
+					mouse.click(back_button1.getAbsoluteX(), back_button1.getAbsoluteY(),
 							back_button2.getAbsoluteX() + back_button2.getWidth() - back_button1.getAbsoluteX(),
-							back_button1.getHeight(),true);
+							back_button1.getHeight(), true);
 					interfaces.get(INTERFACE_WELCOME_SCREEN).getComponent(203).doClick();
 					stopScript(false);
 				}
@@ -125,6 +127,10 @@ public class LoginBot extends Random {
 			}
 		}
 		if (game.getClientState() == INDEX_LOGGED_OUT) {
+			if (interfaces.getComponent(INTERFACE_GRAPHICS_NOTICE, INTERFACE_GRAPHICS_LEAVE_ALONE).isValid()) {
+				interfaces.getComponent(INTERFACE_GRAPHICS_NOTICE, INTERFACE_GRAPHICS_LEAVE_ALONE).doClick();
+				return random(500, 600);
+			}
 			if (!atLoginScreen()) {
 				interfaces.getComponent(INTERFACE_MAIN, INTERFACE_MAIN_CHILD).getComponent(INTERFACE_MAIN_CHILD_COMPONENT_ID).doAction("");
 				return random(500, 600);
@@ -207,7 +213,7 @@ public class LoginBot extends Random {
 	}
 
 	private boolean isUsernameFilled() {
-		String username = account.getName().replaceAll("_", " ").toLowerCase().trim();
+		String username = account.getName().toLowerCase().trim();
 		return interfaces.get(INTERFACE_LOGIN_SCREEN).getComponent(INTERFACE_USERNAME).getText().toLowerCase().equalsIgnoreCase(username);
 	}
 

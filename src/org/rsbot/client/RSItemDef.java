@@ -16,5 +16,5 @@ public interface RSItemDef {
 
     boolean isMembersObject();
 
-    RSItemDefFactory getFactory();
+    RSItemDefLoader getLoader();
 }
