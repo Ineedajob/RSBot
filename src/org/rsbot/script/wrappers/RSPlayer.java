@@ -1,5 +1,6 @@
 package org.rsbot.script.wrappers;
 
+import org.rsbot.client.RSPlayerComposite;
 import org.rsbot.script.methods.MethodContext;
 
 import java.awt.*;
@@ -32,6 +33,14 @@ public class RSPlayer extends RSCharacter {
 
 	public int getTeam() {
 		return p.get().getTeam();
+	}
+
+	public int getNPCID() {
+		RSPlayerComposite comp = p.get().getComposite();
+		if (comp != null) {
+			return comp.getNPCID();
+		}
+		return -1;
 	}
 
 	public boolean isIdle() {

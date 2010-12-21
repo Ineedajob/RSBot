@@ -88,7 +88,7 @@ public class RSTilePath extends RSPath {
 	 */
 	public void randomize(int maxX, int maxY) {
 		for (int i = 0; i < tiles.length; ++i) {
-			tiles[i] = methods.walking.randomize(orig[i], maxX, maxY);
+			tiles[i] = orig[i].randomize(maxX, maxY);
 		}
 	}
 

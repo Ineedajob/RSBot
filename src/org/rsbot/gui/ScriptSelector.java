@@ -139,7 +139,7 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 		table.setIntercellSpacing(new Dimension(1, 1));
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		table.getSelectionModel().addListSelectionListener(new TableSelectionListener());
-		setColumnWidths(table, 30, 175, 50, 90);
+		setColumnWidths(table, 30, 175, 50, 100);
 
 		JToolBar toolBar = new JToolBar();
 		toolBar.setMargin(new Insets(1, 1, 1, 1));
