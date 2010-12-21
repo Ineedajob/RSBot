@@ -5,31 +5,31 @@ package org.rsbot.client;
  */
 public interface RenderData {
 
-    // x calculation values
-    float getXOff();
+	// x calculation values
+	float getXOff();
 
-    float getXX();
+	float getXX();
 
-    float getXY();
+	float getXY();
 
-    float getXZ();
+	float getXZ();
 
-    // y calculation values
-    float getYOff();
+	// y calculation values
+	float getYOff();
 
-    float getYX();
+	float getYX();
 
-    float getYY();
+	float getYY();
 
-    float getYZ();
+	float getYZ();
 
-    // z calculation values
-    float getZOff();
+	// z calculation values
+	float getZOff();
 
-    float getZX();
+	float getZX();
 
-    float getZY();
+	float getZY();
 
-    float getZZ();
+	float getZZ();
 
 }

@@ -2,10 +2,10 @@ package org.rsbot.client;
 
 public interface RSPlayer extends RSCharacter {
 
-    int getLevel();
+	int getLevel();
 
-    String getName();
+	String getName();
 
-    int getTeam();
+	int getTeam();
 
 }

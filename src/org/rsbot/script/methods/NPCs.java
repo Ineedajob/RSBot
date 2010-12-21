@@ -63,7 +63,7 @@ public class NPCs extends MethodProvider {
 	 *
 	 * @param filter Filters out unwanted matches.
 	 * @return An RSNPC object representing the nearest RSNPC accepted by the
-	 * provided Filter; or null if there are no matching NPCs in the current region.
+	 *         provided Filter; or null if there are no matching NPCs in the current region.
 	 */
 	public RSNPC getNearest(Filter<RSNPC> filter) {
 		int min = 20;
@@ -88,11 +88,11 @@ public class NPCs extends MethodProvider {
 
 	/**
 	 * Returns the RSNPC that is nearest out of all of the RSPNCs with the
-	 * provided name(s). Can return null.
+	 * provided ID(s). Can return null.
 	 *
 	 * @param ids Allowed NPC IDs.
 	 * @return An RSNPC object representing the nearest RSNPC with one of the
-	 * provided IDs; or null if there are no matching NPCs in the current region.
+	 *         provided IDs; or null if there are no matching NPCs in the current region.
 	 */
 	public RSNPC getNearest(final int... ids) {
 		return getNearest(new Filter<RSNPC>() {
@@ -113,7 +113,7 @@ public class NPCs extends MethodProvider {
 	 *
 	 * @param names Allowed NPC names.
 	 * @return An RSNPC object representing the nearest RSNPC with one of the
-	 * provided IDs; or null if there are no matching NPCs in the current region.
+	 *         provided names; or null if there are no matching NPCs in the current region.
 	 */
 	public RSNPC getNearest(final String... names) {
 		return getNearest(new Filter<RSNPC>() {

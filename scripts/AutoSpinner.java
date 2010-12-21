@@ -1,13 +1,14 @@
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Point;
-
-import org.rsbot.script.*;
+import org.rsbot.event.listeners.PaintListener;
+import org.rsbot.script.Script;
+import org.rsbot.script.ScriptManifest;
 import org.rsbot.script.methods.Game;
 import org.rsbot.script.methods.Skills;
-import org.rsbot.script.wrappers.*;
 import org.rsbot.script.util.Timer;
-import org.rsbot.event.listeners.PaintListener;
+import org.rsbot.script.wrappers.GEItemInfo;
+import org.rsbot.script.wrappers.RSComponent;
+import org.rsbot.script.wrappers.RSTile;
+
+import java.awt.*;
 
 @ScriptManifest(authors = "Jacmob", keywords = {"Crafting", "Money Making"}, name = "AutoSpinner", version = 2.1, description = "Lumbridge castle; flax at top of bank.")
 public class AutoSpinner extends Script implements PaintListener {

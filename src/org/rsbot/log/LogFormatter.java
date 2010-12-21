@@ -1,11 +1,11 @@
 package org.rsbot.log;
 
+import org.rsbot.util.StringUtil;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
-
-import org.rsbot.util.StringUtil;
 
 public class LogFormatter extends Formatter {
 

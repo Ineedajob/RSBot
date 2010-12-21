@@ -2,28 +2,28 @@ package org.rsbot.client;
 
 public interface RSCharacter extends RSAnimable {
 
-    int getAnimation();
+	int getAnimation();
 
 	int getGraphic();
 
-    int getHeight();
+	int getHeight();
 
-    int getHPRatio();
+	int getHPRatio();
 
-    int getInteracting();
+	int getInteracting();
 
-    int[] getLocationX();
+	int[] getLocationX();
 
-    int[] getLocationY();
+	int[] getLocationY();
 
 	int getOrientation();
 
-    int getLoopCycleStatus();
+	int getLoopCycleStatus();
 
-    String getMessage();
+	String getMessage();
 
-    int isMoving();
-    
-    Model getModel();
+	int isMoving();
+
+	Model getModel();
 
 }

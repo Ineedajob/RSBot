@@ -2,98 +2,98 @@ package org.rsbot.client;
 
 public interface RSInterface {
 
-    String[] getActions();
+	String[] getActions();
 
-    int getBorderThickness();
+	int getBorderThickness();
 
-    int getBoundsArrayIndex();
+	int getBoundsArrayIndex();
 
-    int getComponentID();
+	int getComponentID();
 
-    int getComponentIndex();
+	int getComponentIndex();
 
-    String getComponentName();
+	String getComponentName();
 
-    RSInterface[] getComponents();
+	RSInterface[] getComponents();
 
-    int getComponentStackSize();
+	int getComponentStackSize();
 
-    int getHeight();
+	int getHeight();
 
-    int getHeight2();
+	int getHeight2();
 
-    int getHorizontalScrollBarSize();
+	int getHorizontalScrollBarSize();
 
-    int getHorizontalScrollBarThumbPosition();
+	int getHorizontalScrollBarThumbPosition();
 
-    int getHorizontalScrollBarThumbSize();
+	int getHorizontalScrollBarThumbSize();
 
-    int getID();
+	int getID();
 
-    int[] getInventory();
+	int[] getInventory();
 
-    int[] getInventoryStackSizes();
+	int[] getInventoryStackSizes();
 
-    int getInvSpritePadX();
+	int getInvSpritePadX();
 
-    int getInvSpritePadY();
+	int getInvSpritePadY();
 
-    int getMasterX();
+	int getMasterX();
 
-    int getMasterY();
+	int getMasterY();
 
-    int getModelID();
+	int getModelID();
 
-    int getModelType();
+	int getModelType();
 
-    int getModelZoom();
+	int getModelZoom();
 
-    int getParentID();
+	int getParentID();
 
-    String getSelectedActionName();
+	String getSelectedActionName();
 
-    int getShadowColor();
+	int getShadowColor();
 
-    int getSpecialType();
+	int getSpecialType();
 
-    String getSpellName();
+	String getSpellName();
 
-    String getText();
+	String getText();
 
-    int getTextColor();
+	int getTextColor();
 
-    int getTextureID();
+	int getTextureID();
 
-    String getToolTip();
+	String getToolTip();
 
-    int getType();
+	int getType();
 
-    int[][] getValueIndexArray();
+	int[][] getValueIndexArray();
 
-    int getVerticalScrollBarPosition();
+	int getVerticalScrollBarPosition();
 
-    int getVerticalScrollBarSize();
+	int getVerticalScrollBarSize();
 
-    int getVerticalScrollBarThumbSize();
+	int getVerticalScrollBarThumbSize();
 
-    int getWidth();
+	int getWidth();
 
-    int getWidth2();
+	int getWidth2();
 
-    int getX();
+	int getX();
 
-    int getXRotation();
+	int getXRotation();
 
-    int getY();
+	int getY();
 
-    int getYRotation();
+	int getYRotation();
 
-    int getZRotation();
+	int getZRotation();
 
-    boolean isHorizontallyFlipped();
+	boolean isHorizontallyFlipped();
 
-    boolean isInventoryRSInterface();
+	boolean isInventoryRSInterface();
 
-    boolean isVerticallyFlipped();
+	boolean isVerticallyFlipped();
 
 }

@@ -1,7 +1,6 @@
 package org.rsbot.script.wrappers;
 
-import java.awt.Polygon;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.util.ArrayList;
 
 /**
@@ -114,7 +113,7 @@ public class RSArea {
 
 	/**
 	 * @return The nearest <b>RSTile</b> in the <b>RSArea</b>
-	 * to the given <b>RSTile</b>.
+	 *         to the given <b>RSTile</b>.
 	 */
 	public RSTile getNearestTile(RSTile base) {
 		RSTile[] tiles = this.getTileArray();

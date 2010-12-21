@@ -1,18 +1,17 @@
 package org.rsbot.script.wrappers;
 
-import java.awt.Point;
-import java.awt.Polygon;
-import java.util.Arrays;
-import java.util.LinkedList;
-
 import org.rsbot.client.Model;
 import org.rsbot.script.methods.MethodContext;
 import org.rsbot.script.methods.MethodProvider;
 import org.rsbot.script.util.Filter;
 
+import java.awt.*;
+import java.util.Arrays;
+import java.util.LinkedList;
+
 /**
  * A screen space model.
- * 
+ *
  * @author Jacmob
  */
 public abstract class RSModel extends MethodProvider {
@@ -21,7 +20,7 @@ public abstract class RSModel extends MethodProvider {
 	 * Returns a filter that matches against the array of
 	 * point indices for the A vertices of each triangle.
 	 * Use in scripts is discouraged.
-	 * 
+	 *
 	 * @param vertex_a The array of indices for A vertices.
 	 * @return The vertex point index based model filter.
 	 */
@@ -36,11 +35,11 @@ public abstract class RSModel extends MethodProvider {
 	protected int[] xPoints;
 	protected int[] yPoints;
 	protected int[] zPoints;
-	
+
 	protected short[] indices1;
 	protected short[] indices2;
 	protected short[] indices3;
-	
+
 	public RSModel(MethodContext ctx, Model model) {
 		super(ctx);
 		xPoints = model.getXPoints();
@@ -50,16 +49,18 @@ public abstract class RSModel extends MethodProvider {
 		indices2 = model.getIndices2();
 		indices3 = model.getIndices3();
 	}
-	
+
 	protected abstract int getLocalX();
+
 	protected abstract int getLocalY();
+
 	protected abstract void update();
-	
+
 	/**
 	 * Returns a random screen point.
-	 * 
+	 *
 	 * @return A screen point, or Point(-1, -1) if
-	 * the model is not on screen.
+	 *         the model is not on screen.
 	 */
 	public Point getPoint() {
 		update();
@@ -75,11 +76,11 @@ public abstract class RSModel extends MethodProvider {
 		}
 		return new Point(-1, -1);
 	}
-	
+
 	/**
 	 * Returns an array of triangles containing
 	 * the screen points of this model.
-	 * 
+	 *
 	 * @return The on screen triangles of this model.
 	 */
 	public Polygon[] getTriangles() {
@@ -90,12 +91,12 @@ public abstract class RSModel extends MethodProvider {
 		int len = indices1.length;
 		int height = methods.calc.tileHeight(locX, locY);
 		for (int i = 0; i < len; ++i) {
-			Point one = methods.calc.worldToScreen(locX + xPoints[indices1[i]], height + yPoints[indices1[i]], locY + zPoints[indices1[i]]);
-			Point two = methods.calc.worldToScreen(locX + xPoints[indices2[i]], height + yPoints[indices2[i]], locY + zPoints[indices2[i]]);
-			Point three = methods.calc.worldToScreen(locX + xPoints[indices3[i]], height + yPoints[indices3[i]], locY + zPoints[indices3[i]]);
-			
+			Point one = methods.calc.worldToScreen(locX + xPoints[indices1[i]], locY + zPoints[indices1[i]], height + yPoints[indices1[i]]);
+			Point two = methods.calc.worldToScreen(locX + xPoints[indices2[i]], locY + zPoints[indices2[i]], height + yPoints[indices2[i]]);
+			Point three = methods.calc.worldToScreen(locX + xPoints[indices3[i]], locY + zPoints[indices3[i]], height + yPoints[indices3[i]]);
+
 			if (one.x >= 0 && two.x >= 0 && three.x >= 0) {
-				polygons.add(new Polygon(new int[] {one.x, two.x, three.x}, new int[] {one.y, two.y, three.y}, 3));
+				polygons.add(new Polygon(new int[]{one.x, two.x, three.x}, new int[]{one.y, two.y, three.y}, 3));
 			}
 		}
 		return polygons.toArray(new Polygon[polygons.size()]);
@@ -106,33 +107,33 @@ public abstract class RSModel extends MethodProvider {
 	 * with the same x, y and z points as this model.
 	 * This method compares all of the values in the
 	 * three vertex arrays.
-	 * 
+	 *
 	 * @return <tt>true</tt> if the provided object is a
-	 * model with the same points as this.
+	 *         model with the same points as this.
 	 */
 	public boolean equals(Object o) {
 		if (o instanceof RSModel) {
 			RSModel m = (RSModel) o;
 			return Arrays.equals(indices1, m.indices1) &&
-				   Arrays.equals(xPoints, m.xPoints) &&
-				   Arrays.equals(yPoints, m.yPoints) &&
-				   Arrays.equals(zPoints, m.zPoints);
+					Arrays.equals(xPoints, m.xPoints) &&
+					Arrays.equals(yPoints, m.yPoints) &&
+					Arrays.equals(zPoints, m.zPoints);
 		}
 		return false;
 	}
-	
+
 	private Point getPointInRange(int start, int end) {
 		int locX = getLocalX();
 		int locY = getLocalY();
 		int height = methods.calc.tileHeight(locX, locY);
 		for (int i = start; i < end; ++i) {
-			Point one = methods.calc.worldToScreen(locX + xPoints[indices1[i]], height + yPoints[indices1[i]], locY + zPoints[indices1[i]]);
+			Point one = methods.calc.worldToScreen(locX + xPoints[indices1[i]], locY + zPoints[indices1[i]], height + yPoints[indices1[i]]);
 			int x = -1, y = -1;
 			if (one.x >= 0) {
 				x = one.x;
 				y = one.y;
 			}
-			Point two = methods.calc.worldToScreen(locX + xPoints[indices2[i]], height + yPoints[indices2[i]], locY + zPoints[indices2[i]]);
+			Point two = methods.calc.worldToScreen(locX + xPoints[indices2[i]], locY + zPoints[indices2[i]], height + yPoints[indices2[i]]);
 			if (two.x >= 0) {
 				if (x >= 0) {
 					x = (x + two.x) / 2;
@@ -142,7 +143,7 @@ public abstract class RSModel extends MethodProvider {
 					y = two.y;
 				}
 			}
-			Point three = methods.calc.worldToScreen(locX + xPoints[indices3[i]], height + yPoints[indices3[i]], locY + zPoints[indices3[i]]);
+			Point three = methods.calc.worldToScreen(locX + xPoints[indices3[i]], locY + zPoints[indices3[i]], height + yPoints[indices3[i]]);
 			if (three.x >= 0) {
 				if (x >= 0) {
 					x = (x + three.x) / 2;

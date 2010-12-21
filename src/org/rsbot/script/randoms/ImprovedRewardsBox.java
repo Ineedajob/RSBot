@@ -5,7 +5,7 @@ import org.rsbot.script.ScriptManifest;
 import org.rsbot.script.wrappers.RSComponent;
 import org.rsbot.script.wrappers.RSItem;
 
-import java.awt.Rectangle;
+import java.awt.*;
 
 @ScriptManifest(authors = {"Fred", "Arbiter"}, name = "Improved Rewards Box", version = 1.3)
 public class ImprovedRewardsBox extends Random {
@@ -165,8 +165,8 @@ public class ImprovedRewardsBox extends Random {
 				int toDragtoY = (int) (mouse.getLocation().getY() + (Double
 						.parseDouble(Integer
 								.toString((getBoxArea(selection[optionSelected]).y
-								+ getBoxArea(selection[optionSelected]).height
-								- selection[0].getAbsoluteY() - viewableScreenHeight)))
+										+ getBoxArea(selection[optionSelected]).height
+										- selection[0].getAbsoluteY() - viewableScreenHeight)))
 						/ Double.parseDouble(Integer
 						.toString(hiddenScreenHeight)) * Double
 						.parseDouble(Integer.toString(scrollbarTotalLength))));

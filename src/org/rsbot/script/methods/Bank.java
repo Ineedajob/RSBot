@@ -1,8 +1,12 @@
 package org.rsbot.script.methods;
 
-import org.rsbot.script.wrappers.*;
+import org.rsbot.script.wrappers.RSComponent;
+import org.rsbot.script.wrappers.RSInterface;
+import org.rsbot.script.wrappers.RSItem;
+import org.rsbot.script.wrappers.RSNPC;
+import org.rsbot.script.wrappers.RSObject;
 
-import java.awt.Point;
+import java.awt.*;
 
 /**
  * Bank related operations.

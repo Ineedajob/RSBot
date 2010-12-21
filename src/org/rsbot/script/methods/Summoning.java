@@ -203,6 +203,7 @@ public class Summoning extends MethodProvider {
 		return methods.interfaces.get(INTERFACE_TAB_SUMMONING).getComponent(5).isValid() &&
 				methods.interfaces.get(INTERFACE_TAB_SUMMONING).getComponent(5).doAction(act);
 	}
+
 	/**
 	 * Presses attack in the summoning tab.
 	 *
@@ -365,8 +366,6 @@ public class Summoning extends MethodProvider {
 	}
 
 	/**
-	 *
-	 *
 	 * @return <tt>true</tt> if a familiar is currently summoned; otherwise <tt>false</tt>.
 	 */
 	public boolean familiarExists() {

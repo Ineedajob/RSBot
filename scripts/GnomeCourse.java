@@ -1,17 +1,14 @@
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Point;
-import java.awt.Polygon;
-import java.awt.event.KeyEvent;
-
 import org.rsbot.event.listeners.PaintListener;
 import org.rsbot.script.Script;
 import org.rsbot.script.ScriptManifest;
 import org.rsbot.script.methods.Skills;
+import org.rsbot.script.util.Timer;
 import org.rsbot.script.wrappers.RSModel;
 import org.rsbot.script.wrappers.RSObject;
 import org.rsbot.script.wrappers.RSTile;
-import org.rsbot.script.util.Timer;
+
+import java.awt.*;
+import java.awt.event.KeyEvent;
 
 @ScriptManifest(authors = "Jacmob", keywords = "Agility", name = "Gnome Course", version = 2.2, description = "Standard gnome course. Eats common food.")
 public class GnomeCourse extends Script implements PaintListener {
@@ -48,12 +45,12 @@ public class GnomeCourse extends Script implements PaintListener {
 	public static final RSArea AREA_NET_END = new RSArea(new RSTile(2481, 3418), new RSTile(2490, 3426), 0);
 	public static final RSArea AREA_PIPE = new RSArea(new RSTile(2481, 3427), new RSTile(2489, 3431), 0);
 
-	public static final Obstacle OBSTACLE_LOG = new Obstacle(2474, 3435, -10, "Walk-across", new Obstacle.PassedListener() {
+	public static final Obstacle OBSTACLE_LOG = new Obstacle(2474, 3435, 10, "Walk-across", new Obstacle.PassedListener() {
 		public void onPassed(GnomeCourse ctx) {
 			ctx.camera.turnToTile(OBSTACLE_NET);
 		}
 	});
-	public static final Obstacle OBSTACLE_NET = new Obstacle(2474, 3425, 50, "Climb-over");
+	public static final Obstacle OBSTACLE_NET = new Obstacle(2474, 3425, -50, "Climb-over");
 	public static final Obstacle OBSTACLE_BRANCH = new Obstacle(2473, 3422, 120, "Climb", new Obstacle.PassedListener() {
 		public void onPassed(GnomeCourse ctx) {
 			ctx.turner.setTarget(OBSTACLE_ROPE);
@@ -70,17 +67,17 @@ public class GnomeCourse extends Script implements PaintListener {
 			}
 		}
 	});
-	public static final Obstacle OBSTACLE_BRANCH_DOWN = new Obstacle(2486, 3419, 60, "Climb-down", new Obstacle.PassedListener() {
+	public static final Obstacle OBSTACLE_BRANCH_DOWN = new Obstacle(2486, 3419, -60, "Climb-down", new Obstacle.PassedListener() {
 		public void onPassed(GnomeCourse ctx) {
 			ctx.turner.setTarget(OBSTACLE_NET_END);
 		}
 	});
-	public static final Obstacle OBSTACLE_NET_END = new Obstacle(2486, 3426, 100, "Climb-over", new Obstacle.PassedListener() {
+	public static final Obstacle OBSTACLE_NET_END = new Obstacle(2486, 3426, -100, "Climb-over", new Obstacle.PassedListener() {
 		public void onPassed(GnomeCourse ctx) {
 			ctx.turner.setTarget(OBSTACLE_PIPE);
 		}
 	});
-	public static final Obstacle OBSTACLE_PIPE = new Obstacle(2483, 3431, 60, "Squeeze-through", new Obstacle.PassedListener() {
+	public static final Obstacle OBSTACLE_PIPE = new Obstacle(2483, 3431, -60, "Squeeze-through", new Obstacle.PassedListener() {
 		public void onPassed(GnomeCourse ctx) {
 			ctx.turner.setTarget(OBSTACLE_LOG);
 		}

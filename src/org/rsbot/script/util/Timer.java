@@ -12,7 +12,7 @@ public class Timer {
 	/**
 	 * Instantiates a new Timer with a given time
 	 * period in milliseconds.
-	 * 
+	 *
 	 * @param period Time period in milliseconds.
 	 */
 	public Timer(long period) {
@@ -24,7 +24,7 @@ public class Timer {
 	/**
 	 * Returns the number of milliseconds elapsed since
 	 * the start time.
-	 * 
+	 *
 	 * @return The elapsed time in milliseconds.
 	 */
 	public long getElapsed() {
@@ -34,7 +34,7 @@ public class Timer {
 	/**
 	 * Returns the number of milliseconds remaining
 	 * until the timer is up.
-	 * 
+	 *
 	 * @return The remaining time in milliseconds.
 	 */
 	public long getRemaining() {
@@ -47,7 +47,7 @@ public class Timer {
 	/**
 	 * Returns <tt>true</tt> if this timer's time period
 	 * has not yet elapsed.
-	 * 
+	 *
 	 * @return <tt>true</tt> if the time period has not yet passed.
 	 */
 	public boolean isRunning() {
@@ -66,9 +66,9 @@ public class Timer {
 	 * milliseconds from the time it is called. This does
 	 * not edit the period of the timer (so will not affect
 	 * operation after reset).
-	 * 
+	 *
 	 * @param ms The number of milliseconds before the timer
-	 * should stop running.
+	 *           should stop running.
 	 * @return The new end time.
 	 */
 	public long setEndIn(long ms) {
@@ -78,6 +78,7 @@ public class Timer {
 
 	/**
 	 * Returns a formatted String of the time elapsed.
+	 *
 	 * @return The elapsed time formatted hh:mm:ss.
 	 */
 	public String toElapsedString() {
@@ -86,6 +87,7 @@ public class Timer {
 
 	/**
 	 * Returns a formatted String of the time remaining.
+	 *
 	 * @return The remaining time formatted hh:mm:ss.
 	 */
 	public String toRemainingString() {

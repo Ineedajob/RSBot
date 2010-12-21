@@ -1,10 +1,10 @@
 package org.rsbot.client;
 
-public interface MenuItemNode extends Node {
+public interface MenuItemNode extends NodeSub {
 
-    String getAction();
+	String getAction();
 
-    String getOption();
+	String getOption();
 
 	int getType();
 

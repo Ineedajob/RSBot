@@ -4,6 +4,6 @@ public interface NodeSubQueue {
 
 	NodeSub getCurrent();
 
-    NodeSub getTail();
+	NodeSub getTail();
 
 }

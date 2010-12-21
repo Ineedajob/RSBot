@@ -2,8 +2,8 @@ package org.rsbot.client;
 
 public interface StatusNode {
 
-    StatusNode getNext();
+	StatusNode getNext();
 
-    StatusNode getPrevious();
+	StatusNode getPrevious();
 
 }

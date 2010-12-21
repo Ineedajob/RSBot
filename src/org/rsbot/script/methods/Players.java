@@ -1,10 +1,10 @@
 package org.rsbot.script.methods;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.rsbot.script.util.Filter;
 import org.rsbot.script.wrappers.RSPlayer;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Player related operations.
@@ -26,16 +26,16 @@ public class Players extends MethodProvider {
 
 	/**
 	 * Returns an <tt>RSPlayer</tt> object representing the current player.
-	 * 
+	 *
 	 * @return An <tt>RSPlayer</tt> object representing the player.
 	 */
 	public RSPlayer getMyPlayer() {
 		return new RSPlayer(methods, methods.client.getMyRSPlayer());
 	}
-	
+
 	/**
 	 * Returns an array of all valid <tt>RSPlayer</tt>s.
-	 * 
+	 *
 	 * @return All valid RSPlayers.
 	 */
 	public RSPlayer[] getAll() {
@@ -69,8 +69,8 @@ public class Players extends MethodProvider {
 	 *
 	 * @param filter Filters unwanted matches.
 	 * @return An <tt>RSPlayer</tt> object representing the nearest player that
-	 * was accepted by the provided Filter; or null if there are no matching
-	 * players in the current region.
+	 *         was accepted by the provided Filter; or null if there are no matching
+	 *         players in the current region.
 	 */
 	public RSPlayer getNearest(Filter<RSPlayer> filter) {
 		int min = 20;
@@ -99,8 +99,8 @@ public class Players extends MethodProvider {
 	 *
 	 * @param name The name of the <tt>RSPlayer</tt> that you are searching for.
 	 * @return An <tt>RSPlayer</tt> object representing the nearest player with
-	 * the provided name; or null if there are no matching players in
-	 * the current region.
+	 *         the provided name; or null if there are no matching players in
+	 *         the current region.
 	 */
 	public RSPlayer getNearest(final String name) {
 		return getNearest(new Filter<RSPlayer>() {
@@ -116,8 +116,8 @@ public class Players extends MethodProvider {
 	 *
 	 * @param level The combat level of the <tt>RSPlayer</tt> that you are searching for.
 	 * @return An <tt>RSPlayer</tt> object representing the nearest player with
-	 * the provided combat level; or null if there are no matching players in
-	 * the current region.
+	 *         the provided combat level; or null if there are no matching players in
+	 *         the current region.
 	 */
 	public RSPlayer getNearest(final int level) {
 		return getNearest(new Filter<RSPlayer>() {

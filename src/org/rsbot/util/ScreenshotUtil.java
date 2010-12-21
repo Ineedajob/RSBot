@@ -44,7 +44,7 @@ public class ScreenshotUtil {
 		final Graphics2D graphics = bufferedImage.createGraphics();
 
 		if (hideUsername) {
-			if(bot.getMethodContext().game.isFixed()) {
+			if (bot.getMethodContext().game.isFixed()) {
 				graphics.setColor(Color.black);
 				graphics.fill(new Rectangle(9, 459, 100, 15));
 				graphics.dispose();

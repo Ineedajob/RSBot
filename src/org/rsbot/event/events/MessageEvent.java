@@ -27,27 +27,27 @@ public class MessageEvent extends RSEvent {
 	public static final int MESSAGE_ASSIST_INFO = 104;
 	public static final int MESSAGE_ACTION = 109;
 
-    private static final long serialVersionUID = -8416382326776831211L;
+	private static final long serialVersionUID = -8416382326776831211L;
 
-    private final String sender;
+	private final String sender;
 	private final int id;
 	private final String message;
 
-    public MessageEvent(String sender, int id, String message) {
+	public MessageEvent(String sender, int id, String message) {
 		this.sender = sender;
 		this.id = id;
-        this.message = message;
-    }
+		this.message = message;
+	}
 
-    @Override
-    public void dispatch(final EventListener el) {
-        ((MessageListener) el).messageReceived(this);
-    }
+	@Override
+	public void dispatch(final EventListener el) {
+		((MessageListener) el).messageReceived(this);
+	}
 
-    @Override
-    public long getMask() {
-        return EventMulticaster.MESSAGE_EVENT;
-    }
+	@Override
+	public long getMask() {
+		return EventMulticaster.MESSAGE_EVENT;
+	}
 
 	public String getSender() {
 		return sender;
@@ -57,8 +57,8 @@ public class MessageEvent extends RSEvent {
 		return id;
 	}
 
-    public String getMessage() {
-        return message;
-    }
+	public String getMessage() {
+		return message;
+	}
 
 }

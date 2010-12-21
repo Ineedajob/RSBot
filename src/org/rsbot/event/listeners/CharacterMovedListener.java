@@ -3,13 +3,13 @@
  */
 package org.rsbot.event.listeners;
 
-import java.util.EventListener;
-
 import org.rsbot.event.events.CharacterMovedEvent;
+
+import java.util.EventListener;
 
 /**
  * @author Qauters
  */
 public interface CharacterMovedListener extends EventListener {
-    public void characterMoved(CharacterMovedEvent e);
+	public void characterMoved(CharacterMovedEvent e);
 }

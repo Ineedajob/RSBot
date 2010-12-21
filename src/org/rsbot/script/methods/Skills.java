@@ -6,18 +6,18 @@ package org.rsbot.script.methods;
  * Example usage: skills.getRealLevel(Skills.ATTACK);
  */
 public class Skills extends MethodProvider {
-	
-	public static final String[] SKILL_NAMES = { "attack", "defence",
+
+	public static final String[] SKILL_NAMES = {"attack", "defence",
 			"strength", "constitution", "range", "prayer", "magic", "cooking",
 			"woodcutting", "fletching", "fishing", "firemaking", "crafting",
 			"smithing", "mining", "herblore", "agility", "thieving", "slayer",
 			"farming", "runecrafting", "hunter", "construction", "summoning",
-			"dungeoneering", "-unused-" };
+			"dungeoneering", "-unused-"};
 
 	/**
 	 * A table containing the experiences that begin each level.
 	 */
-	public static final int[] XP_TABLE = { 0, 0, 83, 174, 276, 388, 512, 650,
+	public static final int[] XP_TABLE = {0, 0, 83, 174, 276, 388, 512, 650,
 			801, 969, 1154, 1358, 1584, 1833, 2107, 2411, 2746, 3115, 3523,
 			3973, 4470, 5018, 5624, 6291, 7028, 7842, 8740, 9730, 10824, 12031,
 			13363, 14833, 16456, 18247, 20224, 22406, 24815, 27473, 30408,
@@ -32,7 +32,7 @@ public class Skills extends MethodProvider {
 			14391160, 15889109, 17542976, 19368992, 21385073, 23611006,
 			26068632, 28782069, 31777943, 35085654, 38737661, 42769801,
 			47221641, 52136869, 57563718, 63555443, 70170840, 77474828,
-			85539082, 94442737, 104273167 };
+			85539082, 94442737, 104273167};
 
 	public static final int ATTACK = 0;
 	public static final int DEFENSE = 1;
@@ -90,7 +90,7 @@ public class Skills extends MethodProvider {
 	/**
 	 * Gets the index of the skill with a given name. This is not case
 	 * sensitive.
-	 * 
+	 *
 	 * @param statName The skill's name.
 	 * @return The index of the specified skill; otherwise -1.
 	 * @see #SKILL_NAMES
@@ -105,7 +105,7 @@ public class Skills extends MethodProvider {
 
 	/**
 	 * Gets the level at the given experience.
-	 * 
+	 *
 	 * @param exp The experience.
 	 * @return The level based on the experience given.
 	 * @see #XP_TABLE
@@ -124,7 +124,7 @@ public class Skills extends MethodProvider {
 
 	/**
 	 * Gets the current experience for the given skill.
-	 * 
+	 *
 	 * @param index The index of the skill.
 	 * @return -1 if the skill is unavailable
 	 */
@@ -140,7 +140,7 @@ public class Skills extends MethodProvider {
 	/**
 	 * Gets the effective level of the given skill (accounting for temporary
 	 * boosts and reductions).
-	 * 
+	 *
 	 * @param index The index of the skill.
 	 * @return The current level of the given Skill.
 	 */
@@ -151,7 +151,7 @@ public class Skills extends MethodProvider {
 	/**
 	 * Gets the player's current level in a skill based on their experience in
 	 * that skill.
-	 * 
+	 *
 	 * @param index The index of the skill.
 	 * @return The real level of the skill.
 	 * @see #getRealLevel(int)
@@ -162,10 +162,10 @@ public class Skills extends MethodProvider {
 
 	/**
 	 * Gets the percentage to the next level in a given skill.
-	 * 
+	 *
 	 * @param index The index of the skill.
 	 * @return The percent to the next level of the provided skill or 0 if level
-	 * of skill is 99.
+	 *         of skill is 99.
 	 */
 	public int getPercentToNextLevel(final int index) {
 		final int lvl = getRealLevel(index);
@@ -180,7 +180,7 @@ public class Skills extends MethodProvider {
 
 	/**
 	 * Gets the maximum level of a given skill.
-	 * 
+	 *
 	 * @param index The index of the skill.
 	 * @return The max level of the skill.
 	 */
@@ -190,7 +190,7 @@ public class Skills extends MethodProvider {
 
 	/**
 	 * Gets the maximum experience of a given skill.
-	 * 
+	 *
 	 * @param index The index of the skill.
 	 * @return The max experience of the skill.
 	 */
@@ -201,7 +201,7 @@ public class Skills extends MethodProvider {
 	/**
 	 * Gets the experience remaining until reaching the next level in a given
 	 * skill.
-	 * 
+	 *
 	 * @param index The index of the skill.
 	 * @return The experience to the next level of the skill.
 	 */
@@ -211,10 +211,10 @@ public class Skills extends MethodProvider {
 			return 0;
 		return Skills.XP_TABLE[lvl + 1] - getCurrentExp(index);
 	}
-	
+
 	/**
 	 * Moves the mouse over a given component in the stats tab.
-	 * 
+	 *
 	 * @param component The component index.
 	 * @return <tt>true</tt> if the mouse was moved over the given component index.
 	 */
@@ -223,5 +223,5 @@ public class Skills extends MethodProvider {
 		sleep(random(10, 100));
 		return methods.interfaces.getComponent(INTERFACE_TAB_STATS, component).doHover();
 	}
-	
+
 }

@@ -1,16 +1,20 @@
 package org.rsbot.gui;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.event.*;
-
-import javax.swing.JPanel;
-
 import org.rsbot.bot.Bot;
 import org.rsbot.event.EventManager;
 import org.rsbot.script.methods.Mouse;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 
 import static org.rsbot.script.methods.Environment.INPUT_KEYBOARD;
 import static org.rsbot.script.methods.Environment.INPUT_MOUSE;
@@ -47,7 +51,7 @@ public class BotPanel extends JPanel {
 			}
 
 			public void mouseEntered(MouseEvent e) {
-				
+
 			}
 
 			public void mouseExited(MouseEvent e) {
@@ -61,7 +65,7 @@ public class BotPanel extends JPanel {
 			public void mouseReleased(MouseEvent e) {
 				redispatch(e);
 			}
-			
+
 		});
 		addMouseMotionListener(new MouseMotionListener() {
 
@@ -72,7 +76,7 @@ public class BotPanel extends JPanel {
 			public void mouseMoved(MouseEvent e) {
 				redispatch(e);
 			}
-			
+
 		});
 		addMouseWheelListener(new MouseWheelListener() {
 
@@ -94,7 +98,7 @@ public class BotPanel extends JPanel {
 			public void keyTyped(KeyEvent e) {
 				redispatch(e);
 			}
-			
+
 		});
 	}
 

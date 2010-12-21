@@ -1,9 +1,11 @@
 package org.rsbot.script.methods;
 
+import org.rsbot.client.MenuGroupNode;
 import org.rsbot.client.MenuItemNode;
 import org.rsbot.event.EventMulticaster;
 import org.rsbot.event.listeners.PaintListener;
 import org.rsbot.script.internal.wrappers.Deque;
+import org.rsbot.script.internal.wrappers.Queue;
 
 import java.awt.*;
 import java.util.LinkedList;
@@ -14,11 +16,13 @@ import java.util.regex.Pattern;
  */
 public class Menu extends MethodProvider {
 
-	// Menu items are cached after each frame
-	private static final Pattern stripFormatting = Pattern.compile("\\<.+?\\>");
+	private static final Pattern HTML_TAG = Pattern.compile("(^[^<]+>|<[^>]+>|<[^>]+$)");
+
 	private final Object menuCacheLock = new Object();
+
 	private String[] menuOptionsCache = new String[0];
 	private String[] menuActionsCache = new String[0];
+
 	private boolean menuListenerStarted = false;
 
 	Menu(final MethodContext ctx) {
@@ -35,27 +39,23 @@ public class Menu extends MethodProvider {
 	public boolean doAction(String action) {
 		int idx = getIndex(action);
 		if (!isOpen()) {
-			if (idx == -1)
+			if (idx == -1) {
 				return false;
+			}
 			if (idx == 0) {
 				methods.mouse.click(true);
 				return true;
-			} else {
-				methods.mouse.click(false);
-				idx = getIndex(action);
-				return clickIndex(idx);
 			}
-		} else {
-			if (idx == -1) {
-				while (isOpen()) {
-					methods.mouse.moveRandomly(750);
-					sleep(random(100, 500));
-				}
-				return false;
-			} else {
-				return clickIndex(idx);
+			methods.mouse.click(false);
+			return clickIndex(idx);
+		} else if (idx == -1) {
+			while (isOpen()) {
+				methods.mouse.moveRandomly(750);
+				sleep(random(100, 500));
 			}
+			return false;
 		}
+		return clickIndex(idx);
 	}
 
 	/**
@@ -76,182 +76,230 @@ public class Menu extends MethodProvider {
 	 * @return <tt>true</tt> if the mouse was clicked; otherwise <tt>false</tt>.
 	 */
 	public boolean clickIndex(int i) {
-		if (!isOpen())
+		if (!isOpen()) {
 			return false;
-		try {
-			String[] items = getItems();
-			if (items.length <= i)
-				return false;
-			Point menu = getLocation();
-			int xOff = random(4, items[i].length() * 4);
-			int yOff = 21 + 15 * i + random(3, 12);
-			methods.mouse.move(menu.x + xOff, menu.y + yOff, 2, 2);
-			if (!isOpen())
-				return false;
+		}
+		String[] items = getItems();
+		if (items.length <= i) {
+			return false;
+		}
+		if (isCollapsed()) {
+			Queue<MenuGroupNode> groups = new Queue<MenuGroupNode>(methods.client.getCollapsedMenuItems());
+			int idx = 0, mainIdx = 0;
+			for (MenuGroupNode g = groups.getHead(); g != null; g = groups.getNext(), ++mainIdx) {
+				Queue subItems = new Queue(g.getItems());
+				int subIdx = 0;
+				for (MenuItemNode item = (MenuItemNode) subItems.getHead(); item != null; item = (MenuItemNode) subItems.getNext(), ++subIdx) {
+					if (idx++ == i) {
+						if (subItems.size() == 1) {
+							return clickMain(items, mainIdx);
+						} else {
+							return clickSub(items, mainIdx, subIdx);
+						}
+					}
+				}
+			}
+			return false;
+		} else {
+			return clickMain(items, i);
+		}
+	}
+
+	private boolean clickMain(String[] items, int i) {
+		Point menu = getLocation();
+		int xOff = random(4, items[i].length() * 4);
+		int yOff = 21 + 15 * i + random(3, 12);
+		methods.mouse.move(menu.x + xOff, menu.y + yOff, 2, 2);
+		if (isOpen()) {
 			methods.mouse.click(true);
 			return true;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
 		}
+		return false;
+	}
+
+	private boolean clickSub(String[] items, int mIdx, int sIdx) {
+		Point menuLoc = getLocation();
+		int x = random(menuLoc.x + 4, menuLoc.x + 4 * items[mIdx].length() * 4);
+		methods.mouse.move(x, menuLoc.y + 21 + 15 * mIdx + random(3, 12), 2, 2);
+		sleep(random(0, 150));
+
+		if (isOpen()) {
+			Point subLoc = getSubMenuLocation();
+			x = random(subLoc.x + 4, subLoc.x + 4 + items[sIdx].length() * 4);
+			methods.mouse.move(x, methods.mouse.getLocation().y, 2, 0);
+			sleep(random(50, 150));
+
+			if (isOpen()) {
+				int y = 21 + 15 * sIdx + random(3, 12);
+				methods.mouse.move(x, y, 2, 2);
+				sleep(random(25, 150));
+
+				if (isOpen()) {
+					methods.mouse.click(true);
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	/**
-	 * Returns an array of the first parts of each item in the current
-	 * context menu actions.
+	 * Returns an array of the first parts of each item in the
+	 * current menu context.
 	 *
-	 * @return The first half, for example "Walk here" "Follow".
+	 * @return The first half. "Walk here", "Trade with", "Follow".
 	 */
 	public String[] getActions() {
-		LinkedList<String> actionsList = new LinkedList<String>();
-
-		if (methods.client.isMenuCollapsed()) {
-			/*Queue groups = new Queue(methods.client.getCollapsedMenuItems());
-
-			for (MenuGroupNode g = (MenuGroupNode) groups.getHead(); g != null; g = (MenuGroupNode) groups.getNext()) {
-				Queue items = new Queue(g.getItems());
-
-				for (MenuItemNode item = (MenuItemNode) items.getHead(); item != null; item = (MenuItemNode) items.getNext()) {
-					actionsList.add(item.getAction());
-				}
-			}*/
-			return new String[] {"Cancel"};
-		} else {
-			Deque items = new Deque(methods.client.getMenuItems());
-
-			for (MenuItemNode item = (MenuItemNode) items.getHead(); item != null; item = (MenuItemNode) items.getNext()) {
-				actionsList.add(item.getAction());
-			}
-		}
-
-		String[] actions = actionsList.toArray(new String[actionsList.size()]);
-		LinkedList<String> output = new LinkedList<String>();
-		// Don't remove the commented line, Jagex switches every few updates, so
-		// it's there for quick fixes.
-		for (int i = actions.length - 1; i >= 0; --i) {
-			//for (int i = 0; i < actions.length; ++i) {
-			String action = actions[i];
-			if (action != null) {
-				String text = stripFomatting(action);
-				output.add(text);
-			} else {
-				output.add("");
-			}
-		}
-
-		return output.toArray(new String[output.size()]);
+		return getMenuItemPart(true);
 	}
 
 	/**
-	 * Returns the index (starts at 0) in the menu for a given action. -1 when invalid.
+	 * Returns the index in the menu for a given action. Starts at 0.
 	 *
-	 * @param action The String or a beginning of the String that you want the index of.
-	 * @return The index of the given option in the context menu; or -1 if the
-	 *         option was not found.
+	 * @param action The action that you want the index of.
+	 * @return The index of the given option in the context menu; otherwise -1.
 	 */
 	public int getIndex(String action) {
 		action = action.toLowerCase();
-		String[] actions = getItems();
-		for (int i = 0; i < actions.length; i++) {
-			String a = actions[i];
-			if (a.toLowerCase().startsWith(action))
+		String[] items = getItems();
+		for (int i = 0; i < items.length; i++) {
+			// I believe contains fits more than startsWith
+			if (items[i].toLowerCase().contains(action)) {
 				return i;
+			}
 		}
 		return -1;
 	}
 
 	/**
-	 * Returns an array of each item in the current context menu actions.
+	 * Returns an array of each item in the current menu context.
 	 *
-	 * @return First half + second half. As displayed in rs.
+	 * @return First half + second half. As displayed in RuneScape.
 	 */
 	public String[] getItems() {
 		String[] options;
 		String[] actions;
+
 		synchronized (menuCacheLock) {
 			options = menuOptionsCache;
 			actions = menuActionsCache;
 		}
+
 		LinkedList<String> output = new LinkedList<String>();
 		//for (int i = Math.min(options.length, actions.length) - 1; i >= 0; --i) {
 		for (int i = 0; i < Math.min(options.length, actions.length); ++i) {
 			String option = options[i];
 			String action = actions[i];
 			if (option != null && action != null) {
-				String text = stripFomatting(action) + ' ' + stripFomatting(option);
-				output.add(text);
+				output.add(action + ' ' + option);
 			}
 		}
 		return output.toArray(new String[output.size()]);
 	}
 
 	/**
-	 * Returns the location of the menu. Returns null if not open.
+	 * Returns the menu's location.
 	 *
-	 * @return The screen space point if open; otherwise null.
+	 * @return The screen space point if the menu is open; otherwise null.
 	 */
 	public Point getLocation() {
-		if (!isOpen())
-			return null;
-		int x = methods.client.getMenuX();
-		int y = methods.client.getMenuY();
-		return new Point(x + 4, y + 4);
+		if (isOpen()) {
+			return new Point(methods.client.getMenuX() + 4, methods.client.getMenuY() + 4);
+		}
+		return null;
+	}
+
+	private String[] getMenuItemPart(boolean firstPart) {
+		LinkedList<String> itemsList = new LinkedList<String>();
+		if (isCollapsed()) {
+			Queue<MenuGroupNode> menu = new Queue<MenuGroupNode>(methods.client.getCollapsedMenuItems());
+			for (MenuGroupNode mgn = menu.getHead(); mgn != null; mgn = menu.getNext()) {
+				Queue<MenuItemNode> submenu = new Queue<MenuItemNode>(mgn.getItems());
+				for (MenuItemNode min = submenu.getHead(); min != null; min = submenu.getNext()) {
+					itemsList.add(firstPart ? min.getAction() : min.getOption());
+				}
+			}
+		} else {
+			Deque<MenuItemNode> menu = new Deque<MenuItemNode>(methods.client.getMenuItems());
+			for (MenuItemNode min = menu.getHead(); min != null; min = menu.getNext()) {
+				itemsList.add(firstPart ? min.getAction() : min.getOption());
+			}
+		}
+		String[] items = itemsList.toArray(new String[itemsList.size()]);
+		LinkedList<String> output = new LinkedList<String>();
+		if (isCollapsed()) {
+			for (int i = 0; i < items.length; i++) {
+				String item = items[i];
+				output.add(item == null ? "" : stripFormatting(item));
+			}
+		} else {
+			for (int i = items.length - 1; i >= 0; i--) {
+				String item = items[i];
+				output.add(item == null ? "" : stripFormatting(item));
+			}
+		}
+		return output.toArray(new String[output.size()]);
 	}
 
 	/**
-	 * Returns a list of the second parts of each item in the current
-	 * context menu actions.
+	 * Returns an array of the second parts of each item in the
+	 * current menu context.
 	 *
 	 * @return The second half. "<user name>".
 	 */
 	public String[] getOptions() {
-		LinkedList<String> optionsList = new LinkedList<String>();
-
-		if (methods.client.isMenuCollapsed()) {
-			//Queue menu = new Queue(methods.client.getCollapsedMenuItems());
-		} else {
-			Deque menu = new Deque(methods.client.getMenuItems());
-
-			for (MenuItemNode adn = (MenuItemNode) menu.getHead(); adn != null; adn = (MenuItemNode) menu.getNext()) {
-				optionsList.add(adn.getOption());
-			}
-		}
-
-		String[] options = optionsList.toArray(new String[optionsList.size()]);
-		LinkedList<String> output = new LinkedList<String>();
-		// Don't remove the commented line, Jagex switches every few updates, so
-		// it's there for quick fixes.
-		for (int i = options.length - 1; i >= 0; --i) {
-			//for (int i = 0; i < options.length; ++i) {
-			String option = options[i];
-			if (option != null) {
-				String text = stripFomatting(option);
-				output.add(text);
-			} else {
-				output.add("");
-			}
-		}
-		return output.toArray(new String[output.size()]);
+		return getMenuItemPart(false);
 	}
 
 	/**
-	 * Check whether menu is open, and returns true if opened, and false if otherwise
+	 * Returns the menu's item count.
 	 *
-	 * @return true if menu is open, false otherwise
+	 * @return The menu size.
+	 */
+	public int getSize() {
+		return getItems().length;
+	}
+
+	/**
+	 * Returns the submenu's location.
+	 *
+	 * @return The screen space point of the submenu if the menu is collapsed; otherwise null.
+	 */
+	public Point getSubMenuLocation() {
+		if (isCollapsed()) {
+			return new Point(methods.client.getSubMenuX() + 4, methods.client.getSubMenuY() + 4);
+		}
+		return null;
+	}
+
+	/**
+	 * Checks whether or not the menu is collapsed.
+	 *
+	 * @return <tt>true</tt> if the menu is collapsed; otherwise <tt>false</tt>.
+	 */
+	public boolean isCollapsed() {
+		return methods.client.isMenuCollapsed();
+	}
+
+	/**
+	 * Checks whether or not the menu is open.
+	 *
+	 * @return <tt>true</tt> if the menu is open; otherwise <tt>false</tt>.
 	 */
 	public boolean isOpen() {
 		return methods.client.isMenuOpen();
 	}
 
 	/**
-	 * For internal use only: Sets up the menuListener.
+	 * For internal use only: sets up the menuListener.
 	 */
 	public void setupListener() {
-		if (menuListenerStarted)
+		if (menuListenerStarted) {
 			return;
-
+		}
 		menuListenerStarted = true;
 		methods.bot.getEventManager().addListener(new PaintListener() {
+
 			public void onRepaint(Graphics g) {
 				synchronized (menuCacheLock) {
 					menuOptionsCache = getOptions();
@@ -262,13 +310,12 @@ public class Menu extends MethodProvider {
 	}
 
 	/**
-	 * Removes HTML tags.
+	 * Strips HTML tags.
 	 *
 	 * @param input The string you want to parse.
 	 * @return The parsed {@code String}.
 	 */
-	private String stripFomatting(String input) {
-		return stripFormatting.matcher(input).replaceAll("");
+	private String stripFormatting(String input) {
+		return HTML_TAG.matcher(input).replaceAll("");
 	}
-
 }

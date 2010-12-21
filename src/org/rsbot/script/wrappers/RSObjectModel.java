@@ -5,16 +5,16 @@ import org.rsbot.client.RSObject;
 import org.rsbot.script.methods.MethodContext;
 
 class RSObjectModel extends RSModel {
-	
+
 	protected RSObject object;
-	
+
 	RSObjectModel(MethodContext ctx, Model model, RSObject object) {
 		super(ctx, model);
 		this.object = object;
 	}
 
 	protected void update() {
-		
+
 	}
 
 	@Override

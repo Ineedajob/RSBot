@@ -2,19 +2,19 @@ package org.rsbot.client;
 
 public interface RSItemDef {
 
-    String[] getActions();
+	String[] getActions();
 
-    int getCertID();
+	int getCertID();
 
-    int getCertTemplateID();
+	int getCertTemplateID();
 
-    String[] getGroundActions();
+	String[] getGroundActions();
 
-    int getID();
+	int getID();
 
-    String getName();
+	String getName();
 
-    boolean isMembersObject();
+	boolean isMembersObject();
 
-    RSItemDefLoader getLoader();
+	RSItemDefLoader getLoader();
 }

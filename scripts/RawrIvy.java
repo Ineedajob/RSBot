@@ -1,12 +1,19 @@
-import java.awt.Color;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.Insets;
-import java.awt.Point;
-import java.awt.Rectangle;
+import org.rsbot.event.events.MessageEvent;
+import org.rsbot.event.listeners.MessageListener;
+import org.rsbot.event.listeners.PaintListener;
+import org.rsbot.script.Script;
+import org.rsbot.script.ScriptManifest;
+import org.rsbot.script.methods.Skills;
+import org.rsbot.script.wrappers.RSArea;
+import org.rsbot.script.wrappers.RSGroundItem;
+import org.rsbot.script.wrappers.RSModel;
+import org.rsbot.script.wrappers.RSNPC;
+import org.rsbot.script.wrappers.RSObject;
+import org.rsbot.script.wrappers.RSTile;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -14,22 +21,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-
-import javax.imageio.ImageIO;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.WindowConstants;
-
-import org.rsbot.event.events.MessageEvent;
-import org.rsbot.event.listeners.PaintListener;
-import org.rsbot.event.listeners.MessageListener;
-import org.rsbot.script.Script;
-import org.rsbot.script.ScriptManifest;
-import org.rsbot.script.methods.*;
-import org.rsbot.script.wrappers.*;
 
 @ScriptManifest(authors = "RawR", name = "Rawr Ivy Pro", keywords = "Woodcutting", version = 1.0, description = "The best Ivy Chopper out there.")
 public class RawrIvy extends Script implements PaintListener, MessageListener {

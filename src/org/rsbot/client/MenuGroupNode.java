@@ -3,7 +3,7 @@ package org.rsbot.client;
 /**
  * @author Jacmob
  */
-public interface MenuGroupNode {
+public interface MenuGroupNode extends NodeSub {
 
 	NodeSubQueue getItems();
 

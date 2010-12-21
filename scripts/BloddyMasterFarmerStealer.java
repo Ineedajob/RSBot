@@ -1,11 +1,16 @@
-import java.awt.Color;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Insets;
-import java.awt.Point;
-import java.awt.Rectangle;
+import org.rsbot.event.events.MessageEvent;
+import org.rsbot.event.listeners.MessageListener;
+import org.rsbot.event.listeners.PaintListener;
+import org.rsbot.script.Script;
+import org.rsbot.script.ScriptManifest;
+import org.rsbot.script.methods.Game;
+import org.rsbot.script.methods.Skills;
+import org.rsbot.script.wrappers.RSObject;
+import org.rsbot.script.wrappers.RSTile;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -13,27 +18,6 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-
-import javax.imageio.ImageIO;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
-
-import org.rsbot.event.events.MessageEvent;
-import org.rsbot.event.listeners.PaintListener;
-import org.rsbot.event.listeners.MessageListener;
-import org.rsbot.script.Script;
-import org.rsbot.script.ScriptManifest;
-import org.rsbot.script.methods.Game;
-import org.rsbot.script.methods.Skills;
-import org.rsbot.script.wrappers.RSObject;
-import org.rsbot.script.wrappers.RSTile;
 
 @ScriptManifest(authors = "Bloddyharry", name = "Master Farmer Stealer", keywords = "Thieving", version = 2.4, description = "Made by BloddyHarry. Settings in GUI.")
 public class BloddyMasterFarmerStealer extends Script implements PaintListener, MessageListener {
@@ -190,7 +174,7 @@ public class BloddyMasterFarmerStealer extends Script implements PaintListener, 
 							|| calc.distanceTo(walking.getDestination()) > 40) {
 						if (!walking.walkPathMM(farmerToBank)) {
 							walking.walkTo(walking
-									.randomizeTile(bankTile, 2, 2));
+									.randomize(bankTile, 2, 2));
 							return random(1400, 1600);
 						}
 					}
@@ -208,7 +192,7 @@ public class BloddyMasterFarmerStealer extends Script implements PaintListener, 
 				if (calc.distanceTo(walking.getDestination()) < random(5, 12)
 						|| calc.distanceTo(walking.getDestination()) > 40) {
 					if (!walking.walkPathMM(farmerToBank)) {
-						walking.walkTo(walking.randomizeTile(bankTile, 2, 2));
+						walking.walkTo(walking.randomize(bankTile, 2, 2));
 						return random(1400, 1600);
 					}
 				}
@@ -260,7 +244,7 @@ public class BloddyMasterFarmerStealer extends Script implements PaintListener, 
 						} else if (calc.distanceTo(npcs
 								.getNearest("Master Farmer")) >= 6) {
 							status = "walking to Farmer";
-							walking.walkTo((walking.randomizeTile(npcs
+							walking.walkTo((walking.randomize(npcs
 									.getNearest("Master Farmer").getLocation(),
 									1, 1)));
 							return random(1500, 1700);
@@ -272,7 +256,7 @@ public class BloddyMasterFarmerStealer extends Script implements PaintListener, 
 					} else if (calc
 							.distanceTo(npcs.getNearest("Master Farmer")) >= 6) {
 						status = "walking to Farmer";
-						walking.walkTo((walking.randomizeTile(npcs.getNearest(
+						walking.walkTo((walking.randomize(npcs.getNearest(
 								"Master Farmer").getLocation(), 1, 1)));
 						return random(1600, 1700);
 					}

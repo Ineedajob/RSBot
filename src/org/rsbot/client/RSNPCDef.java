@@ -2,12 +2,12 @@ package org.rsbot.client;
 
 public interface RSNPCDef {
 
-    String[] getActions();
+	String[] getActions();
 
-    String getName();
+	String getName();
 
-    int getType();
+	int getType();
 
-    int getLevel();
+	int getLevel();
 
 }

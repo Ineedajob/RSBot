@@ -56,7 +56,7 @@ public class ClanChat extends MethodProvider {
 
 	/**
 	 * Leaves the current channel.
-	 * 
+	 *
 	 * @return <tt>true</tt> if successful; otherwise <tt>false</tt>
 	 */
 	public boolean leave() {
@@ -109,6 +109,7 @@ public class ClanChat extends MethodProvider {
 
 	/**
 	 * Gets the users in the channel.
+	 *
 	 * @return The users in the channel or null if unavailable
 	 */
 	public String[] getChannelUsers() {

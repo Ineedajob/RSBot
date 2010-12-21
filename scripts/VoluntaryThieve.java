@@ -2,33 +2,10 @@
  * VoluntaryThieve.java	1.12 10/11/10
  * vilon@powerbot.org
  */
-import java.awt.AlphaComposite;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Composite;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.RenderingHints;
-import java.awt.event.MouseEvent;
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.prefs.Preferences;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JOptionPane;
-import javax.swing.JSpinner;
-import javax.swing.event.MouseInputListener;
 
 import org.rsbot.event.events.MessageEvent;
-import org.rsbot.event.listeners.PaintListener;
 import org.rsbot.event.listeners.MessageListener;
+import org.rsbot.event.listeners.PaintListener;
 import org.rsbot.script.Script;
 import org.rsbot.script.ScriptManifest;
 import org.rsbot.script.methods.Game;
@@ -41,6 +18,18 @@ import org.rsbot.script.wrappers.RSItem;
 import org.rsbot.script.wrappers.RSNPC;
 import org.rsbot.script.wrappers.RSObject;
 import org.rsbot.script.wrappers.RSTile;
+
+import javax.swing.*;
+import javax.swing.event.MouseInputListener;
+import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.prefs.Preferences;
 
 @ScriptManifest(authors = "vilon", name = "Voluntary Thieve", keywords = "Thieving", version = 1.12, description = "Blackjacks/pickpockets the trainers and volunteers in the Thieves' Guild.")
 public final class VoluntaryThieve extends Script implements MouseInputListener, PaintListener, MessageListener {
@@ -1813,36 +1802,36 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 											.addGroup(layout.createSequentialGroup()
 													.addGap(10, 10, 10)
 													.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-													.addComponent(getNewGlovesCheckBox)
-													.addGroup(layout.createSequentialGroup()
-													.addComponent(modeLabel)
-													.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-													.addComponent(modeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+															.addComponent(getNewGlovesCheckBox)
+															.addGroup(layout.createSequentialGroup()
+																	.addComponent(modeLabel)
+																	.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+																	.addComponent(modeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
 											.addGroup(layout.createSequentialGroup()
-											.addGap(10, 10, 10)
-											.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-											.addGroup(layout.createSequentialGroup()
-													.addComponent(maxPickpocketsLabel)
-													.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-													.addComponent(maxPickpocketsSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))
-											.addGroup(layout.createSequentialGroup()
-													.addComponent(maximumRuntimeLabel)
-													.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-													.addComponent(maxHoursSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-													.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-													.addComponent(maxHoursLabel)
-													.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-													.addComponent(maxMinutesSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-													.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-													.addComponent(maxMinutesLabel)
-													.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-													.addComponent(maxSecondsSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-													.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-													.addComponent(maxSecondsLabel))
-											.addGroup(layout.createSequentialGroup()
-											.addComponent(maxLevelsLabel)
-											.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-											.addComponent(maxLevelsSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+													.addGap(10, 10, 10)
+													.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+															.addGroup(layout.createSequentialGroup()
+																	.addComponent(maxPickpocketsLabel)
+																	.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+																	.addComponent(maxPickpocketsSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))
+															.addGroup(layout.createSequentialGroup()
+																	.addComponent(maximumRuntimeLabel)
+																	.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+																	.addComponent(maxHoursSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+																	.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+																	.addComponent(maxHoursLabel)
+																	.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+																	.addComponent(maxMinutesSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+																	.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+																	.addComponent(maxMinutesLabel)
+																	.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+																	.addComponent(maxSecondsSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+																	.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+																	.addComponent(maxSecondsLabel))
+															.addGroup(layout.createSequentialGroup()
+																	.addComponent(maxLevelsLabel)
+																	.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+																	.addComponent(maxLevelsSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)))))
 									.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 							.addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
 									.addContainerGap(157, Short.MAX_VALUE)
@@ -1851,61 +1840,61 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 									.addComponent(startButton)
 									.addContainerGap())
 							.addGroup(layout.createSequentialGroup()
-							.addContainerGap()
-							.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-									.addGroup(layout.createSequentialGroup()
-											.addGap(10, 10, 10)
-											.addComponent(enableDebugCheckBox))
-									.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-									.addComponent(otherSeparator)
-									.addComponent(otherLabel)))
-							.addContainerGap(184, Short.MAX_VALUE))
+									.addContainerGap()
+									.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+											.addGroup(layout.createSequentialGroup()
+													.addGap(10, 10, 10)
+													.addComponent(enableDebugCheckBox))
+											.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+													.addComponent(otherSeparator)
+													.addComponent(otherLabel)))
+									.addContainerGap(184, Short.MAX_VALUE))
 			);
 			layout.setVerticalGroup(
 					layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
 							.addGroup(layout.createSequentialGroup()
-							.addContainerGap()
-							.addComponent(generalLabel)
-							.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-							.addComponent(generalSeparator, javax.swing.GroupLayout.PREFERRED_SIZE, 1, javax.swing.GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-							.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-									.addComponent(modeLabel)
-									.addComponent(modeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-							.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-							.addComponent(getNewGlovesCheckBox)
-							.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-							.addComponent(stopConditionsLabel)
-							.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-							.addComponent(stopConditionsSeparator, javax.swing.GroupLayout.PREFERRED_SIZE, 1, javax.swing.GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-							.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-									.addComponent(maximumRuntimeLabel)
-									.addComponent(maxHoursSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-									.addComponent(maxHoursLabel)
-									.addComponent(maxMinutesSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-									.addComponent(maxMinutesLabel)
-									.addComponent(maxSecondsSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-									.addComponent(maxSecondsLabel))
-							.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-							.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-									.addComponent(maxPickpocketsLabel)
-									.addComponent(maxPickpocketsSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-							.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-							.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-									.addComponent(maxLevelsLabel)
-									.addComponent(maxLevelsSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-							.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-							.addComponent(otherLabel)
-							.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-							.addComponent(otherSeparator, javax.swing.GroupLayout.PREFERRED_SIZE, 1, javax.swing.GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-							.addComponent(enableDebugCheckBox)
-							.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-							.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-									.addComponent(startButton)
-									.addComponent(saveButton))
-							.addContainerGap())
+									.addContainerGap()
+									.addComponent(generalLabel)
+									.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+									.addComponent(generalSeparator, javax.swing.GroupLayout.PREFERRED_SIZE, 1, javax.swing.GroupLayout.PREFERRED_SIZE)
+									.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+									.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+											.addComponent(modeLabel)
+											.addComponent(modeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+									.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+									.addComponent(getNewGlovesCheckBox)
+									.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+									.addComponent(stopConditionsLabel)
+									.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+									.addComponent(stopConditionsSeparator, javax.swing.GroupLayout.PREFERRED_SIZE, 1, javax.swing.GroupLayout.PREFERRED_SIZE)
+									.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+									.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+											.addComponent(maximumRuntimeLabel)
+											.addComponent(maxHoursSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+											.addComponent(maxHoursLabel)
+											.addComponent(maxMinutesSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+											.addComponent(maxMinutesLabel)
+											.addComponent(maxSecondsSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+											.addComponent(maxSecondsLabel))
+									.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+									.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+											.addComponent(maxPickpocketsLabel)
+											.addComponent(maxPickpocketsSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+									.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+									.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+											.addComponent(maxLevelsLabel)
+											.addComponent(maxLevelsSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+									.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+									.addComponent(otherLabel)
+									.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+									.addComponent(otherSeparator, javax.swing.GroupLayout.PREFERRED_SIZE, 1, javax.swing.GroupLayout.PREFERRED_SIZE)
+									.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+									.addComponent(enableDebugCheckBox)
+									.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+									.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+											.addComponent(startButton)
+											.addComponent(saveButton))
+									.addContainerGap())
 			);
 
 			pack();

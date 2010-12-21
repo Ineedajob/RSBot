@@ -1,6 +1,10 @@
 package org.rsbot.util;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.Enumeration;
@@ -67,12 +71,12 @@ public class Extractor implements Runnable {
 						jos.putNextEntry(new JarEntry(e.getName().substring(8)));
 						byte[] buffer = new byte[256];
 						while (true) {
-          					int nRead = in.read(buffer, 0, buffer.length);
-          					if (nRead < 0) {
-            					break;
+							int nRead = in.read(buffer, 0, buffer.length);
+							if (nRead < 0) {
+								break;
 							}
 							jos.write(buffer, 0, nRead);
-        				}
+						}
 						in.close();
 					}
 				}

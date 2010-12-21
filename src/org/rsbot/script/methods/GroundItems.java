@@ -3,8 +3,8 @@ package org.rsbot.script.methods;
 import org.rsbot.client.HashTable;
 import org.rsbot.script.internal.wrappers.Deque;
 import org.rsbot.script.util.Filter;
-import org.rsbot.script.wrappers.RSItem;
 import org.rsbot.script.wrappers.RSGroundItem;
+import org.rsbot.script.wrappers.RSItem;
 import org.rsbot.script.wrappers.RSTile;
 
 import java.util.ArrayList;
@@ -57,7 +57,7 @@ public class GroundItems extends MethodProvider {
 	/**
 	 * Returns all matching ground items within the provided range.
 	 *
-	 * @param range The range (max distance in all directions) in which to check items for.
+	 * @param range  The range (max distance in all directions) in which to check items for.
 	 * @param filter Filters out unwanted matches.
 	 * @return <tt>RSGroundItem</tt> array containing all of the items in range.
 	 */
@@ -112,7 +112,7 @@ public class GroundItems extends MethodProvider {
 	 *
 	 * @param ids The IDs to look for.
 	 * @return RSItemTile of the nearest item with the an ID that matches any in
-	 * the array of IDs provided; or null if no matching ground items were found.
+	 *         the array of IDs provided; or null if no matching ground items were found.
 	 */
 	public RSGroundItem getNearest(final int... ids) {
 		return getNearest(new Filter<RSGroundItem>() {

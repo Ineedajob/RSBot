@@ -1,11 +1,3 @@
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.RenderingHints;
-import java.text.DecimalFormat;
-
 import org.rsbot.event.listeners.PaintListener;
 import org.rsbot.script.Script;
 import org.rsbot.script.ScriptManifest;
@@ -14,6 +6,9 @@ import org.rsbot.script.wrappers.RSArea;
 import org.rsbot.script.wrappers.RSGroundItem;
 import org.rsbot.script.wrappers.RSItem;
 import org.rsbot.script.wrappers.RSNPC;
+
+import java.awt.*;
+import java.text.DecimalFormat;
 
 @ScriptManifest(authors = {"Foulwerp"}, name = "Chickens", keywords = {"Combat"}, description = "Kills Chickens & Loots Feathers", version = 1.03)
 public class Chickens extends Script implements PaintListener {

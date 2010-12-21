@@ -1,17 +1,14 @@
 package org.rsbot.event.impl;
 
-import java.awt.Color;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Point;
-import java.util.HashMap;
-
 import org.rsbot.bot.Bot;
 import org.rsbot.event.listeners.PaintListener;
 import org.rsbot.script.methods.MethodContext;
 import org.rsbot.script.wrappers.RSObject;
 import org.rsbot.script.wrappers.RSPlayer;
 import org.rsbot.script.wrappers.RSTile;
+
+import java.awt.*;
+import java.util.HashMap;
 
 public class DrawObjects implements PaintListener {
 
