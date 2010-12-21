@@ -1,8 +1,8 @@
 package org.rsbot.script.methods;
 
-import java.awt.Point;
-
 import org.rsbot.script.internal.MouseHandler;
+
+import java.awt.*;
 
 /**
  * Mouse related operations.
@@ -17,7 +17,7 @@ public class Mouse extends MethodProvider {
 
 	/**
 	 * Moves the mouse randomly between the two distances.
-	 * 
+	 *
 	 * @param minDistance The minimum distance to move.
 	 * @param maxDistance The maximum distance to move.
 	 * @see #moveRandomly(int)
@@ -28,8 +28,13 @@ public class Mouse extends MethodProvider {
 		if (minDistance == 0) {
 			minDistance = 2;
 		}
-		move(getRandomX(random(minDistance, maxDistance)), getRandomY(random(
-				minDistance, maxDistance)));
+		if (minDistance > maxDistance) {
+			int temp = minDistance;
+			minDistance = maxDistance;
+			maxDistance = temp;
+		}
+		move(getRandomX(random(minDistance, maxDistance)),
+				getRandomY(random(minDistance, maxDistance)));
 		if (random(0, 50) <= 5) {
 			moveRandomly(minDistance / 2, maxDistance / 2);
 		}
@@ -37,7 +42,7 @@ public class Mouse extends MethodProvider {
 
 	/**
 	 * Moves the mouse randomly between the maximum distance.
-	 * 
+	 *
 	 * @param maxDistance The maximum distance to move.
 	 * @see #getRandomX(int)
 	 * @see #getRandomY(int)
@@ -45,40 +50,40 @@ public class Mouse extends MethodProvider {
 	public void moveRandomly(int maxDistance) {
 		move(getRandomX(random(maxDistance / 2, maxDistance)),
 				getRandomY(random(maxDistance / 2, maxDistance)));
-		if (random(0, 50) <= 5) {
+		if (random(0, 10) == 0) {
 			moveRandomly(maxDistance / 2);
 		}
 	}
-	
+
 	/**
 	 * Moves the mouse off the screen in a random direction.
 	 */
 	public void moveOffScreen() {
 		if (isPresent()) {
 			switch (random(0, 4)) {
-			case 0: // up
-				move(random(-10, methods.game.getWidth() + 10),
-						random(-100, -10));
-				break;
-			case 1: // down
-				move(random(-10, methods.game.getWidth() + 10),
-						methods.game.getHeight() + random(10, 100));
-				break;
-			case 2: // left
-				move(random(-100, -10),
-						random(-10, methods.game.getHeight() + 10));
-				break;
-			case 4: // right
-				move(random(10, 100) + methods.game.getWidth(),
-						random(-10, methods.game.getHeight() + 10));
-				break;
+				case 0: // up
+					move(random(-10, methods.game.getWidth() + 10),
+							random(-100, -10));
+					break;
+				case 1: // down
+					move(random(-10, methods.game.getWidth() + 10),
+							methods.game.getHeight() + random(10, 100));
+					break;
+				case 2: // left
+					move(random(-100, -10),
+							random(-10, methods.game.getHeight() + 10));
+					break;
+				case 4: // right
+					move(random(10, 100) + methods.game.getWidth(),
+							random(-10, methods.game.getHeight() + 10));
+					break;
 			}
 		}
 	}
 
 	/**
 	 * Drag the mouse from the current position to a certain other position.
-	 * 
+	 *
 	 * @param x The x coordinate to drag to.
 	 * @param y The y coordinate to drag to.
 	 */
@@ -88,7 +93,7 @@ public class Mouse extends MethodProvider {
 
 	/**
 	 * Drag the mouse from the current position to a certain other position.
-	 * 
+	 *
 	 * @param p The point to drag to.
 	 * @see #drag(int, int)
 	 */
@@ -96,10 +101,10 @@ public class Mouse extends MethodProvider {
 		drag(p.x, p.y);
 	}
 
-	
+
 	/**
 	 * Clicks the mouse at its current location.
-	 * 
+	 *
 	 * @param leftClick <tt>true</tt> to left-click, <tt>false</tt>to right-click.
 	 */
 	public void click(boolean leftClick) {
@@ -118,9 +123,9 @@ public class Mouse extends MethodProvider {
 
 	/**
 	 * Moves the mouse to a given location then clicks.
-	 * 
-	 * @param x x coordinate
-	 * @param y y coordinate
+	 *
+	 * @param x		 x coordinate
+	 * @param y		 y coordinate
 	 * @param leftClick <tt>true</tt> to left-click, <tt>false</tt>to right-click.
 	 */
 	public void click(int x, int y, boolean leftClick) {
@@ -129,11 +134,11 @@ public class Mouse extends MethodProvider {
 
 	/**
 	 * Moves the mouse to a given location with given randomness then clicks.
-	 * 
-	 * @param x x coordinate
-	 * @param y y coordinate
-	 * @param randX x randomness (added to x)
-	 * @param randY y randomness (added to y)
+	 *
+	 * @param x		 x coordinate
+	 * @param y		 y coordinate
+	 * @param randX	 x randomness (added to x)
+	 * @param randY	 y randomness (added to y)
 	 * @param leftClick <tt>true</tt> to left-click, <tt>false</tt>to right-click.
 	 * @see #move(int, int, int, int)
 	 */
@@ -146,17 +151,17 @@ public class Mouse extends MethodProvider {
 	/**
 	 * Moves the mouse to a given location with given randomness then clicks,
 	 * then moves a random distance up to <code>afterOffset</code>.
-	 * 
-	 * @param x x coordinate
-	 * @param y y coordinate
-	 * @param randX x randomness (added to x)
-	 * @param randY y randomness (added to y)
-	 * @param leftClick <tt>true</tt> to left-click, <tt>false</tt>to right-click.
+	 *
+	 * @param x			 x coordinate
+	 * @param y			 y coordinate
+	 * @param randX		 x randomness (added to x)
+	 * @param randY		 y randomness (added to y)
+	 * @param leftClick	 <tt>true</tt> to left-click, <tt>false</tt>to right-click.
 	 * @param moveAfterDist The maximum distance in pixels to move on both axes shortly
-	 * after moving to the destination.
+	 *                      after moving to the destination.
 	 */
 	public synchronized void click(int x, int y, int randX, int randY, boolean leftClick,
-			int moveAfterDist) {
+								   int moveAfterDist) {
 		move(x, y, randX, randY);
 		sleep(random(50, 350));
 		click(leftClick, moveAfterDist);
@@ -164,8 +169,8 @@ public class Mouse extends MethodProvider {
 
 	/**
 	 * Moves the mouse to a given location then clicks.
-	 * 
-	 * @param p The point to click.
+	 *
+	 * @param p		 The point to click.
 	 * @param leftClick <tt>true</tt> to left-click, <tt>false</tt>to right-click.
 	 */
 	public void click(Point p, boolean leftClick) {
@@ -179,13 +184,13 @@ public class Mouse extends MethodProvider {
 	/**
 	 * Moves the mouse to a given location with given randomness then clicks,
 	 * then moves a random distance up to <code>afterOffset</code>.
-	 * 
-	 * @param p The destination Point.
-	 * @param x x coordinate
-	 * @param y y coordinate
-	 * @param leftClick <tt>true</tt> to left-click, <tt>false</tt>to right-click.
+	 *
+	 * @param p			 The destination Point.
+	 * @param x			 x coordinate
+	 * @param y			 y coordinate
+	 * @param leftClick	 <tt>true</tt> to left-click, <tt>false</tt>to right-click.
 	 * @param moveAfterDist The maximum distance in pixels to move on both axes shortly
-	 * after moving to the destination.
+	 *                      after moving to the destination.
 	 */
 	public void click(Point p, int x, int y, boolean leftClick, int moveAfterDist) {
 		click(p.x, p.y, x, y, leftClick, moveAfterDist);
@@ -209,7 +214,7 @@ public class Mouse extends MethodProvider {
 
 	/**
 	 * Gets the mouse speed.
-	 * 
+	 *
 	 * @return the current mouse speed.
 	 * @see #setSpeed(int)
 	 */
@@ -219,7 +224,7 @@ public class Mouse extends MethodProvider {
 
 	/**
 	 * Changes the mouse speed
-	 * 
+	 *
 	 * @param speed The speed to move the mouse at. 4-10 is advised, 1 being the fastest.
 	 * @see #getSpeed()
 	 */
@@ -229,7 +234,7 @@ public class Mouse extends MethodProvider {
 
 	/**
 	 * Moves mouse to location (x,y) at default speed.
-	 * 
+	 *
 	 * @param x x coordinate
 	 * @param y y coordinate
 	 * @see #move(int, int, int, int)
@@ -248,15 +253,11 @@ public class Mouse extends MethodProvider {
 
 	/**
 	 * Moves the mouse to the specified point at default speed.
-	 * 
-	 * @param x
-	 *            The x destination.
-	 * @param y
-	 *            The y destination.
-	 * @param randX
-	 *            x-axis randomness (added to x).
-	 * @param randY
-	 *            y-axis randomness (added to y).
+	 *
+	 * @param x	 The x destination.
+	 * @param y	 The y destination.
+	 * @param randX x-axis randomness (added to x).
+	 * @param randY y-axis randomness (added to y).
 	 * @see #move(int, int, int, int, int, int)
 	 * @see #setSpeed(int)
 	 */
@@ -266,17 +267,12 @@ public class Mouse extends MethodProvider {
 
 	/**
 	 * Moves the mouse to the specified point at a certain speed.
-	 * 
-	 * @param speed
-	 *            The lower, the faster.
-	 * @param x
-	 *            The x destination.
-	 * @param y
-	 *            The y destination.
-	 * @param randX
-	 *            x-axis randomness (added to x).
-	 * @param randY
-	 *            y-axis randomness (added to y).
+	 *
+	 * @param speed The lower, the faster.
+	 * @param x	 The x destination.
+	 * @param y	 The y destination.
+	 * @param randX x-axis randomness (added to x).
+	 * @param randY y-axis randomness (added to y).
 	 * @see #move(int, int, int, int, int, int)
 	 */
 	public void move(int speed, int x, int y, int randX, int randY) {
@@ -286,23 +282,17 @@ public class Mouse extends MethodProvider {
 	/**
 	 * Moves the mouse to the specified point at a certain speed,
 	 * then moves a random distance up to <code>afterOffset</code>.
-	 * 
-	 * @param speed
-	 *            The lower, the faster.
-	 * @param x
-	 *            The x destination.
-	 * @param y
-	 *            The y destination.
-	 * @param randX
-	 *            X-axis randomness (added to x).
-	 * @param randY
-	 *            X-axis randomness (added to y).
-	 * @param afterOffset
-	 *            The maximum distance in pixels to move on both axes shortly
-	 *            after moving to the destination.
+	 *
+	 * @param speed	   The lower, the faster.
+	 * @param x		   The x destination.
+	 * @param y		   The y destination.
+	 * @param randX	   X-axis randomness (added to x).
+	 * @param randY	   X-axis randomness (added to y).
+	 * @param afterOffset The maximum distance in pixels to move on both axes shortly
+	 *                    after moving to the destination.
 	 */
 	public synchronized void move(int speed, int x, int y, int randX, int randY,
-			int afterOffset) {
+								  int afterOffset) {
 		if (x != -1 || y != -1) {
 			methods.inputManager.moveMouse(speed, x, y, randX, randY);
 			if (afterOffset > 0) {
@@ -348,32 +338,32 @@ public class Mouse extends MethodProvider {
 	public void move(Point p, int randX, int randY, int afterOffset) {
 		move(getSpeed(), p.x, p.y, randX, randY, afterOffset);
 	}
-	
+
 	/**
 	 * Hops mouse to the specified coordinate.
-	 * 
+	 *
 	 * @param x The x coordinate.
 	 * @param y The y coordinate
 	 */
 	public synchronized void hop(int x, int y) {
 		methods.inputManager.hopMouse(x, y);
 	}
-	
+
 	/**
 	 * Hops mouse to the specified point.
-	 * 
+	 *
 	 * @param p The coordinate point.
 	 * @see #hop(Point)
 	 */
 	public void hop(Point p) {
 		hop(p.x, p.y);
 	}
-	
+
 	/**
 	 * Hops mouse to the certain coordinate.
-	 * 
-	 * @param x The x coordinate.
-	 * @param y The y coordinate.
+	 *
+	 * @param x	 The x coordinate.
+	 * @param y	 The y coordinate.
 	 * @param randX The x coordinate randomization.
 	 * @param randY The y coordinate randomization.
 	 * @see #hop(int, int)
@@ -381,11 +371,11 @@ public class Mouse extends MethodProvider {
 	public void hop(int x, int y, int randX, int randY) {
 		hop(x + random(-randX, randX), y + random(-randX, randY));
 	}
-	
+
 	/**
 	 * Hops mouse to the certain point.
-	 * 
-	 * @param p The coordinate point.
+	 *
+	 * @param p	 The coordinate point.
 	 * @param randX The x coordinate randomization.
 	 * @param randY The y coordinate randomization.
 	 * @see #hop(int, int, int, int)
@@ -413,38 +403,36 @@ public class Mouse extends MethodProvider {
 	}
 
 	/**
-	 * 
 	 * @param maxDistance The maximum distance outwards.
 	 * @return A random x value between the current client location and the max distance outwards.
 	 */
 	public int getRandomX(int maxDistance) {
 		Point p = getLocation();
+		if (p.x < 0)
+			return -1;
 		if (random(0, 2) == 0)
 			return p.x - random(0, p.x < maxDistance ? p.x : maxDistance);
 		else
-			return p.x
-					+ random(1, 762 - p.x < maxDistance ? 762 - p.x
-							: maxDistance);
+			return p.x + random(1, 762 - p.x < maxDistance ? 762 - p.x : maxDistance);
 	}
 
 	/**
-	 * 
 	 * @param maxDistance The maximum distance outwards.
 	 * @return A random y value between the current client location and the max distance outwards.
 	 */
 	public int getRandomY(int maxDistance) {
 		Point p = getLocation();
+		if (p.y < 0)
+			return -1;
 		if (random(0, 2) == 0)
 			return p.y - random(0, p.y < maxDistance ? p.y : maxDistance);
 		else
-			return p.y
-					+ random(1, 500 - p.y < maxDistance ? 500 - p.y
-							: maxDistance);
+			return p.y + random(1, 500 - p.y < maxDistance ? 500 - p.y : maxDistance);
 	}
 
 	/**
 	 * The location of the bot's mouse; or Point(-1, -1) if off screen.
-	 * 
+	 *
 	 * @return A <tt>Point</tt> containing the bot's mouse's x & y coordinates.
 	 */
 	public Point getLocation() {
@@ -453,7 +441,6 @@ public class Mouse extends MethodProvider {
 	}
 
 	/**
-	 * 
 	 * @return The <tt>Point</tt> at which the bot's mouse was last clicked.
 	 */
 	public Point getPressLocation() {
@@ -462,25 +449,22 @@ public class Mouse extends MethodProvider {
 	}
 
 	/**
-	 * 
 	 * @return The system time when the bot's mouse was last pressed.
 	 */
 	public long getPressTime() {
 		org.rsbot.client.input.Mouse mouse = methods.client.getMouse();
 		return mouse == null ? 0 : mouse.getPressTime();
 	}
-	
+
 	/**
-	 * 
 	 * @return <tt>true</tt> if the bot's mouse is present.
 	 */
 	public boolean isPresent() {
 		org.rsbot.client.input.Mouse mouse = methods.client.getMouse();
 		return mouse != null && mouse.isPresent();
 	}
-	
+
 	/**
-	 * 
 	 * @return <tt>true</tt> if the bot's mouse is pressed.
 	 */
 	public boolean isPressed() {

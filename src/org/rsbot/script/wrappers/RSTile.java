@@ -22,20 +22,14 @@ public class RSTile {
 		return y;
 	}
 
-	public boolean isValid() {
-		return (x != -1) && (y != -1);
-	}
-
 	/**
-	 * Randomize the tile.
-	 * 
-	 * @param maxXDeviation
-	 *            Max X distance from tile x.
-	 * @param maxYDeviation
-	 *            Max Y distance from tile y.
+	 * Randomizes this tile.
+	 *
+	 * @param maxXDeviation Max X distance from tile x.
+	 * @param maxYDeviation Max Y distance from tile y.
 	 * @return The randomized tile
 	 */
-	public RSTile randomizeTile(final int maxXDeviation, final int maxYDeviation) {
+	public RSTile randomize(final int maxXDeviation, final int maxYDeviation) {
 		int x = getX();
 		int y = getY();
 		if (maxXDeviation > 0) {

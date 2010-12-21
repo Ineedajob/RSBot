@@ -4,17 +4,17 @@ import java.util.EventListener;
 import java.util.EventObject;
 
 public abstract class RSEvent extends EventObject {
-    
-    private static final long serialVersionUID = 6977096569226837605L;
 
-    private static final Object SOURCE = new Object();
+	private static final long serialVersionUID = 6977096569226837605L;
 
-    public RSEvent() {
-        super(RSEvent.SOURCE);
-    }
+	private static final Object SOURCE = new Object();
 
-    public abstract void dispatch(EventListener el);
+	public RSEvent() {
+		super(RSEvent.SOURCE);
+	}
 
-    public abstract long getMask();
-   
+	public abstract void dispatch(EventListener el);
+
+	public abstract long getMask();
+
 }

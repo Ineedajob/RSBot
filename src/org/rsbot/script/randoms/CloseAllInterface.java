@@ -12,9 +12,9 @@ import java.util.List;
  */
 @ScriptManifest(authors = {"Jacmob", "HeyyamaN"}, name = "InterfaceCloser", version = 1.8)
 public class CloseAllInterface extends Random {
-	
+
 	static class ComponentDef {
-		
+
 		int parent;
 		int child;
 		boolean text;
@@ -24,72 +24,72 @@ public class CloseAllInterface extends Random {
 			this.child = child;
 			this.text = text;
 		}
-		
+
 	}
 
-    private List<ComponentDef> components = new LinkedList<ComponentDef>();
+	private List<ComponentDef> components = new LinkedList<ComponentDef>();
 
-    {
-        addChild(743, 20); // Audio
-        addChild(767, 10); // Bank help
-        addChild(499, 29); // Stats
-        addChild(594, 48); // Report
-        addChild(275, 8); // Quest
-        addChild(206, 16); // Price check
-        addChild(266, 11); // Grove
-        addChild(102, 13); // Death items
-        addChild(14, 88, true); // New pin
-        addChild(14, 3); // Pin settings
-        addChild(157, 13); // Quick chat help
-        addChild(764, 2); // Objectives
-        addChild(895, 19); // Advisor
+	{
+		addChild(743, 20); // Audio
+		addChild(767, 10); // Bank help
+		addChild(499, 29); // Stats
+		addChild(594, 48); // Report
+		addChild(275, 8); // Quest
+		addChild(206, 16); // Price check
+		addChild(266, 11); // Grove
+		addChild(102, 13); // Death items
+		addChild(14, 88, true); // New pin
+		addChild(14, 3); // Pin settings
+		addChild(157, 13); // Quick chat help
+		addChild(764, 2); // Objectives
+		addChild(895, 19); // Advisor
 		addChild(109, 13); // Grand exchange collection
-    }
+	}
 
-    private void addChild(int parent, int idx) {
-        components.add(new ComponentDef(parent, idx, false));
-    }
-	
+	private void addChild(int parent, int idx) {
+		components.add(new ComponentDef(parent, idx, false));
+	}
+
 	private void addChild(int parent, int idx, boolean text) {
-        components.add(new ComponentDef(parent, idx, text));
-    }
+		components.add(new ComponentDef(parent, idx, text));
+	}
 
-    public boolean activateCondition() {
-        if (game.isLoggedIn()) {
-            if (interfaces.get(755).getComponent(44).isValid()) { // World map
-                if (interfaces.getComponent(755, 0).getComponents().length > 0) {
-                    return true;
-                }
-            }
-            for (ComponentDef c : components) {
+	public boolean activateCondition() {
+		if (game.isLoggedIn()) {
+			if (interfaces.get(755).getComponent(44).isValid()) { // World map
+				if (interfaces.getComponent(755, 0).getComponents().length > 0) {
+					return true;
+				}
+			}
+			for (ComponentDef c : components) {
 				RSComponent comp = interfaces.getComponent(c.parent, c.child);
-                if (comp.isValid() && !(c.text && (comp.getText() == null || comp.getText().isEmpty()))) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
+				if (comp.isValid() && !(c.text && (comp.getText() == null || comp.getText().isEmpty()))) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 
-    public int loop() {
-        sleep(random(500, 900));
+	public int loop() {
+		sleep(random(500, 900));
 
-        if (interfaces.get(755).isValid() && (interfaces.getComponent(755, 0).getComponents().length > 0)) {
-            interfaces.getComponent(755, 44).doClick();
-            return random(500, 900);
-        }
-        for (ComponentDef c : components) {
-            if (interfaces.getComponent(c.parent, c.child).isValid()) {
-            	interfaces.getComponent(c.parent, c.child).doClick();
-                sleep(random(500, 900));
+		if (interfaces.get(755).isValid() && (interfaces.getComponent(755, 0).getComponents().length > 0)) {
+			interfaces.getComponent(755, 44).doClick();
+			return random(500, 900);
+		}
+		for (ComponentDef c : components) {
+			if (interfaces.getComponent(c.parent, c.child).isValid()) {
+				interfaces.getComponent(c.parent, c.child).doClick();
+				sleep(random(500, 900));
 				if (random(0, 3) == 0) {
 					mouse.moveSlightly();
 				}
-                break;
-            }
-        }
+				break;
+			}
+		}
 
-        return -1;
-    }
+		return -1;
+	}
 
 }

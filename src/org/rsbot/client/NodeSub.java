@@ -4,6 +4,6 @@ public interface NodeSub extends Node {
 
 	NodeSub getNextSub();
 
-    NodeSub getPrevSub();
+	NodeSub getPrevSub();
 
 }

@@ -1,31 +1,20 @@
 package org.rsbot.gui;
 
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Font;
-import java.awt.Rectangle;
+import org.rsbot.log.LogFormatter;
+import org.rsbot.util.GlobalConfiguration;
+import org.rsbot.util.StringUtil;
+
+import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Formatter;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
-
-import javax.swing.AbstractListModel;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JTextArea;
-import javax.swing.ListCellRenderer;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.border.Border;
-import javax.swing.border.EmptyBorder;
-
-import org.rsbot.util.GlobalConfiguration;
-import org.rsbot.util.StringUtil;
-import org.rsbot.log.LogFormatter;
 
 
 /**

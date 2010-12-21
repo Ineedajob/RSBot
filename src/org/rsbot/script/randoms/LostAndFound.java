@@ -95,7 +95,7 @@ public class LostAndFound extends Random {
 			final RSObject obj = getFarthestObjectByID(appendage);
 			final RSTile tile = obj.getLocation();
 			if (!calc.tileOnScreen(tile)) {
-				walking.walkPathMM(walking.findPath(tile));
+				walking.newTilePath(walking.findPath(tile)).traverse();
 				sleep(random(700, 900));
 				while (getMyPlayer().isMoving()) {
 					sleep(100);

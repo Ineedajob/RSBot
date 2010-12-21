@@ -5,33 +5,23 @@ import org.rsbot.script.methods.Objects;
 import org.rsbot.script.methods.Skills;
 import org.rsbot.script.util.Filter;
 import org.rsbot.script.util.Timer;
-import org.rsbot.script.wrappers.*;
+import org.rsbot.script.wrappers.RSArea;
+import org.rsbot.script.wrappers.RSGroundItem;
+import org.rsbot.script.wrappers.RSModel;
+import org.rsbot.script.wrappers.RSObject;
+import org.rsbot.script.wrappers.RSPlayer;
+import org.rsbot.script.wrappers.RSTile;
 
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextPane;
-import javax.swing.JToolBar;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.Point;
-import java.awt.Polygon;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  * @author Jacmob
@@ -639,7 +629,7 @@ public class AIOChopper extends Script implements PaintListener {
 
 	}
 
-	private static class TreeComparator implements Comparator<Tree> {
+	private class TreeComparator implements Comparator<Tree> {
 
 		private RSTile loc;
 

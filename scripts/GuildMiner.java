@@ -3,12 +3,13 @@ import org.rsbot.script.Script;
 import org.rsbot.script.ScriptManifest;
 import org.rsbot.script.util.Filter;
 import org.rsbot.script.util.Timer;
-import org.rsbot.script.wrappers.*;
+import org.rsbot.script.wrappers.RSArea;
+import org.rsbot.script.wrappers.RSModel;
+import org.rsbot.script.wrappers.RSObject;
+import org.rsbot.script.wrappers.RSPlayer;
+import org.rsbot.script.wrappers.RSTile;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Point;
-import java.awt.Polygon;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -164,7 +165,7 @@ public class GuildMiner extends Script implements PaintListener {
 							walking.walkTileMM(walking.getClosestTileOnMap(rock.getLocation()))) {
 						sleep(500);
 					}
-				} else if (random(0, 4) == 0 && rocks.length > 1 &&!rocks[1].equals(over)) {
+				} else if (random(0, 4) == 0 && rocks.length > 1 && !rocks[1].equals(over)) {
 					over = rocks[1];
 					mouse.move(rocks[1].getModel().getPoint());
 				} else {
@@ -212,7 +213,7 @@ public class GuildMiner extends Script implements PaintListener {
 			if (next_cost == 999999) {
 				return new RSObject[]{rocks.get(lowest_ptr)};
 			}
-			RSObject[] nearest = new RSObject[] {rocks.get(lowest_ptr), rocks.get(next_ptr)};
+			RSObject[] nearest = new RSObject[]{rocks.get(lowest_ptr), rocks.get(next_ptr)};
 			if (nearest[1] != null && nearest[1].equals(last)) {
 				RSObject temp = nearest[0];
 				nearest[0] = nearest[1];

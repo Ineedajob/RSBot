@@ -1,9 +1,9 @@
 package org.rsbot.log;
 
+import org.rsbot.gui.LogTextArea;
+
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
-
-import org.rsbot.gui.LogTextArea;
 
 public class TextAreaLogHandler extends Handler {
 

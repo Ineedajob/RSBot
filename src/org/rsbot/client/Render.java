@@ -5,20 +5,20 @@ package org.rsbot.client;
  */
 public interface Render {
 
-    float getAbsoluteX1();
+	float getAbsoluteX1();
 
-    float getAbsoluteX2();
+	float getAbsoluteX2();
 
-    float getAbsoluteY1();
+	float getAbsoluteY1();
 
-    float getAbsoluteY2();
+	float getAbsoluteY2();
 
-    int getXMultiplier();
+	int getXMultiplier();
 
-    int getYMultiplier();
+	int getYMultiplier();
 
-    int getZFar();
+	int getZFar();
 
-    int getZNear();
+	int getZNear();
 
 }

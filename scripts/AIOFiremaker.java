@@ -1,7 +1,21 @@
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Point;
+import org.rsbot.event.listeners.PaintListener;
+import org.rsbot.script.Script;
+import org.rsbot.script.ScriptManifest;
+import org.rsbot.script.methods.Bank;
+import org.rsbot.script.methods.Game;
+import org.rsbot.script.methods.Skills;
+import org.rsbot.script.util.Filter;
+import org.rsbot.script.util.Timer;
+import org.rsbot.script.wrappers.RSComponent;
+import org.rsbot.script.wrappers.RSItem;
+import org.rsbot.script.wrappers.RSNPC;
+import org.rsbot.script.wrappers.RSObject;
+import org.rsbot.script.wrappers.RSPlayer;
+import org.rsbot.script.wrappers.RSTile;
+import org.rsbot.util.GlobalConfiguration;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -15,23 +29,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.WindowConstants;
-
-import org.rsbot.event.listeners.PaintListener;
-import org.rsbot.script.Script;
-import org.rsbot.script.ScriptManifest;
-import org.rsbot.script.methods.Bank;
-import org.rsbot.script.methods.Game;
-import org.rsbot.script.methods.Skills;
-import org.rsbot.script.util.Filter;
-import org.rsbot.script.wrappers.*;
-import org.rsbot.script.util.Timer;
-import org.rsbot.util.GlobalConfiguration;
 
 /**
  * RSBot AIO Firemaker
@@ -827,7 +824,7 @@ public class AIOFiremaker extends Script implements PaintListener {
 			if (bankItem == null
 					|| bankItem.getComponent().getAbsoluteY() > 270
 					|| !bankItem.doAction(all ? "Withdraw-All " + name : "Withdraw-1 " + name)
-						&& !bankItem.doAction(all ? "Withdraw-All " + name : "Withdraw-1 " + name)) {
+					&& !bankItem.doAction(all ? "Withdraw-All " + name : "Withdraw-1 " + name)) {
 				log.severe("Unable to withraw " + name
 						+ ". You will be logged out in ten seconds.");
 				sleep(random(9000, 11000));

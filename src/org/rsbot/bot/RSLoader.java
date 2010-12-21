@@ -1,8 +1,8 @@
 package org.rsbot.bot;
 
 import org.rsbot.Application;
-import org.rsbot.injector.Injector;
 import org.rsbot.client.Loader;
+import org.rsbot.injector.Injector;
 import org.rsbot.util.GlobalConfiguration;
 
 import java.applet.Applet;
@@ -61,19 +61,17 @@ public class RSLoader extends Applet implements Runnable, Loader {
 	public final void paint(final Graphics graphics) {
 		if (client != null) {
 			client.paint(graphics);
-		}
-		else
-		{
-			Font font = new Font("Helvetica", 1,13);
+		} else {
+			Font font = new Font("Helvetica", 1, 13);
 			FontMetrics fontMetrics = getFontMetrics(font);
 			graphics.setColor(Color.black);
-            graphics.fillRect(0, 0, 768, 503);
-            graphics.setColor(Color.RED);
-            graphics.drawRect(232, 232, 303, 33);
-            String s = "Loading...";
-            graphics.setFont(font);
-            graphics.setColor(Color.WHITE);
-            graphics.drawString(s, (768 - fontMetrics.stringWidth(s)) / 2, 255);
+			graphics.fillRect(0, 0, 768, 503);
+			graphics.setColor(Color.RED);
+			graphics.drawRect(232, 232, 303, 33);
+			String s = "Loading...";
+			graphics.setFont(font);
+			graphics.setColor(Color.WHITE);
+			graphics.drawString(s, (768 - fontMetrics.stringWidth(s)) / 2, 255);
 		}
 	}
 
@@ -85,7 +83,7 @@ public class RSLoader extends Applet implements Runnable, Loader {
 			Class<?> c = classLoader.loadClass("client");
 			client = (Applet) c.newInstance();
 			loadedCallback.run();
-			c.getMethod("provideLoaderApplet", new Class[] { java.applet.Applet.class }).invoke(null, this);
+			c.getMethod("provideLoaderApplet", new Class[]{java.applet.Applet.class}).invoke(null, this);
 			client.init();
 			client.start();
 		} catch (final Exception e) {
@@ -102,7 +100,7 @@ public class RSLoader extends Applet implements Runnable, Loader {
 		targetName = i.generateTargetName();
 		classLoader = new RSClassLoader(i);
 	}
-	
+
 	public void setCallback(final Runnable r) {
 		loadedCallback = r;
 	}

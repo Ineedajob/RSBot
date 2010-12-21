@@ -1,17 +1,17 @@
 package org.rsbot.script.wrappers;
 
-import java.awt.Point;
-
 import org.rsbot.client.Model;
 import org.rsbot.client.RSAnimable;
 import org.rsbot.script.methods.MethodContext;
 import org.rsbot.script.methods.MethodProvider;
 
+import java.awt.*;
+
 /**
  * Represents a physical in-game object.
  */
 public class RSObject extends MethodProvider {
-	
+
 	public static enum Type {
 		INTERACTABLE, FLOOR_DECORATION, BOUNDARY, WALL_DECORATION
 	}
@@ -29,12 +29,12 @@ public class RSObject extends MethodProvider {
 		this.type = type;
 		this.plane = plane;
 	}
-	
+
 	/**
 	 * Gets the RSTile on which this object is centered.
 	 * An RSObject may cover multiple tiles, in which case
 	 * this will return the floored central tile.
-	 * 
+	 *
 	 * @return The central RSTile.
 	 * @see #getArea()
 	 */
@@ -42,12 +42,12 @@ public class RSObject extends MethodProvider {
 		return new RSTile(methods.client.getBaseX() + obj.getX() / 512,
 				methods.client.getBaseY() + obj.getY() / 512);
 	}
-	
+
 	/**
 	 * Gets the area of tiles covered by this object.
-	 * 
+	 *
 	 * @return The RSArea containing all the tiles on which
-	 * this object can be found.
+	 *         this object can be found.
 	 */
 	public RSArea getArea() {
 		if (obj instanceof RSAnimable) {
@@ -62,7 +62,7 @@ public class RSObject extends MethodProvider {
 
 	/**
 	 * Gets the object definition of this object.
-	 * 
+	 *
 	 * @return The RSObjectDef if available, otherwise <code>null</code>.
 	 */
 	public RSObjectDef getDef() {
@@ -84,7 +84,7 @@ public class RSObject extends MethodProvider {
 
 	/**
 	 * Gets the ID of this object.
-	 * 
+	 *
 	 * @return The ID.
 	 */
 	public int getID() {
@@ -93,7 +93,7 @@ public class RSObject extends MethodProvider {
 
 	/**
 	 * Gets the Model of this object.
-	 * 
+	 *
 	 * @return The RSModel, or null if unavailable.
 	 */
 	public RSModel getModel() {
@@ -109,7 +109,7 @@ public class RSObject extends MethodProvider {
 
 	/**
 	 * Determines whether or not this object is on the game screen.
-	 * 
+	 *
 	 * @return <tt>true</tt> if the object is on screen.
 	 */
 	public boolean isOnScreen() {
@@ -130,9 +130,8 @@ public class RSObject extends MethodProvider {
 
 	/**
 	 * Performs the specified action on this object.
-	 * 
-	 * @param action
-	 *            the menu item to search and click
+	 *
+	 * @param action the menu item to search and click
 	 * @return returns true if clicked, false if object does not contain the
 	 *         desired action
 	 */
@@ -145,21 +144,20 @@ public class RSObject extends MethodProvider {
 		}
 		return methods.tiles.doAction(getLocation(), action);
 	}
-	
+
 	/**
 	 * Left-clicks this object.
-	 * 
+	 *
 	 * @return <tt>true</tt> if clicked.
 	 */
 	public boolean doClick() {
 		return doClick(true);
 	}
-	
+
 	/**
 	 * Clicks this object.
-	 * 
-	 * @param left
-	 *            <tt>true</tt> to left-click; <tt>false</tt> to right-click.
+	 *
+	 * @param left <tt>true</tt> to left-click; <tt>false</tt> to right-click.
 	 * @return <tt>true</tt> if clicked.
 	 */
 	public boolean doClick(boolean left) {
@@ -190,10 +188,10 @@ public class RSObject extends MethodProvider {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Moves the mouse over this object.
-	 * 
+	 *
 	 * @return <tt>true</tt> if the mouse was moved.
 	 */
 	public boolean doHover() {
@@ -210,12 +208,12 @@ public class RSObject extends MethodProvider {
 		}
 		return false;
 	}
-	
+
 	@Override
 	public boolean equals(Object o) {
 		return (o instanceof RSObject) && ((RSObject) o).obj == obj;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return obj.hashCode();

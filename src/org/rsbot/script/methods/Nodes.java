@@ -15,7 +15,6 @@ public class Nodes extends MethodProvider {
 	}
 
 	/**
-	 * 
 	 * @param nc The node cache to check
 	 * @param id The id of the node
 	 * @return A <tt>Node</tt> object corresponding to the ID in the nodecache.
@@ -37,7 +36,6 @@ public class Nodes extends MethodProvider {
 	}
 
 	/**
-	 * 
 	 * @param id The id of the node
 	 * @return A <tt>Node</tt> object corresponding to the ID in the loader.
 	 */

@@ -7,59 +7,59 @@ import java.awt.*;
 
 public interface Client {
 
-    ChatLine[] getChatLines();
+	ChatLine[] getChatLines();
 
 	boolean isMenuCollapsed();
 
 	NodeDeque getMenuItems();
 
-    NodeSubQueue getCollapsedMenuItems();
+	NodeSubQueue getCollapsedMenuItems();
 
-    int getBaseX();
+	int getBaseX();
 
-    int getBaseY();
+	int getBaseY();
 
-    Callback getCallBack();
-    
-    Canvas getCanvas();
+	Callback getCallBack();
 
-    int getCameraPitch();
+	Canvas getCanvas();
 
-    int getCameraYaw();
+	int getCameraPitch();
 
-    int getCamPosX();
+	int getCameraYaw();
 
-    int getCamPosY();
+	int getCamPosX();
 
-    int getCamPosZ();
+	int getCamPosY();
 
-    String getCurrentPassword();
+	int getCamPosZ();
 
-    String getCurrentUsername();
+	String getCurrentPassword();
 
-    int getDestX();
+	String getCurrentUsername();
 
-    int getDestY();
+	int getDestX();
 
-    DetailInfo getDetailInfo();
+	int getDestY();
 
-    byte[][][] getGroundByteArray();
+	DetailInfo getDetailInfo();
 
-    int getGUIRSInterfaceIndex();
+	byte[][][] getGroundByteArray();
 
-    int getIdleTime();
+	int getGUIRSInterfaceIndex();
 
-    Keyboard getKeyboard();
+	int getIdleTime();
 
-    int getLoginIndex();
+	Keyboard getKeyboard();
 
-    int getLoopCycle();
+	int getLoginIndex();
 
-    int getMenuOptionsCount();
+	int getLoopCycle();
 
-    int getMenuX();
+	int getMenuOptionsCount();
 
-    int getMenuY();
+	int getMenuX();
+
+	int getMenuY();
 
 	int getSubMenuX();
 
@@ -67,82 +67,82 @@ public interface Client {
 
 	int getSubMenuWidth();
 
-    int getMinimapAngle();
+	int getMinimapAngle();
 
-    float getMinimapOffset();
+	float getMinimapOffset();
 
-    int getMinimapScale();
+	int getMinimapScale();
 
-    int getMinimapSetting();
+	int getMinimapSetting();
 
-    Mouse getMouse();
+	Mouse getMouse();
 
-    //MouseWheel getMouseWheel();
+	//MouseWheel getMouseWheel();
 
-    RSPlayer getMyRSPlayer();
+	RSPlayer getMyRSPlayer();
 
-    int getPlane();
+	int getPlane();
 
-    int getPublicChatMode();
+	int getPublicChatMode();
 
-    RSGround[][][] getRSGroundArray();
+	RSGround[][][] getRSGroundArray();
 
-    RSGroundData[] getRSGroundDataArray();
+	RSGroundData[] getRSGroundDataArray();
 
-    StatusNodeList getRSInteractingDefList();
+	StatusNodeList getRSInteractingDefList();
 
-    Rectangle[] getRSInterfaceBoundsArray();
+	Rectangle[] getRSInterfaceBoundsArray();
 
-    RSInterface[][] getRSInterfaceCache();
+	RSInterface[][] getRSInterfaceCache();
 
-    HashTable getRSInterfaceNC();
+	HashTable getRSInterfaceNC();
 
-    HashTable getRSItemNodeCache();
+	HashTable getRSItemNodeCache();
 
-    HashTable getRSNPCNC();
+	HashTable getRSNPCNC();
 
-    int getRSNPCCount();
+	int getRSNPCCount();
 
-    int[] getRSNPCIndexArray();
+	int[] getRSNPCIndexArray();
 
-    RSPlayer[] getRSPlayerArray();
+	RSPlayer[] getRSPlayerArray();
 
-    int getRSPlayerCount();
+	int getRSPlayerCount();
 
-    int[] getRSPlayerIndexArray();
+	int[] getRSPlayerIndexArray();
 
-    String getSelectedItemName();
+	String getSelectedItemName();
 
-    int getSelfInteracting();
+	int getSelfInteracting();
 
-    Settings getSettingArray();
+	Settings getSettingArray();
 
-    Signlink getSignLink();
+	Signlink getSignLink();
 
-    int[] getSkillExperiences();
+	int[] getSkillExperiences();
 
-    int[] getSkillExperiencesMax();
+	int[] getSkillExperiencesMax();
 
-    int[] getSkillLevelMaxes();
+	int[] getSkillLevelMaxes();
 
-    int[] getSkillLevels();
+	int[] getSkillLevels();
 
-    TileData[] getTileData();
+	TileData[] getTileData();
 
-    boolean[] getValidRSInterfaceArray();
+	boolean[] getValidRSInterfaceArray();
 
-    boolean isFlagged();
+	boolean isFlagged();
 
-    int isItemSelected();
+	int isItemSelected();
 
-    boolean isMenuOpen();
+	boolean isMenuOpen();
 
-    boolean isSpellSelected();
+	boolean isSpellSelected();
 
-    RSItemDefLoader getRSItemDefLoader();
-    
-    RSObjectDefLoader getRSObjectDefLoader();
+	RSItemDefLoader getRSItemDefLoader();
 
-    void setCallback(Callback cb);
+	RSObjectDefLoader getRSObjectDefLoader();
+
+	void setCallback(Callback cb);
 
 }

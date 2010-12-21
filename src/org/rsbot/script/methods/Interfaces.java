@@ -1,14 +1,14 @@
 package org.rsbot.script.methods;
 
+import org.rsbot.script.wrappers.RSComponent;
+import org.rsbot.script.wrappers.RSInterface;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
-import org.rsbot.script.wrappers.RSInterface;
-import org.rsbot.script.wrappers.RSComponent;
 
 /**
  * Provides access to interfaces.
@@ -77,7 +77,7 @@ public class Interfaces extends MethodProvider {
 	}
 
 	/**
-	 * @param index The parent interface index
+	 * @param index	  The parent interface index
 	 * @param childIndex The component index
 	 * @return <tt>RSComponent</tt> for the given index and child index.
 	 */
@@ -131,7 +131,7 @@ public class Interfaces extends MethodProvider {
 				for (int i = 0; i < len; i++) {
 					RSComponent child = iface.getComponent(i);
 					if (child.containsText("Click here to continue") && child.isValid()
-							&& child.getAbsoluteY() > 100)
+							&& child.getAbsoluteX() > 100 && child.getAbsoluteY() > 300)
 						return child;
 				}
 			}

@@ -2,6 +2,10 @@ package org.rsbot.client;
 
 public interface RSGroundData {
 
-    int[][] getBlocks();
+	int[][] getBlocks();
+
+	int getX();
+
+	int getY();
 
 }

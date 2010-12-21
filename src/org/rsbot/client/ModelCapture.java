@@ -25,18 +25,18 @@ public class ModelCapture implements Model {
 			return;
 		}
 		int[] vertices = model.getXPoints();
-        vertex_x = Arrays.copyOf(vertices, vertices.length);
-        vertices = model.getYPoints();
-        vertex_y = Arrays.copyOf(vertices, vertices.length);
-        vertices = model.getZPoints();
-        vertex_z = Arrays.copyOf(vertices, vertices.length);
+		vertex_x = Arrays.copyOf(vertices, vertices.length);
+		vertices = model.getYPoints();
+		vertex_y = Arrays.copyOf(vertices, vertices.length);
+		vertices = model.getZPoints();
+		vertex_z = Arrays.copyOf(vertices, vertices.length);
 
-        short[] faces = model.getIndices1();
-        face_a = Arrays.copyOf(faces, faces.length);
-        faces = model.getIndices2();
-        face_b = Arrays.copyOf(faces, faces.length);
-        faces = model.getIndices3();
-        face_c = Arrays.copyOf(faces, faces.length);
+		short[] faces = model.getIndices1();
+		face_a = Arrays.copyOf(faces, faces.length);
+		faces = model.getIndices2();
+		face_b = Arrays.copyOf(faces, faces.length);
+		faces = model.getIndices3();
+		face_c = Arrays.copyOf(faces, faces.length);
 	}
 
 	public int[] getXPoints() {

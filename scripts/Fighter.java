@@ -1,9 +1,17 @@
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.RenderingHints;
+import org.rsbot.event.listeners.PaintListener;
+import org.rsbot.script.Script;
+import org.rsbot.script.ScriptManifest;
+import org.rsbot.script.util.Filter;
+import org.rsbot.script.wrappers.RSGroundItem;
+import org.rsbot.script.wrappers.RSItem;
+import org.rsbot.script.wrappers.RSNPC;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
@@ -12,30 +20,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
-
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-
-import org.rsbot.event.listeners.PaintListener;
-import org.rsbot.script.Script;
-import org.rsbot.script.ScriptManifest;
-import org.rsbot.script.util.Filter;
-import org.rsbot.script.wrappers.RSGroundItem;
-import org.rsbot.script.wrappers.RSItem;
-import org.rsbot.script.wrappers.RSNPC;
 
 @ScriptManifest(authors = "Foulwerp", name = "Fighter", keywords = "Combat", description = "Basic Multipurpose Fighter...", version = 1.05)
 public class Fighter extends Script implements PaintListener {

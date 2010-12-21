@@ -6,6 +6,7 @@ import org.rsbot.script.wrappers.RSItemDef;
 import org.rsbot.script.wrappers.RSObject;
 
 import java.awt.*;
+import java.util.LinkedList;
 
 /**
  * Inventory related operations.
@@ -45,7 +46,7 @@ public class Inventory extends MethodProvider {
 	 * Drops all items with the same specified id.
 	 *
 	 * @param leftToRight <tt>true</tt> to drop items from left to right.
-	 * @param items The item IDs to drop
+	 * @param items	   The item IDs to drop
 	 */
 	public void dropAllExcept(boolean leftToRight, int... items) {
 		if (getCountExcept(items) != 0) {
@@ -142,7 +143,7 @@ public class Inventory extends MethodProvider {
 	 *
 	 * @param itemID The item(s) you wish to evaluate.
 	 * @return <tt>true</tt> if your inventory contains at least one of all of
-	 * the item IDs provided; otherwise <tt>false</tt>.
+	 *         the item IDs provided; otherwise <tt>false</tt>.
 	 * @see #containsOneOf(int...)
 	 */
 	public boolean containsAll(int... itemID) {
@@ -159,7 +160,7 @@ public class Inventory extends MethodProvider {
 	 *
 	 * @param itemID The item ID to check for.
 	 * @return <tt>true</tt> if inventory contains one of the specified items;
-	 * otherwise <tt>false</tt>.
+	 *         otherwise <tt>false</tt>.
 	 * @see #containsAll(int...)
 	 */
 	public boolean containsOneOf(int... itemID) {
@@ -177,7 +178,7 @@ public class Inventory extends MethodProvider {
 	 * Checks whether or not your inventory is full.
 	 *
 	 * @return <tt>true</tt> if your inventory contains 28 items; otherwise
-	 * <tt>false</tt>.
+	 *         <tt>false</tt>.
 	 */
 	public boolean isFull() {
 		return getCount() == 28;
@@ -195,7 +196,7 @@ public class Inventory extends MethodProvider {
 	/**
 	 * Uses two items together.
 	 *
-	 * @param item The item to use on another item.
+	 * @param item	   The item to use on another item.
 	 * @param targetItem The item you want the first parameter to be used on.
 	 * @return <tt>true</tt> if the "use" action had been used on both items; otherwise <tt>false</tt>.
 	 */
@@ -209,7 +210,7 @@ public class Inventory extends MethodProvider {
 	/**
 	 * Uses an item on an object.
 	 *
-	 * @param item The item to use on another item.
+	 * @param item		 The item to use on another item.
 	 * @param targetObject The RSObject you want the first parameter to be used on.
 	 * @return <tt>true</tt> if the "use" action had been used on both the RSItem and RSObject; otherwise <tt>false</tt>.
 	 */
@@ -236,7 +237,7 @@ public class Inventory extends MethodProvider {
 	 * Gets the selected item name.
 	 *
 	 * @return The name of the current selected item,
-	 * or null if none is selected.
+	 *         or null if none is selected.
 	 */
 	public String getSelectedItemName() {
 		String name = methods.client.getSelectedItemName();
@@ -247,7 +248,7 @@ public class Inventory extends MethodProvider {
 	 * Gets the selected item index.
 	 *
 	 * @return The index of current selected item,
-	 * or -1 if none is selected.
+	 *         or -1 if none is selected.
 	 */
 	public int getSelectedItemIndex() {
 		RSComponent[] comps = getInterface().getComponents();
@@ -262,7 +263,7 @@ public class Inventory extends MethodProvider {
 	 * Gets the selected inventory item.
 	 *
 	 * @return The current selected item,
-	 * or <tt>null</tt> if none is selected.
+	 *         or <tt>null</tt> if none is selected.
 	 */
 	public RSItem getSelectedItem() {
 		int index = getSelectedItemIndex();
@@ -272,8 +273,8 @@ public class Inventory extends MethodProvider {
 	/**
 	 * Clicks selected inventory item, if it's selected.
 	 *
-	 * @param leftClick <tt>true</tt> for left button click, 
-	 * <tt>false</tt> for right button.
+	 * @param leftClick <tt>true</tt> for left button click,
+	 *                  <tt>false</tt> for right button.
 	 * @return <tt>true</tt> if item was selected, <tt>false</tt> if not.
 	 */
 	public boolean clickSelectedItem(boolean leftClick) {
@@ -293,7 +294,6 @@ public class Inventory extends MethodProvider {
 
 	/**
 	 * Gets inventory item at specified index.
-	 *
 	 *
 	 * @param index The index of inventory item.
 	 * @return The item, or <tt>null</tt> if not found.
@@ -335,6 +335,25 @@ public class Inventory extends MethodProvider {
 		}
 
 		return new RSItem[0];
+	}
+
+	/**
+	 * Gets all the items in the inventory matching any of the provided IDs.
+	 *
+	 * @param ids Valid IDs.
+	 * @return <tt>RSItem</tt> array of the matching inventory items.
+	 */
+	public RSItem[] getItems(int... ids) {
+		LinkedList<RSItem> items = new LinkedList<RSItem>();
+		for (RSItem item : getItems()) {
+			for (int i : ids) {
+				if (item.getID() == i) {
+					items.add(item);
+					break;
+				}
+			}
+		}
+		return items.toArray(new RSItem[items.size()]);
 	}
 
 	/**
@@ -426,9 +445,9 @@ public class Inventory extends MethodProvider {
 	 * any of the provided IDs.
 	 *
 	 * @param includeStacks <tt>true</tt> to count the stack
-	 * sizes of each item; <tt>false</tt> to count a stack as
-	 * a single item.
-	 * @param ids The item IDs to exclude.
+	 *                      sizes of each item; <tt>false</tt> to count a stack as
+	 *                      a single item.
+	 * @param ids		   The item IDs to exclude.
 	 * @return The count.
 	 */
 	public int getCountExcept(boolean includeStacks, int... ids) {
@@ -468,9 +487,9 @@ public class Inventory extends MethodProvider {
 	 * the any of the specified IDs.
 	 *
 	 * @param includeStacks <tt>true</tt> to count the stack
-	 * sizes of each item; <tt>false</tt> to count a stack as
-	 * a single item.
-	 * @param itemIDs the item IDs to include
+	 *                      sizes of each item; <tt>false</tt> to count a stack as
+	 *                      a single item.
+	 * @param itemIDs	   the item IDs to include
 	 * @return The count.
 	 */
 	public int getCount(boolean includeStacks, int... itemIDs) {
@@ -505,7 +524,7 @@ public class Inventory extends MethodProvider {
 	 * Gets the count of all items in your inventory.
 	 *
 	 * @param includeStacks <tt>false</tt> if stacked items should
-	 * be counted as a single item; otherwise <tt>true</tt>.
+	 *                      be counted as a single item; otherwise <tt>true</tt>.
 	 * @return The count.
 	 */
 	public int getCount(boolean includeStacks) {

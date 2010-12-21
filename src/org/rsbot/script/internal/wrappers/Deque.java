@@ -2,7 +2,8 @@ package org.rsbot.script.internal.wrappers;
 
 import org.rsbot.client.NodeDeque;
 
-public class Deque {
+@SuppressWarnings("unchecked")
+public class Deque<N> {
 
 	private final NodeDeque nl;
 	private org.rsbot.client.Node current;
@@ -23,7 +24,7 @@ public class Deque {
 		return size;
 	}
 
-	public org.rsbot.client.Node getHead() {
+	public N getHead() {
 		org.rsbot.client.Node node = nl.getTail().getNext();
 
 		if (node == nl.getTail()) {
@@ -32,10 +33,10 @@ public class Deque {
 		}
 		current = node.getNext();
 
-		return node;
+		return (N) node;
 	}
 
-	public org.rsbot.client.Node getTail() {
+	public N getTail() {
 		org.rsbot.client.Node node = nl.getTail().getPrevious();
 
 		if (node == nl.getTail()) {
@@ -44,10 +45,10 @@ public class Deque {
 		}
 		current = node.getPrevious();
 
-		return node;
+		return (N) node;
 	}
 
-	public org.rsbot.client.Node getNext() {
+	public N getNext() {
 		org.rsbot.client.Node node = current;
 
 		if (node == nl.getTail()) {
@@ -56,7 +57,7 @@ public class Deque {
 		}
 		current = node.getNext();
 
-		return node;
+		return (N) node;
 	}
 
 }

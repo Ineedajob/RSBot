@@ -6,7 +6,7 @@ import org.rsbot.client.RSNPCNode;
 import org.rsbot.script.methods.MethodContext;
 import org.rsbot.script.methods.MethodProvider;
 
-import java.awt.Point;
+import java.awt.*;
 
 /**
  * Represents a character.
@@ -147,7 +147,7 @@ public abstract class RSCharacter extends MethodProvider {
 		org.rsbot.client.RSCharacter c = getAccessor();
 		RSModel model = getModel();
 		if (model == null) {
-			return methods.calc.groundToScreen(c.getX(), c.getY(), -c.getHeight() / 2);
+			return methods.calc.groundToScreen(c.getX(), c.getY(), c.getHeight() / 2);
 		} else {
 			return model.getPoint();
 		}

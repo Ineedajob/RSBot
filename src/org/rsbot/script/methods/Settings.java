@@ -30,9 +30,9 @@ public class Settings extends MethodProvider {
 
 	/**
 	 * Gets the settings array.
-	 * 
+	 *
 	 * @return An <tt>int</tt> array representing all of the settings values;
-	 * otherwise <tt>new int[0]</tt>.
+	 *         otherwise <tt>new int[0]</tt>.
 	 */
 	public int[] getSettingArray() {
 		org.rsbot.client.Settings settingArray = methods.client
@@ -44,10 +44,10 @@ public class Settings extends MethodProvider {
 
 	/**
 	 * Gets the setting at a given index.
-	 * 
+	 *
 	 * @param setting The setting index to return the value of.
 	 * @return <tt>int</tt> representing the setting of the given setting id;
-	 * otherwise <tt>-1</tt>.
+	 *         otherwise <tt>-1</tt>.
 	 */
 	public int getSetting(int setting) {
 		int[] settings = getSettingArray();

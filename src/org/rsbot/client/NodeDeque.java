@@ -2,8 +2,8 @@ package org.rsbot.client;
 
 public interface NodeDeque {
 
-    Node getCurrent();
+	Node getCurrent();
 
-    Node getTail();
+	Node getTail();
 
 }

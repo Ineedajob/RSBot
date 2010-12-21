@@ -1,13 +1,14 @@
 import org.rsbot.event.listeners.PaintListener;
 import org.rsbot.script.Script;
 import org.rsbot.script.ScriptManifest;
-import org.rsbot.script.wrappers.*;
 import org.rsbot.script.util.Timer;
+import org.rsbot.script.wrappers.RSArea;
+import org.rsbot.script.wrappers.RSModel;
+import org.rsbot.script.wrappers.RSNPC;
+import org.rsbot.script.wrappers.RSObject;
+import org.rsbot.script.wrappers.RSTile;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Point;
-import java.awt.Polygon;
+import java.awt.*;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -208,7 +209,7 @@ public class AutoEssence extends Script implements PaintListener {
 						++fails;
 					}
 				} else if (!getMyPlayer().isMoving() && (walking.walkTo(obj.getLocation()) ||
-								walking.walkTileMM(walking.getClosestTileOnMap(obj.getLocation())))) {
+						walking.walkTileMM(walking.getClosestTileOnMap(obj.getLocation())))) {
 					sleep(random(1000, 1800));
 				}
 			}

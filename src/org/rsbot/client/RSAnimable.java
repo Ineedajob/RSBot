@@ -2,16 +2,16 @@ package org.rsbot.client;
 
 public interface RSAnimable extends RSInteractable {
 
-    int getX();
+	int getX();
 
-    short getX1();
+	short getX1();
 
-    short getX2();
+	short getX2();
 
-    int getY();
+	int getY();
 
-    short getY1();
+	short getY1();
 
-    short getY2();
+	short getY2();
 
 }

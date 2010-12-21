@@ -1,16 +1,16 @@
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.Point;
-import java.awt.Polygon;
-import java.awt.RenderingHints;
+import org.rsbot.event.listeners.PaintListener;
+import org.rsbot.script.Script;
+import org.rsbot.script.ScriptManifest;
+import org.rsbot.script.methods.Skills;
+import org.rsbot.script.util.Filter;
+import org.rsbot.script.wrappers.RSCharacter;
+import org.rsbot.script.wrappers.RSNPC;
+import org.rsbot.script.wrappers.RSTile;
+import org.rsbot.util.GlobalConfiguration;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -22,30 +22,6 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Properties;
-
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.GroupLayout;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSlider;
-import javax.swing.JTextField;
-import javax.swing.LayoutStyle;
-import javax.swing.SwingConstants;
-import javax.swing.border.EmptyBorder;
-
-import org.rsbot.event.listeners.PaintListener;
-import org.rsbot.script.Script;
-import org.rsbot.script.ScriptManifest;
-import org.rsbot.script.methods.Skills;
-import org.rsbot.script.util.Filter;
-import org.rsbot.script.wrappers.RSCharacter;
-import org.rsbot.script.wrappers.RSNPC;
-import org.rsbot.script.wrappers.RSTile;
-import org.rsbot.util.GlobalConfiguration;
 
 @ScriptManifest(authors = "Dunnkers", name = "DunkYakKilla", keywords = "Combat", version = 1.4, description = "Kills yaks on Neitiznot.")
 public class DunkYakKilla extends Script implements PaintListener {
@@ -69,11 +45,11 @@ public class DunkYakKilla extends Script implements PaintListener {
 	public int YAKDEADANIMATIONID = 5784;
 	public String YAKNAME = "Yak";
 	public int SKILLINTERFACE = 320;
-	public int[] ATTACK = { 125, 123, 121, 2428 }, STRENGTH = { 119, 117, 115,
-			113 }, DEFENCE = { 137, 135, 133, 2432 }, SUPERATTACK = { 149, 147,
-			145, 2436 }, SUPERSTRENGTH = { 161, 159, 157, 2440 },
-			SUPERDEFENCE = { 167, 165, 163, 2442 }, RANGED = { 173, 171, 169,
-					2444 };
+	public int[] ATTACK = {125, 123, 121, 2428}, STRENGTH = {119, 117, 115,
+			113}, DEFENCE = {137, 135, 133, 2432}, SUPERATTACK = {149, 147,
+			145, 2436}, SUPERSTRENGTH = {161, 159, 157, 2440},
+			SUPERDEFENCE = {167, 165, 163, 2442}, RANGED = {173, 171, 169,
+			2444};
 
 	/* SETTINGS */
 	public int pouchID = 12029, pouchCost = 10, foodID = 7946, eatPercent = 50,
@@ -144,99 +120,99 @@ public class DunkYakKilla extends Script implements PaintListener {
 
 	public int loop() {
 		switch (getState()) {
-		case EAT:
-			status = "Eating food...";
-			int eatN = getFoodToHeal();
-			log("[eat] eating " + eatN + " food with id: (" + foodID + ")");
-			for (int i = 0; i < eatN; i++) {
-				inventory.getItem(foodID).doAction("Eat");
-				sleep(random(1500, 2000));
-			}
-			break;
-		case POTIONS:
-			status = "Drinking potions...";
-			int[] potions = {};
-			if (useAttack && !isSkillBoosted(Skills.ATTACK))
-				potions = ATTACK;
-			if (useStrength && !isSkillBoosted(Skills.STRENGTH))
-				potions = STRENGTH;
-			if (useDefence && !isSkillBoosted(Skills.DEFENSE))
-				potions = DEFENCE;
-			if (useRanged && !isSkillBoosted(Skills.RANGE))
-				potions = RANGED;
-			int id = 0;
-			for (int potion : potions) {
-				if (inventory.contains(potion)) {
-					id = potion;
-					break;
+			case EAT:
+				status = "Eating food...";
+				int eatN = getFoodToHeal();
+				log("[eat] eating " + eatN + " food with id: (" + foodID + ")");
+				for (int i = 0; i < eatN; i++) {
+					inventory.getItem(foodID).doAction("Eat");
+					sleep(random(1500, 2000));
 				}
-			}
-			if (id != 0) {
-				log("[potions] drinking potion with id (" + id + ")");
+				break;
+			case POTIONS:
+				status = "Drinking potions...";
+				int[] potions = {};
+				if (useAttack && !isSkillBoosted(Skills.ATTACK))
+					potions = ATTACK;
+				if (useStrength && !isSkillBoosted(Skills.STRENGTH))
+					potions = STRENGTH;
+				if (useDefence && !isSkillBoosted(Skills.DEFENSE))
+					potions = DEFENCE;
+				if (useRanged && !isSkillBoosted(Skills.RANGE))
+					potions = RANGED;
+				int id = 0;
+				for (int potion : potions) {
+					if (inventory.contains(potion)) {
+						id = potion;
+						break;
+					}
+				}
+				if (id != 0) {
+					log("[potions] drinking potion with id (" + id + ")");
+					try {
+						inventory.getItem(id).doAction("Drink");
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					sleep(random(1000, 1250));
+				}
+			case FAMILIAR:
+				status = "Summoning familiar...";
+				log("[familiar] summoning familiar with pouch id: " + pouchID);
 				try {
-					inventory.getItem(id).doAction("Drink");
+					inventory.getItem(pouchID).doAction("Summon");
 				} catch (Exception e) {
-					e.printStackTrace();
 				}
-				sleep(random(1000, 1250));
-			}
-		case FAMILIAR:
-			status = "Summoning familiar...";
-			log("[familiar] summoning familiar with pouch id: " + pouchID);
-			try {
-				inventory.getItem(pouchID).doAction("Summon");
-			} catch (Exception e) {
-			}
-			sleep(random(1000, 2000));
-			break;
-		case ATTACK:
-			status = "Attacking...";
-			if (menuContains("Attack Yak")) {
-				mouse.click(true);
-				sleep(random(500, 1000));
-			} else {
-				RSNPC toAttack = getNPCToAttack();
-				if (toAttack != null) {
-					if (toAttack.isOnScreen()) {
-						toAttack.doAction("Attack");
-						sleep(random(500, 1000));
-					} else {
-						new turnToYak().start();
-						if (calc.distanceTo(toAttack) > 5) {
-							walking.walkTileMM(toAttack.getLocation());
-						}
-					}
+				sleep(random(1000, 2000));
+				break;
+			case ATTACK:
+				status = "Attacking...";
+				if (menuContains("Attack Yak")) {
+					mouse.click(true);
+					sleep(random(500, 1000));
 				} else {
-					if (random(0, 3) == 2) {
-						RSTile[] area = { new RSTile(2327, 3792),
-								new RSTile(2323, 3795), new RSTile(2320, 3794),
-								new RSTile(2323, 3792), new RSTile(2323, 3795) };
-						walking.walkTileMM(area[random(0, area.length)]);
-						sleep(random(1000, 2000));
-					}
-				}
-			}
-			break;
-		case FIND:
-			status = "Finding new opponent...";
-			RSNPC nextOpponent = getNPCToAttack();
-			if (nextOpponent != null) {
-				if (!nextOpponent.isOnScreen()) {
-					camera.turnToCharacter(nextOpponent);
-				} else if (mouseFollow) {
-					if (!menuContains("Attack")) {
-						Point p = nextOpponent.getScreenLocation();
-						if (calc.pointOnScreen(p)) {
-							mouse.move(p.x, p.y);
+					RSNPC toAttack = getNPCToAttack();
+					if (toAttack != null) {
+						if (toAttack.isOnScreen()) {
+							toAttack.doAction("Attack");
+							sleep(random(500, 1000));
+						} else {
+							new turnToYak().start();
+							if (calc.distanceTo(toAttack) > 5) {
+								walking.walkTileMM(toAttack.getLocation());
+							}
+						}
+					} else {
+						if (random(0, 3) == 2) {
+							RSTile[] area = {new RSTile(2327, 3792),
+									new RSTile(2323, 3795), new RSTile(2320, 3794),
+									new RSTile(2323, 3792), new RSTile(2323, 3795)};
+							walking.walkTileMM(area[random(0, area.length)]);
+							sleep(random(1000, 2000));
 						}
 					}
 				}
-			}
-			break;
-		case NONE:
-			status = "Waiting...";
-			antiban();
-			break;
+				break;
+			case FIND:
+				status = "Finding new opponent...";
+				RSNPC nextOpponent = getNPCToAttack();
+				if (nextOpponent != null) {
+					if (!nextOpponent.isOnScreen()) {
+						camera.turnToCharacter(nextOpponent);
+					} else if (mouseFollow) {
+						if (!menuContains("Attack")) {
+							Point p = nextOpponent.getScreenLocation();
+							if (calc.pointOnScreen(p)) {
+								mouse.move(p.x, p.y);
+							}
+						}
+					}
+				}
+				break;
+			case NONE:
+				status = "Waiting...";
+				antiban();
+				break;
 		}
 		return 1;
 	}
@@ -244,60 +220,60 @@ public class DunkYakKilla extends Script implements PaintListener {
 	public void antiban() {
 		int t = random(0, 100);
 		switch (t) {
-		case 1:
-			if (random(0, 10) == 5) {
-				log("[antiban] move mouse");
-				mouse.moveSlightly();
-			}
-			break;
-		case 2:
-			if (random(0, 25) == 5) {
-				log("[antiban] check combat skill");
-				int[] childs = { 1, 2, 4, 22, 46, 87 };
-				game.openTab(1);
-				interfaces.getComponent(SKILLINTERFACE,
-						childs[random(0, childs.length)]).doHover();
-				sleep(random(1000, 2000));
-			}
-			break;
-		case 3:
-			if (random(0, 30) == 5) {
-				log("[antiban] open random tab and move mouse within");
-				game.openTab(random(0, 15));
-				mouse.move(random(550, 735), random(210, 465));
-				sleep(random(1000, 2000));
-			}
-			break;
-		case 4:
-			if (random(0, 30) == 5) {
-				log("[antiban] open random tab");
-				game.openTab(random(0, 15));
-				sleep(random(500, random(1000, 2000)));
-			}
-			break;
-		case 5:
-			if (random(0, 40) == 5) {
-				log("[antiban] check objective");
-				game.openTab(8);
-				interfaces.getComponent(891, 10).doHover();
-				sleep(random(1000, 2000));
-			}
-			break;
-		case 6:
-			if (random(0, 70) == 5) {
-				log("[antiban] away from keyboard");
-				mouse.moveOffScreen();
-				curAFKST = System.currentTimeMillis();
-				curAFKT = random(0, random(5000, random(10000, random(15000,
-						20000))));
-				log("[antiban] afk for " + curAFKT);
-				curAFK = true;
-				sleep(curAFKT);
-				curAFK = false;
-			}
-			break;
-		default:
-			break;
+			case 1:
+				if (random(0, 10) == 5) {
+					log("[antiban] move mouse");
+					mouse.moveSlightly();
+				}
+				break;
+			case 2:
+				if (random(0, 25) == 5) {
+					log("[antiban] check combat skill");
+					int[] childs = {1, 2, 4, 22, 46, 87};
+					game.openTab(1);
+					interfaces.getComponent(SKILLINTERFACE,
+							childs[random(0, childs.length)]).doHover();
+					sleep(random(1000, 2000));
+				}
+				break;
+			case 3:
+				if (random(0, 30) == 5) {
+					log("[antiban] open random tab and move mouse within");
+					game.openTab(random(0, 15));
+					mouse.move(random(550, 735), random(210, 465));
+					sleep(random(1000, 2000));
+				}
+				break;
+			case 4:
+				if (random(0, 30) == 5) {
+					log("[antiban] open random tab");
+					game.openTab(random(0, 15));
+					sleep(random(500, random(1000, 2000)));
+				}
+				break;
+			case 5:
+				if (random(0, 40) == 5) {
+					log("[antiban] check objective");
+					game.openTab(8);
+					interfaces.getComponent(891, 10).doHover();
+					sleep(random(1000, 2000));
+				}
+				break;
+			case 6:
+				if (random(0, 70) == 5) {
+					log("[antiban] away from keyboard");
+					mouse.moveOffScreen();
+					curAFKST = System.currentTimeMillis();
+					curAFKT = random(0, random(5000, random(10000, random(15000,
+							20000))));
+					log("[antiban] afk for " + curAFKT);
+					curAFK = true;
+					sleep(curAFKT);
+					curAFK = false;
+				}
+				break;
+			default:
+				break;
 		}
 	}
 
@@ -313,7 +289,7 @@ public class DunkYakKilla extends Script implements PaintListener {
 				NAME + " v" + VERSION,
 				"Runtime: "
 						+ timeFormat((int) (System.currentTimeMillis() - startTime)),
-				"Status: " + status, "Kills: " + numberFormat(kills) };
+				"Status: " + status, "Kills: " + numberFormat(kills)};
 		drawColumn(g, list, 7, 337, -3, false, true);
 		ArrayList<String> infoSkillsRaw = new ArrayList<String>();
 		for (int i = 0; i < infoSkill.skillAmount; i++) {
@@ -324,7 +300,7 @@ public class DunkYakKilla extends Script implements PaintListener {
 						+ numberFormat(infoSkill.getExpGained(i)));
 				infoSkillsRaw.add("  Exp per hour: "
 						+ numberFormat((int) getPerHour(infoSkill
-								.getExpGained(i), startTime)));
+						.getExpGained(i), startTime)));
 			}
 		}
 		String[] infoSkills = toArray(infoSkillsRaw);
@@ -337,7 +313,7 @@ public class DunkYakKilla extends Script implements PaintListener {
 			}
 		});
 		for (RSNPC b : a) {
-			Point l = calc.tileToScreen(b.getLocation(), -b.getHeight() / 2);
+			Point l = calc.tileToScreen(b.getLocation(), b.getHeight() / 2);
 			if (!calc.pointOnScreen(l))
 				continue;
 			g.drawOval(l.x - 5, l.y - 5, 10, 10);
@@ -346,12 +322,12 @@ public class DunkYakKilla extends Script implements PaintListener {
 		}
 		g.setColor(Color.YELLOW);
 		if (curAFK) {
-			drawNote(g, true, new String[] {
+			drawNote(g, true, new String[]{
 					"Away from keyboard for " + secondFormat(curAFKT)
 							+ " seconds...",
 					"Time left: "
 							+ secondFormat((int) (curAFKT - (System
-									.currentTimeMillis() - curAFKST))) });
+							.currentTimeMillis() - curAFKST)))});
 		}
 		RSCharacter opponent = players.getMyPlayer().getInteracting();
 		if (opponent != null) {
@@ -367,7 +343,7 @@ public class DunkYakKilla extends Script implements PaintListener {
 
 	/* VOIDS */
 	public void drawColumn(Graphics g, String[] column, int x, int y,
-			int offset, boolean reverseHorizontal, boolean reverseVertical) {
+						   int offset, boolean reverseHorizontal, boolean reverseVertical) {
 		int h = g.getFontMetrics().getHeight(), xp = x;
 		h += offset;
 		if (reverseVertical) {
@@ -400,7 +376,7 @@ public class DunkYakKilla extends Script implements PaintListener {
 			g.drawString(strA[i],
 					x
 							+ ((w / 2) - (g.getFontMetrics().stringWidth(
-									strA[i]) / 2)), y + oY * (i + 1));
+							strA[i]) / 2)), y + oY * (i + 1));
 		}
 	}
 
@@ -835,8 +811,8 @@ public class DunkYakKilla extends Script implements PaintListener {
 					label7.setFont(new Font("Tahoma", Font.BOLD, 11));
 					label7.setHorizontalAlignment(SwingConstants.CENTER);
 
-					String[] model = new String[] { "Dont use", "Normal",
-							"Super" };
+					String[] model = new String[]{"Dont use", "Normal",
+							"Super"};
 
 					// ---- attack ----
 					attack.setModel(new DefaultComboBoxModel(model));
@@ -874,8 +850,8 @@ public class DunkYakKilla extends Script implements PaintListener {
 					label11.setText("Ranged potion:");
 
 					// ---- ranged ----
-					ranged.setModel(new DefaultComboBoxModel(new String[] {
-							"Dont use", "Normal" }));
+					ranged.setModel(new DefaultComboBoxModel(new String[]{
+							"Dont use", "Normal"}));
 
 					GroupLayout contentPanelLayout = new GroupLayout(
 							contentPanel);
@@ -1178,10 +1154,10 @@ public class DunkYakKilla extends Script implements PaintListener {
 					buttonBar.setBorder(new EmptyBorder(12, 0, 0, 0));
 					buttonBar.setBackground(Color.white);
 					buttonBar.setLayout(new GridBagLayout());
-					((GridBagLayout) buttonBar.getLayout()).columnWidths = new int[] {
-							0, 85, 80 };
-					((GridBagLayout) buttonBar.getLayout()).columnWeights = new double[] {
-							1.0, 0.0, 0.0 };
+					((GridBagLayout) buttonBar.getLayout()).columnWidths = new int[]{
+							0, 85, 80};
+					((GridBagLayout) buttonBar.getLayout()).columnWeights = new double[]{
+							1.0, 0.0, 0.0};
 
 					// ---- okButton ----
 					okButton.setText("OK");

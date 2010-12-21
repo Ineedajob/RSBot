@@ -2,10 +2,10 @@ package org.rsbot.client;
 
 public interface Node {
 
-    long getID();
+	long getID();
 
-    Node getNext();
+	Node getNext();
 
-    Node getPrevious();
+	Node getPrevious();
 
 }

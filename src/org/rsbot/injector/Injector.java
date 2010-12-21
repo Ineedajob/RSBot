@@ -1,19 +1,37 @@
 package org.rsbot.injector;
 
 import com.sun.org.apache.bcel.internal.Constants;
-import com.sun.org.apache.bcel.internal.classfile.*;
+import com.sun.org.apache.bcel.internal.classfile.ClassParser;
+import com.sun.org.apache.bcel.internal.classfile.ConstantClass;
+import com.sun.org.apache.bcel.internal.classfile.ConstantUtf8;
+import com.sun.org.apache.bcel.internal.classfile.Field;
+import com.sun.org.apache.bcel.internal.classfile.Method;
 import com.sun.org.apache.bcel.internal.generic.*;
 import org.rsbot.client.Model;
 import org.rsbot.client.ModelCapture;
 import org.rsbot.util.GlobalConfiguration;
 
 import javax.swing.*;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintStream;
+import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.jar.JarEntry;
@@ -21,7 +39,9 @@ import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
 import java.util.logging.Logger;
 
-import static org.rsbot.injector.HookData.*;
+import static org.rsbot.injector.HookData.ClassData;
+import static org.rsbot.injector.HookData.FieldData;
+import static org.rsbot.injector.HookData.StaticFieldData;
 
 public class Injector {
 
@@ -47,6 +67,7 @@ public class Injector {
 			}
 		} else {
 			try {
+				// hook data are intentionally not cached
 				hd = new HookData(download(new URL(GlobalConfiguration.Paths.URLs.UPDATE)));
 			} catch (Exception e) {
 				log.severe("Unable to download hook data.");
@@ -91,8 +112,7 @@ public class Injector {
 
 				URL url = new URL(s);
 				return ((JarURLConnection) url.openConnection()).getJarFile();
-			}
-			catch (Exception ignored) {
+			} catch (Exception ignored) {
 			}
 		}
 	}
@@ -231,6 +251,11 @@ public class Injector {
 
 				hackAnimatedModel();
 				hackCharacterModel();
+				hackGroundModel();
+
+				log.info("Preparing christmas decorations");
+				hackChristmas();
+				log.info("Enable christmas in the Edit menu!");
 
 				//Inject masterx/y fields
 				cgInterface.addField(new FieldGen(0, Type.INT, "masterX", cgInterface.getConstantPool()).getField());
@@ -379,7 +404,6 @@ public class Injector {
 
 				//Insert callback
 				insertCallback();
-
 				insertRXTEACallback();
 
 				//Return the classes
@@ -645,6 +669,64 @@ public class Injector {
 		}
 	}
 
+	private void hackChristmas() {
+		ClassGen cg = findClass("dm");
+		for (Method method : cg.getMethods()) {
+			if (!method.isStatic() && method.getReturnType() instanceof ObjectType) {
+				MethodGen mg = new MethodGen(method, cg.getClassName(), cg.getConstantPool());
+
+				InstructionHandle handle = null;
+
+				for (InstructionHandle h : mg.getInstructionList().getInstructionHandles()) {
+					if (h.getInstruction() instanceof IAND) {
+						handle = h;
+						break;
+					}
+				}
+
+				if (handle != null) {
+					InstructionFactory fac = new InstructionFactory(cg, cg.getConstantPool());
+					InstructionList il = mg.getInstructionList();
+					InstructionList nil = new InstructionList();
+					nil.append(fac.createInvoke("org.rsbot.injector.Injector", "getId", Type.INT, new Type[]{Type.INT}, Constants.INVOKESTATIC));
+					il.append(handle, nil);
+					mg.setMaxLocals();
+					mg.setMaxStack();
+					mg.update();
+					cg.replaceMethod(method, mg.getMethod());
+
+					break;
+				}
+
+			}
+		}
+	}
+
+	public static volatile boolean christmasMode = false;
+
+	private static final HashMap<Integer, Integer> ID_MAP = new HashMap<Integer, Integer>();
+
+	static {
+		// tree
+		ID_MAP.put(1276, 47748);
+		ID_MAP.put(1278, 47748);
+		// oak
+		ID_MAP.put(1281, 56933);
+		// yew
+		ID_MAP.put(1309, 56933);
+		// bank booth
+		ID_MAP.put(11402, 19038);
+		// ge spirit tree
+		ID_MAP.put(1317, 47857);
+	}
+
+	public static int getId(int id) {
+		if (christmasMode && ID_MAP.containsKey(id)) {
+			return ID_MAP.get(id);
+		}
+		return id;
+	}
+
 	private void hackCharacterModel() {
 		String model = "L" + findClass("Model").getClassName() + ";";
 		ObjectType modelCaptureType = (ObjectType) Type.getType(ModelCapture.class);
@@ -765,8 +847,59 @@ public class Injector {
 				}
 			}
 		}
+	}
 
+	private void hackGroundModel() {
+		String toolkit = "L" + findClass("Render").getClassName() + ";";
+		ObjectType modelCaptureType = (ObjectType) Type.getType(ModelCapture.class);
+		ClassGen cg = findClass("RSGroundObject");
+		Field f = new FieldGen(Constants.ACC_PRIVATE, Type.getType(Model.class), "model", cg.getConstantPool()).getField();
+		cg.addField(f);
 
+		for (Method method : cg.getMethods()) {
+			if (!method.isStatic() && method.getCode().getLength() > 1000 && method.getSignature().contains(toolkit)) {
+				MethodGen mg = new MethodGen(method, cg.getClassName(), cg.getConstantPool());
+
+				int idx = 0;
+				InstructionHandle handle = null;
+				InstructionHandle[] handles = mg.getInstructionList().getInstructionHandles();
+				for (int i = handles.length - 1; i >= 0; --i) {
+					InstructionHandle h = handles[i];
+					if (h.getInstruction() instanceof ASTORE && !(handles[i - 1].getInstruction() instanceof ARETURN)) {
+						handle = h;
+						idx = ((ASTORE) h.getInstruction()).getIndex();
+						break;
+					}
+				}
+
+				if (handle != null) {
+					InstructionFactory fac = new InstructionFactory(cg, cg.getConstantPool());
+
+					InstructionList il = mg.getInstructionList();
+					InstructionList nil = new InstructionList();
+
+					nil.append(new ALOAD(0));
+					nil.append(fac.createNew(modelCaptureType));
+					nil.append(new DUP());
+					nil.append(new ALOAD(idx));
+					nil.append(fac.createInvoke(
+							modelCaptureType.getClassName(),
+							"<init>",
+							Type.VOID,
+							new Type[]{Type.getType(Model.class)},
+							Constants.INVOKESPECIAL));
+					nil.append(fac.createPutField(cg.getClassName(), "model", Type.getType(Model.class)));
+
+					il.append(handle, nil);
+					mg.setMaxLocals();
+					mg.setMaxStack();
+					mg.update();
+					cg.replaceMethod(method, mg.getMethod());
+				}
+
+				break;
+			}
+		}
 	}
 
 	private void hackCanvas() {

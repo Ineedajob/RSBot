@@ -2,10 +2,10 @@ package org.rsbot.client;
 
 public interface RSObjectDef {
 
-    String[] getActions();
+	String[] getActions();
 
-    int[] getChildrenIDs();
+	int[] getChildrenIDs();
 
-    String getName();
+	String getName();
 
 }

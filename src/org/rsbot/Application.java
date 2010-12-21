@@ -6,8 +6,7 @@ import org.rsbot.log.LogOutputStream;
 import org.rsbot.log.SystemConsoleHandler;
 import org.rsbot.util.Extractor;
 
-import java.awt.Dimension;
-import java.awt.IllegalComponentStateException;
+import java.awt.*;
 import java.io.PrintStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;

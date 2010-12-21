@@ -14,7 +14,7 @@ public interface Filter<T> {
 	 *
 	 * @param t The input.
 	 * @return <tt>true</tt> to include;
-	 * <tt>false</tt> to exclude.
+	 *         <tt>false</tt> to exclude.
 	 */
 	public boolean accept(T t);
 

@@ -2,8 +2,8 @@ package org.rsbot.client;
 
 public interface RSAnimableNode {
 
-    RSAnimableNode getNext();
+	RSAnimableNode getNext();
 
-    RSAnimable getRSAnimable();
+	RSAnimable getRSAnimable();
 
 }

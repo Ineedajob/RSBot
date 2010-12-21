@@ -177,7 +177,7 @@ public class Combat extends MethodProvider {
 	/**
 	 * Activates/deactivates a prayer via interfaces.
 	 *
-	 * @param prayer The prayer to activate.
+	 * @param prayer   The prayer to activate.
 	 * @param activate <tt>true</tt> to activate; <tt>false</tt> to deactivate.
 	 * @return <tt>true</tt> if the interface was clicked; otherwise <tt>false</tt>.
 	 */

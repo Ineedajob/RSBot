@@ -12,7 +12,7 @@ import java.awt.*;
 public class LoginDialog extends JDialog {
 
 	static final ScriptBoxSource.Credentials CREDENTIALS = new ScriptBoxSource.Credentials();
-	
+
 	public LoginDialog(Frame parent) {
 		super(parent, GlobalConfiguration.SITE_NAME + " Login");
 	}

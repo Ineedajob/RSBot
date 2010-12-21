@@ -2,28 +2,30 @@ package org.rsbot.client;
 
 public interface RSGround {
 
-    byte getPlane1();
+	byte getPlane1();
 
-    byte getPlane2();
+	byte getPlane2();
 
-    RSAnimableNode getRSAnimableList();
+	RSAnimableNode getRSAnimableList();
 
-    RSInteractable getRSObject1();
+	RSInteractable getRSObject1();
 
-    RSInteractable getRSObject2_0();
+	RSInteractable getRSObject2_0();
 
-    RSInteractable getRSObject2_1();
+	RSInteractable getRSObject2_1();
 
-    RSInteractable getRSObject3_0();
+	RSInteractable getRSObject3_0();
 
-    RSInteractable getRSObject3_1();
+	RSInteractable getRSObject3_1();
 
-    RSInteractable getRSObject4();
+	RSInteractable getRSObject4();
 
-    RSGround getUnknownRSGround();
+	RSGround getUnknownRSGround();
 
-    short getX();
+	RSGroundEntity getGroundObject();
 
-    short getY();
+	short getX();
+
+	short getY();
 
 }

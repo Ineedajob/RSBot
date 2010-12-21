@@ -2,7 +2,8 @@ package org.rsbot.script.internal.wrappers;
 
 import org.rsbot.client.NodeSubQueue;
 
-public class Queue {
+@SuppressWarnings("unchecked")
+public class Queue<N extends org.rsbot.client.NodeSub> {
 
 	private final NodeSubQueue nl;
 	private org.rsbot.client.NodeSub current;
@@ -23,7 +24,7 @@ public class Queue {
 		return size;
 	}
 
-	public org.rsbot.client.NodeSub getHead() {
+	public N getHead() {
 		org.rsbot.client.NodeSub node = nl.getTail().getNextSub();
 
 		if (node == nl.getTail()) {
@@ -32,22 +33,10 @@ public class Queue {
 		}
 		current = node.getNextSub();
 
-		return node;
+		return (N) node;
 	}
 
-	public org.rsbot.client.NodeSub getTail() {
-		org.rsbot.client.NodeSub node = nl.getTail().getPrevSub();
-
-		if (node == nl.getTail()) {
-			current = null;
-			return null;
-		}
-		current = node.getPrevSub();
-
-		return node;
-	}
-
-	public org.rsbot.client.NodeSub getNext() {
+	public N getNext() {
 		org.rsbot.client.NodeSub node = current;
 
 		if (node == nl.getTail()) {
@@ -56,7 +45,7 @@ public class Queue {
 		}
 		current = node.getNextSub();
 
-		return node;
+		return (N) node;
 	}
 
 }
