@@ -8,4 +8,6 @@ public interface RSPlayer extends RSCharacter {
 
 	int getTeam();
 
+	RSPlayerComposite getComposite();
+
 }

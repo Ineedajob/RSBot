@@ -34,7 +34,10 @@ public class RSGroundItem extends MethodProvider {
 
 		RSGroundEntity obj = rsGround.getGroundObject();
 		if (obj != null) {
-			return new RSAnimableModel(methods, ((RSGroundObject) rsGround.getGroundObject()).getModel(), obj);
+			org.rsbot.client.Model model = ((RSGroundObject) rsGround.getGroundObject()).getModel();
+			if (model != null) {
+				return new RSAnimableModel(methods, model, obj);
+			}
 		}
 		return null;
 	}

@@ -176,22 +176,9 @@ public class Walking extends MethodProvider {
 	 * @param maxYDeviation Max Y distance from tile.getY().
 	 * @return The randomized tile.
 	 */
+	@Deprecated
 	public RSTile randomize(RSTile tile, int maxXDeviation, int maxYDeviation) {
-		int x = tile.getX();
-		int y = tile.getY();
-		if (maxXDeviation > 0) {
-			double d = methods.random.nextDouble() * 2;
-			d -= 1.0;
-			d *= maxXDeviation;
-			x += (int) d;
-		}
-		if (maxYDeviation > 0) {
-			double d = methods.random.nextDouble() * 2;
-			d -= 1.0;
-			d *= maxYDeviation;
-			y += (int) d;
-		}
-		return new RSTile(x, y);
+		return tile.randomize(maxXDeviation, maxYDeviation);
 	}
 
 	/**

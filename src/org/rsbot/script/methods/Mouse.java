@@ -35,9 +35,6 @@ public class Mouse extends MethodProvider {
 		}
 		move(getRandomX(random(minDistance, maxDistance)),
 				getRandomY(random(minDistance, maxDistance)));
-		if (random(0, 50) <= 5) {
-			moveRandomly(minDistance / 2, maxDistance / 2);
-		}
 	}
 
 	/**
@@ -73,7 +70,7 @@ public class Mouse extends MethodProvider {
 					move(random(-100, -10),
 							random(-10, methods.game.getHeight() + 10));
 					break;
-				case 4: // right
+				case 3: // right
 					move(random(10, 100) + methods.game.getWidth(),
 							random(-10, methods.game.getHeight() + 10));
 					break;
@@ -412,8 +409,10 @@ public class Mouse extends MethodProvider {
 			return -1;
 		if (random(0, 2) == 0)
 			return p.x - random(0, p.x < maxDistance ? p.x : maxDistance);
-		else
-			return p.x + random(1, 762 - p.x < maxDistance ? 762 - p.x : maxDistance);
+		else {
+			int dist = methods.game.getWidth() - p.x;
+			return p.x + random(1, dist < maxDistance && dist > 0 ? dist : maxDistance);
+		}
 	}
 
 	/**
@@ -426,8 +425,10 @@ public class Mouse extends MethodProvider {
 			return -1;
 		if (random(0, 2) == 0)
 			return p.y - random(0, p.y < maxDistance ? p.y : maxDistance);
-		else
-			return p.y + random(1, 500 - p.y < maxDistance ? 500 - p.y : maxDistance);
+		else {
+			int dist = methods.game.getHeight() - p.y;
+			return p.y + random(1, dist < maxDistance && dist > 0 ? dist : maxDistance);
+		}
 	}
 
 	/**

@@ -1,38 +1,31 @@
-import org.rsbot.event.events.MessageEvent;
-import org.rsbot.event.listeners.MessageListener;
-import org.rsbot.event.listeners.PaintListener;
-import org.rsbot.script.Script;
-import org.rsbot.script.ScriptManifest;
-import org.rsbot.script.methods.Skills;
-import org.rsbot.script.wrappers.RSArea;
-import org.rsbot.script.wrappers.RSGroundItem;
-import org.rsbot.script.wrappers.RSModel;
-import org.rsbot.script.wrappers.RSNPC;
-import org.rsbot.script.wrappers.RSObject;
-import org.rsbot.script.wrappers.RSTile;
-
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import javax.imageio.ImageIO;
+import javax.swing.JOptionPane;
 
-@ScriptManifest(authors = "RawR", name = "Rawr Ivy Pro", keywords = "Woodcutting", version = 1.0, description = "The best Ivy Chopper out there.")
+import org.rsbot.event.events.MessageEvent;
+import org.rsbot.event.listeners.PaintListener;
+import org.rsbot.event.listeners.MessageListener;
+import org.rsbot.script.Script;
+import org.rsbot.script.ScriptManifest;
+import org.rsbot.script.methods.*;
+import org.rsbot.script.wrappers.*;
+
+@ScriptManifest(authors = "Rawr", name = "Rawr Ivy Pro", keywords = "Woodcutting", version = 1.1, 
+		description = "The best Ivy Chopper out there.")
 public class RawrIvy extends Script implements PaintListener, MessageListener {
-
-	public String LOCATION = "", STATE = "Loading.";
+	antiban AntiBan;
+	public String STATE = "Loading";
 	public int AMOUNT_CHOPPED = 0, NESTS_COLLECTED = 0;
 	public int[] NEST_ID = {5070, 5071, 5072, 5073, 5074, 5075, 5076, 7413, 11966};
 	public int[] IVY_ID = {46318, 46320, 46322, 46324};
 	public int[] HATCHETS = {1349, 1351, 1353, 1355, 1357, 1359, 1361, 6739};
-	public int[] BANK_BOOTHS = {2213, 4483, 6084, 11402, 11758,
-			12759, 14367, 19230, 24914, 25808, 26972, 27663, 29085, 34752, 35647};
-	public int[] BANK_CHESTS = {4483, 12308, 21301, 27663, 42192};
 	public RSObject LAST_IVY, CURRENT_IVY;
 	public RSArea BANK_AREA;
 	public RSArea VP_AREA = new RSArea(new RSTile(3161, 3486), new RSTile(3168, 3493)),
@@ -65,7 +58,8 @@ public class RawrIvy extends Script implements PaintListener, MessageListener {
 			YAN_IVY_TO_BANK = {new RSTile(2595, 3111), new RSTile(2605, 3102), new RSTile(2613, 3092)},
 			CW_IVY_TO_BANK = {new RSTile(2427, 3067), new RSTile(2434, 3067), new RSTile(2445, 3070),
 					new RSTile(2444, 3083)};
-	public long startTime = System.currentTimeMillis(), waitTimer = System.currentTimeMillis();
+	public long startTime = System.currentTimeMillis(), activityTimer = System.currentTimeMillis(),
+		antiban_timer = System.currentTimeMillis();
 	public int START_XP, START_LVL;
 	public Image BKG;
 	public boolean renew = true;
@@ -75,39 +69,63 @@ public class RawrIvy extends Script implements PaintListener, MessageListener {
 	public int percent;
 	BufferedImage normal = null;
 	BufferedImage clicked = null;
-	RawrGUI gui;
+	
+	public String[] locations = { "Varrock Palace", "Varrock Wall", "N Fally", "S Fally"
+			, "Ardougne", "Yanille", "CWars" };
+	public String LOCATION;
+	
+	public void selectLocation() {
+		LOCATION = (String) JOptionPane.showInputDialog(null, "Select Chopping Location...",
+	    		"Select Chopping Location...", JOptionPane.QUESTION_MESSAGE, null,
+	    		locations, locations[0]);
+		if (LOCATION.equals("Varrock Palace")) {
+			BANK_AREA = VP_AREA;
+			IVY_TO_BANK = VP_IVY_TO_BANK;
+			IVY_TILE = VP_IVY;
+		}
+		if (LOCATION.equals("Varrock Wall")) {
+			BANK_AREA = VW_AREA;
+			IVY_TO_BANK = VW_IVY_TO_BANK;
+			IVY_TILE = VW_IVY;
+		}
+		if (LOCATION.equals("N Fally")) {
+			BANK_AREA = NF_AREA;
+			IVY_TO_BANK = NF_IVY_TO_BANK;
+			IVY_TILE = NF_IVY;
+		}
+		if (LOCATION.equals("S Fally")) {
+			BANK_AREA = SF_AREA;
+			IVY_TO_BANK = SF_IVY_TO_BANK;
+			IVY_TILE = SF_IVY;
+		}
+		if (LOCATION.equals("Ardougne")) {
+			BANK_AREA = ARD_AREA;
+			IVY_TO_BANK = ARD_IVY_TO_BANK;
+			IVY_TILE = ARD_IVY;
+		}
+		if (LOCATION.equals("Yanille")) {
+			BANK_AREA = YAN_AREA;
+			IVY_TO_BANK = YAN_IVY_TO_BANK;
+			IVY_TILE = YAN_IVY;
+		}
+		if (LOCATION.equals("CWars")) {
+			BANK_AREA = CW_AREA;
+			IVY_TO_BANK = CW_IVY_TO_BANK;
+			IVY_TILE = CW_IVY;
+		}
+	}
 
 	public boolean onStart() {
-		log.info(":-:-: Loading data for Rawr Ivy :-:-:");
-		log.info("Please wait...");
 		try {
 			BKG = ImageIO.read(new URL("http://a.imageshack.us/img816/9064/ivychopperpaintfinal.png"));
+			normal = ImageIO.read(new URL("http://imgur.com/i7nMG.png"));
+			clicked = ImageIO.read(new URL("http://imgur.com/8k9op.png"));
 		} catch (final java.io.IOException e) {
 			e.printStackTrace();
 		}
-		try {
-			final URL cursorURL = new URL("http://imgur.com/i7nMG.png");
-			final URL cursor80URL = new URL("http://imgur.com/8k9op.png");
-			normal = ImageIO.read(cursorURL);
-			clicked = ImageIO.read(cursor80URL);
-		} catch (MalformedURLException e) {
-			log.info("Unable to buffer cursor.");
-		} catch (IOException e) {
-			log.info("Unable to open cursor image.");
-		}
-		sleep(random(500, 1000));
+		AntiBan = new antiban();
+		selectLocation();
 		startTime = System.currentTimeMillis();
-		waitTimer = System.currentTimeMillis();
-		gui = new RawrGUI(this);
-		gui.setVisible(true);
-		while (!gui.okButtonPressed) {
-			log("Waiting for user to finish filling out the GUI...");
-			sleep(1000);
-		}
-		log.info("Starting WC Level: " + skills.getRealLevel(Skills.WOODCUTTING) + ".");
-		log.info("=================================");
-		log.info("Setting up Camera & Mouse Speed.");
-		mouse.setSpeed(random(8, 10));
 		camera.setPitch(true);
 		return true;
 	}
@@ -127,16 +145,11 @@ public class RawrIvy extends Script implements PaintListener, MessageListener {
 		log.info("Ending WC Level : " + skills.getCurrentLevel(Skills.WOODCUTTING) + ".");
 	}
 
-	public void messageReceived(final MessageEvent e) {
-		final String message = e.getMessage();
-		if (message.contains("chop away some")) AMOUNT_CHOPPED++;
-	}
-
 	public RSObject getIvy() {
 		ArrayList<RSObject> ivys = new ArrayList<RSObject>();
 		for (int x = -11; x < 12; x++) {
 			for (int y = -11; y < 12; y++) {
-				RSObject[] all = objects.getAllAt(new RSTile(getMyPlayer().getLocation().getX() + x, getMyPlayer().getLocation().getY() + y));
+				RSObject[] all = objects.getAllAt(new RSTile(players.getMyPlayer().getLocation().getX() + x, getMyPlayer().getLocation().getY() + y));
 				outer:
 				for (RSObject obj : all) {
 					if (obj != null) {
@@ -152,21 +165,6 @@ public class RawrIvy extends Script implements PaintListener, MessageListener {
 			}
 		}
 		return ivys.size() > 0 ? ivys.get(random(0, ivys.size() - 1)) : null;
-	}
-
-	public boolean clickObject(RSObject obj, String action) {
-		if (obj == null) {
-			return false;
-		}
-		RSModel m = obj.getModel();
-		for (int i = 0; i < 5; i++) {
-			mouse.move(m.getPoint());
-			sleep(random(40, 100));
-			if (menu.doAction(action)) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	public boolean isIvy(RSObject oldIvy) {
@@ -207,194 +205,262 @@ public class RawrIvy extends Script implements PaintListener, MessageListener {
 	}
 
 	public void openBank() {
-		RSObject bankBooth = objects.getNearest(BANK_BOOTHS),
-				bankChest = objects.getNearest(BANK_CHESTS);
-		RSNPC banker = npcs.getNearest(6533, 6535);
-		if (bankBooth != null) {
-			clickObject(bankBooth, "Use-quickly");
-			sleep(random(800, 1000));
-		} else if (bankChest != null) {
-			clickObject(bankChest, "Use");
-			sleep(random(800, 1000));
-		} else if (banker != null) {
-			bank.open();
-			sleep(random(800, 1000));
+		if (objects.getNearest(Bank.BANK_BOOTHS) != null) {
+			if (objects.getNearest(Bank.BANK_BOOTHS).doAction("Use-quickly"))
+				waitForIF(interfaces.get(Bank.INTERFACE_BANK), 2000);
+		}
+		if (objects.getNearest(Bank.BANK_CHESTS) != null) {
+			if (objects.getNearest(Bank.BANK_CHESTS).doAction("Use"))
+				waitForIF(interfaces.get(Bank.INTERFACE_BANK), 2000);
+		}
+		if (npcs.getNearest(Bank.BANKERS) != null) {
+			RSNPC Banker = npcs.getNearest(Bank.BANKERS);
+			RSTile BankerTile = Banker.getLocation();
+			if (tiles.doAction(BankerTile, "Bank"))
+				waitForIF(interfaces.get(Bank.INTERFACE_BANK), 2000);
 		}
 	}
-
-	public void doBank() {
-		if (!bank.isOpen()) {
-			STATE = "Opening bank.";
-			openBank();
-		} else if (bank.isOpen()) {
-			int RANDOM = random(1, 10);
-			if (inventory.getCount() > 1) {
-				STATE = "Depositing nests.";
-				bank.depositAllExcept(HATCHETS);
-				sleep(random(600, 800));
-				if (RANDOM == 5) {
-					bank.close();
-				}
-			}
+	
+	public boolean busy() {
+		if(System.currentTimeMillis() - activityTimer < random(2000, 2200)) {
+			return true;
 		}
-	}
-
-	public void CheckLocation() {
-		if (LOCATION.equals("Varrock Palace")) {
-			BANK_AREA = VP_AREA;
-			IVY_TO_BANK = VP_IVY_TO_BANK;
-			IVY_TILE = VP_IVY;
-		}
-		if (LOCATION.equals("Varrock Wall")) {
-			BANK_AREA = VW_AREA;
-			IVY_TO_BANK = VW_IVY_TO_BANK;
-			IVY_TILE = VW_IVY;
-		}
-		if (LOCATION.equals("N Fally")) {
-			BANK_AREA = NF_AREA;
-			IVY_TO_BANK = NF_IVY_TO_BANK;
-			IVY_TILE = NF_IVY;
-		}
-		if (LOCATION.equals("S Fally")) {
-			BANK_AREA = SF_AREA;
-			IVY_TO_BANK = SF_IVY_TO_BANK;
-			IVY_TILE = SF_IVY;
-		}
-		if (LOCATION.equals("Ardougne")) {
-			BANK_AREA = ARD_AREA;
-			IVY_TO_BANK = ARD_IVY_TO_BANK;
-			IVY_TILE = ARD_IVY;
-		}
-		if (LOCATION.equals("Yanille")) {
-			BANK_AREA = YAN_AREA;
-			IVY_TO_BANK = YAN_IVY_TO_BANK;
-			IVY_TILE = YAN_IVY;
-		}
-		if (LOCATION.equals("CWars")) {
-			BANK_AREA = CW_AREA;
-			IVY_TO_BANK = CW_IVY_TO_BANK;
-			IVY_TILE = CW_IVY;
-		}
+		return false;
 	}
 
 	@Override
 	public int loop() {
-		CheckLocation();
+		mouse.setSpeed(random(7, 9));
 		RSObject IVY = CURRENT_IVY != null && isIvy(CURRENT_IVY) ? CURRENT_IVY : (CURRENT_IVY = getIvy());
 		RSGroundItem NEST = groundItems.getNearest(NEST_ID);
 		//COLLECTING NEST
 		if (NEST != null && !inventory.isFull()) {
-			STATE = "Collecting nest.";
-			NEST.doAction("Take");
-			sleep(random(1000, 1500));
-			NESTS_COLLECTED++;
+			STATE = "Collecting nest";
+			if (NEST.doAction("Take"))
+				sleep(1000, 1500);
 		}
 		//CLICKING IVY
 		if (!inventory.isFull()) {
-			if (IVY != null && (System.currentTimeMillis() - waitTimer) > random(1850, 1950)) {
-				if (IVY.isOnScreen()) {
-					cameraControl();
-					if (clickObject(IVY, "Chop Ivy")) {
-						STATE = "Clicking the Ivy.";
-						LAST_IVY = IVY;
-						sleep(random(2000, 3000));
-					} else {
-						return 1000;
-					}
+			if (IVY != null && !busy()) {
+				cameraControl();
+				if (IVY.doAction("Chop Ivy")) {
+					STATE = "Clicking the Ivy";
+					LAST_IVY = IVY;
+					sleep(2000, 3000);
+				} else {
+					return 1000;
 				}
-				//calc.distanceTo(IVY_TILE) >= 8
 			} else if (calc.distanceTo(IVY_TILE) >= 7) {
-				STATE = "Walking back to Ivy.";
+				STATE = "Walking back to Ivy";
 				walking.walkPathMM(walking.reversePath(IVY_TO_BANK), 1, 1);
-				while (players.getMyPlayer().isMoving()) {
-					sleep(random(200, 500));
-				}
+				waitToGetClose(random(3, 4), random(2500, 3000));
 			}
 		}
 		//BANKING
 		if (inventory.isFull()) {
 			if (LOCATION.equals("Taverly")) {
 				log.info("Sorry, your inventory is full... Stopping script.");
-				sleep(random(1500, 2500));
+				sleep(1500, 2500);
 				stopScript();
 			} else {
 				if (!BANK_AREA.contains(players.getMyPlayer().getLocation())) {
-					STATE = "Walking to Bank.";
+					STATE = "Walking to Bank";
 					walking.walkPathMM(IVY_TO_BANK, 1, 1);
-					while (players.getMyPlayer().isMoving()) {
-						sleep(random(200, 500));
-					}
+					waitToGetClose(random(3, 4), random(2500, 3000));
 				} else if (BANK_AREA.contains(players.getMyPlayer().getLocation())) {
-					doBank();
+					if (!bank.isOpen()) {
+						STATE = "Opening bank";
+						openBank();
+					} else if (bank.isOpen()) {
+						int RANDOM = random(1, 10);
+						if (inventory.getCount() > 1) {
+							STATE = "Depositing inventory";
+							if (bank.depositAllExcept(HATCHETS))
+								sleep(600, 800);
+							if (RANDOM == 5) {
+								bank.close();
+							}
+						}
+					}
 				}
 			}
 		}
 		//CHOPPING IVY
 		if (IVY != null && players.getMyPlayer().getAnimation() != -1) {
-			STATE = "Chopping the Ivy.";
-			waitTimer = System.currentTimeMillis();
-			antiban();
+			STATE = "Chopping the Ivy";
+			activityTimer = System.currentTimeMillis();
+		}
+		
+		if (STATE.equalsIgnoreCase("Chopping the Ivy")) {
+			AntiBan.run();
 		}
 		return 100;
 	}
+	//WAITING METHODS
+	public boolean waitForIF(RSInterface iface, int timeout) {
+		long start = System.currentTimeMillis();
 
-	public void antiban() {
-		int randomNum = random(1, 40);
-		int r = random(1, 45);
-		if (randomNum == 6) {
-			if (r == 2) {
-				log.info("[RAWR ANTIBAN] Opening random tab.");
-				game.openTab(random(1, 14));
+		while (System.currentTimeMillis() - start < timeout) {
+			if (iface.isValid()) {
+					return true;
 			}
-			if (r == 3) {
-				log.info("[RAWR ANTIBAN] Moving mouse.");
-				mouse.moveRandomly(50, 300);
-			}
-			if (r == 4) {
-				log.info("[RAWR ANTIBAN] Moving mouse.");
-				mouse.moveRandomly(70, 380);
-			}
-			if (r == 5) {
-				log.info("[RAWR ANTIBAN] Moving mouse off screen.");
-				mouse.moveOffScreen();
-			}
-			if (r == 6) {
-				log.info("[RAWR ANTIBAN] Moving mouse off screen.");
-				mouse.moveOffScreen();
-			}
-			if (r == 7) {
-				log.info("[RAWR ANTIBAN] Turning camera slightly.");
-				camera.setAngle(random(100, 120));
-			}
-			if (r == 8) {
-				log.info("[RAWR ANTIBAN] Turning camera slightly.");
-				camera.setAngle(random(190, 230));
-			}
-			if (r == 9) {
-				log.info("[RAWR ANTIBAN] Turning camera slightly.");
-				camera.setAngle(random(150, 180));
-			}
-			if (r == 10) {
-				log.info("[RAWR ANTIBAN] Turning camera slightly.");
-				camera.setAngle(random(250, 260));
-			}
-			if (r == 11) {
-				log.info("[RAWR ANTIBAN] Checking inventory.");
-				if (game.getCurrentTab() != 4) {
-					game.openTab(4);
-				} else return;
-			}
-			if (r == 35) {
-				log.info("[RAWR ANTIBAN] Checking Woodcutting XP.");
-				if (game.getCurrentTab() != 1) {
-					game.openTab(1);
-					sleep(random(500, 700));
-					mouse.move(random(680, 730), random(355, 370));
-					sleep(random(1500, 5000));
+			sleep(100);
+		}
+		return false;
+	}
+	
+	public boolean waitToGetClose(int dist, int timeout) {
+		long start = System.currentTimeMillis();
+		if(!waitToMove(random(800,1400))) {
+			return false;
+		}
+		while (System.currentTimeMillis() - start < timeout) {
+			if(dist >= 0) {
+				if(walking.getDestination() != null) {
+					try {
+						if (calc.distanceTo(walking.getDestination()) <= dist) {
+								return true;
+						}
+					} catch (Exception e) {
+						log.severe("Failed to get destination.");
+					}
+				} else {
+					return true;
+				}
+			} else {
+				if(walking.getDestination() != null) {
+					try {
+						if (calc.tileOnScreen(walking.getDestination())) {
+							return true;
+						}
+					} catch (Exception e) {
+						log.severe("Failed to get destination.");
+					}
+				} else {
+					return true;
 				}
 			}
-		}
+			sleep(100);
+		}		
+		return false;
 	}
+	
+	public boolean waitToMove(int timeout) {
+		long start = System.currentTimeMillis();	
+		while (System.currentTimeMillis() - start < timeout) {
+			if (getMyPlayer().isMoving()) {
+					return true;
+			}
+			sleep(50);
+		}
+		return false;
+	}
+
+	///////////////////////////////
+	////////ANTI-BAN METHODS///////
+	///////////////////////////////
+	private class antiban extends Thread {
+		final char[] upDownRandom = new char[] { KeyEvent.VK_DOWN, KeyEvent.VK_UP };
+		final char[] leftRightRandom = new char[] { KeyEvent.VK_LEFT,KeyEvent.VK_RIGHT };
+		final char[] allKeys = new char[] { KeyEvent.VK_LEFT,KeyEvent.VK_RIGHT, KeyEvent.VK_UP,KeyEvent.VK_UP };
+		final int random1 = random(0, 2);
+		final int random2 = random(0, 2);
+		final int random3 = random(0, 4);
+		int antiBanRandomValue = random(0, 15);
+		private void mouseMovementAntiBan() {
+			int mouseRandomValue = random(1, 2);
+			try {
+				if (mouseRandomValue == 1) {
+					mouse.moveRandomly(200);
+				} else if (mouseRandomValue == 2) {
+					mouse.moveOffScreen();
+				}
+			} catch (Exception e) { }
+		}
+
+		private void cameraMovementAntiBan() {
+			try {
+				if (random(0, 2) <= 1) {
+					keyboard.pressKey(upDownRandom[random1]);
+					sleep(600, 800);
+		            keyboard.pressKey(leftRightRandom[random2]);
+		            sleep(600, 800);
+					keyboard.releaseKey(leftRightRandom[random2]);
+					sleep(100, 200);
+					keyboard.releaseKey(upDownRandom[random1]);
+				} else {
+					keyboard.pressKey(allKeys[random3]);
+					sleep(800, 1000);
+					keyboard.releaseKey(allKeys[random3]);
+				}
+			} catch (Exception e) { }
+		}
+
+		private void checkSkillAntiBan() {
+			try {
+				if (random(5, 7) == 6 && players.getMyPlayer().getAnimation() != -1) {
+					if (game.getCurrentTab() != Game.TAB_STATS) {
+						game.openTab(Game.TAB_STATS);
+						sleep(600, 800);
+						skills.doHover(Skills.INTERFACE_WOODCUTTING);
+						sleep(1000, 2000);
+					}
+				}
+			} catch (Exception e) { }
+		}
+
+		private void clickPlayerAntiBan() {
+			if (random(1, 3) == 2) {
+				try {
+					RSPlayer player = players.getNearest(Players.ALL_FILTER);
+					if (player != null) {
+						mouse.move(player.getScreenLocation(), 5, 5);
+						sleep(400, 500);
+						mouse.click(false);
+						sleep(750, 800);
+						mouse.move(random(10, 450), random(10, 495));
+					}
+				} catch (Exception e) { }
+			}
+		}
+
+		private void checkFriendsAntiBan() {
+			try {
+				if (game.getCurrentTab() != Game.TAB_FRIENDS) {
+					if (random(0, 2) == 1) {
+						game.openTab(Game.TAB_FRIENDS);
+						sleep(1000, 2000);
+					}
+				}
+			} catch (Exception e) { }
+		}
+
+        @Override
+        public void run() {
+			try {
+				if ((System.currentTimeMillis() - antiban_timer) >= (random(30, 90) * random(800, 1200)) 
+						&& !players.getMyPlayer().isMoving() && !players.getMyPlayer().isInCombat()) {
+					findAntiBan();
+					antiban_timer = System.currentTimeMillis();
+            	}
+			} catch (Exception e) { }
+		}
+
+        private void findAntiBan() {
+			antiBanRandomValue = random(0, 10);
+			if (antiBanRandomValue < 5) {
+				mouseMovementAntiBan();
+			} else if (antiBanRandomValue == 6) {
+				cameraMovementAntiBan();	
+			} else if (antiBanRandomValue == 7) {
+				checkSkillAntiBan();
+			} else if (antiBanRandomValue == 8) {
+				clickPlayerAntiBan();
+			} else if (antiBanRandomValue == 9) {
+				checkFriendsAntiBan();
+			}
+        }
+    }
 
 	public void drawMouse(final Graphics g) {
 		if (normal != null) {
@@ -435,219 +501,47 @@ public class RawrIvy extends Script implements PaintListener, MessageListener {
 		int XP_TNL = skills.getExpToNextLevel(Skills.WOODCUTTING);
 		int XP_HOUR = (int) ((XP_GAINED) * 3600000D / (System.currentTimeMillis() - startTime));
 		percent = skills.getPercentToNextLevel(Skills.WOODCUTTING);
-		final Point Mouse = new Point(mouse.getLocation().x, mouse.getLocation().y);
-		final Rectangle toggleRectangle = new Rectangle(497, 458, 15, 14);
-		if (renew && toggleRectangle.contains(Mouse) && (mouse.isPressed())) {
-			if (mode == 1) {
-				mode = 2;
-				renew = false;
-			} else if (mode == 2) {
-				mode = 3;
-				renew = false;
-			} else if (mode == 3) {
-				mode = 1;
-				renew = false;
+		g.drawImage(BKG, 13, 4, null);
+		g.setColor(Color.WHITE);
+		g.setFont(new Font("Verdana", 0, 13));
+		g.drawString("" + hours + ":" + minutes + ":" + seconds + ".", 311, 82);
+		g.setFont(new Font("Verdana", 0, 9));
+		g.drawString("Currently : " + STATE, 282, 105);
+		g.drawString("Collected : " + NESTS_COLLECTED + ".", 311, 129);
+		g.setColor(new Color(0, 0, 0));
+		g.fillRect(96, 61, 180, 16);//Black box
+		g.drawRect(95, 60, 181, 17); //FRAME
+		g.setColor(new Color(51, 51, 51));
+		g.fillRect(96, 61, 180, 8);//Gray box
+		g.setColor(new Color(10, 150, 10, 130));
+		g.fillRect(97, 62, (int) (percent * 178 / 100.0), 14);
+		g.setColor(Color.WHITE);
+		g.drawString("" + percent + "% to " + NXT_LVL + " WC" + " - " + XP_TNL / 1000 + "k XP", 124, 73);
+		try {
+			if (XP_HOUR > 0) {
+				long sTNL = (XP_TNL) / (XP_HOUR / 3600);
+				long hTNL = sTNL / (60 * 60);
+				sTNL -= hTNL * (60 * 60);
+				long mTNL = sTNL / 60;
+				sTNL -= mTNL * 60;
+				g.drawString("Next level in: " + hTNL + ":" + mTNL + ":" + sTNL, 95, 89);
+			} else {
+				g.drawString("Next level in: 0:0:0", 95, 89);
 			}
+		} catch (Exception e) {
+			g.drawString("Next level in: -1:-1:-1", 95, 89);
 		}
-		if (!mouse.isPressed()) {
-			renew = true;
-		}
-		g.setColor(new Color(50, 250, 50, 130));
-		g.fillRect(497, 458, 15, 14);
-		g.setColor(new Color(0, 0, 0, 255));
-		g.drawRect(497, 458, 15, 14);
-		g.setColor(new Color(0, 0, 0, 255));
-		g.drawString("" + mode, 502, 470);
-		//Mode 1
-		if (mode == 1) {
-			//BKG
-			g.drawImage(BKG, 13, 4, null);
-			//Clock
-			g.setColor(Color.WHITE);
-			g.setFont(new Font("Verdana", 0, 13));
-			g.drawString("" + hours + ":" + minutes + ":" + seconds + ".", 311, 82);
-			g.setFont(new Font("Verdana", 0, 9));
-			g.drawString("Currently : " + STATE, 282, 105);
-			//Nests
-			g.drawString("Collected : " + NESTS_COLLECTED + ".", 311, 129);
-			//WC'ing Info
-			//Proggy bar
-			g.setColor(new Color(0, 0, 0));
-			g.fillRect(96, 61, 180, 16);//Black box
-			g.drawRect(95, 60, 181, 17); //FRAME
-			g.setColor(new Color(51, 51, 51));
-			g.fillRect(96, 61, 180, 8);//Gray box
-			g.setColor(new Color(10, 150, 10, 130));
-			g.fillRect(97, 62, (int) (percent * 178 / 100.0), 14);
-			g.setColor(Color.WHITE);
-			g.drawString("" + percent + "% to " + NXT_LVL + " WC" + " - " + XP_TNL / 1000 + "k XP", 124, 73);
-			//TNL
-			try {
-				if (XP_HOUR > 0) {
-					long sTNL = (XP_TNL) / (XP_HOUR / 3600);
-					long hTNL = sTNL / (60 * 60);
-					sTNL -= hTNL * (60 * 60);
-					long mTNL = sTNL / 60;
-					sTNL -= mTNL * 60;
-					g.drawString("Next level in: " + hTNL + ":" + mTNL + ":" + sTNL, 95, 89);
-				} else {
-					g.drawString("Next level in: 0:0:0", 95, 89);
-				}
-			} catch (Exception e) {
-				g.drawString("Next level in: -1:-1:-1", 95, 89);
-			}
-			//General
-			g.setColor(Color.ORANGE);
-			g.drawString("Chopped: " + AMOUNT_CHOPPED + " Ivy.", 95, 108);
-			g.setColor(Color.WHITE);
-			g.drawString("XP: " + XP_GAINED + ".  (" + XP_HOUR / 1000 + "k XP/H)", 95, 120);
-			g.setColor(Color.GREEN);
-			g.drawString("WC Level : " + CURR_LVL + " [ " + LVLS_GAINED + " ].", 95, 132);
-		}
-		//Mode 2
-		if (mode == 2) {
-			final int Y = 190;
-			//BKG
-			g.drawImage(BKG, 13, 4 + Y, null);
-			//Clock
-			g.setColor(Color.WHITE);
-			g.setFont(new Font("Verdana", 0, 13));
-			g.drawString("" + hours + ":" + minutes + ":" + seconds + ".", 311, 82 + Y);
-			g.setFont(new Font("Verdana", 0, 9));
-			g.drawString("Currently : " + STATE, 282, 105 + Y);
-			//Nests
-			g.drawString("Collected : " + NESTS_COLLECTED + ".", 311, 129 + Y);
-			//WC'ing Info
-			//Proggy bar
-			g.setColor(new Color(0, 0, 0));
-			g.fillRect(96, 61 + Y, 180, 16);//Black box
-			g.drawRect(95, 60 + Y, 181, 17); //FRAME
-			g.setColor(new Color(51, 51, 51));
-			g.fillRect(96, 61 + Y, 180, 8);//Gray box
-			g.setColor(new Color(10, 150, 10, 130));
-			g.fillRect(97, 62 + Y, (int) (percent * 178 / 100.0), 14);
-			g.setColor(Color.WHITE);
-			g.drawString("" + percent + "% to " + NXT_LVL + " WC" + " - " + XP_TNL / 1000 + "k XP", 124, 73 + Y);
-			//TNL
-			try {
-				if (XP_HOUR > 0) {
-					long sTNL = (XP_TNL) / (XP_HOUR / 3600);
-					long hTNL = sTNL / (60 * 60);
-					sTNL -= hTNL * (60 * 60);
-					long mTNL = sTNL / 60;
-					sTNL -= mTNL * 60;
-					g.drawString("Next level in: " + hTNL + ":" + mTNL + ":" + sTNL, 95, 89 + Y);
-				} else {
-					g.drawString("Next level in: 0:0:0", 95, 89 + Y);
-				}
-			} catch (Exception e) {
-				g.drawString("Next level in: -1:-1:-1", 95, 89 + Y);
-			}
-			//General
-			g.setColor(Color.ORANGE);
-			g.drawString("Chopped: " + AMOUNT_CHOPPED + " Ivy.", 95, 108 + Y);
-			g.setColor(Color.WHITE);
-			g.drawString("XP: " + XP_GAINED + ".  (" + XP_HOUR / 1000 + "k XP/H)", 95, 120 + Y);
-			g.setColor(Color.GREEN);
-			g.drawString("WC Level : " + CURR_LVL + " [ " + LVLS_GAINED + " ].", 95, 132 + Y);
-
-		}
-		//Mode 3
-		if (mode == 3) {
-			g.setFont(new Font("Verdana", 0, 11));
-			g.setColor(Color.GREEN);
-			g.drawString("----->", 450, 469);
-		}
+		g.setColor(Color.ORANGE);
+		g.drawString("Chopped: " + AMOUNT_CHOPPED + " Ivy.", 95, 108);
+		g.setColor(Color.WHITE);
+		g.drawString("XP: " + XP_GAINED + ".  (" + XP_HOUR / 1000 + "k XP/H)", 95, 120);
+		g.setColor(Color.GREEN);
+		g.drawString("WC Level : " + CURR_LVL + " [ " + LVLS_GAINED + " ].", 95, 132);
 	}
-
-	public class RawrGUI extends JFrame {
-		public static final long serialVersionUID = 31653L;
-		public boolean okButtonPressed = false;
-		public RawrIvy bbb;
-
-		public RawrGUI(RawrIvy bbb) {
-			this.bbb = bbb;
-			initComponents();
-		}
-
-		private void Cancel(ActionEvent e) {
-			setVisible(false);
-			okButtonPressed = true;
-		}
-
-		private void Start(ActionEvent e) {
-			setVisible(false);
-			okButtonPressed = true;
-
-		}
-
-		private void initComponents() {
-			label = new JLabel();
-			button1 = new JButton();
-			button2 = new JButton();
-			loc = new JComboBox();
-			setBackground(Color.GREEN);
-			setAlwaysOnTop(false);
-			setTitle("Rawr Ivy");
-			setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-			Container contentPane = getContentPane();
-			contentPane.setLayout(null);
-			//TITLE
-			label.setText("Rawr Ivy");
-			label.setFont(new Font("Trebuchet MS", Font.BOLD, 22));
-			contentPane.add(label);
-			label.setBounds(new Rectangle(new Point(15, 5), label.getPreferredSize()));
-			//LOCATION
-			loc.setModel(new DefaultComboBoxModel(new String[]{
-					"Varrock Wall",
-					"Varrock Palace",
-					"N Fally",
-					"S Fally",
-					"Ardougne",
-					"Yanille",
-					"CWars"
-			}));
-			contentPane.add(loc);
-			loc.setBounds(new Rectangle(new Point(15, 30), loc.getPreferredSize()));
-			//START BUTTON
-			button1.setText("Start Script");
-			button1.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					LOCATION = (String) loc.getSelectedItem();
-					Start(e);
-				}
-			});
-			contentPane.add(button1);
-			button1.setBounds(new Rectangle(new Point(15, 50), button1.getPreferredSize()));
-			//CANCEL BUTTON
-			button2.setText("Cancel");
-			button2.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					Cancel(e);
-				}
-			});
-			contentPane.add(button2);
-			button2.setBounds(new Rectangle(new Point(15, 70), button2.getPreferredSize()));
-			{
-				Dimension preferredSize = new Dimension();
-				for (int i = 0; i < contentPane.getComponentCount(); i++) {
-					Rectangle bounds = contentPane.getComponent(i).getBounds();
-					preferredSize.width = Math.max(bounds.x + bounds.width, preferredSize.width);
-					preferredSize.height = Math.max(bounds.y + bounds.height, preferredSize.height);
-				}
-				Insets insets = contentPane.getInsets();
-				preferredSize.width += insets.right;
-				preferredSize.height += insets.bottom;
-				contentPane.setMinimumSize(preferredSize);
-				contentPane.setPreferredSize(preferredSize);
-			}
-			pack();
-			setLocationRelativeTo(getOwner());
-		}
-
-		private JLabel label;
-		private JButton button1;
-		private JButton button2;
-		private JComboBox loc;
+	
+	public void messageReceived(final MessageEvent e) {
+		final String message = e.getMessage();
+		if (message.contains("chop away some")) AMOUNT_CHOPPED++;
+		if (message.contains("nest falls out")) NESTS_COLLECTED++;
 	}
 }
