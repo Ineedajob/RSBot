@@ -15,6 +15,7 @@ public class Inventory extends MethodProvider {
 
 	public static final int INTERFACE_INVENTORY = 149;
 	public static final int INTERFACE_INVENTORY_BANK = 763;
+	public static final int INTERFACE_INVENTORY_SHOP = 621;
 
 	Inventory(MethodContext ctx) {
 		super(ctx);
@@ -32,8 +33,14 @@ public class Inventory extends MethodProvider {
 				return bankInv;
 			}
 		}
+		if (methods.interfaces.get(INTERFACE_INVENTORY_SHOP).isValid()) {
+			RSComponent shopInv = methods.interfaces.getComponent(INTERFACE_INVENTORY_SHOP, 0);
+			if (shopInv != null && shopInv.getAbsoluteX() > 50) {
+				return shopInv;
+			}
+		}
 
-		// Tab needs to be open for it to update it's content -.-
+		// Tab has to be open for us to get content
 		if (methods.game.getCurrentTab() != Game.TAB_INVENTORY) {
 			methods.game.openTab(Game.TAB_INVENTORY);
 			sleep(random(400, 900));

@@ -2,12 +2,15 @@ package org.rsbot.bot;
 
 import org.rsbot.Application;
 import org.rsbot.client.Loader;
-import org.rsbot.injector.Injector;
+import org.rsbot.loader.ClientLoader;
+import org.rsbot.loader.script.ParseException;
 import org.rsbot.util.GlobalConfiguration;
 
 import java.applet.Applet;
 import java.awt.*;
 import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 import java.util.logging.Logger;
 
 /**
@@ -42,12 +45,9 @@ public class RSLoader extends Applet implements Runnable, Loader {
 		}
 	}
 
+	@Override
 	public boolean isShowing() {
 		return true;
-	}
-
-	public Applet getClient() {
-		return client;
 	}
 
 	@Override
@@ -66,8 +66,8 @@ public class RSLoader extends Applet implements Runnable, Loader {
 			FontMetrics fontMetrics = getFontMetrics(font);
 			graphics.setColor(Color.black);
 			graphics.fillRect(0, 0, 768, 503);
-			graphics.setColor(Color.RED);
-			graphics.drawRect(232, 232, 303, 33);
+			graphics.setColor(new Color(150, 0, 0));
+			graphics.drawRect(230, 233, 303, 33);
 			String s = "Loading...";
 			graphics.setFont(font);
 			graphics.setColor(Color.WHITE);
@@ -92,13 +92,26 @@ public class RSLoader extends Applet implements Runnable, Loader {
 			if (versionFile.exists() && !versionFile.delete()) {
 				log.warning("Unable to clear cache.");
 			}
+			e.printStackTrace();
 		}
 	}
 
-	public void loadClasses() {
-		Injector i = new Injector();
-		targetName = i.generateTargetName();
-		classLoader = new RSClassLoader(i);
+	public Applet getClient() {
+		return client;
+	}
+
+	public void load() {
+		ClientLoader cl = new ClientLoader();
+		try {
+			cl.init(new URL(GlobalConfiguration.Paths.URLs.UPDATE), new File(GlobalConfiguration.Paths.getModScriptCache()));
+			cl.load(new File(GlobalConfiguration.Paths.getClientCache()), new File(GlobalConfiguration.Paths.getVersionCache()));
+			targetName = cl.getTargetName();
+			classLoader = new RSClassLoader(cl.getClasses(), new URL("http://" + targetName + ".com/"));
+		} catch (IOException ex) {
+			log.severe("Unable to load client - " + ex.getMessage());
+		} catch (ParseException ex) {
+			log.severe("Unable to load client - " + ex.toString());
+		}
 	}
 
 	public void setCallback(final Runnable r) {

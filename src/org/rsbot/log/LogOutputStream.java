@@ -2,6 +2,7 @@ package org.rsbot.log;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.ByteBuffer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -32,19 +33,8 @@ public class LogOutputStream extends OutputStream {
 	/**
 	 * The internal buffer where data is stored.
 	 */
-	protected byte[] buf;
 
-	/**
-	 * The number of valid bytes in the buffer. This value is always in the
-	 * range <tt>0</tt> through <tt>buf.length</tt>; elements <tt>buf[0]</tt>
-	 * through <tt>buf[count-1]</tt> contain valid byte data.
-	 */
-	protected int count;
-
-	/**
-	 * Remembers the size of the buffer for speed.
-	 */
-	private int bufLength;
+	protected ByteBuffer buffer = ByteBuffer.allocate(DEFAULT_BUFFER_LENGTH);
 
 	/**
 	 * The default number of bytes in the buffer. =2048
@@ -76,9 +66,6 @@ public class LogOutputStream extends OutputStream {
 
 		this.priority = priority;
 		category = cat;
-		bufLength = LogOutputStream.DEFAULT_BUFFER_LENGTH;
-		buf = new byte[LogOutputStream.DEFAULT_BUFFER_LENGTH];
-		count = 0;
 	}
 
 	/**
@@ -103,35 +90,31 @@ public class LogOutputStream extends OutputStream {
 	 */
 	@Override
 	public void flush() {
-		if (count == 0)
+		int pos = buffer.position();
+		if (pos == 0) {
 			return;
+		}
 		// don't print out blank lines; flushing from PrintStream puts out these
-		if (count == LogOutputStream.LINE_SEPARATOR.length()) {
-			if (((char) buf[0] == LogOutputStream.LINE_SEPARATOR.charAt(0)) && ((count == 1) || // <-
+		if (pos == LogOutputStream.LINE_SEPARATOR.length()) {
+
+			if (((char) buffer.get(0) == LogOutputStream.LINE_SEPARATOR.charAt(0)) && ((pos == 1) || // <-
 					// Unix
 					// &
 					// Mac,
 					// ->
 					// Windows
-					((count == 2) && ((char) buf[1] == LogOutputStream.LINE_SEPARATOR.charAt(1))))) {
+					((pos == 2) && ((char) buffer.get(1) == LogOutputStream.LINE_SEPARATOR.charAt(1))))) {
 				reset();
 				return;
 			}
 		}
 
-		final byte[] theBytes = new byte[count];
-
-		System.arraycopy(buf, 0, theBytes, 0, count);
-
-		category.log(priority, new String(theBytes));
-
+		category.log(priority, new String(buffer.array()));
 		reset();
 	}
 
 	private void reset() {
-		// not resetting the buffer -- assuming that if it grew that it will
-		// likely grow similarly again
-		count = 0;
+		buffer.clear();
 	}
 
 	/**
@@ -151,23 +134,17 @@ public class LogOutputStream extends OutputStream {
 			throw new IOException("The stream has been closed.");
 
 		// don't log nulls
-		if (b == 0)
+		if (b == 0) {
 			return;
-
-		// would this be writing past the buffer?
-		if (count == bufLength) {
-			// grow the buffer
-			final int newBufLength = bufLength + LogOutputStream.DEFAULT_BUFFER_LENGTH;
-			final byte[] newBuf = new byte[newBufLength];
-
-			System.arraycopy(buf, 0, newBuf, 0, bufLength);
-
-			buf = newBuf;
-			bufLength = newBufLength;
 		}
 
-		buf[count] = (byte) b;
-		count++;
-	}
+		if (buffer.position() >= buffer.capacity()) {
+			//make bigger
+			ByteBuffer newBuffer = ByteBuffer.allocate(buffer.capacity() * 2);
+			newBuffer.put(buffer);
+			buffer = newBuffer;
+		}
 
+		buffer.put((byte) b);
+	}
 }

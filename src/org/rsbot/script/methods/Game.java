@@ -2,6 +2,7 @@ package org.rsbot.script.methods;
 
 import org.rsbot.script.wrappers.RSComponent;
 import org.rsbot.script.wrappers.RSInterface;
+import org.rsbot.script.wrappers.RSTile;
 
 /**
  * Game state and GUI operations.
@@ -12,10 +13,14 @@ public class Game extends MethodProvider {
 		VIEW, ON, FRIENDS, OFF, HIDE
 	}
 
+	public static final int INDEX_LOGIN_SCREEN = 3;
+	public static final int[] INDEX_LOGGED_IN = {10, 11};
+	public static final int INDEX_FIXED = 746;
+
 	public static final int TAB_ATTACK = 0;
-	public static final int TAB_STATS = 1;
-	public static final int TAB_QUESTS = 2;
-	public static final int TAB_ACHIEVEMENTS = 3;
+	public static final int TAB_ACHIEVEMENTS = 1;
+	public static final int TAB_STATS = 2;
+	public static final int TAB_QUESTS = 3;
 	public static final int TAB_INVENTORY = 4;
 	public static final int TAB_EQUIPMENT = 5;
 	public static final int TAB_PRAYER = 6;
@@ -30,10 +35,25 @@ public class Game extends MethodProvider {
 	public static final int TAB_NOTES = 15;
 	public static final int TAB_LOGOUT = 16;
 
+	public static final int CHAT_OPTION = 751;
+	public static final int CHAT_OPTION_ALL = 2;
+	public static final int CHAT_OPTION_GAME = 3;
+	public static final int CHAT_OPTION_PUBLIC = 4;
+	public static final int CHAT_OPTION_PRIVATE = 5;
+	public static final int CHAT_OPTION_CLAN = 6;
+	public static final int CHAT_OPTION_TRADE = 7;
+	public static final int CHAT_OPTION_ASSIST = 8;
+
 	public static final int INTERFACE_CHAT_BOX = 137;
 	public static final int INTERFACE_GAME_SCREEN = 548;
 	public static final int INTERFACE_LEVEL_UP = 740;
+	public static final int INTERFACE_LOGOUT = 182;
+	public static final int INTERFACE_LOGOUT_LOBBY = 1;
+	public static final int INTERFACE_LOGOUT_COMPLETE = 6;
+	public static final int INTERFACE_LOGOUT_BUTTON_FIXED = 181;
+	public static final int INTERFACE_LOGOUT_BUTTON_RESIZED = 172;
 	public static final int INTERFACE_WELCOME_SCREEN = 907;
+	public static final int INTERFACE_WELCOME_SCREEN_CHILD = 150;
 	public static final int INTERFACE_WELCOME_SCREEN_PLAY = 18;
 
 	public static final int INTERFACE_HP_ORB = 748;
@@ -58,28 +78,36 @@ public class Game extends MethodProvider {
 	 *
 	 * @param mode The <tt>CHAT_MODE</tt> to set the trade button to.
 	 * @return <tt>true</tt> if item in menu was clicked; otherwise <tt>false</tt>.
+	 * @see #setChatOption(int, CHAT_MODE)
 	 */
+	@Deprecated
 	public boolean setTradeMode(Game.CHAT_MODE mode) {
 		if (mode.equals(Game.CHAT_MODE.HIDE))
 			throw new IllegalArgumentException("Bad mode: HIDE");
-		mouseChatButton(5, false);
+		mouseChatButton(CHAT_OPTION_TRADE, false);
 		return methods.menu.doAction(mode.toString());
 	}
 
 	/**
 	 * Left clicks the first chat button at the bottom of the screen to turn on
 	 * the showing of all chat messages.
+	 *
+	 * @see #setChatOption(int, CHAT_MODE)
 	 */
+	@Deprecated
 	public void showAllChatMessages() {
-		mouseChatButton(0, true);
+		mouseChatButton(CHAT_OPTION_ALL, true);
 	}
 
 	/**
 	 * Left clicks the game chat messages button at the bottom of the screen to enable
 	 * the showing of all game messages.
+	 *
+	 * @see #setChatOption(int, CHAT_MODE)
 	 */
+	@Deprecated
 	public void showGameChatMessages() {
-		mouseChatButton(1, true);
+		mouseChatButton(CHAT_OPTION_GAME, true);
 	}
 
 	/**
@@ -87,11 +115,13 @@ public class Game extends MethodProvider {
 	 *
 	 * @param mode The <tt>CHAT_MODE</tt> to set the private chat button to.
 	 * @return <tt>true</tt> if item in menu was clicked; otherwise <tt>false</tt>.
+	 * @see #setChatOption(int, CHAT_MODE)
 	 */
+	@Deprecated
 	public boolean setPrivateChat(Game.CHAT_MODE mode) {
 		if (mode.equals(Game.CHAT_MODE.HIDE))
 			throw new IllegalArgumentException("Bad mode: HIDE");
-		mouseChatButton(3, false);
+		mouseChatButton(CHAT_OPTION_PRIVATE, false);
 		return methods.menu.doAction(mode.toString());
 	}
 
@@ -100,9 +130,11 @@ public class Game extends MethodProvider {
 	 *
 	 * @param mode The <tt>CHAT_MODE</tt> to set the public chat button to.
 	 * @return <tt>true</tt> if item in menu was clicked; otherwise <tt>false</tt>.
+	 * @see #setChatOption(int, CHAT_MODE)
 	 */
+	@Deprecated
 	public boolean setPublicChat(Game.CHAT_MODE mode) {
-		mouseChatButton(2, false);
+		mouseChatButton(CHAT_OPTION_PUBLIC, false);
 		return methods.menu.doAction(mode.toString());
 	}
 
@@ -111,11 +143,13 @@ public class Game extends MethodProvider {
 	 *
 	 * @param mode The <tt>CHAT_MODE</tt> to set the assist button to.
 	 * @return <tt>true</tt> if item in menu was clicked; otherwise <tt>false</tt>.
+	 * @see #setChatOption(int, CHAT_MODE)
 	 */
+	@Deprecated
 	public boolean setAssistMode(Game.CHAT_MODE mode) {
 		if (mode.equals(Game.CHAT_MODE.HIDE))
 			throw new IllegalArgumentException("Bad mode: HIDE");
-		mouseChatButton(6, false);
+		mouseChatButton(CHAT_OPTION_ASSIST, false);
 		return methods.menu.doAction(mode.toString());
 	}
 
@@ -124,11 +158,25 @@ public class Game extends MethodProvider {
 	 *
 	 * @param mode The <tt>CHAT_MODE</tt> to set the clan button to.
 	 * @return <tt>true</tt> if item in menu was clicked; otherwise <tt>false</tt>.
+	 * @see #setChatOption(int, CHAT_MODE)
 	 */
+	@Deprecated
 	public boolean setClanMode(Game.CHAT_MODE mode) {
 		if (mode.equals(Game.CHAT_MODE.HIDE))
 			throw new IllegalArgumentException("Bad mode: HIDE");
-		mouseChatButton(4, false);
+		mouseChatButton(CHAT_OPTION_CLAN, false);
+		return methods.menu.doAction(mode.toString());
+	}
+
+	/**
+	 * Set the specified chat mode
+	 *
+	 * @param chatOption one of CHAT_OPTION_
+	 * @param mode	   one of CHAT_MODE
+	 * @return <tt>true</tt> if item was clicked correctly; otherwise <tt>false</tt>
+	 */
+	public boolean setChatOption(int chatOption, CHAT_MODE mode) {
+		mouseChatButton(chatOption, false);
 		return methods.menu.doAction(mode.toString());
 	}
 
@@ -181,18 +229,15 @@ public class Game extends MethodProvider {
 	/**
 	 * Click chat button.
 	 *
-	 * @param button Which button? Left-to right, 0 to 6. 7 Would land you on
-	 *               Report Abuse.
+	 * @param button Which button? One of CHAT_OPTION
 	 * @param left   Left or right button? Left = true. Right = false.
 	 */
-	public void mouseChatButton(int button, boolean left) {
-		int x = 33 + 58 * button;
-		x = random(x - 23, x + 23);
-		int y = 491;
-		y = random(y - 8, y + 8);
-		methods.mouse.move(x, y);
-		sleep(random(200, 300));
-		methods.mouse.click(left);
+	public boolean mouseChatButton(int button, boolean left) {
+		RSComponent chatButton = methods.interfaces.get(CHAT_OPTION).getComponent(button);
+		if (!chatButton.isValid()) {
+			return false;
+		}
+		return chatButton.doClick(left);
 	}
 
 	/**
@@ -279,15 +324,7 @@ public class Game extends MethodProvider {
 	 * @return <tt>true</tt> if on the logout tab.
 	 */
 	public boolean isOnLogoutTab() {
-		for (int i = 0; i < Game.TAB_NAMES.length; i++) {
-			org.rsbot.client.RSInterface tab = methods.gui.getTab(i);
-			if (tab == null)
-				continue;
-			int id = tab.getTextureID();
-			if (id > -1 && id < 2201)
-				return false;
-		}
-		return true;
+		return methods.interfaces.get(INTERFACE_LOGOUT).isValid();
 	}
 
 	/**
@@ -304,29 +341,17 @@ public class Game extends MethodProvider {
 		if (methods.bank.isOpen()) {
 			return false;
 		}
-		if (methods.client.isSpellSelected() || methods.inventory.isItemSelected()) {
-			int currentTab = methods.game.getCurrentTab();
-			int randomTab = random(1, 6);
-			while (randomTab == currentTab) {
-				randomTab = random(1, 6);
-			}
-			methods.game.openTab(randomTab);
-			sleep(random(400, 800));
-		}
-		if (methods.client.isSpellSelected() || methods.inventory.isItemSelected()) {
-			return false;
-		}
 		if (!isOnLogoutTab()) {
 			int idx = methods.client.getGUIRSInterfaceIndex();
 			//Logout button in the top right hand corner
-			methods.interfaces.getComponent(idx, isFixed() ? 180 : 171).doClick();
+			methods.interfaces.getComponent(idx, isFixed() ? INTERFACE_LOGOUT_BUTTON_FIXED : INTERFACE_LOGOUT_BUTTON_RESIZED).doClick();
 			int timesToWait = 0;
 			while (!isOnLogoutTab() && timesToWait < 5) {
 				sleep(random(200, 400));
 				timesToWait++;
 			}
 		}
-		methods.interfaces.getComponent(182, lobby ? 1 : 6).doClick();
+		methods.interfaces.getComponent(INTERFACE_LOGOUT, lobby ? INTERFACE_LOGOUT_LOBBY : INTERFACE_LOGOUT_COMPLETE).doClick();
 		//Final logout button in the logout tab
 		sleep(random(1500, 2000));
 		return !isLoggedIn();
@@ -339,7 +364,7 @@ public class Game extends MethodProvider {
 	 * @return <tt>true</tt> if in fixed mode; otherwise <tt>false</tt>.
 	 */
 	public boolean isFixed() {
-		return methods.client.getGUIRSInterfaceIndex() != 746;
+		return methods.client.getGUIRSInterfaceIndex() != INDEX_FIXED;
 	}
 
 	/**
@@ -351,7 +376,12 @@ public class Game extends MethodProvider {
 	public boolean isLoggedIn() {
 		org.rsbot.client.Client client = methods.client;
 		int index = client == null ? -1 : client.getLoginIndex();
-		return index == 10 || index == 11;
+		for (int idx : INDEX_LOGGED_IN) {
+			if (index == idx) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -361,7 +391,7 @@ public class Game extends MethodProvider {
 	 *         otherwise <tt>false</tt>.
 	 */
 	public boolean isLoginScreen() {
-		return methods.client.getLoginIndex() == 3;
+		return methods.client.getLoginIndex() == INDEX_LOGIN_SCREEN;
 	}
 
 	/**
@@ -371,7 +401,7 @@ public class Game extends MethodProvider {
 	 *         otherwise <tt>false</tt>.
 	 */
 	public boolean isWelcomeScreen() {
-		return methods.interfaces.get(INTERFACE_WELCOME_SCREEN).getComponent(150).getAbsoluteY() > 2;
+		return methods.interfaces.get(INTERFACE_WELCOME_SCREEN).getComponent(INTERFACE_WELCOME_SCREEN_CHILD).getAbsoluteY() > 2;
 	}
 
 	/**
@@ -395,7 +425,7 @@ public class Game extends MethodProvider {
 	}
 
 	/**
-	 * Gets the x coordinate of the current region (far west).
+	 * Gets the x coordinate of the loaded map area (far west).
 	 *
 	 * @return The region base x.
 	 */
@@ -404,12 +434,22 @@ public class Game extends MethodProvider {
 	}
 
 	/**
-	 * Gets the y coordinate of the current region (far south).
+	 * Gets the y coordinate of the loaded map area (far south).
 	 *
 	 * @return The region base y.
 	 */
 	public int getBaseY() {
 		return methods.client.getBaseY();
+	}
+
+	/**
+	 * Gets the (x, y) coordinate pair of the south-western
+	 * tile at the base of the loaded map area.
+	 *
+	 * @return The region base tile.
+	 */
+	public RSTile getMapBase() {
+		return new RSTile(methods.client.getBaseX(), methods.client.getBaseY());
 	}
 
 	/**

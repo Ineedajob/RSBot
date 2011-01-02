@@ -2,6 +2,8 @@ package org.rsbot.script.methods;
 
 import org.rsbot.script.wrappers.RSPlayer;
 
+import java.awt.Color;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -264,6 +266,17 @@ public class Methods {
 	 */
 	public void log(Object message) {
 		log.info(message.toString());
+	}
+
+	/**
+	 * Prints to the RSBot log with a font color
+	 *
+	 * @param color The color of the font
+	 * @param message Object to log
+	 * */
+	public void log(Color color, Object message) {
+		Object[] parameters = { color };
+		log.log(Level.INFO, message.toString(), parameters);
 	}
 
 }

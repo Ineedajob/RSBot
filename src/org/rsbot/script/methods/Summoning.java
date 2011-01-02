@@ -19,13 +19,13 @@ public class Summoning extends MethodProvider {
 	public static final int INTERFACE_DETAILS = 662;
 	public static final int INTERFACE_OPTIONS = 880;
 
-	public static final int INTERFACE_FOLLOWER_DETAILS = 8;
-	public static final int INTERFACE_SPECIAL_MOVE = 10;
-	public static final int INTERFACE_ATTACK = 12;
-	public static final int INTERFACE_CALL_FOLLOWER = 14;
-	public static final int INTERFACE_DISMISS_FOLLOWER = 16;
-	public static final int INTERFACE_TAKE_BOB = 18;
-	public static final int INTERFACE_RENEW_FAMILIAR = 20;
+	public static final int INTERFACE_FOLLOWER_DETAILS = 9;
+	public static final int INTERFACE_SPECIAL_MOVE = 99;
+	public static final int INTERFACE_ATTACK = 14;
+	public static final int INTERFACE_CALL_FOLLOWER = 17;
+	public static final int INTERFACE_DISMISS_FOLLOWER = 18;
+	public static final int INTERFACE_TAKE_BOB = 12;
+	public static final int INTERFACE_RENEW_FAMILIAR = 13;
 
 	/**
 	 * Familiar constants.
@@ -191,7 +191,7 @@ public class Summoning extends MethodProvider {
 	 * @return <tt>true</tt> if you have a familiar.
 	 */
 	public boolean isFamiliarSummoned() {
-		return getFamiliar() != null;
+		return methods.interfaces.getComponent(INTERFACE_TAB_SUMMONING, 3).getBackgroundColor() == 1802;
 	}
 
 	/**
@@ -200,8 +200,8 @@ public class Summoning extends MethodProvider {
 	 * @return <tt>true</tt> if action is performed.
 	 */
 	public boolean doAction(String act) {
-		return methods.interfaces.get(INTERFACE_TAB_SUMMONING).getComponent(5).isValid() &&
-				methods.interfaces.get(INTERFACE_TAB_SUMMONING).getComponent(5).doAction(act);
+		return methods.interfaces.get(INTERFACE_TAB_SUMMONING).getComponent(INTERFACE_TAB_SUMMONING_CHILD).isValid() &&
+				methods.interfaces.get(INTERFACE_TAB_SUMMONING).getComponent(INTERFACE_TAB_SUMMONING_CHILD).doAction(act);
 	}
 
 	/**
@@ -363,13 +363,6 @@ public class Summoning extends MethodProvider {
 		}
 		return null;
 
-	}
-
-	/**
-	 * @return <tt>true</tt> if a familiar is currently summoned; otherwise <tt>false</tt>.
-	 */
-	public boolean familiarExists() {
-		return methods.interfaces.getComponent(INTERFACE_TAB_SUMMONING, 3).getBackgroundColor() == 1802;
 	}
 
 }

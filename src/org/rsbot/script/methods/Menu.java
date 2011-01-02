@@ -108,7 +108,7 @@ public class Menu extends MethodProvider {
 	private boolean clickMain(String[] items, int i) {
 		Point menu = getLocation();
 		int xOff = random(4, items[i].length() * 4);
-		int yOff = 21 + 15 * i + random(3, 12);
+		int yOff = 21 + 16 * i + random(3, 12);
 		methods.mouse.move(menu.x + xOff, menu.y + yOff, 2, 2);
 		if (isOpen()) {
 			methods.mouse.click(true);
@@ -130,7 +130,7 @@ public class Menu extends MethodProvider {
 			sleep(random(50, 150));
 
 			if (isOpen()) {
-				int y = 21 + 15 * sIdx + random(3, 12);
+				int y = 21 + 16 * sIdx + random(3, 12);
 				methods.mouse.move(x, y, 2, 2);
 				sleep(random(25, 150));
 
@@ -204,7 +204,7 @@ public class Menu extends MethodProvider {
 	 */
 	public Point getLocation() {
 		if (isOpen()) {
-			return new Point(methods.client.getMenuX() + 4, methods.client.getMenuY() + 4);
+			return new Point(methods.client.getMenuX(), methods.client.getMenuY());
 		}
 		return null;
 	}

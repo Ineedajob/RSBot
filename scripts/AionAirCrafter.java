@@ -6,12 +6,16 @@ import org.rsbot.script.ScriptManifest;
 import org.rsbot.script.methods.Bank;
 import org.rsbot.script.methods.Game;
 import org.rsbot.script.methods.Skills;
+import org.rsbot.script.util.Filter;
 import org.rsbot.script.util.Timer;
 import org.rsbot.script.wrappers.RSArea;
 import org.rsbot.script.wrappers.RSItem;
+import org.rsbot.script.wrappers.RSModel;
 import org.rsbot.script.wrappers.RSNPC;
 import org.rsbot.script.wrappers.RSObject;
+import org.rsbot.script.wrappers.RSPath;
 import org.rsbot.script.wrappers.RSTile;
+import org.rsbot.script.wrappers.RSTilePath;
 
 import java.awt.*;
 import java.util.HashSet;
@@ -19,7 +23,7 @@ import java.util.Set;
 
 @ScriptManifest(authors = "Aion",
 		name = "Aion's Air Crafter",
-		version = 0.1,
+		version = 0.2,
 		description = "Either wear an air tiara or have an air talisman in your inventory.")
 public class AionAirCrafter extends Script implements PaintListener, MessageListener {
 
@@ -41,6 +45,12 @@ public class AionAirCrafter extends Script implements PaintListener, MessageList
 
 		double VERSION = AionAirCrafter.class.getAnnotation(ScriptManifest.class).version();
 
+		Filter<RSNPC> FILTER_NPC = new Filter<RSNPC>() {
+			public boolean accept(RSNPC t) {
+				return t != null && t.getID() == Constants.NPC_BANKER;
+			}
+		};
+
 		RSTile[] PATH = {
 				new RSTile(3185, 3434), new RSTile(3173, 3428),
 				new RSTile(3159, 3423), new RSTile(3147, 3415),
@@ -54,7 +64,6 @@ public class AionAirCrafter extends Script implements PaintListener, MessageList
 		RSArea AREA_RUINS = new RSArea(new RSTile(3122, 3401), new RSTile(3132, 3409));
 
 		RSArea AREA_MUSICIAN = new RSArea(new RSTile(3149, 3419), new RSTile(3157, 3424));
-
 	}
 
 	public static abstract class Action {
@@ -64,20 +73,17 @@ public class AionAirCrafter extends Script implements PaintListener, MessageList
 		public abstract boolean isValid();
 
 		public abstract void process();
-
 	}
 
 	public class BankAction extends Action {
 
-		private boolean out;
-
 		public String getDesc() {
 			if (!bank.isOpen()) {
-				return "Attempting to open bank";
+				return "Opening bank.";
 			} else if (inventory.contains(Constants.ITEM_AIR_RUNE)) {
-				return "Attempting to deposit items";
+				return "Depositing items.";
 			}
-			return "Attempting to withdraw items";
+			return "Withdrawing items.";
 		}
 
 		public boolean isValid() {
@@ -86,85 +92,79 @@ public class AionAirCrafter extends Script implements PaintListener, MessageList
 
 		public void process() {
 			if (bank.isOpen()) {
-				int invCount = inventory.getCount();
 				if (inventory.contains(Constants.ITEM_AIR_RUNE)) {
 					if (inventory.containsOneOf(Constants.ITEM_AIR_TALISMAN, Constants.ITEM_RUNE_ESS)) {
 						bank.depositAllExcept(Constants.ITEM_AIR_TALISMAN, Constants.ITEM_RUNE_ESS);
 					} else {
 						bank.depositAll();
 					}
-				} else if (!inventory.isFull() && !out) {
-					if (bank.getCount(Constants.ITEM_RUNE_ESS) <= 28) {
-						out = true;
+				} else if (!inventory.contains(Constants.ITEM_RUNE_ESS)) {
+					int runeCount = bank.getCount(Constants.ITEM_RUNE_ESS);
+					if (runeCount < 1) {
+						log("You are out of rune essences!");
+					} else {
+						bank.withdraw(Constants.ITEM_RUNE_ESS, 0);
 					}
-					bank.withdraw(Constants.ITEM_RUNE_ESS, 0);
-				} else {
-					log("You have run out of rune essences!");
-					stopScript(true);
 				}
-				long endTime = System.currentTimeMillis() + random(700, 1000);
-				while (System.currentTimeMillis() < endTime) {
-					if (inventory.getCount() != invCount) break;
-					sleep(5, 15);
-				}
+				sleep(600, 800);
 			} else {
-				RSNPC banker = npcs.getNearest(Constants.NPC_BANKER);
-				if (banker == null) return;
-				if (banker.isOnScreen()) {
-					banker.doAction("Bank");
-					if (calc.distanceTo(banker) > 1) {
-						waitToMove(random(600, 900));
-						waitToStop();
+				RSNPC banker = npcs.getNearest(Constants.FILTER_NPC);
+				if (banker != null) {
+					if (banker.isOnScreen()) {
+						banker.doAction("Bank");
+						if (calc.distanceTo(banker) > 1) {
+							waitToMove(random(600, 900));
+							waitToStop();
+						}
+						waitForIface(Bank.INTERFACE_BANK, random(600, 800));
+					} else {
+						camera.turnToCharacter(banker);
+						if (!banker.isOnScreen()) {
+							walking.getPath(banker.getLocation()).traverse();
+						}
 					}
-					waitForIface(Bank.INTERFACE_BANK, random(600, 800));
-				} else if (walking.getDestination() == null) {
-					walking.walkTileMM(banker.getLocation());
-					waitToMove(random(600, 900));
-				} else {
-					camera.turnToCharacter(banker);
 				}
 			}
 		}
-
 	}
 
 	public abstract class ObjectAction extends Action {
 
-		private int[] ids;
 		private String action;
+		private int id;
 
-		public ObjectAction(String action, int... ids) {
-			this.ids = ids;
+		public ObjectAction(String action, int id) {
 			this.action = action;
+			this.id = id;
 		}
 
 		public String getDesc() {
-			return "Interacting with object (" + ids[0] + ":" + action + ")";
+			return "Interacting with object.";
 		}
 
 		public void process() {
-			RSObject object = objects.getNearest(ids);
+			RSObject object = objects.getNearest(id);
 			if (object != null) {
 				if (object.isOnScreen()) {
 					object.doAction(action);
 					if (calc.distanceTo(object) > 1) {
 						waitToMove(random(600, 900));
 					}
-				} else if (walking.getDestination() == null) {
-					walking.walkTileMM(object.getLocation());
-					waitToMove(random(600, 900));
+				} else {
+					camera.turnToObject(object);
+					if (!object.isOnScreen()) {
+						walking.getPath(object.getLocation()).traverse();
+					}
 				}
-				sleep(800, 1000);
 			}
 		}
-
 	}
 
 	public abstract class WalkToArea extends Action {
 
-		private RSTile[] path;
+		private RSPath path;
 
-		public WalkToArea(RSTile[] path) {
+		public WalkToArea(RSPath path) {
 			this.path = path;
 		}
 
@@ -177,63 +177,24 @@ public class AionAirCrafter extends Script implements PaintListener, MessageList
 		}
 
 		public void process() {
-			RSTile last = null;
-			while (calc.distanceTo(path[path.length - 1]) >= 8) {
-				if (!getMyPlayer().isMoving() || walking.getDestination() == null
-						|| calc.distanceTo(walking.getDestination()) < random(5, 8)) {
-					RSTile nextTile = walking.nextTile(path);
-					if (walking.getDestination() != null
-							&& calc.distanceBetween(walking.getDestination(), nextTile) <= random(2, 4)) {
-						if (random(1, 10) == 4) {
-							antiban();
-						}
-						continue;
+			if (walking.getEnergy() < 20) {
+				if (canRest() && inMusician()) {
+					RSTilePath tilePath = walking.newTilePath(Constants.AREA_MUSICIAN.getTileArray());
+					if (!tilePath.traverse()) {
+						walking.newTilePath(new RSTile[]{Constants.AREA_MUSICIAN.getCentralTile()}).traverse();
 					}
-					int defSpeed = mouse.getSpeed();
-					mouse.setSpeed(random(3, 6));
-					if (!walking.walkTileMM(nextTile, random(-4, 4), random(-4, 4))) {
-						if (inBank()) {
-							walking.walkPathMM(walking.findPath(nextTile));
-						}
-					}
-					if (!getMyPlayer().isMoving()) {
-						waitToMove(random(600, 900));
-					}
-					mouse.setSpeed(defSpeed);
+					waitToMove(random(600, 900));
+					walking.rest(100);
 				}
-				RSTile myLoc = getMyPlayer().getLocation();
-				if (last == null) last = myLoc;
-				if (myLoc != last) {
-					if (calc.distanceBetween(myLoc, last) >= 30) {
-						break;
-					}
-					last = myLoc;
-				}
-				if (!isRunning() || isPaused()) {
-					break;
-				} else if (game.getClientState() != 10) {
-					break;
-				} else if (walking.getEnergy() < 20) {
-					if (canRest() && inMusician()) {
-						RSTile[] tiles = Constants.AREA_MUSICIAN.getTileArray();
-						if (!walking.walkTileMM(tiles[random(0, tiles.length)])) {
-							walking.walkTileMM(Constants.AREA_MUSICIAN.getCentralTile());
-						}
-						waitToMove(random(600, 900));
-						walking.rest(100);
-					}
-				} else if (!walking.isRunEnabled()) {
-					if (walking.getEnergy() > 20) {
-						walking.setRun(true);
-						break;
-					}
-				}
-				sleep(5, 15);
+			} else if (!walking.isRunEnabled()) {
+				walking.setRun(true);
 			}
+			path.traverse();
 		}
 	}
 
-	private int runesCrafted = 0;
+	private int runesCrafted;
+
 	private int startExp;
 	private int startLvl;
 
@@ -242,6 +203,7 @@ public class AionAirCrafter extends Script implements PaintListener, MessageList
 
 	private Timer timer;
 
+	@Override
 	public boolean onStart() {
 		timer = new Timer(0);
 
@@ -251,8 +213,9 @@ public class AionAirCrafter extends Script implements PaintListener, MessageList
 
 		actions.add(new ObjectAction("Enter", Constants.OBJECT_RUINS) {
 
+			@Override
 			public String getDesc() {
-				return "Entering mysterious ruins";
+				return "Entering mysterious ruins.";
 			}
 
 			public boolean isValid() {
@@ -270,18 +233,24 @@ public class AionAirCrafter extends Script implements PaintListener, MessageList
 							return;
 						}
 					}
-					RSObject obj = objects.getNearest(Constants.OBJECT_RUINS);
+					RSObject obj = objects.getNearest(Constants.OBJECT_ALTAR);
 					if (obj != null) {
-						if (obj.isOnScreen()) {
+						Point toClick = getScreenPoint(obj);
+						if (toClick.x != -1 && toClick.y != -1) {
+							mouse.click(toClick, true);
+							if (calc.distanceTo(obj) > 1) {
+								waitToMove(random(600, 900));
+							}
+							return;
+						} else if (obj.isOnScreen()) {
 							obj.doClick(true);
 							if (calc.distanceTo(obj) > 1) {
 								waitToMove(random(600, 900));
 							}
-						} else if (walking.getDestination() == null) {
-							walking.walkTileMM(obj.getLocation());
-							waitToMove(random(600, 900));
 						} else {
 							camera.turnToObject(obj);
+							if (!obj.isOnScreen())
+								walking.getPath(obj.getLocation()).traverse();
 						}
 					}
 				} else {
@@ -289,13 +258,13 @@ public class AionAirCrafter extends Script implements PaintListener, MessageList
 				}
 				waitToStop();
 			}
-
 		});
 
 		actions.add(new ObjectAction("Craft-rune", Constants.OBJECT_ALTAR) {
 
+			@Override
 			public String getDesc() {
-				return "Crafting runes";
+				return "Crafting runes.";
 			}
 
 			public boolean isValid() {
@@ -303,24 +272,28 @@ public class AionAirCrafter extends Script implements PaintListener, MessageList
 			}
 
 			public void process() {
-				camera.setAngle(random(0, 40));
-				camera.setPitch(true);
 				super.process();
 				sleep(200, 400);
 				waitForAnim(random(900, 1200));
 				if (random(1, 6) == 3) {
 					RSObject portal = objects.getNearest(Constants.OBJECT_PORTAL);
 					if (portal != null) {
-						portal.doClick(false);
+						Point toClick = getScreenPoint(portal);
+						if (toClick.x != -1 && toClick.y != -1) {
+							mouse.click(toClick, true);
+						} else {
+							portal.doClick(false);
+						}
 						if (menu.isOpen()) {
 							if (!menu.contains("Enter")) {
-								mouse.moveSlightly();
+								while (menu.isOpen()) {
+									mouse.moveRandomly(750);
+								}
 							}
 						}
 					}
 				}
 			}
-
 		});
 
 		actions.add(new ObjectAction("Enter", Constants.OBJECT_PORTAL) {
@@ -346,13 +319,11 @@ public class AionAirCrafter extends Script implements PaintListener, MessageList
 				}
 				waitToStop();
 			}
-
 		});
 
-		actions.add(new WalkToArea(walking.reversePath(Constants.PATH)) {
+		actions.add(new WalkToArea(walking.newTilePath(Constants.PATH).reverse()) {
 
 			protected boolean canRest() {
-				// Subject to change
 				return true;
 			}
 
@@ -363,13 +334,11 @@ public class AionAirCrafter extends Script implements PaintListener, MessageList
 			public String getDesc() {
 				return "Heading to bank";
 			}
-
 		});
 
-		actions.add(new WalkToArea(Constants.PATH) {
+		actions.add(new WalkToArea(walking.newTilePath(Constants.PATH)) {
 
 			protected boolean canRest() {
-				// Subject to change
 				return true;
 			}
 
@@ -380,7 +349,6 @@ public class AionAirCrafter extends Script implements PaintListener, MessageList
 			public String getDesc() {
 				return "Heading to mysterious ruins";
 			}
-
 		});
 
 		startExp = skills.getCurrentExp(Skills.RUNECRAFTING);
@@ -492,18 +460,24 @@ public class AionAirCrafter extends Script implements PaintListener, MessageList
 	private void antiban() {
 		switch (random(1, 50)) {
 			case 2:
-				if (random(1, 5) != 1) break;
+				if (random(1, 5) != 1) {
+					break;
+				}
 				mouse.moveSlightly();
 				break;
 			case 6:
-				if (random(1, 18) != 7) break;
+				if (random(1, 18) != 7) {
+					break;
+				}
 				if (game.getCurrentTab() != Game.TAB_STATS) {
 					game.openTab(Game.TAB_STATS);
 					sleep(500, 900);
 				}
 				skills.doHover(Skills.INTERFACE_RUNECRAFTING);
 				sleep(random(1400, 2000), 3000);
-				if (random(0, 5) != 3) break;
+				if (random(0, 5) != 3) {
+					break;
+				}
 				mouse.moveSlightly();
 				break;
 			case 9:
@@ -532,8 +506,8 @@ public class AionAirCrafter extends Script implements PaintListener, MessageList
 		if (number.length() < 4) {
 			return number;
 		}
-		return format(number.substring(0, number.length() - 3)) + "," +
-				number.substring(number.length() - 3, number.length());
+		return format(number.substring(0, number.length() - 3)) + ","
+				+ number.substring(number.length() - 3, number.length());
 	}
 
 	private int getExpGained() {
@@ -590,6 +564,23 @@ public class AionAirCrafter extends Script implements PaintListener, MessageList
 		return timer.toElapsedString();
 	}
 
+	private Point getScreenPoint(RSObject obj) {
+		if (obj != null) {
+			RSModel model = obj.getModel();
+			if (model != null) {
+				for (Polygon pol : model.getTriangles()) {
+					for (int i = 0; i < pol.npoints; i++) {
+						Point p = new Point(pol.xpoints[i], pol.ypoints[i]);
+						if (calc.pointOnScreen(p)) {
+							return p;
+						}
+					}
+				}
+			}
+		}
+		return new Point(-1, -1);
+	}
+
 	private String getTimeFormat(long time) {
 		return Timer.format(time);
 	}
@@ -621,7 +612,9 @@ public class AionAirCrafter extends Script implements PaintListener, MessageList
 	private void waitForAnim(int timeout) {
 		long endTime = System.currentTimeMillis() + timeout;
 		while (System.currentTimeMillis() < endTime) {
-			if (getMyPlayer().getAnimation() != -1) break;
+			if (getMyPlayer().getAnimation() != -1) {
+				break;
+			}
 			sleep(5, 15);
 		}
 	}
@@ -629,7 +622,9 @@ public class AionAirCrafter extends Script implements PaintListener, MessageList
 	private void waitForIface(int iface, int timeout) {
 		long endTime = System.currentTimeMillis() + timeout;
 		while (System.currentTimeMillis() < endTime) {
-			if (interfaces.get(iface).isValid()) break;
+			if (interfaces.get(iface).isValid()) {
+				break;
+			}
 			sleep(5, 15);
 		}
 	}
@@ -637,7 +632,9 @@ public class AionAirCrafter extends Script implements PaintListener, MessageList
 	private boolean waitToMove(int timeout) {
 		long endTime = System.currentTimeMillis() + timeout;
 		while (System.currentTimeMillis() < endTime) {
-			if (getMyPlayer().isMoving()) return true;
+			if (getMyPlayer().isMoving()) {
+				return true;
+			}
 			sleep(5, 15);
 		}
 		return false;
@@ -648,5 +645,4 @@ public class AionAirCrafter extends Script implements PaintListener, MessageList
 			sleep(5, 15);
 		} while (getMyPlayer().isMoving());
 	}
-
 }

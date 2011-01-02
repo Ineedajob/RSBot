@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 /**
  * @author Jacmob
@@ -38,10 +37,9 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 	private BotToolBar toolBar;
 	private BotMenuBar menuBar;
 	private JScrollPane textScroll;
+	private BotHome home;
 
 	private List<Bot> bots = new ArrayList<Bot>();
-
-	private boolean christmassed = false;
 
 	public BotGUI() {
 		init();
@@ -83,13 +81,14 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 			menu = action.substring(0, z);
 			option = action.substring(z + 1);
 		}
-		if (menu.equals("File")) {
+		if (menu.equals("Close")) {
+			int idx = Integer.parseInt(option);
+			removeBot(bots.get(idx - 1));
+		} else if (menu.equals("File")) {
 			if (option.equals("New Bot")) {
 				addBot();
 			} else if (option.equals("Close Bot")) {
-				if (bots.size() > 1) {
-					removeBot(getCurrentBot());
-				}
+				removeBot(getCurrentBot());
 			} else if (option.equals("Run Script")) {
 				Bot current = getCurrentBot();
 				if (current != null) {
@@ -129,15 +128,6 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 						current.disableRandoms = ((JCheckBoxMenuItem) evt.getSource()).isSelected();
 					} else if (option.equals("Disable Auto Login")) {
 						current.disableAutoLogin = ((JCheckBoxMenuItem) evt.getSource()).isSelected();
-					} else if (option.equals("Christmas Mode")) {
-						boolean selected = ((JCheckBoxMenuItem) evt.getSource()).isSelected();
-						org.rsbot.injector.Injector.christmasMode = selected;
-						if (selected && !christmassed) {
-							christmassed = true;
-							Logger log = Logger.getLogger("PowerBot");
-							log.info("Merry christmas from Jacmob & Method!");
-							log.info("Look out for christmas decorations in-game.");
-						}
 					}
 				}
 			}
@@ -209,7 +199,7 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 					toolBar.setScriptButton(BotToolBar.RUN_SCRIPT);
 				}
 				toolBar.setOverrideInput(curr.overrideInput);
-				toolBar.setInputState(curr.inputMask);
+				toolBar.setInputState(curr.inputFlags);
 			}
 		} else if (menu.equals("Run")) {
 			Bot current = getCurrentBot();
@@ -256,6 +246,7 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 		new Thread(new Runnable() {
 			public void run() {
 				bot.start();
+				home.setBots(bots);
 			}
 		}).start();
 	}
@@ -268,6 +259,7 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 		bots.remove(idx);
 		bot.getScriptHandler().stopAllScripts();
 		bot.getScriptHandler().removeScriptListener(this);
+		home.setBots(bots);
 		new Thread(new Runnable() {
 			public void run() {
 				bot.stop();
@@ -355,7 +347,8 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 
 		WindowUtil.setFrame(this);
 
-		panel = new BotPanel();
+		home = new BotHome();
+		panel = new BotPanel(home);
 		toolBar = new BotToolBar(this);
 		menuBar = new BotMenuBar(this);
 		panel.setFocusTraversalKeys(0, new HashSet<AWTKeyStroke>());
@@ -407,10 +400,10 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 	public void scriptStarted(ScriptHandler handler, Script script) {
 		Bot bot = handler.getBot();
 		if (bot == getCurrentBot()) {
-			bot.inputMask = Environment.INPUT_KEYBOARD;
+			bot.inputFlags = Environment.INPUT_KEYBOARD;
 			bot.overrideInput = false;
 			toolBar.setScriptButton(BotToolBar.PAUSE_SCRIPT);
-			toolBar.setInputState(bot.inputMask);
+			toolBar.setInputState(bot.inputFlags);
 			toolBar.setOverrideInput(false);
 			menuBar.setOverrideInput(false);
 			String acct = bot.getAccountName();
@@ -423,10 +416,10 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 	public void scriptStopped(ScriptHandler handler, Script script) {
 		Bot bot = handler.getBot();
 		if (bot == getCurrentBot()) {
-			bot.inputMask = Environment.INPUT_KEYBOARD | Environment.INPUT_MOUSE;
+			bot.inputFlags = Environment.INPUT_KEYBOARD | Environment.INPUT_MOUSE;
 			bot.overrideInput = false;
 			toolBar.setScriptButton(BotToolBar.RUN_SCRIPT);
-			toolBar.setInputState(bot.inputMask);
+			toolBar.setInputState(bot.inputFlags);
 			toolBar.setOverrideInput(false);
 			menuBar.setOverrideInput(false);
 			menuBar.setPauseScript(false);
@@ -451,7 +444,7 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 	}
 
 	public void inputChanged(Bot bot, int mask) {
-		bot.inputMask = mask;
+		bot.inputFlags = mask;
 		toolBar.setInputState(mask);
 		toolBar.updateInputButton();
 	}

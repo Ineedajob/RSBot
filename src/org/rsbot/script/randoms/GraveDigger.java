@@ -3,12 +3,9 @@ package org.rsbot.script.randoms;
 import org.rsbot.script.Random;
 import org.rsbot.script.ScriptManifest;
 import org.rsbot.script.methods.Bank;
-import org.rsbot.script.methods.Game;
-import org.rsbot.script.methods.Store;
 import org.rsbot.script.wrappers.RSCharacter;
 import org.rsbot.script.wrappers.RSComponent;
 import org.rsbot.script.wrappers.RSInterface;
-import org.rsbot.script.wrappers.RSItem;
 import org.rsbot.script.wrappers.RSNPC;
 import org.rsbot.script.wrappers.RSObject;
 
@@ -119,7 +116,7 @@ public class GraveDigger extends Random {
 			RSObject depo = objects.getNearest(12731);
 			if (depo != null) {
 				if (!calc.tileOnScreen(depo.getLocation())) {
-					walking.newTilePath(walking.findPath(depo.getLocation())).traverse();
+					walking.getPath(depo.getLocation()).traverse();
 					camera.turnToObject(depo);
 				} else {
 					depo.doAction("Deposit");
@@ -323,7 +320,7 @@ public class GraveDigger extends Random {
 
 						break;
 					case 1:
-						walking.walkTileMM(walking.getClosestTileOnMap(walking.randomize(ch.getLocation(), 2, 2)));
+						walking.walkTileMM(walking.getClosestTileOnMap(ch.getLocation().randomize(2, 2)));
 
 						sleep(random(1800, 2000));
 
@@ -354,11 +351,8 @@ public class GraveDigger extends Random {
 
 						break;
 					case 1:
-						walking.walkTileMM(walking.getClosestTileOnMap(
-								walking.randomize(obj.getLocation(), 2, 2)));
-
+						walking.walkTileMM(walking.getClosestTileOnMap(obj.getLocation().randomize(2, 2)));
 						sleep(random(1800, 2000));
-
 						while (getMyPlayer().isMoving()) {
 							sleep(random(200, 500));
 						}

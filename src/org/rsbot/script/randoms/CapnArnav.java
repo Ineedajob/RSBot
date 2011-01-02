@@ -2,62 +2,46 @@ package org.rsbot.script.randoms;
 
 import org.rsbot.script.Random;
 import org.rsbot.script.ScriptManifest;
+import org.rsbot.script.util.Timer;
+import org.rsbot.script.wrappers.RSComponent;
 import org.rsbot.script.wrappers.RSInterface;
 import org.rsbot.script.wrappers.RSNPC;
 import org.rsbot.script.wrappers.RSObject;
 
-/*
- * Updated by TwistedMind (Feb 8, '10) ~ It wasn't exiting...
- * Updated by Iscream (Feb 8, 10) Fixed some loop issues.
- * Updated by Iscream (Feb 09,10)
- * Updated by Iscream (Feb 17,10) Fixed Exiting Issues
- * Updated by Arbiter (Oct 27,10)
- * Updated by NoEffex (Nov 29,10) Updated to interface coords rather than fixed coords
- */
+import java.awt.*;
 
-@ScriptManifest(authors = {"Keilgo", "Taha", "Equilibrium", "Twistedmind"}, name = "CapnArnav", version = 0.9)
+@ScriptManifest(authors = "endoskeleton", name = "CapnArnav", version = 1)
 public class CapnArnav extends Random {
 
-	public int startValue3;
-	public int startValue2;
-	public int startValue1;
+	private static final int[] ARNAV_CHEST = {42337, 42338};
+	private static final int ARNAV_ID = 2308;
+	private static final int EXIT_PORTAL = 11369;
+	private static final int[][] INTERFACE_SOLVE_IDS = {
+			{7, 14, 21},	//BOWL
+			{5, 12, 19},	//RING
+			{6, 13, 20},	//COIN
+			{8, 15, 22}		 //BAR
+	};
+	private static final int[][] ARROWS = {
+			{2, 3},
+			{9, 10},
+			{16, 17}
+	};
+	private static final int TALK_INTERFACE = 228;
+	private static final int CHEST_INTERFACE_PARENT = 185;
+	private static final int CHEST_INTERFACE_UNLOCK = 28;
+	private static final int CHEST_INTERFACE_CENTER = 23;
 
-	public int currValue3;
-	public int currValue2;
-	public int currValue1;
+	private static enum STATE {OPEN_CHEST, SOLVE, TALK, EXIT}
 
-	private boolean thirdColFound = false;
-	private boolean secondColFound = false;
-	private boolean firstColFound = false;
-
-	private boolean reel1done = false;
-	private boolean reel2done = false;
-	private boolean reel3done = false;
-
-	private boolean talkedto = false;
-	private static final int CAPTAIN_ID = 2308;
-	private static final int PORTAL_ID = 11369;
-
-
-	private boolean done = false;
-
-	static class Ifaces {
-		public static final int PARENT = 185;
-		public static final int FIRST_SET_UP = 3;
-		public static final int FIRST_SET_DOWN = 2;
-		public static final int SECOND_SET_UP = 10;
-		public static final int SECOND_SET_DOWN = 9;
-		public static final int THIRD_SET_UP = 17;
-		public static final int THIRD_SET_DOWN = 16;
-		public static final int CONFIRM_BUTTON = 28;
-	}
+	private int index = -1;
 
 	public boolean activateCondition() {
-		final RSNPC captain = npcs.getNearest(CAPTAIN_ID);
+		final RSNPC captain = npcs.getNearest(ARNAV_ID);
 
 		if (captain != null) {
 			sleep(random(1500, 1600));
-			RSObject portal = objects.getNearest(PORTAL_ID);
+			RSObject portal = objects.getNearest(EXIT_PORTAL);
 
 			return portal != null;
 
@@ -66,253 +50,130 @@ public class CapnArnav extends Random {
 		return false;
 	}
 
+	public void onFinish() {
+		index = -1;
+	}
+
+	private STATE getState() {
+		if (objects.getNearest(ARNAV_CHEST[1]) != null) {
+			return STATE.EXIT;
+		} else if (interfaces.canContinue() || interfaces.get(TALK_INTERFACE) != null && interfaces.get(TALK_INTERFACE).isValid()) {
+			return STATE.TALK;
+		} else if (interfaces.get(CHEST_INTERFACE_PARENT) == null || !interfaces.get(CHEST_INTERFACE_PARENT).isValid()) {
+			return STATE.OPEN_CHEST;
+		} else {
+			return STATE.SOLVE;
+		}
+	}
+
+
 	public int loop() {
 		if (bank.isDepositOpen() || bank.isOpen())
 			bank.close();
 
-		final RSNPC captain = npcs.getNearest(CAPTAIN_ID);
-
 		if (!activateCondition()) {
 			return -1;
 		}
-		if (getMyPlayer().isMoving() || (getMyPlayer().getAnimation() != -1)) {
-			return random(1200, 1500);
+
+		if (getMyPlayer().isMoving()) {
+			return random(1000, 2000);
 		}
-		if (searchText(241, "yer foot")) {
-			final RSObject Chest = objects.getNearest(42337);
-			talkedto = true;
-			Chest.doAction("Open");
-			//try and wait a few (3-6) seconds for the interface to pop up
-			for (int i = 0; i < 30 && !interfaces.get(Ifaces.PARENT).isValid(); i++) {
-				sleep(100, 200);
-			}
-			return random(800, 1200);
-		}
-		if (interfaces.get(228).getComponent(3).isValid() && interfaces.get(228).getComponent(3).getText().contains("Okay")) {
-			interfaces.get(228).getComponent(3).doClick();
-			for (int i = 0; i < 30 && interfaces.get(228).getComponent(3).isValid()
-					&& interfaces.get(228).getComponent(3).getText().contains("Okay"); i++)
-				sleep(100, 200);
-		}
-		if (interfaces.get(241).isValid() && interfaces.get(241).getComponent(0).getAbsoluteY() > 2) {
-			if (interfaces.get(241).containsText("haul") || interfaces.get(241).containsText("Just hop")) {
-				done = true;
-				log("Finished CapnArnav Random ~ Exiting");
+
+		switch (getState()) {
+			case EXIT:
+				RSObject portal = objects.getNearest(EXIT_PORTAL);
+				if (portal != null) {
+					if (!portal.isOnScreen()) {
+						camera.turnToObject(portal);
+					}
+					if (portal.doAction("Enter")) {
+						return random(1000, 1300);
+					}
+				}
+				break;
+
+			case OPEN_CHEST:
+				RSObject chest = objects.getNearest(ARNAV_CHEST);
+				if (chest != null) {
+					if (chest.doClick()) {
+						return random(1000, 1300);
+					}
+				}
+				break;
+
+			case TALK:
 				if (interfaces.canContinue()) {
 					interfaces.clickContinue();
-					return random(600, 700);
+					return random(1500, 2000);
 				}
-				return random(500, 700);
-			}
-		}
-		if (done) {
-			final RSObject Portal = objects.getNearest(11369);
-			if (Portal == null) {
-				log("Can't find portal!");
-				camera.turnToObject(Portal);
-				return random(800, 1200);
-			}
-			if (Portal.doAction("Enter")) {
-				return random(4500, 4900);
-			} else {
-				camera.turnToObject(Portal);
-				return random(600, 700);
-			}
-		}
-		if (interfaces.get(Ifaces.PARENT).isValid()) {
-			log("Setting default position. Coins Coins Coins!");
-			for (int i = 0; i < 100 && !firstColFound; i++) {
-				for (int j = 0; j < 100 && !thirdColFound; j++) {
-					startValue3 = settings.getSetting(809);
-					sleep(random(500, 700));
-					interfaces.getComponent(Ifaces.PARENT, Ifaces.THIRD_SET_UP).doClick(); // third set up
-					sleep(random(800, 1000));
-					currValue3 = settings.getSetting(809);
-					if (currValue3 < startValue3) {
-						thirdColFound = true;
+				RSComponent okay = interfaces.getComponent(TALK_INTERFACE, 3);
+				if (okay != null && okay.isValid()) {
+					okay.doClick();
+				}
+				return random(1500, 2000);
+
+			case SOLVE:
+				RSInterface solver = interfaces.get(CHEST_INTERFACE_PARENT);
+				if (solver != null && solver.isValid()) {
+
+					String s = solver.getComponent(32).getText();
+					if (s.contains("Bowl")) {
+						index = 0;
+					} else if (s.contains("Ring")) {
+						index = 1;
+					} else if (s.contains("Coin")) {
+						index = 2;
+					} else if (s.contains("Bar")) {
+						index = 3;
 					}
-				}
 
-				for (int j = 0; j < 100 && !secondColFound; j++) {
-					startValue2 = settings.getSetting(809);
-					sleep(random(500, 700));
-					interfaces.getComponent(Ifaces.PARENT, Ifaces.SECOND_SET_UP).doClick(); // second set up
-					sleep(random(800, 1000));
-					currValue2 = settings.getSetting(809);
-					if (currValue2 < startValue2) {
-						secondColFound = true;
+					if (solved()) {
+						solver.getComponent(CHEST_INTERFACE_UNLOCK).doClick();
+						return random(600, 900);
 					}
-				}
 
-				for (int j = 0; j < 100 && !firstColFound; j++) {
-					startValue1 = settings.getSetting(809);
-					sleep(random(500, 700));
-					interfaces.getComponent(Ifaces.PARENT, Ifaces.FIRST_SET_UP).doClick(); // first set up
-					sleep(random(800, 1000));
-					currValue1 = settings.getSetting(809);
-					if (currValue1 < startValue1) {
-						firstColFound = true;
+					RSComponent container = solver.getComponent(CHEST_INTERFACE_CENTER);
+					for (int i = 0; i < 3; i++) {
+						int rand = random(0, 100);
+						if (rand < 50) {
+							rand = 0;
+						} else if (rand >= 50) {
+							rand = 1;
+						}
+						RSComponent target = solver.getComponent(INTERFACE_SOLVE_IDS[index][i]);
+						RSComponent arrow = solver.getComponent(ARROWS[i][rand]);
+						while (container.isValid() && target.isValid() &&
+								!container.getArea().contains(new Point(target.getCenter().x + 15, target.getCenter().y)) &&
+								arrow.isValid() && new Timer(10000).isRunning()) {
+							arrow.doClick();
+							sleep(random(1000, 1200));
+						}
 					}
+
 				}
-			}
 		}
-
-		if (interfaces.get(Ifaces.PARENT).isValid()) {
-			if (searchText(Ifaces.PARENT, "Bar")) {
-				for (int i = 0; i < 100 && !reel1done; i++) {
-					interfaces.getComponent(Ifaces.PARENT, Ifaces.FIRST_SET_UP).doClick();
-					sleep(random(800, 1000));
-					interfaces.getComponent(Ifaces.PARENT, Ifaces.FIRST_SET_UP).doClick();
-					sleep(random(800, 1000));
-					log("Reel 1 Bar Found!");
-					reel1done = true;
-				}
-
-				for (int i = 0; i < 100 && !reel2done; i++) {
-					interfaces.getComponent(Ifaces.PARENT, Ifaces.SECOND_SET_UP).doClick();
-					sleep(random(800, 1000));
-					interfaces.getComponent(Ifaces.PARENT, Ifaces.SECOND_SET_UP).doClick();
-					sleep(random(800, 1000));
-					log("Reel 2 Bar Found!");
-					reel2done = true;
-				}
-
-				for (int i = 0; i < 100 && !reel3done; i++) {
-					interfaces.getComponent(Ifaces.PARENT, Ifaces.THIRD_SET_UP).doClick();
-					sleep(random(800, 1000));
-					interfaces.getComponent(Ifaces.PARENT, Ifaces.THIRD_SET_UP).doClick();
-					sleep(random(800, 1000));
-					log("Reel 3 Bar Found!");
-					reel3done = true;
-				}
-
-				if (interfaces.get(Ifaces.PARENT).isValid()) {
-					interfaces.get(Ifaces.PARENT).getComponent(Ifaces.CONFIRM_BUTTON).doClick();
-					sleep(random(700, 1000));
-				}
-			}
-		}
-
-		if (interfaces.get(Ifaces.PARENT).isValid()) {
-			if (searchText(Ifaces.PARENT, "Coins")) {
-				if (!reel1done) {
-					log("Reel 1 Coins Found!");
-					reel1done = true;
-				}
-
-				if (!reel2done) {
-					log("Reel 2 Coins Found!");
-					reel2done = true;
-				}
-
-				if (!reel3done) {
-					log("Reel 3 Coins Found!");
-					reel3done = true;
-				}
-
-				if (interfaces.get(Ifaces.PARENT).isValid()) {
-					interfaces.get(Ifaces.PARENT).getComponent(Ifaces.CONFIRM_BUTTON).doClick();
-					sleep(random(700, 1000));
-				}
-			}
-		}
-
-		if (interfaces.get(Ifaces.PARENT).isValid()) {
-			if (searchText(Ifaces.PARENT, "Bowl")) {
-				for (int i = 0; i < 100 && !reel1done; i++) {
-					interfaces.getComponent(Ifaces.PARENT, Ifaces.FIRST_SET_UP).doClick();
-					sleep(random(800, 1000));
-					log("Reel 1 Bowl Found!");
-					reel1done = true;
-				}
-
-				for (int i = 0; i < 100 && !reel2done; i++) {
-					interfaces.getComponent(Ifaces.PARENT, Ifaces.SECOND_SET_UP).doClick();
-					sleep(random(800, 1000));
-					log("Reel 2 Bowl Found!");
-					reel2done = true;
-				}
-
-				for (int i = 0; i < 100 && !reel3done; i++) {
-					interfaces.getComponent(Ifaces.PARENT, Ifaces.THIRD_SET_UP).doClick();
-					sleep(random(800, 1000));
-					log("Reel 3 Bowl Found!");
-					reel3done = true;
-				}
-
-				if (interfaces.get(Ifaces.PARENT).isValid()) {
-					interfaces.get(Ifaces.PARENT).getComponent(Ifaces.CONFIRM_BUTTON).doClick(); //click confirm
-					sleep(random(700, 1000));
-				}
-			}
-		}
-
-		if (interfaces.get(Ifaces.PARENT).isValid()) { //scroll down
-			if (searchText(Ifaces.PARENT, "Ring")) {
-				for (int i = 0; i < 100 && !reel1done; i++) { //first set
-					interfaces.getComponent(Ifaces.PARENT, Ifaces.FIRST_SET_DOWN).doClick();
-					sleep(random(800, 1000));
-					log("Reel 1 Ring Found!");
-					reel1done = true;
-				}
-
-				for (int i = 0; i < 100 && !reel2done; i++) {
-					interfaces.getComponent(Ifaces.PARENT, Ifaces.SECOND_SET_DOWN).doClick();
-					sleep(random(800, 1000));
-					log("Reel 2 Ring Found!");
-					reel2done = true;
-				}
-
-				for (int i = 0; i < 100 && !reel3done; i++) {
-					interfaces.getComponent(Ifaces.PARENT, Ifaces.THIRD_SET_DOWN).doClick();
-					sleep(random(800, 1000));
-					log("Reel 3 Ring Found!");
-					reel3done = true;
-				}
-
-				if (interfaces.get(Ifaces.PARENT).isValid()) {
-					interfaces.get(Ifaces.PARENT).getComponent(Ifaces.CONFIRM_BUTTON).doClick();
-					sleep(random(700, 1000));
-				}
-			}
-		}
-
-		if (interfaces.get(228).isValid() && interfaces.get(228).getComponent(0).getAbsoluteY() > 2) {
-			// final int x = random(220, 310), y = random(427, 437);
-			// mouse.click(x, y, true);
-			interfaces.clickContinue();
-		}
-		if (!myClickContinue() && !talkedto && !interfaces.canContinue()) {
-			captain.doAction("Talk-to");
-			return random(500, 700);
-		}
-		if (interfaces.canContinue()) {
-			interfaces.clickContinue();
-			return random(1000, 1200);
-		}
-		if (!done && talkedto && !interfaces.get(Ifaces.PARENT).isValid() && !interfaces.get(241).isValid() && !interfaces.canContinue() && !getMyPlayer().isInteractingWithLocalPlayer()) {
-			captain.doAction("Talk-to");
-			return random(500, 700);
-		}
-		return random(1000, 1500);
+		return random(500, 800);
 	}
 
-	public boolean myClickContinue() {
-		sleep(random(800, 1000));
-		if ((interfaces.getComponent(243, 7).isValid() && interfaces.getComponent(243, 7).getAbsoluteY() < 5) || (interfaces.getComponent(241, 5).isValid() && interfaces.getComponent(241, 5).getAbsoluteY() < 5) || (interfaces.getComponent(242, 6).isValid() && interfaces.getComponent(242, 6).getAbsoluteY() < 5) || (interfaces.getComponent(244, 8).isValid() && interfaces.getComponent(244, 8).getAbsoluteY() < 5) || (interfaces.getComponent(64, 5).isValid() && interfaces.getComponent(64, 5).getAbsoluteY() < 5) || (interfaces.getComponent(236, 1).isValid() && interfaces.getComponent(236, 1).getAbsoluteY() < 5) || (interfaces.getComponent(230, 4).isValid() && interfaces.getComponent(230, 4).getAbsoluteY() < 5) || (interfaces.getComponent(228, 3).isValid() && interfaces.getComponent(228, 3).getAbsoluteY() < 5))
+	private boolean solved() {
+		if (index == -1) {
 			return false;
-		return interfaces.getComponent(243, 7).doClick() || interfaces.getComponent(241, 5).doClick() || interfaces.getComponent(242, 6).doClick() || interfaces.getComponent(244, 8).doClick() || interfaces.getComponent(64, 5).doClick() || interfaces.getComponent(236, 1).doClick() || interfaces.getComponent(230, 4).doClick() || interfaces.getComponent(228, 3).doClick();
-	}
-
-	public boolean searchText(final int interfac, final String text) {
-		final RSInterface talkFace = interfaces.get(interfac);
-		if (!talkFace.isValid())
-			return false;
-		for (int i = 0; i < talkFace.getChildCount(); i++) {
-			if (talkFace.getComponent(i).containsText(text))
-				return true;
 		}
+		RSInterface solver = interfaces.get(CHEST_INTERFACE_PARENT);
+		if (solver != null && solver.isValid()) {
+			RSComponent container = solver.getComponent(CHEST_INTERFACE_CENTER);
 
+			Point p1 = solver.getComponent(INTERFACE_SOLVE_IDS[index][0]).getCenter();
+			p1.setLocation(p1.x + 15, p1.y);
+			Point p2 = solver.getComponent(INTERFACE_SOLVE_IDS[index][1]).getCenter();
+			p2.setLocation(p2.x + 15, p1.y);
+			Point p3 = solver.getComponent(INTERFACE_SOLVE_IDS[index][2]).getCenter();
+			p3.setLocation(p3.x + 15, p1.y);
+			return (container.getArea().contains(p1)
+					&& container.getArea().contains(p2)
+					&& container.getArea().contains(p3));
+		}
 		return false;
 	}
+
 }

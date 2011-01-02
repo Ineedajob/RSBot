@@ -5,6 +5,7 @@ package org.rsbot.script.wrappers;
  *
  * @author Arbiter
  */
+@Deprecated
 public class GEItemInfo {
 	/**
 	 * The price change in 30 days.

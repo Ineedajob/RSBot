@@ -2,7 +2,11 @@ package org.rsbot.script.randoms;
 
 import org.rsbot.script.Random;
 import org.rsbot.script.ScriptManifest;
-import org.rsbot.script.wrappers.*;
+import org.rsbot.script.wrappers.RSCharacter;
+import org.rsbot.script.wrappers.RSComponent;
+import org.rsbot.script.wrappers.RSInterface;
+import org.rsbot.script.wrappers.RSNPC;
+import org.rsbot.script.wrappers.RSObject;
 
 import java.awt.*;
 
@@ -396,7 +400,7 @@ public class Exam extends Random {
 
 		if (door != null) {
 			if (calc.distanceTo(door) > 3) {
-				walking.newTilePath(walking.findPath(door.getLocation())).traverse();
+				walking.getPath(door.getLocation()).traverse();
 				sleep(random(1400, 2500));
 			}
 			if (!calc.tileOnScreen(door.getLocation())) {
@@ -438,7 +442,7 @@ public class Exam extends Random {
 				&& !interfaces.get(relatedCardsInterface).isValid() && !interfaces.canContinue()
 				&& door == null) {
 			if (calc.distanceTo(mordaut) > 4) {
-				walking.newTilePath(walking.findPath(mordaut.getLocation())).traverse();
+				walking.getPath(mordaut.getLocation()).traverse();
 			}
 			if (!calc.tileOnScreen(mordaut.getLocation())) {
 				walking.walkTileMM(mordaut.getLocation());

@@ -1,7 +1,5 @@
 package org.rsbot.bot;
 
-import org.rsbot.injector.Injector;
-
 import java.awt.*;
 import java.io.File;
 import java.io.FilePermission;
@@ -12,7 +10,7 @@ import java.security.CodeSource;
 import java.security.Permissions;
 import java.security.ProtectionDomain;
 import java.util.Calendar;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.PropertyPermission;
 
 /**
@@ -20,16 +18,14 @@ import java.util.PropertyPermission;
  */
 public final class RSClassLoader extends ClassLoader {
 
-	private HashMap<String, byte[]> classes;
+	private Map<String, byte[]> classes;
 	private ProtectionDomain domain;
-	private String signlink;
 
-	public RSClassLoader(Injector injector) {
+	public RSClassLoader(Map<String, byte[]> classes, URL source) {
 		try {
-			CodeSource codeSource = new CodeSource(new URL("http://" + injector.generateTargetName() + ".com/"), (CodeSigner[]) null);
+			CodeSource codeSource = new CodeSource(source, (CodeSigner[]) null);
 			domain = new ProtectionDomain(codeSource, getPermissions());
-			classes = injector.getClasses();
-			signlink = injector.findClass("Signlink").getClassName();
+			this.classes = classes;
 		} catch (final Exception ignored) {
 		}
 	}
@@ -43,7 +39,7 @@ public final class RSClassLoader extends ClassLoader {
 		ps.add(new PropertyPermission("os.name", "read"));
 		ps.add(new PropertyPermission("os.arch", "read"));
 		ps.add(new PropertyPermission("os.version", "read"));
-		ps.add(new SocketPermission("*", "connect,resolve"));//quick fix TODO FIXME
+		ps.add(new SocketPermission("*", "connect,resolve"));
 		String uDir = System.getProperty("user.home");
 		if (uDir != null) {
 			uDir += "/";
@@ -51,7 +47,6 @@ public final class RSClassLoader extends ClassLoader {
 			uDir = "~/";
 		}
 		final String[] dirs = {"c:/rscache/", "/rscache/", "c:/windows/", "c:/winnt/", "c:/", uDir, "/tmp/", "."};
-		// If "." fails then System.getProperty("user.dir") should work
 		final String[] rsDirs = {".jagex_cache_32", ".file_store_32"};
 		for (String dir : dirs) {
 			final File f = new File(dir);
@@ -74,9 +69,6 @@ public final class RSClassLoader extends ClassLoader {
 
 	@Override
 	public final Class<?> loadClass(String name) throws ClassNotFoundException {
-		if (name.equals("SignLink")) {
-			name = signlink;
-		}
 		if (classes.containsKey(name)) {
 			final byte buffer[] = classes.remove(name);
 			return defineClass(name, buffer, 0, buffer.length, domain);

@@ -16,7 +16,7 @@ public abstract class RSPath extends MethodProvider {
 	 * Defines the path traversal options.
 	 */
 	public static enum TraversalOption {
-		SPACE_ACTIONS
+		HANDLE_RUN, SPACE_ACTIONS
 	}
 
 	public RSPath(MethodContext ctx) {
@@ -47,7 +47,9 @@ public abstract class RSPath extends MethodProvider {
 	 * @see #traverse(EnumSet)
 	 */
 	public boolean traverse() {
-		return traverse(EnumSet.of(TraversalOption.SPACE_ACTIONS));
+		return traverse(EnumSet.of(
+				TraversalOption.HANDLE_RUN,
+				TraversalOption.SPACE_ACTIONS));
 	}
 
 	/**
