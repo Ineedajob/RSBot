@@ -22,9 +22,10 @@ public abstract class Script extends Methods implements EventListener, Runnable 
 	private volatile boolean running = false;
 	private volatile boolean paused = false;
 	private volatile boolean random = false;
+	private volatile int breakLength = 0;
 
 	private int id = -1;
-	private long lastNotice;
+	private long breakEnd = -1;
 
 	/**
 	 * Finalized to cause errors intentionally to avoid confusion
@@ -51,14 +52,17 @@ public abstract class Script extends Methods implements EventListener, Runnable 
 	}
 
 	/**
-	 * The main loop. Called if you return true from onStart, then continuously until
-	 * a negative integer is returned or the script stopped externally. When this script
-	 * is paused this method will not be called until the script is resumed. Avoid causing
-	 * execution to pause using sleep() within this method in favor of returning the number
-	 * of milliseconds to sleep. This ensures that pausing and anti-randoms perform normally.
+	 * The main loop. Called if you return true from onStart, then continuously
+	 * until a negative integer is returned or the script stopped externally.
+	 * When this script is paused this method will not be called until the
+	 * script is resumed. Avoid causing execution to pause using sleep() within
+	 * this method in favor of returning the number of milliseconds to sleep.
+	 * This ensures that pausing and anti-randoms perform normally.
+	 * Never sleep within a while loop to wait for a given condition, but rather
+	 * wrap the conditionally executed code within a simple conditional statement.
 	 *
-	 * @return The number of milliseconds that the manager should sleep before
-	 *         calling it again. Returning a negative number will deactivate the script.
+	 * @return The number of milliseconds before this method is called again.
+	 *         Returning a negative number will stop the script.
 	 */
 	public abstract int loop();
 
@@ -70,8 +74,7 @@ public abstract class Script extends Methods implements EventListener, Runnable 
 	}
 
 	/**
-	 * Initializes this script with another script's
-	 * context.
+	 * Initializes this script with another script's context.
 	 *
 	 * @param script The context providing Script.
 	 * @see #delegateTo(Script)
@@ -185,8 +188,8 @@ public abstract class Script extends Methods implements EventListener, Runnable 
 	}
 
 	/**
-	 * Stops the current script; player can be logged out before
-	 * the script is stopped.
+	 * Stops the current script; player can be logged out before the
+	 * script is stopped.
 	 *
 	 * @param logout <tt>true</tt> if the player should be logged
 	 *               out before the script is stopped.
@@ -204,6 +207,35 @@ public abstract class Script extends Methods implements EventListener, Runnable 
 		this.running = false;
 	}
 
+	/**
+	 * Called when a break is requested by the break handler according
+	 * to the current account's schedule.
+	 * May be overridden to delay the call to {@link #startBreak(int)}
+	 * made by default.
+	 *
+	 * @param duration The break length in seconds.
+	 */
+	public void breakRequested(int duration) {
+		startBreak(duration);
+	}
+
+	/**
+	 * Breaks for a given number of seconds.
+	 * The account will be logged out to the lobby for breaks over one
+	 * minute in length.
+	 *
+	 * @param duration The break length in seconds.
+	 */
+	protected final void startBreak(int duration) {
+		if (duration < 0) {
+			throw new IllegalArgumentException("Negative duration!");
+		}
+		if (breakLength > 0) {
+			throw new IllegalStateException("Already breaking!");
+		}
+		breakLength = duration;
+	}
+
 	public final void run() {
 		boolean start = false;
 		try {
@@ -215,29 +247,36 @@ public abstract class Script extends Methods implements EventListener, Runnable 
 		if (start) {
 			running = true;
 			ctx.bot.getEventManager().addListener(this);
+			BreakHandler bh = new BreakHandler();
 			log.info("Script started.");
 			try {
 				while (running) {
 					if (!paused) {
 						if (account.isTakingBreaks()) {
-							BreakHandler h = ctx.bot.getBreakHandler();
-							if (h.isBreaking()) {
-								if (System.currentTimeMillis() - lastNotice > 600000) {
-									lastNotice = System.currentTimeMillis();
-									log.info("Breaking for " + Timer.format(h.getBreakTime()));
-								}
-								if (game.isLoggedIn() && h.getBreakTime() > 60000) {
+							int time = bh.tick();
+							if (time > 0) {
+								breakRequested(time);
+							}
+						}
+						if (breakLength > 0) {
+							if (breakEnd <= 0) {
+								int time = breakLength * 1000;
+								breakEnd = System.currentTimeMillis() + time;
+								log.info("Breaking for " + Timer.format(time));
+								if (game.isLoggedIn() && time > 60000) {
 									game.logout(true);
 								}
-								try {
-									sleep(5000);
-								} catch (ThreadDeath td) {
-									break;
-								}
-								continue;
-							} else {
-								h.tick();
 							}
+							try {
+								sleep(5000);
+							} catch (ThreadDeath td) {
+								break;
+							}
+							if (System.currentTimeMillis() > breakEnd) {
+								breakLength = 0;
+								breakEnd = -1;
+							}
+							continue;
 						}
 						if (checkForRandoms()) {
 							continue;
@@ -250,8 +289,11 @@ public abstract class Script extends Methods implements EventListener, Runnable 
 						} catch (Exception ex) {
 							log.log(Level.WARNING, "Uncaught exception from script: ", ex);
 						}
-						if (timeOut == -1) {
+						if (timeOut < 0) {
 							break;
+						}
+						if (timeOut < 5) {
+							timeOut = 5;
 						}
 						try {
 							sleep(timeOut);

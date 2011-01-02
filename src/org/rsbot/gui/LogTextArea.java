@@ -83,7 +83,7 @@ public class LogTextArea extends JList {
 		logQueue.queue(new WrappedLogRecord(logRecord));
 	}
 
-	private static class LogAreaListModel extends AbstractListModel {
+	private class LogAreaListModel extends AbstractListModel {
 		private static final long serialVersionUID = 0;
 
 		private List<WrappedLogRecord> records = new ArrayList<WrappedLogRecord>(LogTextArea.MAX_ENTRIES);
@@ -170,7 +170,9 @@ public class LogTextArea extends JList {
 				return new JLabel();
 			final WrappedLogRecord wlr = (WrappedLogRecord) value;
 
-			final JTextArea result = new JTextArea(wlr.formatted);
+			final JTextPane result = new JTextPane();
+			result.setDragEnabled(true);
+			result.setText(wlr.formatted);
 			result.setComponentOrientation(list.getComponentOrientation());
 			result.setFont(list.getFont());
 			result.setBorder(cellHasFocus || isSelected ? SELECTED_BORDER
@@ -194,6 +196,21 @@ public class LogTextArea extends JList {
 				result.setForeground(DARK_GREEN);
 			}
 
+			Object[] parameters = wlr.record.getParameters();
+			if (parameters != null) {
+				for (Object parameter : parameters) {
+					if (parameter == null) {
+						continue;
+					}
+
+					if (parameter instanceof Color) {
+						result.setForeground((Color) parameter);
+					} else if (parameter instanceof Font) {
+						result.setFont((Font) parameter);
+					}
+				}
+			}
+
 			return result;
 		}
 
@@ -204,7 +221,7 @@ public class LogTextArea extends JList {
 	 * Wrap the log records so we can control the copy paste text (via
 	 * #toString)
 	 */
-	private static class WrappedLogRecord {
+	private class WrappedLogRecord {
 
 		public final LogRecord record;
 		public final String formatted;

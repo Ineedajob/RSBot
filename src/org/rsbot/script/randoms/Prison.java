@@ -86,8 +86,8 @@ public class Prison extends Random {
 					final RSObject depo = objects.getNearest(32924);
 					if (depo != null) {
 						if (!calc.tileOnScreen(depo.getLocation())) {
-							if (!walking.walkTileMM(walking.randomize(depo.getLocation(), 3, 3))) {
-								walking.newTilePath(walking.findPath(walking.randomize(depo.getLocation(), 3, 3))).traverse();
+							if (!walking.walkTileMM(depo.getLocation().randomize(3, 3))) {
+								walking.getPath(depo.getLocation().randomize(3, 3)).traverse();
 								return random(500, 700);
 							}
 							return random(1000, 1500);
@@ -247,8 +247,7 @@ public class Prison extends Random {
 						return random(1200, 1400);
 					} else {
 						if (!getMyPlayer().isMoving()) {
-							walking.walkTileMM(walking.randomize(balloonToPop.getLocation(), 2,
-									2));
+							walking.walkTileMM(balloonToPop.getLocation().randomize(2, 2));
 							return random(500, 750);
 						}
 						return random(500, 750);

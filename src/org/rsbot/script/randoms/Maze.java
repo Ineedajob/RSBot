@@ -168,7 +168,7 @@ public class Maze extends Random {
 			return random(200, 300);
 		}
 		if ((walkToTile != null) && (calc.distanceTo(walkToTile) >= 3)) {
-			walking.newTilePath(walking.findPath(walkToTile)).traverse();
+			walking.getPath(walkToTile).traverse();
 			return random(500, 600);
 		}
 		if ((walkToTile != null) && (calc.distanceTo(walkToTile) <= 3)) {
@@ -336,7 +336,7 @@ public class Maze extends Random {
 		}
 		if (!calc.tileOnScreen(a) || !calc.tileOnScreen(b) || (calc.distanceTo(a) > random(4, 7))) {
 			if (calc.tileOnMap(a)) {
-				walking.newTilePath(walking.findPath(walking.randomize(a, 3, 3))).traverse();
+				walking.getPath(a.randomize(3, 3)).traverse();
 				sleep(random(750, 1250));
 			} else {
 				log("Cannot find wall tiles...");

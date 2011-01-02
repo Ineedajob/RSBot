@@ -9,19 +9,19 @@ public class Boot {
 		String location = Boot.class.getProtectionDomain().getCodeSource().getLocation().getPath();
 		location = URLDecoder.decode(location, "UTF-8").replaceAll("\\\\", "/");
 		String os = System.getProperty("os.name").toLowerCase();
-		String memory = "-Xmx512m";
+		String flags = "-Xmx512m -Dsun.java2d.d3d=false";
 
 		if (os.contains("windows")) {
-			Runtime.getRuntime().exec("javaw " + memory + " -classpath \"" +
+			Runtime.getRuntime().exec("javaw " + flags + " -classpath \"" +
 					location + "\" org.rsbot.Application");
 		} else if (os.contains("mac")) {
 			Runtime.getRuntime().exec(new String[]{"/bin/sh",
-					"-c", "java " + memory + " -Xdock:name=\"RSBot\"" +
+					"-c", "java " + flags + " -Xdock:name=\"RSBot\"" +
 							" -Xdock:icon=resources/images/icon.png" +
 							" -classpath \"" + location + "\" org.rsbot.Application"});
 		} else {
 			Runtime.getRuntime().exec(new String[]{"/bin/sh",
-					"-c", "java " + memory + " -classpath \"" + location + "\" org.rsbot.Application"});
+					"-c", "java " + flags + " -classpath \"" + location + "\" org.rsbot.Application"});
 		}
 	}
 

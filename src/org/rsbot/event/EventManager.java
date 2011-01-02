@@ -192,7 +192,7 @@ public class EventManager implements Runnable {
 			if (eventThread != null) {
 				throw new IllegalThreadStateException();
 			}
-			eventThread = new Thread(this, "EventQueue");
+			eventThread = new Thread(this, "EventQueue-" + hashCode());
 			eventThread.setDaemon(true);
 			eventThread.start();
 		}

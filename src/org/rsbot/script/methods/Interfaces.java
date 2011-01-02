@@ -131,7 +131,7 @@ public class Interfaces extends MethodProvider {
 				for (int i = 0; i < len; i++) {
 					RSComponent child = iface.getComponent(i);
 					if (child.containsText("Click here to continue") && child.isValid()
-							&& child.getAbsoluteX() > 100 && child.getAbsoluteY() > 300)
+							&& child.getAbsoluteX() > 10 && child.getAbsoluteY() > 300)
 						return child;
 				}
 			}

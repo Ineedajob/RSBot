@@ -32,11 +32,13 @@ public class RSGroundItem extends MethodProvider {
 		int plane = methods.client.getPlane();
 		org.rsbot.client.RSGround rsGround = methods.client.getRSGroundArray()[plane][x][y];
 
-		RSGroundEntity obj = rsGround.getGroundObject();
-		if (obj != null) {
-			org.rsbot.client.Model model = ((RSGroundObject) rsGround.getGroundObject()).getModel();
-			if (model != null) {
-				return new RSAnimableModel(methods, model, obj);
+		if (rsGround != null) {
+			RSGroundEntity obj = rsGround.getGroundObject();
+			if (obj != null) {
+				org.rsbot.client.Model model = ((RSGroundObject) rsGround.getGroundObject()).getModel();
+				if (model != null) {
+					return new RSAnimableModel(methods, model, obj);
+				}
 			}
 		}
 		return null;

@@ -364,7 +364,7 @@ public class Calculations extends MethodProvider {
 			}
 			TileData[] planes = methods.client.getTileData();
 
-			if (p < planes.length && planes[p] != null) {
+			if (planes != null && p < planes.length && planes[p] != null) {
 				int[][] heights = planes[p].getHeights();
 				if (heights != null) {
 					int x2 = x & 512 - 1;

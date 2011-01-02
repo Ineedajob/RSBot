@@ -1,5 +1,6 @@
 package org.rsbot.script.methods;
 
+import org.rsbot.script.wrappers.RSComponent;
 import org.rsbot.script.wrappers.RSInterface;
 
 /**
@@ -209,8 +210,14 @@ public class Magic extends MethodProvider {
 			}
 			sleep(random(150, 250));
 		}
-		return methods.game.getCurrentTab() == Game.TAB_MAGIC
-				&& getInterface().getComponent(spell).doAction("Cast");
+		if (methods.game.getCurrentTab() == Game.TAB_MAGIC) {
+			RSInterface inter = getInterface();
+			if (inter != null) {
+				RSComponent comp = inter.getComponent(spell);
+				return comp != null && comp.doAction("Cast");
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -226,7 +233,11 @@ public class Magic extends MethodProvider {
 				methods.game.openTab(Game.TAB_MAGIC);
 				sleep(random(150, 250));
 			}
-			return getInterface().getComponent(spell).doAction("Autocast");
+			RSInterface inter = getInterface();
+			if (inter != null) {
+				RSComponent comp = inter.getComponent(spell);
+				return comp != null && comp.doAction("Autocast");
+			}
 		}
 		return false;
 	}

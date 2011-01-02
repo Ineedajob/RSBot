@@ -22,8 +22,8 @@ public class BotToolBar extends JToolBar {
 	public static final int PAUSE_SCRIPT = 1;
 	public static final int RESUME_SCRIPT = 2;
 
-	public static final Icon ICON_HOME;
-	public static final Icon ICON_BOT;
+	public static final ImageIcon ICON_HOME;
+	public static final ImageIcon ICON_BOT;
 
 	public static final Image IMAGE_CLOSE;
 	public static final Image IMAGE_CLOSE_OVER;
@@ -72,8 +72,7 @@ public class BotToolBar extends JToolBar {
 		runScriptButton.addActionListener(listener);
 		runScriptButton.setFocusable(false);
 
-		BotButton home = new BotButton("Home", ICON_HOME);
-		home.setVisible(false);
+		HomeButton home = new HomeButton(ICON_HOME);
 
 		setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
 		setFloatable(false);
@@ -94,10 +93,14 @@ public class BotToolBar extends JToolBar {
 	}
 
 	public void removeTab(int idx) {
-		setSelection(0);
 		remove(idx);
 		revalidate();
 		repaint();
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				setSelection(0);
+			}
+		});
 	}
 
 	public void setTabLabel(int idx, String label) {
@@ -198,11 +201,65 @@ public class BotToolBar extends JToolBar {
 	}
 
 	/**
+	 * @author Jacmob
+	 */
+	private class HomeButton extends JPanel {
+
+		private static final long serialVersionUID = 938456324328L;
+
+		private Image image;
+		private boolean hovered;
+
+		public HomeButton(ImageIcon icon) {
+			super(new BorderLayout());
+			this.image = icon.getImage();
+			setBorder(new EmptyBorder(3, 6, 2, 3));
+			setPreferredSize(new Dimension(24, 22));
+			setMaximumSize(new Dimension(24, 22));
+			setFocusable(false);
+			addMouseListener(new MouseAdapter() {
+				public void mouseReleased(MouseEvent e) {
+					setSelection(getComponentIndex(HomeButton.this));
+				}
+
+				public void mouseEntered(MouseEvent e) {
+					hovered = true;
+					repaint();
+				}
+
+				public void mouseExited(MouseEvent e) {
+					hovered = false;
+					repaint();
+				}
+			});
+		}
+
+		public void paintComponent(Graphics g) {
+			super.paintComponent(g);
+			((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+					RenderingHints.VALUE_ANTIALIAS_ON);
+			if (getComponentIndex(this) == idx) {
+				g.setColor(new Color(255, 255, 255, 200));
+				g.fillRoundRect(0, 0, getWidth() - 2, getHeight() - 1, 4, 4);
+				g.setColor(new Color(180, 180, 180, 200));
+				g.drawRoundRect(0, 0, getWidth() - 2, getHeight() - 1, 4, 4);
+			} else if (hovered) {
+				g.setColor(new Color(255, 255, 255, 150));
+				g.fillRoundRect(0, 0, getWidth() - 2, getHeight() - 1, 4, 4);
+				g.setColor(new Color(180, 180, 180, 150));
+				g.drawRoundRect(0, 0, getWidth() - 2, getHeight() - 1, 4, 4);
+			}
+			g.drawImage(image, 3, 3, null);
+		}
+
+	}
+
+	/**
 	 * @author Tekk
 	 */
 	private class BotButton extends JPanel {
 
-		private static final long serialVersionUID = 1L;
+		private static final long serialVersionUID = 329845763420L;
 
 		private JLabel nameLabel;
 		private boolean hovered;
@@ -222,9 +279,10 @@ public class BotToolBar extends JToolBar {
 			setFocusable(false);
 			addMouseListener(new MouseAdapter() {
 				public void mouseReleased(MouseEvent e) {
-					if (hovered && close && BotToolBar.this.getComponentCount() > 6) {
+					if (hovered && close) {
+						int idx = BotToolBar.this.getComponentIndex(BotButton.this);
 						listener.actionPerformed(new ActionEvent(this,
-								ActionEvent.ACTION_PERFORMED, "File.Close Bot"));
+								ActionEvent.ACTION_PERFORMED, "Close." + idx));
 					} else {
 						setSelection(getComponentIndex(BotButton.this));
 					}
@@ -242,7 +300,7 @@ public class BotToolBar extends JToolBar {
 			});
 			addMouseMotionListener(new MouseMotionAdapter() {
 				public void mouseMoved(MouseEvent e) {
-					close = e.getX() > 95 && BotToolBar.this.getComponentCount() > 6;
+					close = e.getX() > 95;
 					repaint();
 				}
 			});
@@ -254,20 +312,27 @@ public class BotToolBar extends JToolBar {
 
 		public void paintComponent(Graphics g) {
 			super.paintComponent(g);
+			((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+					RenderingHints.VALUE_ANTIALIAS_ON);
 			if (getComponentIndex(this) == idx) {
-				((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-						RenderingHints.VALUE_ANTIALIAS_ON);
 				g.setColor(new Color(255, 255, 255, 200));
-				g.fillRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 4, 4);
+				g.fillRoundRect(0, 0, getWidth() - 2, getHeight() - 1, 4, 4);
 				g.setColor(new Color(180, 180, 180, 200));
-				g.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 4, 4);
+				g.drawRoundRect(0, 0, getWidth() - 2, getHeight() - 1, 4, 4);
+			} else if (hovered) {
+				g.setColor(new Color(255, 255, 255, 150));
+				g.fillRoundRect(0, 0, getWidth() - 2, getHeight() - 1, 4, 4);
+				g.setColor(new Color(180, 180, 180, 150));
+				g.drawRoundRect(0, 0, getWidth() - 2, getHeight() - 1, 4, 4);
+			} else {
+				g.setColor(new Color(180, 180, 180, 150));
+				g.drawRoundRect(0, 0, getWidth() - 2, getHeight() - 1, 4, 4);
 			}
 			if (hovered && close) {
 				g.drawImage(IMAGE_CLOSE_OVER, 90, 3, null);
 			} else {
 				g.drawImage(IMAGE_CLOSE, 90, 3, null);
 			}
-
 		}
 	}
 

@@ -15,6 +15,8 @@ public class RSTilePath extends RSPath {
 	protected RSTile[] tiles;
 	protected RSTile[] orig;
 
+	private boolean end;
+
 	public RSTilePath(MethodContext ctx, RSTile[] tiles) {
 		super(ctx);
 		this.orig = tiles;
@@ -29,19 +31,27 @@ public class RSTilePath extends RSPath {
 		if (next == null) {
 			return false;
 		}
-		if (next == getEnd()) {
-			return !next.equals(methods.walking.getDestination()) &&
-					methods.walking.walkTileMM(next, 0, 0);
+		if (next.equals(getEnd())) {
+			if (methods.calc.distanceTo(next) <= 1 || (end && methods.players.getMyPlayer().isMoving()) || next.equals(methods.walking.getDestination())) {
+				return false;
+			}
+			end = true;
+		} else {
+			end = false;
+		}
+		if (options.contains(TraversalOption.HANDLE_RUN) && !methods.walking.isRunEnabled() && methods.walking.getEnergy() > 50) {
+			methods.walking.setRun(true);
+			sleep(300);
 		}
 		if (options.contains(TraversalOption.SPACE_ACTIONS)) {
 			RSTile dest = methods.walking.getDestination();
 			if (dest != null && methods.players.getMyPlayer().isMoving() &&
 					methods.calc.distanceTo(dest) > 5 &&
-					methods.calc.distanceBetween(next, dest) < 5) {
+					methods.calc.distanceBetween(next, dest) < 7) {
 				return true;
 			}
 		}
-		return methods.walking.walkTileMM(next);
+		return methods.walking.walkTileMM(next, 0, 0);
 	}
 
 	/**
@@ -85,17 +95,21 @@ public class RSTilePath extends RSPath {
 	 *
 	 * @param maxX The max deviation on the X axis
 	 * @param maxY The max deviation on the Y axis
+	 * @return This path.
 	 */
-	public void randomize(int maxX, int maxY) {
+	public RSTilePath randomize(int maxX, int maxY) {
 		for (int i = 0; i < tiles.length; ++i) {
 			tiles[i] = orig[i].randomize(maxX, maxY);
 		}
+		return this;
 	}
 
 	/**
 	 * Reverses this path.
+	 *
+	 * @return This path.
 	 */
-	public void reverse() {
+	public RSTilePath reverse() {
 		RSTile[] reversed = new RSTile[tiles.length];
 		for (int i = 0; i < orig.length; ++i) {
 			reversed[i] = orig[tiles.length - 1 - i];
@@ -106,6 +120,18 @@ public class RSTilePath extends RSPath {
 			reversed[i] = tiles[tiles.length - 1 - i];
 		}
 		tiles = reversed;
+		return this;
+	}
+
+	/**
+	 * Returns an array containing all of the vertices in this path.
+	 *
+	 * @return an array containing all of the vertices in this path.
+	 */
+	public RSTile[] toArray() {
+		RSTile[] a = new RSTile[tiles.length];
+		System.arraycopy(tiles, 0, a, 0, tiles.length);
+		return a;
 	}
 
 }

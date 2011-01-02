@@ -25,7 +25,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -34,12 +33,12 @@ import java.util.concurrent.Executors;
  * RSBot AIO Firemaker
  *
  * @author Jacmob
- * @version 2.0
+ * @version 2.2
  */
-@ScriptManifest(authors = {"Jacmob"}, keywords = "Firemaking", name = "AIO Firemaker", version = 2.0, description = "Place your logs at top of the bank.")
+@ScriptManifest(authors = {"Jacmob"}, keywords = "Firemaking", name = "AIO Firemaker", version = 2.2, description = "Place your logs at top of the bank.")
 public class AIOFiremaker extends Script implements PaintListener {
 
-	private enum State {
+	private static enum State {
 		FIREMAKE, OPEN_BANK, BANK
 	}
 
@@ -83,20 +82,27 @@ public class AIOFiremaker extends Script implements PaintListener {
 	public static final int TINDERBOX = 590;
 	public static final int FIRE_RING = 13659;
 	public static final int FLAME_GLOVES = 13660;
-	public static final int[] FireObjects = {2732, 2982, 2983, 2984, 2985, 2986, 1189};
+	public static final int[] FIRE_OBJECTS = {2732, 2982, 2983, 2984, 2985, 2986, 1189};
 
 	public static final Color BG = new Color(100, 0, 0, 150);
 	public static final Color DROP = new Color(20, 0, 0, 255);
 	public static final Color TEXT = new Color(200, 255, 0, 255);
+
+	public static final Color TARGET_OUTLINE = new Color(255, 0, 0, 20);
+	public static final Color TARGET_FILL = new Color(255, 255, 0, 20);
+	public static final Color PATH_OUTLINE = new Color(0, 255, 255, 20);
+	public static final Color PATH_FILL = new Color(0, 255, 0, 20);
+
+	public static final RSTile[] EMPTY_PATH = new RSTile[0];
 
 	private int logId = 0;
 	private String logName = "";
 	private String eqString = "";
 	private double xpPerFire = 0;
 	private double xpMultiplier = 1;
-	private FMLocation location;
+	private Location location;
 
-	private int nextMinRunEnergy = random(20, 50);
+	private int nextMinEnergy = random(20, 50);
 	private int currentZone = 0;
 	private int sine = 0;
 	private int sineM = 1;
@@ -105,19 +111,9 @@ public class AIOFiremaker extends Script implements PaintListener {
 	private long lastXPCheckTime = 0;
 	private RSTile nextTile = null;
 	private RSTile blackListedTile = null;
+	private RSTile[] path = EMPTY_PATH;
 
-	private final AStar pathFinder = new AStar();
 	private final ExecutorService antiBanExecutor = Executors.newSingleThreadExecutor();
-
-	private RSTile checkTile(RSTile tile) {
-		if (calc.distanceTo(tile) < 17) {
-			return tile;
-		}
-		RSTile loc = getMyPlayer().getLocation();
-		RSTile walk = new RSTile((loc.getX() + tile.getX()) / 2,
-				(loc.getY() + tile.getY()) / 2);
-		return calc.distanceTo(walk) < 17 ? walk : checkTile(walk);
-	}
 
 	private void checkXP() {
 		if (System.currentTimeMillis() - lastXPCheckTime < 300000) {
@@ -195,25 +191,13 @@ public class AIOFiremaker extends Script implements PaintListener {
 		}
 	}
 
-	private RSTile getClosestTileInRegion(RSTile tile) {
-		RSTile loc = getMyPlayer().getLocation();
-		for (int i = 0; i < 1000; ++i) {
-			if (tileInRegion(tile)) {
-				return tile;
-			}
-			tile = new RSTile((loc.getX() + tile.getX()) / 2,
-					(loc.getY() + tile.getY()) / 2);
-		}
-		return null;
-	}
-
 	private RSTile getProceedingTile(RSTile location) {
 		if (location == null) {
 			return null;
 		}
-		FMRow[] rows = this.location.zones[currentZone].rows;
+		Row[] rows = this.location.zones[currentZone].rows;
 		int x = location.getX(), y = location.getY();
-		for (FMRow row : rows) {
+		for (Row row : rows) {
 			int start = Math.min(row.start, row.end);
 			int end = Math.max(row.start, row.end);
 			if (this.location.zones[currentZone].horizontal && y == row.pos
@@ -271,7 +255,7 @@ public class AIOFiremaker extends Script implements PaintListener {
 			return false;
 		}
 		int objID = obj.getID();
-		for (int i : FireObjects) {
+		for (int i : FIRE_OBJECTS) {
 			if (objID == i) {
 				return true;
 			}
@@ -284,9 +268,9 @@ public class AIOFiremaker extends Script implements PaintListener {
 	}
 
 	private boolean isInRow(RSTile location) {
-		FMRow[] rows = this.location.zones[currentZone].rows;
+		Row[] rows = this.location.zones[currentZone].rows;
 		int x = location.getX(), y = location.getY();
-		for (FMRow row : rows) {
+		for (Row row : rows) {
 			int start = Math.min(row.start, row.end);
 			int end = Math.max(row.start, row.end);
 			if (this.location.zones[currentZone].horizontal && y == row.pos
@@ -372,9 +356,9 @@ public class AIOFiremaker extends Script implements PaintListener {
 								}
 								sleep(random(50, 100));
 							} else {
-								if (walking.getEnergy() > nextMinRunEnergy) {
+								if (walking.getEnergy() > nextMinEnergy) {
 									walking.setRun(true);
-									nextMinRunEnergy = random(20, 50);
+									nextMinEnergy = random(20, 50);
 								}
 								if (calc.distanceTo(nextTile) < 16) {
 									walkTo(nextTile);
@@ -490,9 +474,9 @@ public class AIOFiremaker extends Script implements PaintListener {
 			case OPEN_BANK:
 				RSTile bankLoc = nearestBank();
 				nextTile = bankLoc;
-				if (walking.getEnergy() > nextMinRunEnergy) {
+				if (walking.getEnergy() > nextMinEnergy) {
 					walking.setRun(true);
-					nextMinRunEnergy = random(20, 50);
+					nextMinEnergy = random(20, 50);
 				}
 				if (inventory.isItemSelected()) {
 					unUse();
@@ -508,7 +492,11 @@ public class AIOFiremaker extends Script implements PaintListener {
 					} else {
 						sleep(random(200, 400));
 						if (!bank.open()) {
-							rotateCamera();
+							if (random(0, 10) == 0) {
+								walking.walkTileMM(bankLoc);
+							} else {
+								rotateCamera();
+							}
 						}
 					}
 				} else if (location.randomness == -1) {
@@ -601,7 +589,10 @@ public class AIOFiremaker extends Script implements PaintListener {
 							tbIF.getComponent().getHeight() + 2);
 				}
 			} else if (nextTile != null) {
-				highlightTile(g, nextTile, new Color(255, 0, 0, 20), new Color(255, 255, 0, 20));
+				highlightTile(g, nextTile, TARGET_OUTLINE, TARGET_FILL);
+				for (RSTile t : path) {
+					highlightTile(g, t, PATH_OUTLINE, PATH_FILL);
+				}
 			}
 
 			if (scriptStartTime == -1) {
@@ -730,11 +721,6 @@ public class AIOFiremaker extends Script implements PaintListener {
 		camera.setAngle(angle);
 	}
 
-	private boolean tileInRegion(RSTile tile) {
-		int tileX = tile.getX() - game.getBaseX(), tileY = tile.getY() - game.getBaseY();
-		return !(tileX < 0 || tileY < 0 || tileX > 103 || tileY > 103);
-	}
-
 	private void unUse() {
 		int rand = random(0, 2);
 		if (game.getCurrentTab() != Game.TAB_INVENTORY) {
@@ -756,35 +742,9 @@ public class AIOFiremaker extends Script implements PaintListener {
 		return item != null && item.getID() == TINDERBOX;
 	}
 
-	public void walkTo(RSTile tile) {
-		RSTile dest = getMyPlayer().getLocation();
-		RSTile[] path = null;
-		if (calc.distanceBetween(tile, dest) > 1) {
-			dest = getClosestTileInRegion(tile);
-			if (dest != null) {
-				path = pathFinder.findPath(getMyPlayer().getLocation(), dest);
-			}
-		}
-		if (path == null) {
-			walking.walkTileMM(checkTile(tile));
-			return;
-		}
-		for (int i = path.length - 1; i >= 0; i--) {
-			if (calc.distanceTo(path[i]) < 17) {
-				RSTile currDest = walking.getDestination();
-				if (currDest != null) {
-					if (calc.distanceBetween(currDest, path[i]) <= 3) {
-						break;
-					}
-				}
-				walking.walkTileMM(checkTile(path[i]));
-				sleep(random(200, 400));
-				RSTile cdest = walking.getDestination();
-				if (cdest != null && calc.distanceTo(cdest) > 6) {
-					sleep(random(300, 500));
-				}
-				break;
-			}
+	public void walkTo(RSTile dest) {
+		if (!walking.walkTo(dest)) {
+			walking.walkTileMM(walking.getClosestTileOnMap(dest));
 		}
 	}
 
@@ -840,462 +800,292 @@ public class AIOFiremaker extends Script implements PaintListener {
 		}
 	}
 
-	class AStar {
+	static class FMFrame extends JFrame {
 
-		private class Node {
+		/**
+		 * AIO Firemaker Swing GUI Class
+		 */
+		private static long serialVersionUID = -6177554547983230084L;
+		private int currentLogs;
+		private String currentLogName;
+		private JComboBox logsBox;
+		private JComboBox locationsBox;
+		private Location currentLocation;
+		private HashMap<Integer, Double> XPMap;
+		private HashMap<String, Integer> logMap;
+		private HashMap<String, Location> locationMap;
 
-			public int x, y;
-			public Node parent;
-			public double g, f;
+		public Location[] LOCATIONS;
+		public File SETTINGS_FILE = new File(new File(
+				GlobalConfiguration.Paths.getSettingsDirectory()), "AIOFM.txt");
 
-			public Node(int x, int y) {
-				this.x = x;
-				this.y = y;
-				g = f = 0;
-			}
+		public FMFrame(String title) {
+			super(title);
 
-			public boolean isAt(Node another) {
-				return x == another.x && y == another.y;
-			}
+			/**
+			 * LOCATIONS ARRAY
+			 *
+			 * Location("Name", Zone[], (RSTile)bankLocation, (int)randomness)
+			 * Zone(Row[], (boolean)horizontal) Row((int)startpos,
+			 * (int)endpos, (int)otheraxispos)
+			 *
+			 * If a zone is horizontal, starpos and endpos for all rows will refer
+			 * to the x axis and otheraxispos will refer to the y position. As far
+			 * as I have seen all firemaking runs from east to west, so horizontal =
+			 * true && endpos < startpos The randomness for each location determines
+			 * how it will walk to the bank tile. If -1 is specified, it will walk
+			 * directly to the found bank if possible, otherwise the script will
+			 * always walk to bankLocation, with the randomness specified. 0 = no
+			 * randomness, 1 = one tile randomness etc.
+			 */
+			LOCATIONS = new Location[]{
 
-			public RSTile toRSTile(int baseX, int baseY) {
-				return new RSTile(x + baseX, y + baseY);
-			}
+					new Location("Grand Exchange", new Zone[]{
+							new Zone(new Row[]{new Row(3172, 3157, 3484),
+									new Row(3178, 3151, 3483),
+									new Row(3178, 3151, 3482),
+									new Row(3169, 3161, 3481)}, true),
+							new Zone(new Row[]{new Row(3173, 3156, 3494),
+									new Row(3172, 3157, 3495),
+									new Row(3178, 3151, 3496),
+									new Row(3178, 3151, 3497),
+									new Row(3168, 3161, 3498)}, true)},
+							new RSTile(3162, 3490), 1),
 
+					new Location("Draynor Village", new Zone[]{new Zone(
+							new Row[]{new Row(3097, 3077, 3249),
+									new Row(3098, 3072, 3248),
+									new Row(3095, 3081, 3247)}, true)},
+							new RSTile(3093, 3244), 0),
+
+					new Location("Fist of Guthix", new Zone[]{new Zone(
+							new Row[]{new Row(1717, 1676, 5601),
+									new Row(1718, 1676, 5600),
+									new Row(1718, 1676, 5599),
+									new Row(1718, 1676, 5598),
+									new Row(1718, 1676, 5597)}, true)},
+							new RSTile(1703, 5599), -1),
+
+					new Location("Varrock West", new Zone[]{new Zone(
+							new Row[]{new Row(3199, 3175, 3431),
+									new Row(3199, 3168, 3430),
+									new Row(3199, 3168, 3429),
+									new Row(3199, 3168, 3428)}, true)},
+							new RSTile(3183, 3435), 0),
+
+					new Location("Varrock East", new Zone[]{new Zone(
+							new Row[]{new Row(3265, 3241, 3429),
+									new Row(3265, 3241, 3428),
+									new Row(3257, 3255, 3427),
+									new Row(3252, 3250, 3427)}, true)},
+							new RSTile(3253, 3421), 0),
+
+					new Location("Falador East", new Zone[]{new Zone(
+							new Row[]{new Row(3032, 3005, 3359),
+									new Row(3032, 3005, 3360),
+									new Row(3032, 3001, 3361),
+									new Row(3032, 3001, 3362),
+									new Row(3032, 3001, 3363)}, true)},
+							new RSTile(3012, 3356), 0),
+
+					new Location("Yanille", new Zone[]{new Zone(
+							new Row[]{new Row(2606, 2577, 3099),
+									new Row(2606, 2577, 3098),
+									new Row(2606, 2578, 3097)}, true)},
+							new RSTile(2612, 3092), 0)
+
+			};
+
+			currentLocation = null;
+			logsBox = new JComboBox();
+			locationsBox = new JComboBox();
+			XPMap = new HashMap<Integer, Double>();
+			logMap = new HashMap<String, Integer>();
+			locationMap = new HashMap<String, Location>();
+			setupFrame();
+			setVisible(true);
 		}
 
-		private int[][] blocks;
-
-		public AStar() {
-
+		public Location getSelectedLocation() {
+			return currentLocation;
 		}
 
-		private Node cheapestNode(ArrayList<Node> open) {
-			Node c = null;
-			for (Node t : open) {
-				if (c == null || t.f < c.f) {
-					c = t;
+		public double[] getSelectedLogInfo() {
+			return new double[]{currentLogs, XPMap.get(currentLogs)};
+		}
+
+		public String getSelectedLogName() {
+			return currentLogName;
+		}
+
+		private void setupFrame() {
+
+			// FRAME
+
+			setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+			setResizable(false);
+			setAlwaysOnTop(true);
+			setLocationRelativeTo(null);
+			setSize(200, 120);
+
+			// START BUTTON
+
+			JButton startButton = new JButton("Start");
+			add(startButton, BorderLayout.SOUTH);
+			startButton.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent evt) {
+
+					currentLocation = locationMap.get(locationsBox
+							.getSelectedItem().toString());
+					currentLogs = logMap.get(logsBox.getSelectedItem().toString());
+					currentLogName = logsBox.getSelectedItem().toString();
+
+					// WRITE TO SETTINGS FILE
+
+					try {
+						BufferedWriter out = new BufferedWriter(
+								new FileWriter(SETTINGS_FILE));
+						out.write(currentLogName + ":"
+								+ locationsBox.getSelectedItem().toString());
+						out.close();
+					} catch (Exception ignored) {
+					}
+
+					// DISPOSE
+
+					setVisible(false);
+					dispose();
 				}
-			}
-			return c;
-		}
+			});
 
-		private double diagonalHeuristic(Node current, Node end) {
-			double dx = Math.abs(current.x - end.x);
-			double dy = Math.abs(current.y - end.y);
-			double diag = Math.min(dx, dy);
-			double straight = dx + dy;
-			return Math.sqrt(2.0) * diag + straight - 2 * diag;
-		}
+			// COMBO BOXES
 
-		public RSTile[] findPath(RSTile cur, RSTile dest) {
-			int baseX = game.getBaseX(), baseY = game.getBaseY();
-			int currX = cur.getX() - baseX, currY = cur.getY() - baseY;
-			int destX = dest.getX() - baseX, destY = dest.getY() - baseY;
-			if (currX < 0 || currY < 0 || currX > 103 || currY > 103 || destX < 0
-					|| destY < 0 || destX > 103 || destY > 103) {
-				return null;
+			String[] locations = new String[LOCATIONS.length];
+
+			/**
+			 * LOG ARRAYS
+			 *
+			 * The following three arrays must be the same length, with
+			 * <code>LOG_NAMES</code> referring to the log name, <code>LOG_IDS</code>
+			 * referring to the log ID, and <code>LOG_XPS</code> referring to the
+			 * firemaking XP gained each time a log of that kind is burned.
+			 *
+			 * Each string in (String[] LOG_NAMES) must be the correct name of the item
+			 * specified in LOG_IDS or the script will be unable to withdraw the LOG_NAMES
+			 * from the bank.
+			 */
+			String[] LOG_NAMES = {"Logs", "Oak logs", "Willow logs", "Maple logs", "Yew logs", "Magic logs"};
+			int[] LOG_IDS = {1511, 1521, 1519, 1517, 1515, 1513};
+			double[] LOG_XPS = {40.0, 60.0, 90.0, 135.0, 202.5, 303.8};
+
+			for (int i = 0; i < LOG_NAMES.length; i++) {
+				logMap.put(LOG_NAMES[i], LOG_IDS[i]);
+				XPMap.put(LOG_IDS[i], LOG_XPS[i]);
 			}
-			ArrayList<Node> closed = new ArrayList<Node>(), open = new ArrayList<Node>();
-			blocks = walking.getCollisionFlags(game.getPlane());
-			Node current = new Node(currX, currY);
-			Node destination = new Node(destX, destY);
-			open.add(current);
-			while (open.size() > 0) {
-				current = cheapestNode(open);
-				closed.add(current);
-				open.remove(open.indexOf(current));
-				for (Node n : getSurroundingWalkableNodes(current)) {
-					if (!isIn(closed, n)) {
-						if (!isIn(open, n)) {
-							n.parent = current;
-							n.g = current.g + getAdditionalCost(n, current);
-							n.f = n.g + diagonalHeuristic(n, destination);
-							open.add(n);
-						} else {
-							Node old = getNode(open, n);
-							if (current.g + getAdditionalCost(old, current) < old.g) {
-								old.parent = current;
-								old.g = current.g + getAdditionalCost(old, current);
-								old.f = old.g + diagonalHeuristic(old, destination);
-							}
-						}
+
+			for (int i = 0; i < locations.length; i++) {
+				locations[i] = LOCATIONS[i].name;
+				locationMap.put(locations[i], LOCATIONS[i]);
+			}
+
+			locationsBox.setModel(new DefaultComboBoxModel(locations));
+			add(locationsBox, BorderLayout.CENTER);
+
+			logsBox.setModel(new DefaultComboBoxModel(LOG_NAMES));
+			add(logsBox, BorderLayout.NORTH);
+
+			// LOAD SAVED SELECTIONS FROM SETTINGS FILE
+
+			try {
+
+				BufferedReader in = new BufferedReader(new FileReader(
+						SETTINGS_FILE));
+				String line;
+				String[] opts = {};
+
+				while ((line = in.readLine()) != null) {
+					if (line.contains(":")) {
+						opts = line.split(":");
 					}
 				}
-				if (isIn(closed, destination)) {
-					return getPath(closed.get(closed.size() - 1), baseX, baseY);
+				in.close();
+				if (opts.length == 2) {
+					logsBox.setSelectedItem(opts[0]);
+					locationsBox.setSelectedItem(opts[1]);
 				}
+			} catch (IOException ignored) {
 			}
-			return null;
+
 		}
 
-		private double getAdditionalCost(Node start, Node end) {
-			double cost = 1.0;
-			if (!(start.x == end.y) || start.x == end.y) {
-				cost = Math.sqrt(2.0);
-			}
-			return cost;
-		}
-
-		private Node getNode(ArrayList<Node> nodes, Node key) {
-			for (Node n : nodes) {
-				if (n.isAt(key)) {
-					return n;
-				}
-			}
-			return null;
-		}
-
-		private RSTile[] getPath(Node endNode, int baseX,
-								 int baseY) {
-			ArrayList<RSTile> reversePath = new ArrayList<RSTile>();
-			Node p = endNode;
-			while (p.parent != null) {
-				reversePath.add(p.toRSTile(baseX, baseY));
-				int next = (int) (Math.random() * 4 + 5);
-				for (int i = 0; i < next && p.parent != null; i++) {
-					p = p.parent;
-				}
-			}
-			RSTile[] fixedPath = new RSTile[reversePath.size()];
-			for (int i = 0; i < fixedPath.length; i++) {
-				fixedPath[i] = reversePath.get(fixedPath.length - 1 - i);
-			}
-			return fixedPath;
-		}
-
-		private ArrayList<Node> getSurroundingWalkableNodes(Node t) {
-			ArrayList<Node> tiles = new ArrayList<Node>();
-			int curX = t.x, curY = t.y;
-			if (curX > 0 && curY < 103
-					&& (blocks[curX - 1][curY + 1] & 0x1280138) == 0
-					&& (blocks[curX - 1][curY] & 0x1280108) == 0
-					&& (blocks[curX][curY + 1] & 0x1280120) == 0) {
-				tiles.add(new Node(curX - 1, curY + 1));
-			}
-			if (curY < 103 && (blocks[curX][curY + 1] & 0x1280120) == 0) {
-				tiles.add(new Node(curX, curY + 1));
-			}
-			if (curX > 0 && curY < 103
-					&& (blocks[curX - 1][curY + 1] & 0x1280138) == 0
-					&& (blocks[curX - 1][curY] & 0x1280108) == 0
-					&& (blocks[curX][curY + 1] & 0x1280120) == 0) {
-				tiles.add(new Node(curX + 1, curY + 1));
-			}
-			if (curX > 0 && (blocks[curX - 1][curY] & 0x1280108) == 0) {
-				tiles.add(new Node(curX - 1, curY));
-			}
-			if (curX < 103 && (blocks[curX + 1][curY] & 0x1280180) == 0) {
-				tiles.add(new Node(curX + 1, curY));
-			}
-			if (curX > 0 && curY > 0
-					&& (blocks[curX - 1][curY - 1] & 0x128010e) == 0
-					&& (blocks[curX - 1][curY] & 0x1280108) == 0
-					&& (blocks[curX][curY - 1] & 0x1280102) == 0) {
-				tiles.add(new Node(curX - 1, curY - 1));
-			}
-			if (curY > 0 && (blocks[curX][curY - 1] & 0x1280102) == 0) {
-				tiles.add(new Node(curX, curY - 1));
-			}
-			if (curX < 103 && curY > 0
-					&& (blocks[curX + 1][curY - 1] & 0x1280183) == 0
-					&& (blocks[curX + 1][curY] & 0x1280180) == 0
-					&& (blocks[curX][curY - 1] & 0x1280102) == 0) {
-				tiles.add(new Node(curX + 1, curY - 1));
-			}
-			return tiles;
-		}
-
-		private boolean isIn(ArrayList<Node> nodes, Node key) {
-			return getNode(nodes, key) != null;
-		}
-	}
-
-}
-
-class FMFrame extends JFrame {
-
-	/**
-	 * AIO Firemaker Swing GUI Class
-	 */
-	private static long serialVersionUID = -6177554547983230084L;
-	private int currentLogs;
-	private String currentLogName;
-	private JComboBox logsBox;
-	private JComboBox locationsBox;
-	private FMLocation currentLocation;
-	private HashMap<Integer, Double> XPMap;
-	private HashMap<String, Integer> logMap;
-	private HashMap<String, FMLocation> locationMap;
-
-	public FMLocation[] LOCATIONS;
-	public File SETTINGS_FILE = new File(new File(
-			GlobalConfiguration.Paths.getSettingsDirectory()), "AIOFM.txt");
-
-	public FMFrame(String title) {
-		super(title);
-
-		/*
-		 * LOCATIONS ARRAY
-		 *
-		 * FMLocation("Name", FMZone[], (RSTile)bankLocation, (int)randomness)
-		 * FMZone(FMRow[], (boolean)horizontal) FMRow((int)startpos,
-		 * (int)endpos, (int)otheraxispos)
-		 *
-		 * If a zone is horizontal, starpos and endpos for all rows will refer
-		 * to the x axis and otheraxispos will refer to the y position. As far
-		 * as I have seen all firemaking runs from east to west, so horizontal =
-		 * true && endpos < startpos The randomness for each location determins
-		 * how it will walk to the bank tile. If -1 is specified, it will walk
-		 * directly to the found bank if possible, otherwise the script will
-		 * always walk to bankLocation, with the randomness specified. 0 = no
-		 * randomness, 1 = one tile randomness etc.
-		 */
-		LOCATIONS = new FMLocation[]{
-
-				new FMLocation("Grand Exchange", new FMZone[]{
-						new FMZone(new FMRow[]{new FMRow(3172, 3157, 3484),
-								new FMRow(3178, 3151, 3483),
-								new FMRow(3178, 3151, 3482),
-								new FMRow(3169, 3161, 3481)}, true),
-						new FMZone(new FMRow[]{new FMRow(3173, 3156, 3494),
-								new FMRow(3172, 3157, 3495),
-								new FMRow(3178, 3151, 3496),
-								new FMRow(3178, 3151, 3497),
-								new FMRow(3168, 3161, 3498)}, true)},
-						new RSTile(3162, 3490), 1),
-
-				new FMLocation("Draynor Village", new FMZone[]{new FMZone(
-						new FMRow[]{new FMRow(3097, 3077, 3249),
-								new FMRow(3098, 3072, 3248),
-								new FMRow(3095, 3081, 3247)}, true)},
-						new RSTile(3093, 3244), 0),
-
-				new FMLocation("Fist of Guthix", new FMZone[]{new FMZone(
-						new FMRow[]{new FMRow(1717, 1676, 5601),
-								new FMRow(1718, 1676, 5600),
-								new FMRow(1718, 1676, 5599),
-								new FMRow(1718, 1676, 5598),
-								new FMRow(1718, 1676, 5597)}, true)},
-						new RSTile(1703, 5599), -1),
-
-				new FMLocation("Varrock West", new FMZone[]{new FMZone(
-						new FMRow[]{new FMRow(3199, 3175, 3431),
-								new FMRow(3199, 3168, 3430),
-								new FMRow(3199, 3168, 3429),
-								new FMRow(3199, 3168, 3428)}, true)},
-						new RSTile(3183, 3435), 0),
-
-				new FMLocation("Varrock East", new FMZone[]{new FMZone(
-						new FMRow[]{new FMRow(3265, 3241, 3429),
-								new FMRow(3265, 3241, 3428),
-								new FMRow(3257, 3255, 3427),
-								new FMRow(3252, 3250, 3427)}, true)},
-						new RSTile(3253, 3421), 0),
-
-				new FMLocation("Falador East", new FMZone[]{new FMZone(
-						new FMRow[]{new FMRow(3032, 3005, 3359),
-								new FMRow(3032, 3005, 3360),
-								new FMRow(3032, 3001, 3361),
-								new FMRow(3032, 3001, 3362),
-								new FMRow(3032, 3001, 3363)}, true)},
-						new RSTile(3012, 3356), 0),
-
-				new FMLocation("Yanille", new FMZone[]{new FMZone(
-						new FMRow[]{new FMRow(2606, 2577, 3099),
-								new FMRow(2606, 2577, 3098),
-								new FMRow(2606, 2578, 3097)}, true)},
-						new RSTile(2612, 3092), 0)
-
-		};
-
-		currentLocation = null;
-		logsBox = new JComboBox();
-		locationsBox = new JComboBox();
-		XPMap = new HashMap<Integer, Double>();
-		logMap = new HashMap<String, Integer>();
-		locationMap = new HashMap<String, FMLocation>();
-		setupFrame();
-		setVisible(true);
-	}
-
-	public FMLocation getSelectedLocation() {
-		return currentLocation;
-	}
-
-	public double[] getSelectedLogInfo() {
-		return new double[]{currentLogs, XPMap.get(currentLogs)};
-	}
-
-	public String getSelectedLogName() {
-		return currentLogName;
-	}
-
-	private void setupFrame() {
-
-		// FRAME
-
-		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-		setResizable(false);
-		setAlwaysOnTop(true);
-		setLocationRelativeTo(null);
-		setSize(200, 120);
-
-		// START BUTTON
-
-		JButton startButton = new JButton("Start");
-		add(startButton, BorderLayout.SOUTH);
-		startButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent evt) {
-
-				currentLocation = locationMap.get(locationsBox
-						.getSelectedItem().toString());
-				currentLogs = logMap.get(logsBox.getSelectedItem().toString());
-				currentLogName = logsBox.getSelectedItem().toString();
-
-				// WRITE TO SETTINGS FILE
-
-				try {
-					BufferedWriter out = new BufferedWriter(
-							new FileWriter(SETTINGS_FILE));
-					out.write(currentLogName + ":"
-							+ locationsBox.getSelectedItem().toString());
-					out.close();
-				} catch (Exception ignored) {
-				}
-
-				// DISPOSE
-
-				setVisible(false);
-				dispose();
-			}
-		});
-
-		// COMBO BOXES
-
-		String[] locations = new String[LOCATIONS.length];
-
-		/*
-		 * LOG ARRAYS
-		 *
-		 * The following three arrays must be the same length, with
-		 * <code>logs</code> referring to the log name, <code>logIDs</code>
-		 * referring to the log ID, and <code>logXPs</code> referring to the
-		 * firemaking XP gained each time a log of that kind is burned.
-		 *
-		 * Each string in (String[] logs) must be the correct name of the item
-		 * specified in logIDs or the script will be unable to withdraw the logs
-		 * from the bank.
-		 */
-		String[] logs = {"Logs", "Oak logs", "Willow logs",
-				"Maple logs", "Yew logs", "Magic logs"};
-		int[] logIDs = {1511, 1521, 1519, 1517, 1515, 1513};
-		double[] logXPs = {40.0, 60.0, 90.0, 135.0, 202.5, 303.8};
-
-		for (int i = 0; i < logs.length; i++) {
-			logMap.put(logs[i], logIDs[i]);
-			XPMap.put(logIDs[i], logXPs[i]);
-		}
-
-		for (int i = 0; i < locations.length; i++) {
-			locations[i] = LOCATIONS[i].name;
-			locationMap.put(locations[i], LOCATIONS[i]);
-		}
-
-		locationsBox.setModel(new DefaultComboBoxModel(locations));
-		add(locationsBox, BorderLayout.CENTER);
-
-		logsBox.setModel(new DefaultComboBoxModel(logs));
-		add(logsBox, BorderLayout.NORTH);
-
-		// LOAD SAVED SELECTIONS FROM SETTINGS FILE
-
-		try {
-
-			BufferedReader in = new BufferedReader(new FileReader(
-					SETTINGS_FILE));
-			String line;
-			String[] opts = {};
-
-			while ((line = in.readLine()) != null) {
-				if (line.contains(":")) {
-					opts = line.split(":");
-				}
-			}
-			in.close();
-			if (opts.length == 2) {
-				logsBox.setSelectedItem(opts[0]);
-				locationsBox.setSelectedItem(opts[1]);
-			}
-		} catch (IOException ignored) {
-		}
 
 	}
 
-}
+	static class Location {
 
-class FMLocation {
-	public String name;
-	public FMZone[] zones;
-	public RSTile bank;
-	public int randomness;
+		public String name;
+		public Zone[] zones;
+		public RSTile bank;
+		public int randomness;
 
-	public FMLocation(String name, FMZone[] zones,
-					  RSTile bank, int randomness) {
-		this.name = name;
-		this.zones = zones;
-		this.bank = bank;
-		this.randomness = randomness;
-	}
-}
-
-class FMRow {
-	public RSTile[] tiles;
-	public int start, end, pos;
-
-	public FMRow(int start, int end, int pos) {
-		this.start = start;
-		this.end = end;
-		this.pos = pos;
+		public Location(String name, Zone[] zones,
+						RSTile bank, int randomness) {
+			this.name = name;
+			this.zones = zones;
+			this.bank = bank;
+			this.randomness = randomness;
+		}
 	}
 
-	public void generateTiles(boolean horizontal) {
-		int length = Math.abs(end - start) + 1;
-		tiles = new RSTile[length];
-		if (end > start) {
-			if (horizontal) {
-				for (int i = 0; i < length; i++) {
-					tiles[i] = new RSTile(start + i, pos);
+	static class Row {
+
+		public RSTile[] tiles;
+		public int start, end, pos;
+
+		public Row(int start, int end, int pos) {
+			this.start = start;
+			this.end = end;
+			this.pos = pos;
+		}
+
+		public void generateTiles(boolean horizontal) {
+			int length = Math.abs(end - start) + 1;
+			tiles = new RSTile[length];
+			if (end > start) {
+				if (horizontal) {
+					for (int i = 0; i < length; i++) {
+						tiles[i] = new RSTile(start + i, pos);
+					}
+				} else {
+					for (int i = 0; i < length; i++) {
+						tiles[i] = new RSTile(pos, start + i);
+					}
 				}
 			} else {
-				for (int i = 0; i < length; i++) {
-					tiles[i] = new RSTile(pos, start + i);
-				}
-			}
-		} else {
-			if (horizontal) {
-				for (int i = 0; i < length; i++) {
-					tiles[i] = new RSTile(start - i, pos);
-				}
-			} else {
-				for (int i = 0; i < length; i++) {
-					tiles[i] = new RSTile(pos, start - i);
+				if (horizontal) {
+					for (int i = 0; i < length; i++) {
+						tiles[i] = new RSTile(start - i, pos);
+					}
+				} else {
+					for (int i = 0; i < length; i++) {
+						tiles[i] = new RSTile(pos, start - i);
+					}
 				}
 			}
 		}
+
 	}
 
-}
+	static class Zone {
+		public Row[] rows;
+		public boolean horizontal;
 
-class FMZone {
-	public FMRow[] rows;
-	public boolean horizontal;
-
-	public FMZone(FMRow[] fmRows, boolean horizontal) {
-		rows = fmRows;
-		this.horizontal = horizontal;
-		for (FMRow r : rows) {
-			r.generateTiles(horizontal);
+		public Zone(Row[] fmRows, boolean horizontal) {
+			rows = fmRows;
+			this.horizontal = horizontal;
+			for (Row r : rows) {
+				r.generateTiles(horizontal);
+			}
 		}
 	}
 

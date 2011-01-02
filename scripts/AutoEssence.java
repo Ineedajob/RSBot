@@ -15,7 +15,7 @@ import java.util.Set;
 /**
  * @author Jacmob
  */
-@ScriptManifest(name = "AutoEssence", authors = "Jacmob", keywords = "Mining", version = 1.3,
+@ScriptManifest(name = "AutoEssence", authors = "Jacmob", keywords = "Mining", version = 1.4,
 		description = "Varrock and Yanille essence miner.")
 public class AutoEssence extends Script implements PaintListener {
 
@@ -50,9 +50,13 @@ public class AutoEssence extends Script implements PaintListener {
 
 		int VARROCK_OPEN_DOOR = 24381;
 
+		int VARROCK_BANK_STAIRS = 24353;
+
 		RSTile WIZARD_TOWER_DOOR_TILE = new RSTile(2598, 3087);
 
 		int[] WIZARD_TOWER_DOORS = {1600, 1601};
+
+		int WIZARD_TOWER_STAIRS = 1723;
 
 		int AUBURY = 553;
 
@@ -235,9 +239,9 @@ public class AutoEssence extends Script implements PaintListener {
 
 	public abstract class WalkToArea extends Action {
 
-		private RSArea dest;
-		private String name;
-		private RSTile last;
+		protected RSArea dest;
+		protected String name;
+		protected RSTile last;
 
 		public WalkToArea(RSArea dest, String name) {
 			this.dest = dest;
@@ -255,11 +259,12 @@ public class AutoEssence extends Script implements PaintListener {
 			if (last == null || getMyPlayer().isIdle() || (calc.distanceTo(last) < 10 && !dest.contains(last))) {
 				if (calc.tileOnMap(tile)) {
 					walking.walkTileMM(tile);
+					sleep(random(1000, 1800));
 				} else if (!walking.walkTo(tile)) {
 					walking.walkTileOnScreen(calc.getTileOnScreen(tile));
+					sleep(random(1000, 1800));
 				}
 				last = walking.getDestination();
-				sleep(random(1000, 1800));
 			} else {
 				idle();
 			}
@@ -305,18 +310,29 @@ public class AutoEssence extends Script implements PaintListener {
 		// Varrock
 
 		actions.add(new WalkToArea(Constants.VARROCK_BANK_AREA, "Varrock east bank") {
+
+			private boolean turned;
+
 			protected boolean isTargetValid() {
 				return !canMine() && inVarrock();
 			}
 
 			public void process() {
+				RSTile dest = walking.getDestination();
+				if (random(0, 4) != 0 && !turned && dest != null && this.dest.contains(dest)) {
+					camera.setCompass('s');
+					turned = true;
+				}
+				if (Constants.AUBURY_AREA.contains(getMyPlayer().getLocation())) {
+					turned = false;
+				}
 				RSObject obj = objects.getNearest(Constants.VARROCK_OPEN_DOOR);
 				if (obj != null && calc.distanceBetween(obj.getLocation(), Constants.VARROCK_DOOR_TILE) < 2) {
 					if (obj.isOnScreen()) {
 						if (obj.doAction("Open")) {
 							sleep(random(1000, 2000));
 						}
-					} else if (!Constants.VARROCK_DOOR_TILE.equals(walking.getDestination())) {
+					} else if (!Constants.VARROCK_DOOR_TILE.equals(dest)) {
 						walking.walkTo(Constants.VARROCK_DOOR_TILE);
 					}
 				} else {
@@ -327,11 +343,16 @@ public class AutoEssence extends Script implements PaintListener {
 
 		actions.add(new WalkToArea(Constants.AUBURY_AREA, "Aubury") {
 
+			private boolean turned;
+
 			protected boolean isTargetValid() {
 				return canMine() && inVarrock();
 			}
 
 			public void process() {
+				if (Constants.VARROCK_BANK_AREA.contains(getMyPlayer().getLocation())) {
+					turned = false;
+				}
 				RSObject obj = objects.getNearest(Constants.VARROCK_OPEN_DOOR);
 				if (obj != null && calc.distanceBetween(obj.getLocation(), Constants.VARROCK_DOOR_TILE) < 2) {
 					if (obj.isOnScreen()) {
@@ -342,6 +363,16 @@ public class AutoEssence extends Script implements PaintListener {
 						walking.walkTo(Constants.VARROCK_DOOR_TILE);
 					}
 				} else {
+					RSTile dest = walking.getDestination();
+					if (!turned && dest != null && this.dest.contains(dest)) {
+						turned = true;
+						if (random(0, 5) != 0) {
+							mouse.move(game.getWidth() / 2, game.getHeight() / 2, 60, 60);
+						}
+						if (random(0, 5) != 0) {
+							camera.setCompass('n');
+						}
+					}
 					super.process();
 				}
 			}
@@ -442,6 +473,30 @@ public class AutoEssence extends Script implements PaintListener {
 
 		// Global
 
+		actions.add(new ObjectAction(Constants.VARROCK_BANK_STAIRS, "Climb-down") {
+
+			public String getDesc() {
+				return "Descending bank stairs.";
+			}
+
+			public boolean isValid() {
+				return game.getPlane() == 1 && calc.distanceTo(Constants.VARROCK_BANK_AREA.getCentralTile()) < 20;
+			}
+
+		});
+
+		actions.add(new ObjectAction(Constants.WIZARD_TOWER_STAIRS, "Climb-down") {
+
+			public String getDesc() {
+				return "Descending tower stairs.";
+			}
+
+			public boolean isValid() {
+				return game.getPlane() == 1 && calc.distanceTo(Constants.WIZARD_TOWER_AREA.getCentralTile()) < 20;
+			}
+
+		});
+
 		actions.add(new ObjectAction(Constants.PORTAL, "Enter") {
 			public String getDesc() {
 				return "Leaving mine.";
@@ -451,6 +506,7 @@ public class AutoEssence extends Script implements PaintListener {
 				return !canMine() && inMine();
 			}
 		});
+
 		actions.add(new ObjectAction(Constants.ROCK, "Mine") {
 
 			private int ticks = 0;
@@ -510,7 +566,7 @@ public class AutoEssence extends Script implements PaintListener {
 				}
 			}
 		}
-		return random(300, 500);
+		return random(80, 200);
 	}
 
 	public void onRepaint(Graphics g) {
@@ -565,11 +621,13 @@ public class AutoEssence extends Script implements PaintListener {
 	}
 
 	private boolean inVarrock() {
-		return calc.distanceTo(Constants.VARROCK_BANK_AREA.getCentralTile()) < 200;
+		return calc.distanceTo(Constants.VARROCK_BANK_AREA.getCentralTile()) < 200
+				&& game.getPlane() == 0;
 	}
 
 	private boolean inYanille() {
-		return calc.distanceTo(Constants.YANILLE_BANK_AREA.getCentralTile()) < 200;
+		return calc.distanceTo(Constants.YANILLE_BANK_AREA.getCentralTile()) < 200
+				&& game.getPlane() == 0;
 	}
 
 	private boolean inShop() {

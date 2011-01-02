@@ -26,7 +26,7 @@ import java.util.Set;
 /**
  * @author Jacmob
  */
-@ScriptManifest(name = "AIO Chopper", authors = {"Jacmob"}, keywords = "Woodcutting", version = 1.1,
+@ScriptManifest(name = "AIO Chopper", authors = {"Jacmob"}, keywords = "Woodcutting", version = 1.2,
 		description = "Select options in the GUI")
 public class AIOChopper extends Script implements PaintListener {
 
@@ -151,12 +151,19 @@ public class AIOChopper extends Script implements PaintListener {
 		}
 		switch (action = getAction()) {
 			case WALK_TO_TREES:
-				walkTo(currentLocation.treeArea);
+				if (currentLocation.bankHandler.exit()) {
+					walking.walkTo(currentLocation.treeArea.getCentralTile().randomize(2, 2));
+				}
 				break;
 			case WALK_TO_BANK:
-				walkTo(currentLocation.bankArea);
+				walking.walkTo(currentLocation.bankHandler.getArea().getCentralTile().randomize(1, 1));
 				break;
 			case CHOP:
+				if (currentLocation != null && currentLocation.bankHandler != null &&
+						inArea(currentLocation.bankHandler.getArea()) &&
+						!currentLocation.bankHandler.exit()) {
+					break;
+				}
 				if (currentTrees == null) {
 					if (currentLocation == null) {
 						currentTrees = getLocalTrees(AUTO_QUEUE);
@@ -171,8 +178,8 @@ public class AIOChopper extends Script implements PaintListener {
 					loadNextTree();
 				}
 				boolean newTree = false;
-				if (currentTree == null || !currentTree.isStanding() && (
-						nextTree.isStanding() || !approached)) {
+				if (currentTree == null || !currentTree.isStanding() &&
+						(nextTree != null && nextTree.isStanding() || !approached)) {
 					currentTree = nextTree;
 					loadNextTree();
 					newTree = true;
@@ -204,12 +211,17 @@ public class AIOChopper extends Script implements PaintListener {
 							camera.turnToObject(obj, 10);
 							targetedCurrent = true;
 						} else {
-							walking.walkTileOnScreen(obj.getLocation());
-							sleep(500);
+							walking.walkTileOnScreen(obj.getLocation().randomize(1, 1));
+							sleep(random(500, 1000));
 						}
 					} else if (!targetedCurrent) {
 						camera.turnToObject(obj, 10);
 						targetedCurrent = true;
+					} else if (calc.distanceTo(obj.getLocation()) > 12) {
+						if (!walking.walkTo(obj.getLocation().randomize(3, 3))) {
+							walking.walkTileMM(walking.getClosestTileOnMap(obj.getLocation()));
+							sleep(500);
+						}
 					} else if (calc.distanceTo(obj.getLocation()) > 4) {
 						walking.walkTileOnScreen(obj.getLocation());
 						sleep(500);
@@ -241,6 +253,9 @@ public class AIOChopper extends Script implements PaintListener {
 				inventory.dropAllExcept(random(0, 2) == 0, AXE_IDS);
 				break;
 			case BANK:
+				if (!currentLocation.bankHandler.enter()) {
+					break;
+				}
 				if (bank.isOpen()) {
 					if (hatchet > 0 && !inventory.containsOneOf(AXE_IDS)) {
 						bank.withdraw(hatchet, 1);
@@ -349,23 +364,6 @@ public class AIOChopper extends Script implements PaintListener {
 
 	/* Defined Methods */
 
-	private void walkTo(RSArea area) {
-		if (area.contains(getMyPlayer().getLocation())) {
-			return;
-		}
-		if (!walking.isRunEnabled() && walking.getEnergy() > nextMinRunEnergy) {
-			nextMinRunEnergy = random(20, 50);
-			walking.setRun(true);
-		}
-		RSTile dest = walking.getDestination();
-		if (dest != null && getMyPlayer().isMoving() && calc.distanceTo(dest) > 8) {
-			return;
-		}
-		if (walking.walkTileMM(walking.getClosestTileOnMap(area.getCentralTile()))) {
-			sleep(500);
-		}
-	}
-
 	private void nest() {
 		RSGroundItem nest = groundItems.getNearest(NEST_IDS);
 		int initialCount = inventory.getCount();
@@ -446,7 +444,7 @@ public class AIOChopper extends Script implements PaintListener {
 		if (inventory.isFull()) {
 			if (powerChop)
 				return Action.DROP;
-			else if (inArea(currentLocation.bankArea))
+			else if (inArea(currentLocation.bankHandler.getArea()))
 				return Action.BANK;
 			else
 				return Action.WALK_TO_BANK;
@@ -486,7 +484,7 @@ public class AIOChopper extends Script implements PaintListener {
 		} else {
 			for (int i = selectedLocs.length - 1; i >= 0; --i) {
 				if (skills.getCurrentLevel(Skills.WOODCUTTING) >= selectedLocs[i].treeType.level &&
-						(selectedLocs[i].bankArea != null || getLocalTrees(selectedLocs[i].treeType).length > 0)) {
+						(selectedLocs[i].bankHandler != null || getLocalTrees(selectedLocs[i].treeType).length > 0)) {
 					currentLocation = selectedLocs[i];
 					break;
 				}
@@ -495,6 +493,9 @@ public class AIOChopper extends Script implements PaintListener {
 	}
 
 	private void loadNextTree() {
+		if (currentTrees == null) {
+			return;
+		}
 		Arrays.sort(currentTrees, new TreeComparator(getMyPlayer().getLocation()));
 		if (currentTrees.length >= 2 && currentTrees[0].equals(currentTree)) {
 			nextTree = currentTrees[1];
@@ -599,8 +600,13 @@ public class AIOChopper extends Script implements PaintListener {
 						return true;
 					}
 				}
+				for (int id : type.stumps) {
+					if (id == oid) {
+						return false;
+					}
+				}
 			}
-			return false;
+			return fallTime < System.currentTimeMillis() - 30000;
 		}
 
 		public String toString() {
@@ -654,21 +660,114 @@ public class AIOChopper extends Script implements PaintListener {
 
 	}
 
+	private static interface BankHandler {
+
+		public boolean exit();
+
+		public boolean enter();
+
+		public RSArea getArea();
+
+	}
+
+	private static class BasicBankHandler implements BankHandler {
+
+		private RSArea area;
+
+		public BasicBankHandler(RSArea area) {
+			this.area = area;
+		}
+
+		public boolean exit() {
+			return true;
+		}
+
+		public boolean enter() {
+			return true;
+		}
+
+		public RSArea getArea() {
+			return area;
+		}
+	}
+
+	private class TreeGnomeBankHandler implements BankHandler {
+
+		public final int STAIRS_DOWN = 1744;
+		public final int STAIRS_UP = 1742;
+		public final RSArea AREA = new RSArea(new RSTile(2442, 3423), new RSTile(2450, 3438));
+
+		public boolean exit() {
+			if (game.getPlane() == 0) {
+				return true;
+			}
+			if (bank.isOpen()) {
+				bank.close();
+			}
+			RSObject stairs = objects.getNearest(STAIRS_DOWN);
+			if (stairs != null) {
+				if (stairs.isOnScreen()) {
+					if (stairs.doAction("Climb-down")) {
+						for (int i = 0; i < 10; ++i) {
+							if (game.getPlane() == 0) {
+								break;
+							}
+							sleep(400);
+						}
+					} else {
+						camera.turnToObject(stairs);
+					}
+				} else {
+					walking.walkTileMM(stairs.getLocation());
+				}
+			}
+			return false;
+		}
+
+		public boolean enter() {
+			if (game.getPlane() == 1) {
+				return true;
+			}
+			RSObject stairs = objects.getNearest(STAIRS_UP);
+			if (stairs != null) {
+				if (stairs.isOnScreen()) {
+					if (stairs.doAction("Climb-up")) {
+						for (int i = 0; i < 10; ++i) {
+							if (game.getPlane() == 1) {
+								break;
+							}
+							sleep(400);
+						}
+					} else {
+						camera.turnToObject(stairs);
+					}
+				} else {
+					walking.walkTileMM(stairs.getLocation());
+				}
+			}
+			return false;
+		}
+
+		public RSArea getArea() {
+			return AREA;
+		}
+	}
+
 	private static class Location {
 
-		public final RSArea bankArea;
+		public final BankHandler bankHandler;
 		public final RSArea treeArea;
 		public final TreeType treeType;
 
-		public Location(RSArea bankA, RSArea treeA, TreeType treeT) {
-			this.bankArea = bankA;
+		public Location(BankHandler bankH, RSArea treeA, TreeType treeT) {
+			this.bankHandler = bankH;
 			this.treeArea = treeA;
 			this.treeType = treeT;
 		}
 
 	}
 
-	private static class SetupFrame extends JFrame {
+	private class SetupFrame extends JFrame {
 
 		public final String OPTION_OTHER = "Other...";
 		public final String OPTION_AUTO_CHOP = "Auto Select";
@@ -715,14 +814,25 @@ public class AIOChopper extends Script implements PaintListener {
 						new TreeArea(TreeType.YEW, new RSArea(new RSTile(3203, 3501), new RSTile(3224, 3505)))
 				}),
 
+				// Edgeville
+				new SelectableLocation("Edgeville", new RSArea(new RSTile(3091, 3488), new RSTile(3097, 3497)), new TreeArea[]{
+						new TreeArea(TreeType.YEW, new RSArea(new RSTile(3085, 3468), new RSTile(3089, 3482)))
+				}),
+
 				// Seers' Village
 				new SelectableLocation("Seers' Village", new RSArea(new RSTile(2722, 3490), new RSTile(2729, 3493)), new TreeArea[]{
 						new TreeArea(TreeType.MAPLE, new RSArea(new RSTile(2720, 3498), new RSTile(2734, 3503))),
 						new TreeArea(TreeType.MAGIC, new RSArea(new RSTile(2689, 3422), new RSTile(2698, 3428)))
 				}),
 
+				// Gnome Stronghold
+				new SelectableLocation("Gnome Stronghold", new TreeGnomeBankHandler(), new TreeArea[]{
+						new TreeArea(TreeType.YEW, new RSArea(new RSTile(2431, 3424), new RSTile(2441, 3443))),
+						new TreeArea(TreeType.MAGIC, new RSArea(new RSTile(2431, 3408), new RSTile(2435, 3413)))
+				}),
+
 				// Power Chop
-				new SelectableLocation(OPTION_OTHER, null, null)
+				new SelectableLocation(OPTION_OTHER, null)
 
 		};
 
@@ -837,6 +947,7 @@ public class AIOChopper extends Script implements PaintListener {
 					new Insets(0, 0, 0, 0), 0, 0));
 
 			paintEffects = new JCheckBox("Paint Effects");
+			paintEffects.setSelected(true);
 
 			settingsPanel.add(paintEffects, new GridBagConstraints(1, 3, 1, 1, 0.0, 0.0,
 					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
@@ -889,6 +1000,7 @@ public class AIOChopper extends Script implements PaintListener {
 			updatesPane.setEditable(false);
 			updatesPane.setContentType("text/html");
 			updatesPane.setText("<html><body style='padding:5px; font-family: Arial; font-size: 9px;'>" +
+					"<strong>v1.2</strong><br />Locations added.<br />Walking updated." +
 					"<strong>v1.1</strong><br />Paint updated; effects optional.<br />Inventory hatchet support.<br />Preemptive movement updated." +
 					"<br /><strong>v1.0</strong><br />More features and locations will come with bot updates.</body></html>");
 
@@ -930,9 +1042,9 @@ public class AIOChopper extends Script implements PaintListener {
 			} else if (sType == sLoc.treeAreas.length) {
 				selectedLocs = new Location[sType];
 				for (int i = 0; i < selectedLocs.length; ++i)
-					selectedLocs[i] = new Location(sLoc.bankArea, sLoc.treeAreas[i].area, sLoc.treeAreas[i].type);
+					selectedLocs[i] = new Location(sLoc.bankHandler, sLoc.treeAreas[i].area, sLoc.treeAreas[i].type);
 			} else {
-				selectedLocs = new Location[]{new Location(sLoc.bankArea, sLoc.treeAreas[sType].area, sLoc.treeAreas[sType].type)};
+				selectedLocs = new Location[]{new Location(sLoc.bankHandler, sLoc.treeAreas[sType].area, sLoc.treeAreas[sType].type)};
 			}
 
 		}
@@ -970,12 +1082,24 @@ public class AIOChopper extends Script implements PaintListener {
 		private class SelectableLocation {
 
 			public final String name;
-			public final RSArea bankArea;
+			public final BankHandler bankHandler;
 			public final TreeArea[] treeAreas;
+
+			public SelectableLocation(String name, BankHandler bankHandler, TreeArea[] treeAreas) {
+				this.name = name;
+				this.bankHandler = bankHandler;
+				this.treeAreas = treeAreas;
+			}
 
 			public SelectableLocation(String name, RSArea bankArea, TreeArea[] treeAreas) {
 				this.name = name;
-				this.bankArea = bankArea;
+				this.bankHandler = new BasicBankHandler(bankArea);
+				this.treeAreas = treeAreas;
+			}
+
+			public SelectableLocation(String name, TreeArea[] treeAreas) {
+				this.name = name;
+				this.bankHandler = null;
 				this.treeAreas = treeAreas;
 			}
 

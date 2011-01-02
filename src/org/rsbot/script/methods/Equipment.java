@@ -9,6 +9,7 @@ import org.rsbot.script.wrappers.RSItem;
  */
 public class Equipment extends MethodProvider {
 
+    public static final int ITEM_SLOTS = 11;
 	public static final int INTERFACE_EQUIPMENT = 387;
 	public static final int HELMET = 8;
 	public static final int CAPE = 11;
@@ -32,7 +33,7 @@ public class Equipment extends MethodProvider {
 	 * @return the equipment interface
 	 */
 	public RSInterface getInterface() {
-		// Tab needs to be open for it to update it's content -.-
+		// Tab needs to be open for it to update its content -.-
 		if (methods.game.getCurrentTab() != Game.TAB_EQUIPMENT) {
 			if (methods.bank.isOpen()) {
 				methods.bank.close();
@@ -50,12 +51,26 @@ public class Equipment extends MethodProvider {
 	 */
 	public RSItem[] getItems() {
 		RSComponent[] equip = getInterface().getComponents();
-		RSItem[] items = new RSItem[11];
-		for (int i = 0; i < 11; i++) {
+		RSItem[] items = new RSItem[ITEM_SLOTS];
+		for (int i = 0; i < items.length; i++) {
 			items[i] = new RSItem(methods, equip[i * 3 + 8]);
 		}
 		return items;
 	}
+
+    /**
+     * Gets the cached equipment array (i.e. does not open the interface).
+     * @return The items equipped as seen when the equipment tab was last opened.
+     */
+    public RSItem[] getCachedItems() {
+        RSInterface equipment = methods.interfaces.get(INTERFACE_EQUIPMENT);
+        RSComponent[] components = equipment.getComponents();
+        RSItem[] items = new RSItem[ITEM_SLOTS];
+        for (int i = 0; i < items.length; i++) {
+            items[i] = new RSItem(methods, components[i * 3 + 8]);
+        }
+        return items;
+    }
 
 	/**
 	 * Gets the equipment item at a given index.
@@ -73,7 +88,7 @@ public class Equipment extends MethodProvider {
 	 * @return Amount of items currently equipped.
 	 */
 	public int getCount() {
-		return 11 - getCount(-1);
+		return ITEM_SLOTS - getCount(-1);
 	}
 
 	/**

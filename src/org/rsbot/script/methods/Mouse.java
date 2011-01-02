@@ -15,42 +15,59 @@ public class Mouse extends MethodProvider {
 		super(ctx);
 	}
 
-	/**
-	 * Moves the mouse randomly between the two distances.
-	 *
-	 * @param minDistance The minimum distance to move.
-	 * @param maxDistance The maximum distance to move.
-	 * @see #moveRandomly(int)
-	 * @see #getRandomX(int)
-	 * @see #getRandomY(int)
-	 */
-	public void moveRandomly(int minDistance, int maxDistance) {
-		if (minDistance == 0) {
-			minDistance = 2;
-		}
-		if (minDistance > maxDistance) {
-			int temp = minDistance;
-			minDistance = maxDistance;
-			maxDistance = temp;
-		}
-		move(getRandomX(random(minDistance, maxDistance)),
-				getRandomY(random(minDistance, maxDistance)));
-	}
+    /**
+     * Author - Enfilade
+     * Moves the mouse a random distance between 1 and maxDistance from the
+     * current position of the mouse by generating a random vector and then
+     * multiplying it by a random number between 1 and maxDistance. The maximum
+     * distance is cut short if the mouse would go off screen in the direction
+     * it chose.
+     * @param maxDistance The maximum distance the cursor will move (exclusive)
+     */
+    public void moveRandomly(int maxDistance) {
+        moveRandomly(1, maxDistance);
+    }
 
-	/**
-	 * Moves the mouse randomly between the maximum distance.
-	 *
-	 * @param maxDistance The maximum distance to move.
-	 * @see #getRandomX(int)
-	 * @see #getRandomY(int)
-	 */
-	public void moveRandomly(int maxDistance) {
-		move(getRandomX(random(maxDistance / 2, maxDistance)),
-				getRandomY(random(maxDistance / 2, maxDistance)));
-		if (random(0, 10) == 0) {
-			moveRandomly(maxDistance / 2);
-		}
-	}
+    /**
+     * Author - Enfilade
+     * Moves the mouse a random distance between minDistance and maxDistance from
+     * the current position of the mouse
+     * by generating random vector and then multiplying it by a random number
+     * between minDistance and maxDistance. The maximum distance is cut short
+     * if the mouse would go off screen in the direction it chose.
+     * @param minDistance The minimum distance the cursor will move
+     * @param maxDistance The maximum distance the cursor will move (exclusive)
+     */
+    public void moveRandomly(int minDistance, int maxDistance) {
+        /* Generate a random vector for the direction the mouse will move in */
+        double xvec = Math.random();
+        if(random(0, 2) == 1)
+            xvec = -xvec;
+        double yvec = Math.sqrt(1-xvec*xvec);
+        if(random(0, 2) == 1)
+            yvec = -yvec;
+        /* Start the maximum distance at maxDistance */
+        double distance = maxDistance;
+        /* Get the current location of the cursor */
+        Point p = getLocation();
+        /* Calculate the x coordinate if the mouse moved the maximum distance */
+        int maxX = (int)Math.round(xvec*distance + p.x);
+        /* If the maximum x is offscreen, subtract that distance/xvec from the
+         * maximum distance so the maximum distance will give a valid X coordinate*/
+        distance -= Math.abs((maxX - Math.max(0, Math.min(methods.game.getWidth(), maxX)))/xvec);
+        /* Do the same thing with the Y coordinate */
+        int maxY = (int)Math.round(yvec*distance + p.y);
+        distance -= Math.abs((maxY - Math.max(0, Math.min(methods.game.getHeight(), maxY)))/yvec);
+        /* If the maximum distance in the generated direction is too small,
+         * don't move the mouse at all*/
+        if(distance < minDistance)
+            return;
+        /* With the calculated maximum distance, pick a random distance to move
+         * the mouse between maxDistance and the calculated maximum distance */
+        distance = random(minDistance, (int)distance);
+        /* Generate the point to move the mouse to and move it there */
+        move((int)(xvec*distance) + p.x, (int)(yvec*distance) + p.y);
+    }
 
 	/**
 	 * Moves the mouse off the screen in a random direction.
@@ -405,7 +422,7 @@ public class Mouse extends MethodProvider {
 	 */
 	public int getRandomX(int maxDistance) {
 		Point p = getLocation();
-		if (p.x < 0)
+		if (p.x < 0 || maxDistance <= 0)
 			return -1;
 		if (random(0, 2) == 0)
 			return p.x - random(0, p.x < maxDistance ? p.x : maxDistance);
@@ -421,7 +438,7 @@ public class Mouse extends MethodProvider {
 	 */
 	public int getRandomY(int maxDistance) {
 		Point p = getLocation();
-		if (p.y < 0)
+		if (p.y < 0 || maxDistance <= 0)
 			return -1;
 		if (random(0, 2) == 0)
 			return p.y - random(0, p.y < maxDistance ? p.y : maxDistance);

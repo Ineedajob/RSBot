@@ -14,7 +14,7 @@ public abstract class Random extends Methods implements PaintListener {
 
 	private Script script;
 
-	private int timeout = random(240, 300);
+	private long timeout = random(240, 300);
 
 	/**
 	 * Detects whether or not this anti-random should
@@ -50,7 +50,7 @@ public abstract class Random extends Methods implements PaintListener {
 	 *         detected as having failed. If this time is reached
 	 *         the random and running script will be stopped.
 	 */
-	public int getTimeout() {
+	public long getTimeout() {
 		return timeout;
 	}
 
