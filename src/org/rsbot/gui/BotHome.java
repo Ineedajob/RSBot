@@ -54,13 +54,13 @@ public class BotHome {
 		} else if (len == 5) {
 			draw(g, 0, 0, 0, width / 3, height / 2);
 			draw(g, 1, width / 3, 0, width / 3, height / 2);
-			draw(g, 1, (width * 2) / 3, 0, width / 3, height / 2);
+			draw(g, 2, (width * 2) / 3, 0, width / 3, height / 2);
 			draw(g, 3, 0, height / 2, width / 2, height / 2);
 			draw(g, 4, width / 2, height / 2, width / 2, height / 2);
 		} else if (len == 6) {
 			draw(g, 0, 0, 0, width / 3, height / 2);
 			draw(g, 1, width / 3, 0, width / 3, height / 2);
-			draw(g, 1, (width * 2) / 3, 0, width / 3, height / 2);
+			draw(g, 2, (width * 2) / 3, 0, width / 3, height / 2);
 			draw(g, 3, 0, height / 2, width / 3, height / 2);
 			draw(g, 4, width / 3, height / 2, width / 3, height / 2);
 			draw(g, 5, (width * 2) / 3, height / 2, width / 3, height / 2);

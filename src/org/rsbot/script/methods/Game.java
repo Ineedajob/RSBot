@@ -319,43 +319,65 @@ public class Game extends MethodProvider {
 	}
 
 	/**
-	 * Checks whether or not the logout tab is selected.
-	 *
-	 * @return <tt>true</tt> if on the logout tab.
-	 */
-	public boolean isOnLogoutTab() {
-		return methods.interfaces.get(INTERFACE_LOGOUT).isValid();
-	}
+         * Checks whether or not the logout tab is selected.
+         *
+         * @return <tt>true</tt> if on the logout tab.
+         */
+        public boolean isOnLogoutTab() {
+                for (int i = 0; i < Game.TAB_NAMES.length; i++) {
+                        org.rsbot.client.RSInterface tab = methods.gui.getTab(i);
+                        if (tab == null)
+                                continue;
+                        int id = tab.getTextureID();
+                        if (id > -1 && id < 2201)
+                                return false;
+                }
+                return true;
+        }
 
-	/**
-	 * Closes the bank if it is open and logs out.
-	 *
-	 * @param lobby <tt>true</tt> if player should be logged out to the lobby
-	 * @return <tt>true</tt> if the player was logged out.
-	 */
-	public boolean logout(boolean lobby) {
-		if (methods.bank.isOpen()) {
-			methods.bank.close();
-			sleep(random(200, 400));
-		}
-		if (methods.bank.isOpen()) {
-			return false;
-		}
-		if (!isOnLogoutTab()) {
-			int idx = methods.client.getGUIRSInterfaceIndex();
-			//Logout button in the top right hand corner
-			methods.interfaces.getComponent(idx, isFixed() ? INTERFACE_LOGOUT_BUTTON_FIXED : INTERFACE_LOGOUT_BUTTON_RESIZED).doClick();
-			int timesToWait = 0;
-			while (!isOnLogoutTab() && timesToWait < 5) {
-				sleep(random(200, 400));
-				timesToWait++;
-			}
-		}
-		methods.interfaces.getComponent(INTERFACE_LOGOUT, lobby ? INTERFACE_LOGOUT_LOBBY : INTERFACE_LOGOUT_COMPLETE).doClick();
-		//Final logout button in the logout tab
-		sleep(random(1500, 2000));
-		return !isLoggedIn();
-	}
+        /**
+         * Closes the bank if it is open and logs out.
+         *
+         * @param lobby <tt>true</tt> if player should be logged out to the lobby
+         * @return <tt>true</tt> if the player was logged out.
+         */
+        public boolean logout(boolean lobby) {
+                if (methods.bank.isOpen()) {
+                        methods.bank.close();
+                        sleep(random(200, 400));
+                }
+                if (methods.bank.isOpen()) {
+                        return false;
+                }
+                if (methods.client.isSpellSelected() || methods.inventory.isItemSelected()) {
+                        int currentTab = methods.game.getCurrentTab();
+                        int randomTab = random(1, 6);
+                        while (randomTab == currentTab) {
+                                randomTab = random(1, 6);
+                        }
+                        methods.game.openTab(randomTab);
+                        sleep(random(400, 800));
+                }
+                if (methods.client.isSpellSelected() || methods.inventory.isItemSelected()) {
+                        return false;
+                }
+                if (!isOnLogoutTab()) {
+                        int idx = methods.client.getGUIRSInterfaceIndex();
+                        //Logout button in the top right hand corner
+                        methods.interfaces.getComponent(idx, isFixed() ? 181 : 172).doClick();
+                        int timesToWait = 0;
+                        while (!isOnLogoutTab() && timesToWait < 5) {
+                                sleep(random(200, 400));
+                                timesToWait++;
+                        }
+                }
+                methods.interfaces.getComponent(182, lobby ? 1 : 6).doClick();
+                //Final logout button in the logout tab
+                sleep(random(1500, 2000));
+                return !isLoggedIn();
+        }
+
+
 
 	/**
 	 * Determines whether or no the client is currently in the

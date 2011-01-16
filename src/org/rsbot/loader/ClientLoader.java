@@ -1,11 +1,5 @@
 package org.rsbot.loader;
 
-import org.rsbot.loader.asm.ClassReader;
-import org.rsbot.loader.script.ModScript;
-import org.rsbot.loader.script.ParseException;
-import org.rsbot.util.GlobalConfiguration;
-
-import javax.swing.*;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -31,6 +25,13 @@ import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
 import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
+
+import javax.swing.JOptionPane;
+
+import org.rsbot.loader.asm.ClassReader;
+import org.rsbot.loader.script.ModScript;
+import org.rsbot.loader.script.ParseException;
+import org.rsbot.util.GlobalConfiguration;
 
 /**
  * @author Jacmob
@@ -84,6 +85,7 @@ public class ClientLoader {
 				throw new IOException("Unable to download ModScript data.");
 			}
 		}
+
 		this.script = new ModScript(unpack(data));
 	}
 
@@ -139,6 +141,7 @@ public class ClientLoader {
 				if (name.endsWith(".class")) {
 					name = name.substring(0, name.length() - 6).replace('/', '.');
 					if (replace.contains(name)) {
+						log.info("Name: " + name);
 						classes.put(name, load(loader.getInputStream(entry)));
 					}
 				}
@@ -191,11 +194,11 @@ public class ClientLoader {
 			JOptionPane.showMessageDialog(
 					null,
 					GlobalConfiguration.NAME + " does not yet support the latest version of this game client.\n" +
-							"Our developers are currently ensuring that the bot can understand any new game content.\n" +
-							"This process also ensures that the bot client remains undetectable.\n" +
-							"This application will update itself when opened after the update is complete.\n" +
-							"Try again in a few minutes or check the powerbot.org announcements for more information.\n" +
-							"If this does not give you an exact time, refrain from asking as no one else will be able to.",
+					"Our developers are currently ensuring that the bot can understand any new game content.\n" +
+					"This process also ensures that the bot client remains undetectable.\n" +
+					"This application will update itself when opened after the update is complete.\n" +
+					"Try again in a few minutes or check the powerbot.org announcements for more information.\n" +
+					"If this does not give you an exact time, refrain from asking as no one else will be able to.",
 					"Outdated (" + script.getName() + ")",
 					JOptionPane.INFORMATION_MESSAGE);
 			throw new IOException("ModScript #" + script.getVersion() + " != #" + vv.getVersion());

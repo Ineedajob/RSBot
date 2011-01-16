@@ -8,19 +8,15 @@ public interface RSGround {
 
 	RSAnimableNode getRSAnimableList();
 
-	RSInteractable getRSObject1();
+	RSInteractable getFloorDecoration();
 
-	RSInteractable getRSObject2_0();
+	RSInteractable getBoundary1();
 
-	RSInteractable getRSObject2_1();
+	RSInteractable getBoundary2();
 
-	RSInteractable getRSObject3_0();
+	RSInteractable getWallDecoration1();
 
-	RSInteractable getRSObject3_1();
-
-	RSInteractable getRSObject4();
-
-	RSGround getUnknownRSGround();
+	RSInteractable getWallDecoration2();
 
 	RSGroundEntity getGroundObject();
 

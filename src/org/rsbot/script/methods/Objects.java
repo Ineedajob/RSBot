@@ -224,7 +224,7 @@ public class Objects extends MethodProvider {
 
 				// Ground Decorations
 				if ((mask & TYPE_FLOOR_DECORATION) != 0) {
-					obj = rsGround.getRSObject1();
+					obj = rsGround.getFloorDecoration();
 					if (obj != null) {
 						rsObj = (org.rsbot.client.RSObject) obj;
 						if (rsObj.getID() != -1) {
@@ -236,14 +236,14 @@ public class Objects extends MethodProvider {
 
 				// Boundaries / Doors / Fences / Walls
 				if ((mask & TYPE_BOUNDARY) != 0) {
-					obj = rsGround.getRSObject2_0();
+					obj = rsGround.getBoundary1();
 					if (obj != null) {
 						rsObj = (org.rsbot.client.RSObject) obj;
 						if (rsObj.getID() != -1)
 							objects.add(new RSObject(methods, rsObj, RSObject.Type.BOUNDARY, plane));
 					}
 
-					obj = rsGround.getRSObject2_1();
+					obj = rsGround.getBoundary2();
 					if (obj != null) {
 						rsObj = (org.rsbot.client.RSObject) obj;
 						if (rsObj.getID() != -1)
@@ -253,14 +253,14 @@ public class Objects extends MethodProvider {
 
 				// Wall Decorations
 				if ((mask & TYPE_WALL_DECORATION) != 0) {
-					obj = rsGround.getRSObject3_0();
+					obj = rsGround.getWallDecoration1();
 					if (obj != null) {
 						rsObj = (org.rsbot.client.RSObject) obj;
 						if (rsObj.getID() != -1)
 							objects.add(new RSObject(methods, rsObj, RSObject.Type.WALL_DECORATION, plane));
 					}
 
-					obj = rsGround.getRSObject3_1();
+					obj = rsGround.getWallDecoration2();
 					if (obj != null) {
 						rsObj = (org.rsbot.client.RSObject) obj;
 						if (rsObj.getID() != -1)

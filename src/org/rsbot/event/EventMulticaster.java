@@ -4,7 +4,6 @@ import org.rsbot.event.events.RSEvent;
 import org.rsbot.event.listeners.CharacterMovedListener;
 import org.rsbot.event.listeners.MessageListener;
 import org.rsbot.event.listeners.PaintListener;
-import org.rsbot.event.listeners.ServerMessageListener;
 import org.rsbot.event.listeners.TextPaintListener;
 
 import java.awt.event.FocusEvent;
@@ -42,6 +41,7 @@ public class EventMulticaster implements EventListener {
 	/**
 	 * Gets the default mask for an event listener.
 	 */
+	@SuppressWarnings("deprecation")
 	public static long getDefaultMask(EventListener el) {
 		if (el instanceof EventMulticaster) {
 			EventMulticaster em = (EventMulticaster) el;
@@ -68,7 +68,7 @@ public class EventMulticaster implements EventListener {
 			mask |= EventMulticaster.CHARACTER_MOVED_EVENT;
 		}
 		//noinspection deprecation
-		if (el instanceof ServerMessageListener) {
+		if (el instanceof org.rsbot.event.listeners.ServerMessageListener) {
 			mask |= EventMulticaster.SERVER_MESSAGE_EVENT;
 		}
 		if (el instanceof MessageListener) {

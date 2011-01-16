@@ -1,6 +1,6 @@
 package org.rsbot.client;
 
-public interface HardReference extends Node {
+public interface HardReference extends Reference {
 
 	Object get();
 

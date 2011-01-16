@@ -152,6 +152,80 @@ public class Interfaces extends MethodProvider {
 		}
 		return results.toArray(new RSInterface[results.size()]);
 	}
+	
+	/**
+	 * Scrolls to the component
+	 * @param component component to scroll to
+	 * @param scrollBarID scrollbar to scroll with
+	 * 
+	 * @return true when scrolled successfully
+	 */
+	public boolean scrollTo(RSComponent component, int scrollBarID) {
+		RSComponent scrollBar = getComponent(scrollBarID);
+		
+		return scrollTo(component, scrollBar);
+	}
+	
+	/**
+	 * Scrolls to the component
+	 * @param component component to scroll to
+	 * @param scrollBar scrollbar to scroll with
+	 * 
+	 * @return true when scrolled successfully
+	 */
+	public boolean scrollTo(RSComponent component, RSComponent scrollBar) {
+		//Check arguments
+		if(component == null || scrollBar == null || !component.isValid())
+			return false;	
+		
+		if(scrollBar.getComponents().length != 6)
+			return true; //no scrollbar, so probably not scrollable
+		
+		//Find scrollable area
+		RSComponent scrollableArea = component;
+		while( (scrollableArea.getScrollableContentHeight() == 0) && (scrollableArea.getParentID() != -1) )
+			scrollableArea = getComponent( scrollableArea.getParentID() );
+		
+		//Check scrollable area
+		if(scrollableArea.getScrollableContentHeight() == 0)
+			return false;
+		
+		//Get scrollable area height
+		int areaY = scrollableArea.getAbsoluteY();
+		int areaHeight = scrollableArea.getRealHeight();
+		
+		//Check if the component is already visible
+		if( (component.getAbsoluteY() >= areaY) && (component.getAbsoluteY() <= areaY + areaHeight - component.getRealHeight()) )
+			return true;
+		
+		//Calculate scroll bar position to click
+		RSComponent scrollBarArea = scrollBar.getComponent(0);
+		int contentHeight = scrollableArea.getScrollableContentHeight();
+		
+		int pos = (int) ((float) scrollBarArea.getRealHeight() / contentHeight * ( component.getRelativeY() + random(-areaHeight / 2, areaHeight / 2 - component.getRealHeight()) ));
+		if(pos < 0) //inner
+			pos = 0;
+		else if(pos >= scrollBarArea.getRealHeight())
+			pos = scrollBarArea.getRealHeight() - 1; //outer
+		
+		//Click on the scrollbar
+		methods.mouse.click(scrollBarArea.getAbsoluteX() + random(0, scrollBarArea.getRealWidth()), 
+				scrollBarArea.getAbsoluteY() + pos, true);
+		
+		//Wait a bit
+		sleep( random(200, 400) );
+		
+		//Scroll to it if we missed it
+		while( component.getAbsoluteY() < areaY || component.getAbsoluteY() > (areaY + areaHeight - component.getRealHeight()) ) {
+			boolean scrollUp = component.getAbsoluteY() < areaY;
+			scrollBar.getComponent(scrollUp ? 4 : 5).doAction("");
+			
+			sleep( random(100, 200) );
+		}
+		
+		//Return whether or not the component is visible now.
+		return (component.getAbsoluteY() >= areaY) && (component.getAbsoluteY() <= areaY + areaHeight - component.getRealHeight());
+	}
 
 	/**
 	 * Enlarges the cache if there are more interfaces than the cache size.

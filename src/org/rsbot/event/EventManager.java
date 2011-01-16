@@ -16,7 +16,6 @@ public class EventManager implements Runnable {
 		@Override
 		public void dispatch(final EventListener el) {
 		}
-
 		@Override
 		public long getMask() {
 			return -1;

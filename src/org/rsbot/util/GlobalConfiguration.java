@@ -138,6 +138,10 @@ public class GlobalConfiguration {
 		public static String getBootCache() {
 			return Paths.getSettingsDirectory() + File.separator + "boot.txt";
 		}
+		
+		public static String getUIDsFile() {
+			return Paths.getSettingsDirectory() + File.separator + "uid.txt";
+		}
 
 		public static String getScreenshotsDirectory() {
 			return Paths.getHomeDirectory() + File.separator + "Screenshots";

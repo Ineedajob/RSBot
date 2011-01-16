@@ -30,7 +30,7 @@ public class FreakyForester extends Random implements MessageListener {
 	short[] phe = { };
 	Filter<RSNPC> pheasantFilter = new Filter<RSNPC>() {
 		public boolean accept(RSNPC npc) {
-			log("phe.length = " + phe.length);
+//			log("phe.length = " + phe.length);
 			Filter<RSModel> modelFilter = RSModel.newVertexFilter(phe);
 			return modelFilter.accept(npc.getModel());
 		}
@@ -135,15 +135,15 @@ public class FreakyForester extends Random implements MessageListener {
 				}
 				return random(500, 800);
 			case 1: // Talking
-				log("Talking"); //debug REMOVEME
-				if (searchText(SEARCH_INTERFACE_ID, "one")) {
+				//log("Talking"); //debug REMOVEME
+				if (searchText(SEARCH_INTERFACE_ID, " one")) {
 					phe = Models.oneTail;
-				} else if (searchText(SEARCH_INTERFACE_ID, "two")) {
+				} else if (searchText(SEARCH_INTERFACE_ID, " two")) {
 					phe = Models.twoTail;
-				} else if (searchText(SEARCH_INTERFACE_ID, "three")) {
+				} else if (searchText(SEARCH_INTERFACE_ID, " three")) {
 					phe = Models.threeTail;
 				}
-				if (searchText(SEARCH_INTERFACE_ID, "four")) {
+				if (searchText(SEARCH_INTERFACE_ID, " four")) {
 					phe = Models.fourTail;
 				}
 				if (interfaces.clickContinue())
@@ -158,7 +158,7 @@ public class FreakyForester extends Random implements MessageListener {
 					tiles.doAction(tile.getLocation(), "Take");
 					return random(600, 900);
 				} else if (pheasant != null) {
-					log("Pheasant ID = " + pheasant.getID());
+//					log("Pheasant ID = " + pheasant.getID());
 					if (calc.tileOnScreen(pheasant.getLocation()) && (calc.distanceTo(pheasant.getLocation()) <= 5)) {
 						pheasant.doAction("Attack");
 						return random(1000, 1500);
@@ -167,7 +167,7 @@ public class FreakyForester extends Random implements MessageListener {
 						camera.turnToTile(pheasant.getLocation().randomize(3, 3));
 					}
 				} else {
-					log("Pheasant == NULL, sleeping");
+//					log("Pheasant == NULL, sleeping");
 					return random(2000, 5000);
 				}
 			case 3: // Get out

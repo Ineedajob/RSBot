@@ -141,7 +141,7 @@ public class GroundItems extends MethodProvider {
 		}
 		List<RSGroundItem> list = new ArrayList<RSGroundItem>();
 
-		HashTable itemNC = methods.client.getRSItemNodeCache();
+		HashTable itemNC = methods.client.getRSItemHashTable();
 		int id = x | y << 14 | methods.client.getPlane() << 28;
 
 		org.rsbot.client.NodeListCache itemNLC = (org.rsbot.client.NodeListCache) methods.nodes.lookup(itemNC, id);
@@ -149,8 +149,8 @@ public class GroundItems extends MethodProvider {
 		if (itemNLC == null)
 			return new RSGroundItem[0];
 
-		Deque itemNL = new Deque(itemNLC.getNodeList());
-		for (org.rsbot.client.RSItem item = (org.rsbot.client.RSItem) itemNL.getHead(); item != null; item = (org.rsbot.client.RSItem) itemNL.getNext()) {
+		Deque<org.rsbot.client.RSItem> itemNL = new Deque<org.rsbot.client.RSItem>(itemNLC.getNodeList());
+		for (org.rsbot.client.RSItem item = itemNL.getHead(); item != null; item = itemNL.getNext()) {
 			list.add(new RSGroundItem(methods, new RSTile(x, y), new RSItem(methods, item)));
 		}
 
