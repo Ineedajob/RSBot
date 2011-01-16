@@ -1,11 +1,12 @@
 package org.rsbot.script.wrappers;
 
+import java.awt.Point;
+import java.awt.Rectangle;
+
 import org.rsbot.client.RSInterfaceNode;
 import org.rsbot.script.internal.wrappers.HashTable;
 import org.rsbot.script.methods.MethodContext;
 import org.rsbot.script.methods.MethodProvider;
-
-import java.awt.*;
 
 /**
  * Represents an interface component. An RSComponent may or
@@ -190,7 +191,7 @@ public class RSComponent extends MethodProvider {
 	 */
 	public int getAbsoluteX() {
 		// Get internal Interface
-		final org.rsbot.client.RSInterface inter = getInterfaceInternal();
+		org.rsbot.client.RSInterface inter = getInterfaceInternal();
 		if (inter == null)
 			return -1;
 
@@ -218,6 +219,13 @@ public class RSComponent extends MethodProvider {
 
 		// Add our x
 		x += inter.getX();
+		
+		// Find scrollable area
+		if(inter.getParentID() != -1) {
+			inter = methods.interfaces.getComponent(inter.getParentID() >> 16, inter.getParentID() & 0xFFFF).getInterfaceInternal();
+			if(inter.getHorizontalScrollBarSize() != 0)
+				x -= inter.getHorizontalScrollBarThumbPosition();
+		}
 
 		// Return x
 		return x;
@@ -231,7 +239,7 @@ public class RSComponent extends MethodProvider {
 	 */
 	public int getAbsoluteY() {
 		// Get internal Interface
-		final org.rsbot.client.RSInterface inter = getInterfaceInternal();
+		org.rsbot.client.RSInterface inter = getInterfaceInternal();
 		if (inter == null)
 			return -1;
 
@@ -260,6 +268,13 @@ public class RSComponent extends MethodProvider {
 		// Add our y
 		y += inter.getY();
 
+		// Find scrollable area
+		if(inter.getParentID() != -1) {
+			inter = methods.interfaces.getComponent(inter.getParentID() >> 16, inter.getParentID() & 0xFFFF).getInterfaceInternal();
+			if(inter.getVerticalScrollBarSize() != 0)
+				y -= inter.getVerticalScrollBarPosition();
+		}
+		
 		// Return y
 		return y;
 	}
@@ -410,6 +425,9 @@ public class RSComponent extends MethodProvider {
 	 * @return the height of this component or -1 if null
 	 */
 	public int getHeight() {
+		if(!isInScrollableArea())
+			return getRealHeight();
+		
 		final org.rsbot.client.RSInterface childInterface = getInterfaceInternal();
 		if (childInterface != null)
 			return childInterface.getHeight() - 4;
@@ -563,6 +581,62 @@ public class RSComponent extends MethodProvider {
 			return childInterface.getY();
 		return -1;
 	}
+	
+	public int getVerticalScrollPosition() {
+		final org.rsbot.client.RSInterface childInterface = getInterfaceInternal();
+		if (childInterface != null)
+			return childInterface.getVerticalScrollBarPosition();
+		return -1;
+	}
+	
+	public int getHorizontalScrollPosition() {
+		final org.rsbot.client.RSInterface childInterface = getInterfaceInternal();
+		if (childInterface != null)
+			return childInterface.getHorizontalScrollBarThumbPosition();
+		return -1;
+	}
+	
+	public int getScrollableContentHeight() {
+		final org.rsbot.client.RSInterface childInterface = getInterfaceInternal();
+		if (childInterface != null)
+			return childInterface.getVerticalScrollBarSize();
+		return -1;
+	}
+	
+	public int getScrollableContentWidth() {
+		final org.rsbot.client.RSInterface childInterface = getInterfaceInternal();
+		if (childInterface != null)
+			return childInterface.getHorizontalScrollBarSize();
+		return -1;
+	}
+	
+	public int getRealHeight() {
+		final org.rsbot.client.RSInterface childInterface = getInterfaceInternal();
+		if (childInterface != null)
+			return childInterface.getVerticalScrollBarThumbSize();
+		return -1;
+	}
+	
+	public int getRealWidth() {
+		final org.rsbot.client.RSInterface childInterface = getInterfaceInternal();
+		if (childInterface != null)
+			return childInterface.getHorizontalScrollBarThumbSize();
+		return -1;
+	}
+	
+	public boolean isInScrollableArea() {
+		//Check if we have a parent
+		if(this.getParentID() == -1)
+			return false;
+		
+		//Find scrollable area
+		RSComponent scrollableArea = methods.interfaces.getComponent(this.getParentID());
+		while( (scrollableArea.getScrollableContentHeight() == 0) && (scrollableArea.getParentID() != -1) )
+			scrollableArea = methods.interfaces.getComponent( scrollableArea.getParentID() );
+		
+		//Return if we are in a scrollable area
+		return (scrollableArea.getScrollableContentHeight() != 0);
+	}
 
 	/**
 	 * Gets the selected action name of this component
@@ -682,6 +756,9 @@ public class RSComponent extends MethodProvider {
 	 * @return the width of the component or -1 if null
 	 */
 	public int getWidth() {
+		if(!isInScrollableArea())
+			return getRealWidth();
+		
 		final org.rsbot.client.RSInterface childInterface = getInterfaceInternal();
 		if (childInterface != null)
 			return childInterface.getWidth() - 4;

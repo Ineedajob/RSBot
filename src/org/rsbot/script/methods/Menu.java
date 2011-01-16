@@ -1,15 +1,17 @@
 package org.rsbot.script.methods;
 
+import java.awt.Graphics;
+import java.awt.Point;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.regex.Pattern;
+
 import org.rsbot.client.MenuGroupNode;
 import org.rsbot.client.MenuItemNode;
 import org.rsbot.event.EventMulticaster;
 import org.rsbot.event.listeners.PaintListener;
 import org.rsbot.script.internal.wrappers.Deque;
 import org.rsbot.script.internal.wrappers.Queue;
-
-import java.awt.*;
-import java.util.LinkedList;
-import java.util.regex.Pattern;
 
 /**
  * Context menu related operations.
@@ -24,6 +26,7 @@ public class Menu extends MethodProvider {
 	private String[] menuActionsCache = new String[0];
 
 	private boolean menuListenerStarted = false;
+	private boolean reverse = false;
 
 	Menu(final MethodContext ctx) {
 		super(ctx);
@@ -87,9 +90,9 @@ public class Menu extends MethodProvider {
 			Queue<MenuGroupNode> groups = new Queue<MenuGroupNode>(methods.client.getCollapsedMenuItems());
 			int idx = 0, mainIdx = 0;
 			for (MenuGroupNode g = groups.getHead(); g != null; g = groups.getNext(), ++mainIdx) {
-				Queue subItems = new Queue(g.getItems());
+				Queue<MenuItemNode> subItems = new Queue<MenuItemNode>(g.getItems());
 				int subIdx = 0;
-				for (MenuItemNode item = (MenuItemNode) subItems.getHead(); item != null; item = (MenuItemNode) subItems.getNext(), ++subIdx) {
+				for (MenuItemNode item = subItems.getHead(); item != null; item = subItems.getNext(), ++subIdx) {
 					if (idx++ == i) {
 						if (subItems.size() == 1) {
 							return clickMain(items, mainIdx);
@@ -185,16 +188,28 @@ public class Menu extends MethodProvider {
 			actions = menuActionsCache;
 		}
 
-		LinkedList<String> output = new LinkedList<String>();
-		//for (int i = Math.min(options.length, actions.length) - 1; i >= 0; --i) {
-		for (int i = 0; i < Math.min(options.length, actions.length); ++i) {
+		ArrayList<String> output = new ArrayList<String>();
+
+		int len = Math.min(options.length, actions.length);
+		for (int i = (reverse ? len - 1 : 0); (reverse ? i >=0 : i < len);  ) {
 			String option = options[i];
 			String action = actions[i];
 			if (option != null && action != null) {
-				output.add(action + ' ' + option);
+				String text = action + ' ' + option;
+				output.add(text.trim());
 			}
+
+			i += (reverse ? -1 : 1);
 		}
-		return output.toArray(new String[output.size()]);
+
+		String[] retvalue = output.toArray(new String[output.size()]);
+//		if(retvalue.length > 1 && retvalue[0].equals("Cancel") && !reverse)
+//		{
+//			reverse = true;
+//			return getItems();
+//		}
+
+		return retvalue;
 	}
 
 	/**

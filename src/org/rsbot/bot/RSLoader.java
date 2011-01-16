@@ -1,17 +1,22 @@
 package org.rsbot.bot;
 
+import java.applet.Applet;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import org.rsbot.Application;
 import org.rsbot.client.Loader;
 import org.rsbot.loader.ClientLoader;
 import org.rsbot.loader.script.ParseException;
 import org.rsbot.util.GlobalConfiguration;
-
-import java.applet.Applet;
-import java.awt.*;
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.util.logging.Logger;
 
 /**
  * @author Qauters
@@ -86,13 +91,14 @@ public class RSLoader extends Applet implements Runnable, Loader {
 			c.getMethod("provideLoaderApplet", new Class[]{java.applet.Applet.class}).invoke(null, this);
 			client.init();
 			client.start();
-		} catch (final Exception e) {
+		} catch (final Throwable e) {
 			log.severe("Unable to load client, please check your firewall and internet connection.");
 			File versionFile = new File(GlobalConfiguration.Paths.getVersionCache());
 			if (versionFile.exists() && !versionFile.delete()) {
 				log.warning("Unable to clear cache.");
 			}
-			e.printStackTrace();
+			
+			log.log(Level.SEVERE, "Error reason:", e);
 		}
 	}
 
@@ -149,7 +155,8 @@ public class RSLoader extends Applet implements Runnable, Loader {
 	public final void update(Graphics graphics) {
 		if (client != null) {
 			client.update(graphics);
-		}
+		} else
+			paint(graphics);
 	}
 
 	public final void setSize(int width, int height) {

@@ -7,6 +7,7 @@ import org.rsbot.event.EventManager;
 import org.rsbot.event.events.PaintEvent;
 import org.rsbot.event.events.TextPaintEvent;
 import org.rsbot.gui.AccountManager;
+import org.rsbot.script.internal.BreakHandler;
 import org.rsbot.script.internal.InputManager;
 import org.rsbot.script.internal.ScriptHandler;
 import org.rsbot.script.methods.Environment;
@@ -34,6 +35,7 @@ public class Bot {
 	private InputManager im;
 	private RSLoader loader;
 	private ScriptHandler sh;
+        private BreakHandler bh;
 	private Map<String, EventListener> listeners;
 
 	/**
@@ -77,6 +79,7 @@ public class Bot {
 			}
 		});
 		sh = new ScriptHandler(this);
+                bh = new BreakHandler();
 		backBuffer = new BufferedImage(size.width, size.height, BufferedImage.TYPE_INT_RGB);
 		image = new BufferedImage(size.width, size.height, BufferedImage.TYPE_INT_RGB);
 		paintEvent = new PaintEvent();
@@ -210,6 +213,10 @@ public class Bot {
 		return im;
 	}
 
+	public BreakHandler getBreakHandler() {
+		return bh;
+	}
+
 	public ScriptHandler getScriptHandler() {
 		return sh;
 	}
@@ -235,5 +242,6 @@ public class Bot {
 		}
 		return null;
 	}
+
 
 }

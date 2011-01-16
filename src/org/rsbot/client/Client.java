@@ -41,7 +41,7 @@ public interface Client {
 
 	int getDestY();
 
-	DetailInfo getDetailInfo();
+	DetailInfoNode getDetailInfoNode();
 
 	byte[][][] getGroundByteArray();
 
@@ -60,6 +60,8 @@ public interface Client {
 	int getMenuX();
 
 	int getMenuY();
+	
+	MenuGroupNode getCurrentMenuGroupNode();
 
 	int getSubMenuX();
 
@@ -97,7 +99,7 @@ public interface Client {
 
 	HashTable getRSInterfaceNC();
 
-	HashTable getRSItemNodeCache();
+	HashTable getRSItemHashTable();
 
 	HashTable getRSNPCNC();
 
@@ -142,6 +144,12 @@ public interface Client {
 	RSItemDefLoader getRSItemDefLoader();
 
 	RSObjectDefLoader getRSObjectDefLoader();
+	
+	StatusNodeListLoader getRSInteractableDefListLoader();
+	
+	Signlink getSignlink();
+	
+	ServerData getWorldData();
 
 	void setCallback(Callback cb);
 

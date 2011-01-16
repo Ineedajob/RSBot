@@ -1,8 +1,12 @@
 package org.rsbot.bot;
 
-import java.awt.*;
+import java.awt.AWTPermission;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FilePermission;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.SocketPermission;
 import java.net.URL;
 import java.security.CodeSigner;
@@ -26,8 +30,34 @@ public final class RSClassLoader extends ClassLoader {
 			CodeSource codeSource = new CodeSource(source, (CodeSigner[]) null);
 			domain = new ProtectionDomain(codeSource, getPermissions());
 			this.classes = classes;
-		} catch (final Exception ignored) {
-		}
+
+			//Get path of org/rsbot/client/RandomAccessFile
+			String s = getClass().getResource("RSClassLoader.class").toString();
+			s = s.replace("bot/RSClassLoader.class", "client/RandomAccessFile.class");
+			URL url = new URL(s);
+
+			//Read org/rsbot/client/RandomAccessFile
+			InputStream is = null;
+			try {
+				ByteArrayOutputStream bos = new ByteArrayOutputStream(5000);
+				is = new BufferedInputStream(url.openStream());
+
+				byte[] buff = new byte[1024];
+				int len = -1;
+				while((len = is.read(buff)) != -1)
+					bos.write(buff, 0, len);
+				
+				byte[] data = bos.toByteArray();
+
+				//Store it so we can load it
+				this.classes.put("org.rsbot.client.RandomAccessFile", data);
+			}catch(IOException e) {
+				e.printStackTrace();
+			} finally {
+				if(is != null)
+					is.close();
+			}
+		} catch (final Exception ignored) { }
 	}
 
 	private Permissions getPermissions() {
