@@ -144,12 +144,12 @@ public class Maze extends Random {
 
 	@Override
 	public int loop() {
-		if (!activateCondition()) {
+		if (!activateCondition())
 			return -1;
-		}
-		if (getMyPlayer().isMoving()) {
+			
+		if (getMyPlayer().isMoving())
 			return random(150, 200);
-		}
+		
 		if (getMyPlayer().getLocation().equals(new RSTile(2911, 4576))) {
 			if (getMyPlayer().getAnimation() == -1) {
 				tiles.doAction(new RSTile(2912, 4576), "Touch");
@@ -167,10 +167,14 @@ public class Maze extends Random {
 			getNewWall();
 			return random(200, 300);
 		}
+
 		if ((walkToTile != null) && (calc.distanceTo(walkToTile) >= 3)) {
-			walking.getPath(walkToTile).traverse();
+			if(!walking.getPath(walkToTile).traverse())
+				walking.walkTileMM(walkToTile.randomize(2, 2));
+
 			return random(500, 600);
 		}
+		
 		if ((walkToTile != null) && (calc.distanceTo(walkToTile) <= 3)) {
 			if ((doorDir != 'a') && !getMyPlayer().isMoving()) {
 				if (((camera.getAngle() - turnCameraTo()) < 30) || ((camera.getAngle() - turnCameraTo()) > 30)) {
@@ -182,6 +186,7 @@ public class Maze extends Random {
 				}
 			}
 		}
+		
 		return random(300, 350);
 	}
 
@@ -204,14 +209,14 @@ public class Maze extends Random {
 			return random(330, 380);
 		}
 		switch (doorD) {
-			case 'n':
-				return random(330, 380);
-			case 's':
-				return random(155, 190);
-			case 'e':
-				return random(245, 290);
-			case 'w':
-				return random(65, 110);
+		case 'n':
+			return random(330, 380);
+		case 's':
+			return random(155, 190);
+		case 'e':
+			return random(245, 290);
+		case 'w':
+			return random(65, 110);
 		}
 		return random(330, 380);
 	}
@@ -227,14 +232,14 @@ public class Maze extends Random {
 			return new RSTile(1, 1);
 		}
 		switch (doorD) {
-			case 'n':
-				return new RSTile(walkToTile.getX(), walkToTile.getY() + 1);
-			case 'w':
-				return new RSTile(walkToTile.getX() - 1, walkToTile.getY());
-			case 'e':
-				return new RSTile(walkToTile.getX() + 1, walkToTile.getY());
-			case 's':
-				return new RSTile(walkToTile.getX(), walkToTile.getY() - 1);
+		case 'n':
+			return new RSTile(walkToTile.getX(), walkToTile.getY() + 1);
+		case 'w':
+			return new RSTile(walkToTile.getX() - 1, walkToTile.getY());
+		case 'e':
+			return new RSTile(walkToTile.getX() + 1, walkToTile.getY());
+		case 's':
+			return new RSTile(walkToTile.getX(), walkToTile.getY() - 1);
 		}
 		return new RSTile(1, 1);
 	}
@@ -287,24 +292,24 @@ public class Maze extends Random {
 		int x = location.getX(), y = location.getY();
 		boolean fail = false;
 		switch (direction) {
-			case 'N':
-			case 'n':
-				y++;
-				break;
-			case 'W':
-			case 'w':
-				x--;
-				break;
-			case 'E':
-			case 'e':
-				x++;
-				break;
-			case 'S':
-			case 's':
-				y--;
-				break;
-			default:
-				fail = true;
+		case 'N':
+		case 'n':
+			y++;
+			break;
+		case 'W':
+		case 'w':
+			x--;
+			break;
+		case 'E':
+		case 'e':
+			x++;
+			break;
+		case 'S':
+		case 's':
+			y--;
+			break;
+		default:
+			fail = true;
 		}
 		if (fail)
 			throw new IllegalArgumentException();

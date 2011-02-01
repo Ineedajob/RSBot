@@ -43,7 +43,29 @@ public class Combat extends MethodProvider {
 		RAPID_RENEWAL(26, 65),
 		PIETY(27, 70),
 		RIGOUR(28, 74),
-		AUGURY(29, 77);
+		AUGURY(29, 77),
+		
+		//New curse prayer book?
+		PROTECT_ITEM2(0, 50),
+		SAP_WARRIOR(1, 50),
+		SAP_RANGER(2, 52),
+		SAP_MAGE(3, 54),
+		SAP_SPIRIT(4, 56),
+		BERSERKER(5, 59),
+		DEFLECT_SUMMONING(6, 62),
+		DEFLECT_MAGIC(7, 65),
+		DEFLECT_MISSLE(8, 68),
+		DEFLECT_MELEE(9, 71),
+		LEECH_ATTACK(10, 74),
+		LEECH_RANGE(11, 76),
+		LEECH_MAGIC(12, 78),
+		LEECH_DEFENCE(13, 80),
+		LEECH_STRENGTH(14, 82),
+		LEECH_ENERGY(15, 84),
+		LEECH_SPECIAL_ATTACK(16, 86),
+		WRATH(17, 89),
+		SOUL_SPLIT(18, 92),
+		TURMOIL(19, 95);
 
 		private int index;
 		private int level;

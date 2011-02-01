@@ -100,6 +100,7 @@ public class Molly extends Random {
 			setCamera();
 			sleep(random(800, 1200));
 			noThanksInterface.doClick();
+			talkedToMolly = true;
 			return random(600, 1000);
 		}
 		if (!cameraSet) {
@@ -197,9 +198,10 @@ public class Molly extends Random {
 	}
 
 	private boolean hasClawMoved(RSTile prevClawLoc) {
-		if (objects.getNearest(Molly.CLAW_ID) == null)
+		RSObject claw = objects.getNearest(Molly.CLAW_ID);
+		if (claw == null)
 			return false;
-		RSTile currentClawLoc = objects.getNearest(Molly.CLAW_ID).getLocation();
+		RSTile currentClawLoc = claw.getLocation();
 		return (currentClawLoc.getX() - prevClawLoc.getX() != 0) || (currentClawLoc.getY() - prevClawLoc.getY() != 0);
 	}
 

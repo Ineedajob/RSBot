@@ -1,10 +1,13 @@
 package org.rsbot.script;
 
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Point;
+import java.util.logging.Level;
+
 import org.rsbot.event.listeners.PaintListener;
 import org.rsbot.script.methods.MethodContext;
 import org.rsbot.script.methods.Methods;
-
-import java.awt.*;
 
 public abstract class Random extends Methods implements PaintListener {
 
@@ -109,7 +112,7 @@ public abstract class Random extends Methods implements PaintListener {
 					sleep(wait);
 				}
 			} catch (Exception ex) {
-				log.severe(ex.toString());
+				log.log(Level.SEVERE, "Uncatched exception: ", ex);
 				break;
 			}
 		}
