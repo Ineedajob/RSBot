@@ -1,5 +1,7 @@
 package org.rsbot.script.methods;
 
+import java.awt.event.KeyEvent;
+
 import org.rsbot.script.wrappers.RSComponent;
 import org.rsbot.script.wrappers.RSInterface;
 import org.rsbot.script.wrappers.RSTile;
@@ -14,9 +16,29 @@ public class Game extends MethodProvider {
 	}
 
 	public static final int INDEX_LOGIN_SCREEN = 3;
+	public static final int INDEX_LOBBY_SCREEN = 7;
 	public static final int[] INDEX_LOGGED_IN = {10, 11};
 	public static final int INDEX_FIXED = 746;
 
+	public static final int[] TAB_FUNCTION_KEYS = { 
+													KeyEvent.VK_F5, //Attack
+													0, 				//Achievements
+													0, 				//Stats
+													0, 				//Quests
+													KeyEvent.VK_F1,	//Inventory
+													KeyEvent.VK_F2,	//Equipment
+													KeyEvent.VK_F3,	//Prayer
+													KeyEvent.VK_F4,	//Magic
+													0,				//Summoning
+													0,				//Friends
+													0,				//Ignore
+													0,				//Clan
+													0,				//Options
+													0,				//Controls
+													0,				//Music
+													0,				//Notes
+													0,				//Logout
+	};
 	public static final int TAB_ATTACK = 0;
 	public static final int TAB_ACHIEVEMENTS = 1;
 	public static final int TAB_STATS = 2;
@@ -60,14 +82,14 @@ public class Game extends MethodProvider {
 	public static final int INTERFACE_PRAYER_ORB = 749;
 
 	public static final int[] INTERFACE_TALKS = new int[]{211, 241, 251, 101,
-			242, 102, 161, 249, 243, 64, 65, 244, 255, 249, 230, 372, 421};
+		242, 102, 161, 249, 243, 64, 65, 244, 255, 249, 230, 372, 421};
 	public static final int[] INTERFACE_OPTIONS = new int[]{230, 228};
 
 	public static final String[] TAB_NAMES = new String[]{"Combat Styles",
-			"Stats", "Quest List", "Achievements", "Inventory",
-			"Worn Equipment", "Prayer List", "Magic Spellbook", "Objectives",
-			"Friends List", "Ignore List", "Clan Chat", "Options", "Emotes",
-			"Music Player", "Notes", "Exit"};
+		"Stats", "Quest List", "Achievements", "Inventory",
+		"Worn Equipment", "Prayer List", "Magic Spellbook", "Objectives",
+		"Friends List", "Ignore List", "Clan Chat", "Options", "Emotes",
+		"Music Player", "Notes", "Exit"};
 
 	Game(final MethodContext ctx) {
 		super(ctx);
@@ -187,29 +209,54 @@ public class Game extends MethodProvider {
 	 */
 	public String getLastMessage() {
 		RSInterface chatBox = methods.interfaces.get(INTERFACE_CHAT_BOX);
-		for (int i = 157; i >= 58; i--) {// Valid text is from 58 to 157
+		for (int i = 279; i >= 180; i--) {// Valid text is from 180 to 279, was 58-157
 			String text = chatBox.getComponent(i).getText();
 			if (!text.isEmpty() && text.contains("<"))
 				return text;
 		}
 		return "";
 	}
+	
 
 	/**
 	 * Opens the specified tab at the specified index.
 	 *
-	 * @param tab The tab to open
-	 * @see #getCurrentTab()
+	 * @param tab The tab to open.
+	 * @return <tt>true</tt> if tab successfully selected; otherwise <tt>false</tt>.
+	 * @see #openTab(int tab, boolean functionKey)
 	 */
-	public void openTab(int tab) {
-		if (tab == getCurrentTab()) {
-			return;
+	public boolean openTab(int tab) {
+		return openTab(tab, false);
+	}
+
+	/**
+	 * Opens the specified tab at the specified index.
+	 *
+	 * @param tab The tab to open, functionKey if wanting to use function keys to switch.
+	 * @return <tt>true</tt> if tab successfully selected; otherwise <tt>false</tt>.
+	 */
+	public boolean openTab(int tab, boolean functionKey) {
+		//Check current tab
+		if (tab == getCurrentTab())
+			return true;
+		
+		if (functionKey) {
+			if (tab >= TAB_FUNCTION_KEYS.length || TAB_FUNCTION_KEYS[tab] == 0)
+				return false;//no function key for specified tab
+			
+			methods.keyboard.pressKey((char) TAB_FUNCTION_KEYS[tab]);
+			sleep(random(80, 200));
+			methods.keyboard.releaseKey((char) TAB_FUNCTION_KEYS[tab]);
+		} else {
+			org.rsbot.client.RSInterface iTab = methods.gui.getTab(tab);
+			if (iTab == null) {
+				return false;
+			}
+			methods.interfaces.getComponent(iTab.getID()).doClick();
 		}
-		org.rsbot.client.RSInterface iTab = methods.gui.getTab(tab);
-		if (iTab == null) {
-			return;
-		}
-		methods.interfaces.getComponent(iTab.getID()).doClick();
+		
+		sleep(random(400, 600));
+		return tab == getCurrentTab();
 	}
 
 	/**
@@ -292,90 +339,115 @@ public class Game extends MethodProvider {
 	/**
 	 * Switches to a given world.
 	 *
-	 * @param worldToSwitchTo the world to switch to, must be valid.
+	 * @param world the world to switch to, must be valid.
 	 */
-	public void switchWorld(int worldToSwitchTo) {
-		if (isLoggedIn()) {
+	public boolean switchWorld(int world){
+		if(isLoggedIn())
 			logout(true);
-		}
-		int currentWorld = Integer.parseInt(methods.interfaces.getComponent(910, 10).getText());
-		RSComponent[] worldsAvailable = methods.interfaces.getComponent(910, 68).getComponents();
 
-		for (RSComponent world : worldsAvailable) {
-			if (!world.isValid()) {
-				methods.interfaces.getComponent(910, 85).getComponent(5).doAction("");
-			}
-			if (Integer.parseInt(world.getText()) == worldToSwitchTo
-					&& Integer.parseInt(world.getText()) != currentWorld) {
-				world.doAction("Select");
-				sleep(1000);
-				if (currentWorld == Integer.parseInt(world
-						.getText())) {
-					methods.interfaces.getComponent(906, 181).doAction("Click Here To Play");
-					break;
+		if (getClientState() != INDEX_LOBBY_SCREEN)
+			return false;
+
+		RSComponent worldSelect = methods.interfaces.getComponent(906, 196);
+		if (worldSelect.getBackgroundColor() != 2630) {
+			if (worldSelect.doClick()) {
+				for(int i = 0; worldSelect.getBackgroundColor() != 2630; i++){
+					if(i == 10)
+						return false;
+
+					sleep(random(100, 200));
 				}
 			}
 		}
+
+		RSComponent worldComp = null;
+		for (RSComponent comp : methods.interfaces.getComponent(910, 68).getComponents()) {
+			if (Integer.parseInt(comp.getText()) == world) {
+				worldComp = comp;
+				break;
+			}
+		}
+
+		if(worldComp == null)
+			return false;
+
+		for (int i = 0; !methods.interfaces.scrollTo(worldComp, (910 << 16) + 85); i++) {
+			if (i == 3)
+				return false;
+
+			sleep(random(200, 400));
+		}
+
+		String players = methods.interfaces.getComponent(910, 70).getComponents()[worldComp.getComponentIndex()].getText();
+		if (players.equals("0") || players.equals("OFFLINE") || players.equals("FULL"))
+			return false;
+
+		if (methods.interfaces.getComponent(910, 76).getComponents()[worldComp.getComponentIndex()].doClick()) {
+			if (methods.interfaces.getComponent(906, 154).doClick())
+				return true;
+		}
+
+		return false;
 	}
 
 	/**
-         * Checks whether or not the logout tab is selected.
-         *
-         * @return <tt>true</tt> if on the logout tab.
-         */
-        public boolean isOnLogoutTab() {
-                for (int i = 0; i < Game.TAB_NAMES.length; i++) {
-                        org.rsbot.client.RSInterface tab = methods.gui.getTab(i);
-                        if (tab == null)
-                                continue;
-                        int id = tab.getTextureID();
-                        if (id > -1 && id < 2201)
-                                return false;
-                }
-                return true;
-        }
+	 * Checks whether or not the logout tab is selected.
+	 *
+	 * @return <tt>true</tt> if on the logout tab.
+	 */
+	public boolean isOnLogoutTab() {
+		for (int i = 0; i < Game.TAB_NAMES.length; i++) {
+			org.rsbot.client.RSInterface tab = methods.gui.getTab(i);
+			if (tab == null)
+				continue;
+			int id = tab.getTextureID();
+			if (id > -1 && id < 2201)
+				return false;
+		}
+		return true;
+	}
 
-        /**
-         * Closes the bank if it is open and logs out.
-         *
-         * @param lobby <tt>true</tt> if player should be logged out to the lobby
-         * @return <tt>true</tt> if the player was logged out.
-         */
-        public boolean logout(boolean lobby) {
-                if (methods.bank.isOpen()) {
-                        methods.bank.close();
-                        sleep(random(200, 400));
-                }
-                if (methods.bank.isOpen()) {
-                        return false;
-                }
-                if (methods.client.isSpellSelected() || methods.inventory.isItemSelected()) {
-                        int currentTab = methods.game.getCurrentTab();
-                        int randomTab = random(1, 6);
-                        while (randomTab == currentTab) {
-                                randomTab = random(1, 6);
-                        }
-                        methods.game.openTab(randomTab);
-                        sleep(random(400, 800));
-                }
-                if (methods.client.isSpellSelected() || methods.inventory.isItemSelected()) {
-                        return false;
-                }
-                if (!isOnLogoutTab()) {
-                        int idx = methods.client.getGUIRSInterfaceIndex();
-                        //Logout button in the top right hand corner
-                        methods.interfaces.getComponent(idx, isFixed() ? 181 : 172).doClick();
-                        int timesToWait = 0;
-                        while (!isOnLogoutTab() && timesToWait < 5) {
-                                sleep(random(200, 400));
-                                timesToWait++;
-                        }
-                }
-                methods.interfaces.getComponent(182, lobby ? 1 : 6).doClick();
-                //Final logout button in the logout tab
-                sleep(random(1500, 2000));
-                return !isLoggedIn();
-        }
+	/**
+	 * Closes the bank if it is open and logs out.
+	 *
+	 * @param lobby <tt>true</tt> if player should be logged out to the lobby
+	 * @return <tt>true</tt> if the player was logged out.
+	 */
+	public boolean logout(boolean lobby) {
+		if (methods.bank.isOpen()) {
+			methods.bank.close();
+			sleep(random(200, 400));
+		}
+		if (methods.bank.isOpen()) {
+			return false;
+		}
+		if (methods.client.isSpellSelected() || methods.inventory.isItemSelected()) {
+			int currentTab = methods.game.getCurrentTab();
+			int randomTab = random(1, 6);
+			while (randomTab == currentTab) {
+				randomTab = random(1, 6);
+			}
+			methods.game.openTab(randomTab);
+			sleep(random(400, 800));
+		}
+		if (methods.client.isSpellSelected() || methods.inventory.isItemSelected()) {
+			return false;
+		}
+		if (!isOnLogoutTab()) {
+			int idx = methods.client.getGUIRSInterfaceIndex();
+			//Logout button in the top right hand corner
+			methods.interfaces.getComponent(idx, isFixed() ? 181 : 172).doClick();
+			int timesToWait = 0;
+			while (!isOnLogoutTab() && timesToWait < 5) {
+				sleep(random(200, 400));
+				timesToWait++;
+			}
+		}
+		methods.interfaces.getComponent(182, lobby ? 1 : 6).doClick();
+		//Final logout button in the logout tab
+		sleep(random(1500, 2000));
+		return !isLoggedIn();
+	}
 
 
 

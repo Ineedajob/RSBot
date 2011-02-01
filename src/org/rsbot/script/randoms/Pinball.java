@@ -12,6 +12,7 @@ import org.rsbot.script.wrappers.RSObject;
 * Updated by TwistedMind (Feb 7, 10) "What have you guys been smoking??? I cleaned the code and it worked again... Why atTile if there's atObject?"
 * Updated by Arbiter (Sep 21, 10) Switched back to atTile. Obvious spread out model is obvious. Also fixed the fail returning. >.>
 * Updated by Jacmob (Oct 10, 10) Cleaned up disgraceful activateCondition()
+* Updated by Liang (Jan 16, 11) Optimized and removed click here to continue
 */
 @ScriptManifest(authors = {"Aelin", "LM3", "IceCandle", "Taha"}, name = "Pinball", version = 2.7)
 public class Pinball extends Random {
@@ -22,7 +23,7 @@ public class Pinball extends Random {
 
 	private static final int INTERFACE_PINBALL = 263;
 
-	private int continueCounter = 0;
+	//private int continueCounter = 0;
 
 	public boolean activateCondition() {
 		return game.isLoggedIn() && objects.getNearest(OBJ_ACTIVATE) != null;
@@ -38,19 +39,25 @@ public class Pinball extends Random {
 	}
 
 	public int loop() {
-		if (!activateCondition()) {
+		if (!activateCondition())
 			return -1;
-		}
-		if (interfaces.canContinue() && continueCounter < 10) {
-			interfaces.clickContinue();
-			continueCounter++;
-			return random(1000, 1200);
-		}
-		continueCounter = 0;
+//		
+//		if (interfaces.canContinue() && continueCounter < 10) {
+//			log.info("trying to continue");
+//			interfaces.clickContinue();
+//			continueCounter++;
+//			
+//			log.info("Clicked continue");
+//			return random(1000, 1200);
+//		}	
+//		continueCounter = 0;
+		
 		if (getMyPlayer().isMoving() || getMyPlayer().getAnimation() != -1) {
 			return random(1000, 1600);
 		}
+		
 		if (getScore() >= 10) {
+			//log.info("Score >= 10" + getScore());
 			int OBJ_EXIT = 15010;
 			RSObject exit = objects.getNearest(OBJ_EXIT);
 			if (exit != null) {
@@ -63,18 +70,27 @@ public class Pinball extends Random {
 					walking.walkTileOnScreen(exit.getLocation());
 					return random(1400, 1500);
 				}
+		
 			}
 		}
-		if (objects.getNearest(OBJ_PILLARS) != null) {
-			if (!calc.tileOnScreen(objects.getNearest(OBJ_PILLARS).getLocation())) {
-				walking.walkTileOnScreen(objects.getNearest(OBJ_PILLARS).getLocation());
+		
+		RSObject pillar = objects.getNearest(OBJ_PILLARS);
+		
+		if (pillar != null) {
+			//log.info("Found pillar: " + pillar.getID() + " - " + pillar.getLocation());
+			
+			if(calc.distanceTo(pillar) > 2) {
+				walking.walkTileOnScreen(pillar.getLocation());
 				return random(500, 600);
 			}
+			
 			sleep(random(400, 500));
-			if (!objects.getNearest(OBJ_PILLARS).doAction("Tag"))
+			
+			if (!tiles.doAction(pillar.getLocation(), "Tag"))
 				return random(50, 100);
 			else
 				sleep(500, 1000);
+			
 			int before = getScore();
 			for (int i = 0; i < 100; i++) {
 				if (getScore() > before)

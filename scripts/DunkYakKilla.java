@@ -1,16 +1,15 @@
-import org.rsbot.event.listeners.PaintListener;
-import org.rsbot.script.Script;
-import org.rsbot.script.ScriptManifest;
-import org.rsbot.script.methods.Skills;
-import org.rsbot.script.util.Filter;
-import org.rsbot.script.wrappers.RSCharacter;
-import org.rsbot.script.wrappers.RSNPC;
-import org.rsbot.script.wrappers.RSTile;
-import org.rsbot.util.GlobalConfiguration;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Point;
+import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -23,17 +22,42 @@ import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Properties;
 
-@ScriptManifest(authors = "Dunnkers", name = "DunkYakKilla", keywords = "Combat", version = 1.4, description = "Kills yaks on Neitiznot.")
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.GroupLayout;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.JTextField;
+import javax.swing.LayoutStyle;
+import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
+
+import org.rsbot.event.listeners.PaintListener;
+import org.rsbot.script.Script;
+import org.rsbot.script.ScriptManifest;
+import org.rsbot.script.methods.Game;
+import org.rsbot.script.methods.Skills;
+import org.rsbot.script.util.Filter;
+import org.rsbot.script.wrappers.RSCharacter;
+import org.rsbot.script.wrappers.RSNPC;
+import org.rsbot.util.GlobalConfiguration;
+
+@ScriptManifest(authors = "Dunnkers", name = "DunkYakKilla", keywords = "Combat", version = 1.5, description = "Kills yaks on Neitiznot.")
 public class DunkYakKilla extends Script implements PaintListener {
 
 	/* MISC */
 	public double VERSION = 1;
 	public String NAME = "";
+	public static String TITLE;
 	public long startTime = System.currentTimeMillis();
 	public String status = "";
 	public int kills = 0;
 	public int MS = 4;
-	public SkillInfo infoSkill;
+	public SkillInfo skillInfo;
 	public int curAFKT;
 	public long curAFKST;
 	public boolean curAFK = false, run = false;
@@ -43,16 +67,17 @@ public class DunkYakKilla extends Script implements PaintListener {
 
 	/* IDS */
 	public int YAKDEADANIMATIONID = 5784;
-	public String YAKNAME = "Yak";
-	public int SKILLINTERFACE = 320;
-	public int[] ATTACK = {125, 123, 121, 2428}, STRENGTH = {119, 117, 115,
-			113}, DEFENCE = {137, 135, 133, 2432}, SUPERATTACK = {149, 147,
-			145, 2436}, SUPERSTRENGTH = {161, 159, 157, 2440},
-			SUPERDEFENCE = {167, 165, 163, 2442}, RANGED = {173, 171, 169,
-			2444};
+	public int YAK_ID = 5529;
+	public int SKILL_PARENT = 320;
+	public int[] SKILLS_COMBAT = { 1, 2, 4, 22, 46, 87 };
+	public int[] ATTACK = { 125, 123, 121, 2428 }, STRENGTH = { 119, 117, 115,
+			113 }, DEFENCE = { 137, 135, 133, 2432 }, SUPERATTACK = { 149, 147,
+			145, 2436 }, SUPERSTRENGTH = { 161, 159, 157, 2440 },
+			SUPERDEFENCE = { 167, 165, 163, 2442 }, RANGED = { 173, 171, 169,
+					2444 };
 
 	/* SETTINGS */
-	public int pouchID = 12029, pouchCost = 10, foodID = 7946, eatPercent = 50,
+	public int pouchID = 12029, pouchCost = 10, foodID = 7946, eatPercent = 40,
 			foodHeal = 16;
 	public boolean useAttack = false, useStrength = false, useDefence = false,
 			superAttack = false, superStrength = false, superDefence = false,
@@ -62,6 +87,7 @@ public class DunkYakKilla extends Script implements PaintListener {
 	public boolean onStart() {
 		VERSION = getClass().getAnnotation(ScriptManifest.class).version();
 		NAME = getClass().getAnnotation(ScriptManifest.class).name();
+		TITLE = NAME + " v" + VERSION;
 		settingsFile = new Properties();
 		final DunkYakKillaGUI GUI = new DunkYakKillaGUI();
 		GUI.setVisible(true);
@@ -74,7 +100,7 @@ public class DunkYakKilla extends Script implements PaintListener {
 			STRENGTH = SUPERSTRENGTH;
 		if (superDefence)
 			DEFENCE = SUPERDEFENCE;
-		infoSkill = new SkillInfo();
+		skillInfo = new SkillInfo();
 		mouse.setSpeed(MS);
 		return run;
 	}
@@ -88,23 +114,26 @@ public class DunkYakKilla extends Script implements PaintListener {
 			if (inventory.contains(foodID)) {
 				return state.EAT;
 			} else if (getHPPercent() > 0) {
-				log("We ran out of food and we're low on hp, stopping script.");
+				out("We ran out of food and we're low on hp, stopping script.",
+						out.progress);
 				stopScript();
 			}
 		}
-		if (useAttack && inventory.containsOneOf(ATTACK)
-				&& !isSkillBoosted(Skills.ATTACK) || useStrength
-				&& inventory.containsOneOf(STRENGTH)
-				&& !isSkillBoosted(Skills.STRENGTH) || useDefence
-				&& inventory.containsOneOf(DEFENCE)
-				&& !isSkillBoosted(Skills.DEFENSE) || useRanged
+		if (useAttack && !isSkillBoosted(Skills.ATTACK)
+				&& inventory.containsOneOf(ATTACK) || useStrength
+				&& !isSkillBoosted(Skills.STRENGTH)
+				&& inventory.containsOneOf(STRENGTH) || useDefence
+				&& !isSkillBoosted(Skills.DEFENSE)
+				&& inventory.containsOneOf(DEFENCE) || useRanged
 				&& !isSkillBoosted(Skills.RANGE)
 				&& inventory.containsOneOf(RANGED)) {
 			return state.POTIONS;
 		}
-		if (pouchID != 0 && inventory.contains(pouchID)
-				&& !summoning.isFamiliarSummoned()
-				&& summoning.getSummoningPoints() >= pouchCost) {
+		if (pouchID != 0 && !summoning.isFamiliarSummoned()
+				&& summoning.getSummoningPoints() >= pouchCost
+				&& inventory.contains(pouchID)
+
+		) {
 			return state.FAMILIAR;
 		}
 		if (needAttack()) {
@@ -120,99 +149,97 @@ public class DunkYakKilla extends Script implements PaintListener {
 
 	public int loop() {
 		switch (getState()) {
-			case EAT:
-				status = "Eating food...";
-				int eatN = getFoodToHeal();
-				log("[eat] eating " + eatN + " food with id: (" + foodID + ")");
-				for (int i = 0; i < eatN; i++) {
-					inventory.getItem(foodID).doAction("Eat");
-					sleep(random(1500, 2000));
+		case EAT:
+			status = "Eating food...";
+			int eatN = getFoodToHeal();
+			out("eating " + eatN + " food with id: (" + foodID + ")", out.debug);
+			for (int i = 0; i < eatN; i++) {
+				inventory.getItem(foodID).doAction("Eat");
+				sleep(random(1500, 2000));
+			}
+			break;
+		case POTIONS:
+			status = "Drinking potions...";
+			int[] potions = {};
+			if (useAttack && !isSkillBoosted(Skills.ATTACK))
+				potions = ATTACK;
+			if (useStrength && !isSkillBoosted(Skills.STRENGTH))
+				potions = STRENGTH;
+			if (useDefence && !isSkillBoosted(Skills.DEFENSE))
+				potions = DEFENCE;
+			if (useRanged && !isSkillBoosted(Skills.RANGE))
+				potions = RANGED;
+			int id = 0;
+			for (int potion : potions) {
+				if (inventory.contains(potion)) {
+					id = potion;
+					break;
 				}
-				break;
-			case POTIONS:
-				status = "Drinking potions...";
-				int[] potions = {};
-				if (useAttack && !isSkillBoosted(Skills.ATTACK))
-					potions = ATTACK;
-				if (useStrength && !isSkillBoosted(Skills.STRENGTH))
-					potions = STRENGTH;
-				if (useDefence && !isSkillBoosted(Skills.DEFENSE))
-					potions = DEFENCE;
-				if (useRanged && !isSkillBoosted(Skills.RANGE))
-					potions = RANGED;
-				int id = 0;
-				for (int potion : potions) {
-					if (inventory.contains(potion)) {
-						id = potion;
-						break;
-					}
-				}
-				if (id != 0) {
-					log("[potions] drinking potion with id (" + id + ")");
-					try {
-						inventory.getItem(id).doAction("Drink");
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-					sleep(random(1000, 1250));
-				}
-			case FAMILIAR:
-				status = "Summoning familiar...";
-				log("[familiar] summoning familiar with pouch id: " + pouchID);
+			}
+			if (id != 0) {
+				out("drinking potion with id (" + id + ")", out.debug);
 				try {
-					inventory.getItem(pouchID).doAction("Summon");
+					inventory.getItem(id).doAction("Drink");
 				} catch (Exception e) {
+					e.printStackTrace();
 				}
-				sleep(random(1000, 2000));
-				break;
-			case ATTACK:
-				status = "Attacking...";
-				if (menuContains("Attack Yak")) {
-					mouse.click(true);
-					sleep(random(500, 1000));
-				} else {
-					RSNPC toAttack = getNPCToAttack();
-					if (toAttack != null) {
-						if (toAttack.isOnScreen()) {
-							toAttack.doAction("Attack");
-							sleep(random(500, 1000));
-						} else {
-							new turnToYak().start();
-							if (calc.distanceTo(toAttack) > 5) {
-								walking.walkTileMM(toAttack.getLocation());
-							}
+				sleep(random(1000, 1250));
+			}
+			break;
+		case FAMILIAR:
+			status = "Summoning familiar...";
+			out("summoning familiar with pouch id: " + pouchID, out.debug);
+			try {
+				inventory.getItem(pouchID).doAction("Summon");
+			} catch (Exception e) {
+			}
+			sleep(random(1000, 2000));
+			break;
+		case ATTACK:
+			status = "Attacking...";
+			if (menuContains("Attack Yak")) {
+				mouse.click(true);
+				sleep(random(500, 1000));
+			} else {
+				RSNPC target = getNPCToAttack();
+				if (target != null) {
+					if (target.isOnScreen()) {
+						if (doAction(target, "Attack")) {
+							sleep(random(1500, 2000));
 						}
 					} else {
-						if (random(0, 3) == 2) {
-							RSTile[] area = {new RSTile(2327, 3792),
-									new RSTile(2323, 3795), new RSTile(2320, 3794),
-									new RSTile(2323, 3792), new RSTile(2323, 3795)};
-							walking.walkTileMM(area[random(0, area.length)]);
-							sleep(random(1000, 2000));
+						if (calc.distanceTo(target) > 5) {
+							walking.walkTileMM(target.getLocation());
+						}
+						new turnToYak().start();
+					}
+				}
+			}
+			break;
+		case FIND:
+			status = "Finding new opponent...";
+			RSNPC nextOpponent = getNPCToAttack();
+			if (nextOpponent != null) {
+				if (!nextOpponent.isOnScreen()) {
+					camera.turnToCharacter(nextOpponent);
+				} else if (mouseFollow) {
+					if (!menuContains("Attack")) {
+						Point p = nextOpponent.getScreenLocation();
+						if (calc.pointOnScreen(p)) {
+							mouse.move(p.x, p.y);
 						}
 					}
 				}
-				break;
-			case FIND:
-				status = "Finding new opponent...";
-				RSNPC nextOpponent = getNPCToAttack();
-				if (nextOpponent != null) {
-					if (!nextOpponent.isOnScreen()) {
-						camera.turnToCharacter(nextOpponent);
-					} else if (mouseFollow) {
-						if (!menuContains("Attack")) {
-							Point p = nextOpponent.getScreenLocation();
-							if (calc.pointOnScreen(p)) {
-								mouse.move(p.x, p.y);
-							}
-						}
-					}
-				}
-				break;
-			case NONE:
-				status = "Waiting...";
+			}
+			break;
+		case NONE:
+			status = "Waiting...";
+			try {
 				antiban();
-				break;
+			} catch (Exception e) {
+				out("Error in antiban", out.error);
+			}
+			break;
 		}
 		return 1;
 	}
@@ -220,60 +247,63 @@ public class DunkYakKilla extends Script implements PaintListener {
 	public void antiban() {
 		int t = random(0, 100);
 		switch (t) {
-			case 1:
-				if (random(0, 10) == 5) {
-					log("[antiban] move mouse");
-					mouse.moveSlightly();
+		case 1:
+			if (random(0, 10) == 5) {
+				out("move mouse", out.antiban);
+				mouse.moveSlightly();
+			}
+			break;
+		case 2:
+			if (random(0, 25) == 5) {
+				out("check combat skill", out.antiban);
+				try {
+					game.openTab(Game.TAB_STATS);
+					interfaces.getComponent(SKILL_PARENT,
+							SKILLS_COMBAT[random(0, SKILLS_COMBAT.length)])
+							.doHover();
+				} catch (Exception e) {
+					out("Failed to hover a combat stat", out.error);
 				}
-				break;
-			case 2:
-				if (random(0, 25) == 5) {
-					log("[antiban] check combat skill");
-					int[] childs = {1, 2, 4, 22, 46, 87};
-					game.openTab(1);
-					interfaces.getComponent(SKILLINTERFACE,
-							childs[random(0, childs.length)]).doHover();
-					sleep(random(1000, 2000));
-				}
-				break;
-			case 3:
-				if (random(0, 30) == 5) {
-					log("[antiban] open random tab and move mouse within");
+				sleep(random(1000, 2000));
+			}
+			break;
+		case 3:
+			if (random(0, 30) == 5) {
+				out("open random tab and move mouse within", out.antiban);
+				try {
 					game.openTab(random(0, 15));
 					mouse.move(random(550, 735), random(210, 465));
-					sleep(random(1000, 2000));
+				} catch (Exception e) {
+					out("Failed to open a random tab", out.error);
 				}
-				break;
-			case 4:
-				if (random(0, 30) == 5) {
-					log("[antiban] open random tab");
+				sleep(random(1000, 2000));
+			}
+			break;
+		case 4:
+			if (random(0, 30) == 5) {
+				try {
+					out("open random tab", out.antiban);
 					game.openTab(random(0, 15));
-					sleep(random(500, random(1000, 2000)));
+				} catch (Exception e) {
+					out("Failed to open a random tab", out.error);
 				}
-				break;
-			case 5:
-				if (random(0, 40) == 5) {
-					log("[antiban] check objective");
-					game.openTab(8);
-					interfaces.getComponent(891, 10).doHover();
-					sleep(random(1000, 2000));
-				}
-				break;
-			case 6:
-				if (random(0, 70) == 5) {
-					log("[antiban] away from keyboard");
-					mouse.moveOffScreen();
-					curAFKST = System.currentTimeMillis();
-					curAFKT = random(0, random(5000, random(10000, random(15000,
-							20000))));
-					log("[antiban] afk for " + curAFKT);
-					curAFK = true;
-					sleep(curAFKT);
-					curAFK = false;
-				}
-				break;
-			default:
-				break;
+				sleep(random(500, random(1000, 2000)));
+			}
+			break;
+		case 5:
+			if (random(0, 70) == 5) {
+				mouse.moveOffScreen();
+				curAFKST = System.currentTimeMillis();
+				curAFKT = random(0, random(5000, random(10000, random(15000,
+						20000))));
+				out("away from keyboard for " + curAFKT, out.antiban);
+				curAFK = true;
+				sleep(curAFKT);
+				curAFK = false;
+			}
+			break;
+		default:
+			break;
 		}
 	}
 
@@ -286,26 +316,13 @@ public class DunkYakKilla extends Script implements PaintListener {
 		g.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		g.setColor(Color.WHITE);
 		String[] list = {
-				NAME + " v" + VERSION,
+				TITLE,
 				"Runtime: "
 						+ timeFormat((int) (System.currentTimeMillis() - startTime)),
-				"Status: " + status, "Kills: " + numberFormat(kills)};
+				"Status: " + status, "Kills: " + numberFormat(kills) };
 		drawColumn(g, list, 7, 337, -3, false, true);
-		ArrayList<String> infoSkillsRaw = new ArrayList<String>();
-		for (int i = 0; i < infoSkill.skillAmount; i++) {
-			if (infoSkill.getExpGained(i) > 0) {
-				infoSkillsRaw.add("");
-				infoSkillsRaw.add(setFirstUppercase(infoSkill.getSkillName(i))
-						+ " exp gained: "
-						+ numberFormat(infoSkill.getExpGained(i)));
-				infoSkillsRaw.add("  Exp per hour: "
-						+ numberFormat((int) getPerHour(infoSkill
-						.getExpGained(i), startTime)));
-			}
-		}
-		String[] infoSkills = toArray(infoSkillsRaw);
 		g.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		drawColumn(g, infoSkills, 515, 337, -3, true, true);
+		drawColumn(g, getSkillColumn(), 515, 337, -3, true, true);
 		g.setColor(setAlpha(Color.GREEN, 150));
 		RSNPC[] a = npcs.getAll(new Filter<RSNPC>() {
 			public boolean accept(RSNPC v) {
@@ -313,21 +330,20 @@ public class DunkYakKilla extends Script implements PaintListener {
 			}
 		});
 		for (RSNPC b : a) {
-			Point l = calc.tileToScreen(b.getLocation(), b.getHeight() / 2);
+			Point l = calc.tileToScreen(b.getLocation(), -b.getHeight() / 2);
 			if (!calc.pointOnScreen(l))
 				continue;
-			g.drawOval(l.x - 5, l.y - 5, 10, 10);
 			g.setColor(setAlpha(Color.GREEN, 150));
-			// drawModel(g, b);
+			g.drawOval(l.x - 5, l.y - 5, 10, 10);
 		}
 		g.setColor(Color.YELLOW);
 		if (curAFK) {
-			drawNote(g, true, new String[]{
+			drawNote(g, true, new String[] {
 					"Away from keyboard for " + secondFormat(curAFKT)
 							+ " seconds...",
 					"Time left: "
 							+ secondFormat((int) (curAFKT - (System
-							.currentTimeMillis() - curAFKST)))});
+									.currentTimeMillis() - curAFKST))) });
 		}
 		RSCharacter opponent = players.getMyPlayer().getInteracting();
 		if (opponent != null) {
@@ -341,9 +357,24 @@ public class DunkYakKilla extends Script implements PaintListener {
 		}
 	}
 
+	public String[] getSkillColumn() {
+		ArrayList<String> column = new ArrayList<String>();
+		for (int i = 0; i < skillInfo.skillAmount; i++) {
+			int expGained = skillInfo.getExpGained(i);
+			if (expGained > 0) {
+				column.add("");
+				column.add(setFirstUppercase(skillInfo.getSkillName(i))
+						+ " exp gained: " + numberFormat(expGained));
+				column.add("Exp per hour: "
+						+ numberFormat((int) getPerHour(expGained, startTime)));
+			}
+		}
+		return toArray(column);
+	}
+
 	/* VOIDS */
 	public void drawColumn(Graphics g, String[] column, int x, int y,
-						   int offset, boolean reverseHorizontal, boolean reverseVertical) {
+			int offset, boolean reverseHorizontal, boolean reverseVertical) {
 		int h = g.getFontMetrics().getHeight(), xp = x;
 		h += offset;
 		if (reverseVertical) {
@@ -376,15 +407,26 @@ public class DunkYakKilla extends Script implements PaintListener {
 			g.drawString(strA[i],
 					x
 							+ ((w / 2) - (g.getFontMetrics().stringWidth(
-							strA[i]) / 2)), y + oY * (i + 1));
+									strA[i]) / 2)), y + oY * (i + 1));
 		}
 	}
 
-	public void drawModel(Graphics g, RSNPC o) {
-		Polygon[] model = o.getModel().getTriangles();
-		for (Polygon p : model) {
-			g.drawPolygon(p);
+	public enum out {
+		error, warning, note, debug, antiban, progress
+	}
+
+	public void out(String str) {
+		out(str, null);
+	}
+
+	public void out(String str, out sort) {
+		String output = "";
+		if (sort != null) {
+			output += "[" + sort.name().toUpperCase() + "] ";
 		}
+		output += Character.toUpperCase(str.charAt(0))
+				+ str.substring(1).toLowerCase();
+		log(output);
 	}
 
 	/* BOOLEANS */
@@ -395,7 +437,7 @@ public class DunkYakKilla extends Script implements PaintListener {
 	}
 
 	public boolean isValidToAttack(RSNPC v) {
-		return v.getName().equals(YAKNAME) && v.getInteracting() == null
+		return v.getID() == YAK_ID && v.getInteracting() == null
 				&& !v.isInCombat();
 	}
 
@@ -412,6 +454,28 @@ public class DunkYakKilla extends Script implements PaintListener {
 				}
 			}
 		} catch (Exception e) {
+		}
+		return false;
+	}
+
+	public boolean doAction(RSNPC npc, String action) {
+		if (npc == null || !calc.pointOnScreen(npc.getScreenLocation()))
+			return false;
+		mouse.move(new Point((int) Math.round(npc.getScreenLocation().getX()),
+				(int) Math.round(npc.getScreenLocation().getY())));
+		String[] items = menu.getItems();
+		if (items.length > 0
+				&& items[0].toLowerCase().startsWith(action.toLowerCase())) {
+			mouse.click(true);
+			return true;
+		} else {
+			String[] menuItems = menu.getItems();
+			for (String item : menuItems) {
+				if (item.toLowerCase().contains(action.toLowerCase())) {
+					mouse.click(false);
+					return menu.doAction(action);
+				}
+			}
 		}
 		return false;
 	}
@@ -582,7 +646,11 @@ public class DunkYakKilla extends Script implements PaintListener {
 	public class turnToYak extends Thread {
 
 		public void run() {
-			camera.turnToCharacter(getNPCToAttack());
+			try {
+				camera.turnToCharacter(getNPCToAttack());
+			} catch (Exception e) {
+				out("Failed to turn to character", out.error);
+			}
 		}
 	}
 
@@ -766,7 +834,7 @@ public class DunkYakKilla extends Script implements PaintListener {
 
 			// ======== this ========
 			setResizable(false);
-			setTitle("DunkYakKilla");
+			setTitle(NAME);
 			setBackground(Color.white);
 			Container contentPane = getContentPane();
 			contentPane.setLayout(new BorderLayout());
@@ -784,7 +852,7 @@ public class DunkYakKilla extends Script implements PaintListener {
 					contentPanel.setPreferredSize(new Dimension(190, 300));
 
 					// ---- title ----
-					title.setText("DunkYakKilla");
+					title.setText(TITLE);
 					title.setFont(new Font("Tahoma", Font.BOLD, 16));
 					title.setHorizontalAlignment(SwingConstants.CENTER);
 
@@ -811,8 +879,8 @@ public class DunkYakKilla extends Script implements PaintListener {
 					label7.setFont(new Font("Tahoma", Font.BOLD, 11));
 					label7.setHorizontalAlignment(SwingConstants.CENTER);
 
-					String[] model = new String[]{"Dont use", "Normal",
-							"Super"};
+					String[] model = new String[] { "Dont use", "Normal",
+							"Super" };
 
 					// ---- attack ----
 					attack.setModel(new DefaultComboBoxModel(model));
@@ -850,8 +918,8 @@ public class DunkYakKilla extends Script implements PaintListener {
 					label11.setText("Ranged potion:");
 
 					// ---- ranged ----
-					ranged.setModel(new DefaultComboBoxModel(new String[]{
-							"Dont use", "Normal"}));
+					ranged.setModel(new DefaultComboBoxModel(new String[] {
+							"Dont use", "Normal" }));
 
 					GroupLayout contentPanelLayout = new GroupLayout(
 							contentPanel);
@@ -1154,10 +1222,10 @@ public class DunkYakKilla extends Script implements PaintListener {
 					buttonBar.setBorder(new EmptyBorder(12, 0, 0, 0));
 					buttonBar.setBackground(Color.white);
 					buttonBar.setLayout(new GridBagLayout());
-					((GridBagLayout) buttonBar.getLayout()).columnWidths = new int[]{
-							0, 85, 80};
-					((GridBagLayout) buttonBar.getLayout()).columnWeights = new double[]{
-							1.0, 0.0, 0.0};
+					((GridBagLayout) buttonBar.getLayout()).columnWidths = new int[] {
+							0, 85, 80 };
+					((GridBagLayout) buttonBar.getLayout()).columnWeights = new double[] {
+							1.0, 0.0, 0.0 };
 
 					// ---- okButton ----
 					okButton.setText("OK");
