@@ -36,11 +36,12 @@ public class BotStub implements AppletStub, AppletContext {
 
 	public BotStub(final RSLoader applet) {
 		this.applet = applet;
-		parameters = new Crawler("http://www." + applet.getTargetName() + ".com/").getParameters();
-		final String world = parameters.get("worldid");
+		Crawler c = new Crawler("http://www." + applet.getTargetName() + ".com/");
+		parameters = c.getParameters();
+		final String world_prefix = c.getWorldPrefix();
 		try {
-			codeBase = new URL("http://world" + world + "." + applet.getTargetName() + ".com");
-			documentBase = new URL("http://world" + world + "." + applet.getTargetName() + ".com/m0");
+			codeBase = new URL("http://world" + world_prefix + "." + applet.getTargetName() + ".com");
+			documentBase = new URL("http://world" + world_prefix + "." + applet.getTargetName() + ".com/m0");
 		} catch (final MalformedURLException e) {
 			throw new RuntimeException(e);
 		}

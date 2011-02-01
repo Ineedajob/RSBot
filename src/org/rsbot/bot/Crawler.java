@@ -14,6 +14,7 @@ public class Crawler {
 	private static final Logger log = Logger.getLogger(Crawler.class.getName());
 
 	private static HashMap<String, String> parameters;
+	private String world_prefix;
 
 	public Crawler(String root) {
 		final String index = firstMatch("<a id=\"continue\" class=\"barItem\" href=\"([^\"]+)\"\\s+onclick=\"[^\"]+\">Continue to Full Site for News and Game Help", downloadPage(root, null));
@@ -21,6 +22,8 @@ public class Crawler {
 		final String frame = root + "game.ws";
 
 		final String game = firstMatch("<frame style=\"[^\"]+\" src=\"([^\"]+)\"", downloadPage(frame, index));
+		
+		world_prefix = game.substring(12, game.indexOf(".runescape"));
 
 		final Pattern pattern = Pattern.compile("<param name=\"?([^\\s]+)\"?\\s+value=\"?([^>]*)\"?>", Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
 		final Matcher matcher = pattern.matcher(downloadPage(game, frame));
@@ -68,6 +71,10 @@ public class Crawler {
 
 	public HashMap<String, String> getParameters() {
 		return parameters;
+	}
+	
+	public String getWorldPrefix() {
+		return world_prefix;
 	}
 
 	private String removeTrailingChar(final String str, final char ch) {
