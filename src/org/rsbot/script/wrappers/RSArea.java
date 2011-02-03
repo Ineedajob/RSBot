@@ -155,8 +155,8 @@ public class RSArea {
 	 */
 	public RSTile[][] getTiles() {
 		RSTile[][] tiles = new RSTile[this.getWidth() + 1][this.getHeight() + 1];
-		for (int i = 0; i < this.getHeight(); ++i) {
-			for (int j = 0; j < this.getWidth(); ++j) {
+		for (int i = 0; i < this.getWidth(); ++i) {
+			for (int j = 0; j < this.getHeight(); ++j) {
 				if (this.area.contains(this.getX() + i, this.getY() + j)) {
 					tiles[i][j] = new RSTile(this.getX() + i, this.getY() + j);
 				}
