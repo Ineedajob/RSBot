@@ -62,10 +62,10 @@ public class GlobalConfiguration {
 		}
 
 		public static class URLs {
-			public static final String UPDATER = "http://updater.powerbot.org/";
-			public static final String DOWNLOAD = UPDATER + "RSBot.jar";
-			public static final String UPDATE = UPDATER + "mod.dat";
-			public static final String VERSION = UPDATER + "version.dat";
+			public static final String UPDATER = "http://links.powerbot.org/";
+			public static final String DOWNLOAD = UPDATER + "update";
+			public static final String UPDATE = UPDATER + "modscript";
+			public static final String VERSION = UPDATER + "version";
 			public static final String PROJECT = "http://code.google.com/p/rsbot-client";
 			public static final String SITE = "http://www.powerbot.org";
 			public static final String STATS = "http://stats.powerbot.org/sync/";
