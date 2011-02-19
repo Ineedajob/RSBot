@@ -4,7 +4,7 @@ import org.rsbot.script.Random;
 import org.rsbot.script.ScriptManifest;
 import org.rsbot.script.wrappers.RSComponent;
 
-@ScriptManifest(authors = {"Holo", "Gnarly"}, name = "BankPin", version = 2.1)
+@ScriptManifest(authors = { "Holo", "Gnarly", "Salty_Fish", "Pervy Shuya" }, name = "BankPin", version = 2.2)
 public class BankPins extends Random {
 
 	@Override
@@ -17,21 +17,20 @@ public class BankPins extends Random {
 			return;
 		final RSComponent[] children = interfaces.get(13).getComponents();
 		int state = 0;
-		for (int i = 21; i < 25; i++) {
+		for (int i = 1; i < 5; i++) {
 			if (children[i].containsText("?")) {
 				state++;
 			}
 		}
 		state = 4 - state;
-		for (int i = 11; i < 21; i++) {
-			if (children[i].containsText(pin.substring(state, state + 1))) {
-				children[i - 10].doClick();
+		if (!interfaces.get(759).isValid())
+			return;
+		final RSComponent[] bankPin = interfaces.get(759).getComponents();
+		for (int i = 0; i < bankPin.length; i++) {
+			if (bankPin[i].containsText(pin.substring(state, state + 1))) {
+				bankPin[i].doClick(true);
 				sleep(random(500, 1000));
 				break;
-			} else {
-				if (random(0, 5) == 0) {
-					mouse.moveSlightly();
-				}
 			}
 		}
 	}
