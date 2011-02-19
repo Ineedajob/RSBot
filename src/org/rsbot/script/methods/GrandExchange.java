@@ -7,9 +7,11 @@ import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.rsbot.script.wrappers.GEItemInfo;
+
 /**
  * Obtains information on tradeable items from the Grand Exchange website.
- *
+ * 
  * @author Aion
  */
 @SuppressWarnings("deprecation")
@@ -18,8 +20,8 @@ public class GrandExchange extends MethodProvider {
 	private static final String HOST = "http://services.runescape.com";
 	private static final String GET = "/m=itemdb_rs/viewitem.ws?obj=";
 
-	private static final Pattern PATTERN = Pattern.compile(
-			"(?i)<td><img src=\".+obj_sprite\\.gif\\?id=(\\d+)\" alt=\"(.+)\"");
+	private static final Pattern PATTERN = Pattern
+			.compile("(?i)<td><img src=\".+obj_sprite\\.gif\\?id=(\\d+)\" alt=\"(.+)\"");
 
 	GrandExchange() {
 		super(null);
@@ -27,8 +29,9 @@ public class GrandExchange extends MethodProvider {
 
 	/**
 	 * Gets the name of the given item ID. Should not be used.
-	 *
-	 * @param itemID The item ID to look for.
+	 * 
+	 * @param itemID
+	 *            The item ID to look for.
 	 * @return The name of the given item ID or an empty String if unavailable.
 	 * @see GrandExchange#lookup(int)
 	 */
@@ -42,8 +45,9 @@ public class GrandExchange extends MethodProvider {
 
 	/**
 	 * Gets the ID of the given item name. Should not be used.
-	 *
-	 * @param itemName The name of the item to look for.
+	 * 
+	 * @param itemName
+	 *            The name of the item to look for.
 	 * @return The ID of the given item name or -1 if unavailable.
 	 * @see GrandExchange#lookup(java.lang.String)
 	 */
@@ -56,86 +60,26 @@ public class GrandExchange extends MethodProvider {
 	}
 
 	/**
-	 * This method loads a item's full info from the Grand Exchange website. Use only when requiring all info.
-	 *
-	 * @param itemID Item to load
-	 * @return GEItemInfo containing item information
-	 * @see #lookup(int)
-	 */
-	@Deprecated
-	public org.rsbot.script.wrappers.GEItemInfo loadItemInfo(int itemID) {
-		GEItem item = lookup(itemID);
-		if (item == null) {
-			return null;
-		}
-		return new org.rsbot.script.wrappers.GEItemInfo(itemID, item.getMinPrice(), item.getMaxPrice(), item.getMarketPrice(), Double.toString(item.getChange30Days()), Double.toString(item.getChange90Days()), Double.toString(item.getChange180Days()));
-	}
-
-	/**
-	 * Fetches the max price from the grand exchange
-	 *
-	 * @param itemID Item to load
-	 * @return Max price
-	 * @see #lookup(int)
-	 */
-	@Deprecated
-	public int getMaxPrice(int itemID) {
-		GEItem item = lookup(itemID);
-		if (item != null) {
-			return item.getMaxPrice();
-		}
-		return -1;
-	}
-
-	/**
-	 * Fetches the market price from the grand exchange
-	 *
-	 * @param itemID Item to load
-	 * @return Market price
-	 * @see #lookup(int)
-	 */
-	@Deprecated
-	public int getMarketPrice(int itemID) {
-		GEItem item = lookup(itemID);
-		if (item != null) {
-			return item.getMarketPrice();
-		}
-		return -1;
-	}
-
-	/**
-	 * Fetches the min price from the grand exchange
-	 *
-	 * @param itemID Item to load
-	 * @return Min price
-	 * @see #lookup(int)
-	 */
-	@Deprecated
-	public int getMinPrice(int itemID) {
-		GEItem item = lookup(itemID);
-		if (item != null) {
-			return item.getMinPrice();
-		}
-		return -1;
-	}
-
-	/**
 	 * Collects data for a given item ID from the Grand Exchange website.
-	 *
-	 * @param itemID The item ID.
-	 * @return An instance of GrandExchange.GEItem; <code>null</code> if unable to fetch data.
+	 * 
+	 * @param itemID
+	 *            The item ID.
+	 * @return An instance of GrandExchange.GEItem; <code>null</code> if unable
+	 *         to fetch data.
 	 */
 	public GEItem lookup(int itemID) {
 		try {
 			URL url = new URL(GrandExchange.HOST + GrandExchange.GET + itemID);
-			BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream()));
+			BufferedReader br = new BufferedReader(new InputStreamReader(
+					url.openStream()));
 			String input;
 			boolean exists = false;
 			int i = 0;
-			double[] values = new double[6];
+			double[] values = new double[4];
 			String name = "", examine = "";
 			while ((input = br.readLine()) != null) {
-				if (input.contains("<div class=\"brown_box main_ge_page") && !exists) {
+				if (input.contains("<div class=\"brown_box main_ge_page")
+						&& !exists) {
 					if (!input.contains("vertically_spaced")) {
 						return null;
 					}
@@ -159,15 +103,19 @@ public class GrandExchange extends MethodProvider {
 
 	/**
 	 * Collects data for a given item name from the Grand Exchange website.
-	 *
-	 * @param itemName The name of the item.
-	 * @return An instance of GrandExchange.GEItem; <code>null</code> if unable to fetch data.
+	 * 
+	 * @param itemName
+	 *            The name of the item.
+	 * @return An instance of GrandExchange.GEItem; <code>null</code> if unable
+	 *         to fetch data.
 	 */
 	public GEItem lookup(String itemName) {
 		try {
-			URL url = new URL(GrandExchange.HOST + "/m=itemdb_rs/results.ws?query="
-					+ itemName + "&price=all&members=");
-			BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream()));
+			URL url = new URL(GrandExchange.HOST
+					+ "/m=itemdb_rs/results.ws?query=" + itemName
+					+ "&price=all&members=");
+			BufferedReader br = new BufferedReader(new InputStreamReader(
+					url.openStream()));
 			String input;
 			while ((input = br.readLine()) != null) {
 				if (input.contains("<div id=\"search_results_text\">")) {
@@ -216,110 +164,109 @@ public class GrandExchange extends MethodProvider {
 
 	public static class GEItem {
 
-		private String name;
-		private String examine;
+		private final String name;
+		private final String examine;
 
-		private int id;
+		private final int id;
 
-		private int minPrice;
-		private int marketPrice;
-		private int maxPrice;
+		private final int guidePrice;
 
-		private double change30;
-		private double change90;
-		private double change180;
+		private final double change30;
+		private final double change90;
+		private final double change180;
 
 		GEItem(String name, String examine, int id, double[] values) {
 			this.name = name;
 			this.examine = examine;
 			this.id = id;
-			minPrice = (int) values[0];
-			marketPrice = (int) values[1];
-			maxPrice = (int) values[2];
-			change30 = values[3];
-			change90 = values[4];
-			change180 = values[5];
+			this.guidePrice = (int) values[0];
+			this.change30 = values[1];
+			this.change90 = values[2];
+			this.change180 = values[3];
 		}
 
 		/**
 		 * Gets the change in price for the last 30 days of this item.
-		 *
+		 * 
 		 * @return The change in price for the last 30 days of this item.
 		 */
 		public double getChange30Days() {
-			return change30;
+			return this.change30;
 		}
 
 		/**
 		 * Gets the change in price for the last 90 days of this item.
-		 *
+		 * 
 		 * @return The change in price for the last 90 days of this item.
 		 */
 		public double getChange90Days() {
-			return change90;
+			return this.change90;
 		}
 
 		/**
 		 * Gets the change in price for the last 180 days of this item.
-		 *
+		 * 
 		 * @return The change in price for the last 180 days of this item.
 		 */
 		public double getChange180Days() {
-			return change180;
+			return this.change180;
 		}
 
 		/**
 		 * Gets the ID of this item.
-		 *
+		 * 
 		 * @return The ID of this item.
 		 */
 		public int getID() {
-			return id;
+			return this.id;
 		}
 
 		/**
 		 * Gets the market price of this item.
-		 *
+		 * 
 		 * @return The market price of this item.
 		 */
-		public int getMarketPrice() {
-			return marketPrice;
-		}
-
-		/**
-		 * Gets the maximum market price of this item.
-		 *
-		 * @return The maximum market price of this item.
-		 */
-		public int getMaxPrice() {
-			return maxPrice;
-		}
-
-		/**
-		 * Gets the minimum market price of this item.
-		 *
-		 * @return The minimum market price of this item.
-		 */
-		public int getMinPrice() {
-			return minPrice;
+		public int getGuidePrice() {
+			return this.guidePrice;
 		}
 
 		/**
 		 * Gets the name of this item.
-		 *
+		 * 
 		 * @return The name of this item.
 		 */
 		public String getName() {
-			return name;
+			return this.name;
 		}
 
 		/**
 		 * Gets the description of this item.
-		 *
+		 * 
 		 * @return The description of this item.
 		 */
 		public String getDescription() {
-			return examine;
+			return this.examine;
 		}
+
+		@Deprecated
+		public int getMarketPrice() {
+			return this.guidePrice;
+		}
+
+		@Deprecated
+		public int getMaxPrice() {
+			return this.guidePrice;
+		}
+
+		@Deprecated
+		public int getMinPrice() {
+			return this.guidePrice;
+		}
+	}
+
+	@Deprecated
+	public GEItemInfo loadItemInfo(int i) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

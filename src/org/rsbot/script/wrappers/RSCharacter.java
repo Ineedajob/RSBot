@@ -1,12 +1,12 @@
 package org.rsbot.script.wrappers;
 
+import java.awt.Point;
+
 import org.rsbot.client.Model;
 import org.rsbot.client.Node;
 import org.rsbot.client.RSNPCNode;
 import org.rsbot.script.methods.MethodContext;
 import org.rsbot.script.methods.MethodProvider;
-
-import java.awt.*;
 
 /**
  * Represents a character.
@@ -18,40 +18,87 @@ public abstract class RSCharacter extends MethodProvider {
 	}
 
 	/**
-	 * Retrieves a reference to the client accessor. For internal use.
-	 * The reference should be stored in a SoftReference by subclasses
-	 * to allow for garbage collection when appropriate.
-	 *
+	 * Retrieves a reference to the client accessor. For internal use. The
+	 * reference should be stored in a SoftReference by subclasses to allow for
+	 * garbage collection when appropriate.
+	 * 
 	 * @return The client accessor.
 	 */
 	protected abstract org.rsbot.client.RSCharacter getAccessor();
 
-	/**
+	/*
 	 * Clicks a humanoid character (tall and skinny).
-	 *
+	 * 
 	 * @param action The option to be clicked (if available).
+	 * 
 	 * @return <tt>true</tt> if the option was found; otherwise <tt>false</tt>.
 	 */
-	public boolean doAction(String action) {
+	/*
+	 * public boolean doAction(String action) { for (int i = 0; i < 20; i++) {
+	 * if (getAccessor() == null ||
+	 * !methods.calc.pointOnScreen(getScreenLocation()) ||
+	 * !methods.calc.tileOnScreen(getLocation())) return false;
+	 * methods.mouse.move(new Point((int) Math.round(getScreenLocation().getX())
+	 * + random(-5, 5), (int) Math.round(getScreenLocation().getY()) +
+	 * random(-5, 5))); String[] items = methods.menu.getItems(); if
+	 * (items.length > 0 &&
+	 * items[0].toLowerCase().startsWith(action.toLowerCase())) {
+	 * methods.mouse.click(true); return true; } else { String[] menuItems =
+	 * methods.menu.getItems(); for (String item : menuItems) { if
+	 * (item.toLowerCase().contains(action.toLowerCase())) {
+	 * methods.mouse.click(false); return methods.menu.doAction(action); } } } }
+	 * return false; }
+	 */
+
+	/**
+	 * Clicks a humanoid character (tall and skinny).
+	 * 
+	 * @param action
+	 *            The option to be clicked (if available).
+	 * @return <tt>true</tt> if the option was found; otherwise <tt>false</tt>.
+	 */
+	public boolean doAction(final String action) {
 		for (int i = 0; i < 20; i++) {
-			if (getAccessor() == null || !methods.calc.pointOnScreen(getScreenLocation()) || !methods.calc.tileOnScreen(getLocation()))
+			if (getAccessor() == null || getModel().getPointOnScreen() == null
+					|| !methods.calc.tileOnScreen(getLocation()))
 				return false;
-			methods.mouse.move(new Point((int) Math.round(getScreenLocation().getX()) + random(-5, 5), (int) Math.round(getScreenLocation().getY()) + random(-5, 5)));
-			String[] items = methods.menu.getItems();
-			if (items.length > 0 && items[0].toLowerCase().startsWith(action.toLowerCase())) {
-				methods.mouse.click(true);
-				return true;
-			} else {
-				String[] menuItems = methods.menu.getItems();
-				for (String item : menuItems) {
-					if (item.toLowerCase().contains(action.toLowerCase())) {
-						methods.mouse.click(false);
-						return methods.menu.doAction(action);
+			if (getModel().getPointOnScreen() != null) {
+				Point p;
+				if (isOnScreen()) {
+					p = getModel().getCentralPoint();
+				} else {
+					p = getModel().getPoint();
+				}
+				if (p == null || !methods.calc.pointOnScreen(p)) {
+					return false;
+				}
+				methods.mouse.move(
+						p,
+						(int) Math.round(getScreenLocation().getX())
+								+ random(-5, 5),
+						(int) Math.round(getScreenLocation().getY())
+								+ random(-5, 5));
+				String[] items = methods.menu.getItems();
+				if (items.length > 0
+						&& items[0].toLowerCase().startsWith(
+								action.toLowerCase())) {
+					methods.mouse.click(true);
+					return true;
+				} else {
+					methods.mouse.click(false);
+					sleep(random(100, 200));
+					for (int x = 0; x < 4; x++) {
+						if (!methods.menu.contains(action)) {
+							break;
+						} else if (methods.menu.contains(action)) {
+							return methods.menu.doAction(action);
+						}
 					}
 				}
 			}
 		}
 		return false;
+
 	}
 
 	public RSModel getModel() {
@@ -81,7 +128,7 @@ public abstract class RSCharacter extends MethodProvider {
 	 * @return The % of HP
 	 */
 	public int getHPPercent() {
-		return isInCombat()? getAccessor().getHPRatio() * 100 / 255 : 100;
+		return isInCombat() ? getAccessor().getHPRatio() * 100 / 255 : 100;
 	}
 
 	public RSCharacter getInteracting() {
@@ -90,7 +137,8 @@ public abstract class RSCharacter extends MethodProvider {
 			return null;
 		}
 		if (interact < 32768) {
-			Node node = methods.nodes.lookup(methods.client.getRSNPCNC(), interact);
+			Node node = methods.nodes.lookup(methods.client.getRSNPCNC(),
+					interact);
 			if (node == null || !(node instanceof RSNPCNode)) {
 				return null;
 			}
@@ -100,7 +148,8 @@ public abstract class RSCharacter extends MethodProvider {
 			if (index == methods.client.getSelfInteracting()) {
 				index = 2047;
 			}
-			return new RSPlayer(methods, methods.client.getRSPlayerArray()[index]);
+			return new RSPlayer(methods,
+					methods.client.getRSPlayerArray()[index]);
 		}
 	}
 
@@ -119,9 +168,9 @@ public abstract class RSCharacter extends MethodProvider {
 	}
 
 	/**
-	 * Gets the minimap location, of the character.
-	 * Note: This does work when it's walking!
-	 *
+	 * Gets the minimap location, of the character. Note: This does work when
+	 * it's walking!
+	 * 
 	 * @return The location of the character on the minimap.
 	 */
 	public Point getMinimapLocation() {
@@ -147,18 +196,22 @@ public abstract class RSCharacter extends MethodProvider {
 		org.rsbot.client.RSCharacter c = getAccessor();
 		RSModel model = getModel();
 		if (model == null) {
-			return methods.calc.groundToScreen(c.getX(), c.getY(), c.getHeight() / 2);
+			return methods.calc.groundToScreen(c.getX(), c.getY(),
+					c.getHeight() / 2);
 		} else {
 			return model.getPoint();
 		}
 	}
 
 	public boolean isInCombat() {
-		return methods.game.isLoggedIn() && methods.client.getLoopCycle() < getAccessor().getLoopCycleStatus();
+		return methods.game.isLoggedIn()
+				&& methods.client.getLoopCycle() < getAccessor()
+						.getLoopCycleStatus();
 	}
 
 	public boolean isInteractingWithLocalPlayer() {
-		return getAccessor().getInteracting() - 32768 == methods.client.getSelfInteracting();
+		return getAccessor().getInteracting() - 32768 == methods.client
+				.getSelfInteracting();
 	}
 
 	public boolean isMoving() {
@@ -195,7 +248,13 @@ public abstract class RSCharacter extends MethodProvider {
 	@Override
 	public String toString() {
 		final RSCharacter inter = getInteracting();
-		return "[anim=" + getAnimation() + ",msg=" + getMessage() + ",interact=" + (inter == null ? "null" : inter.isValid() ? inter.getMessage() : "Invalid") + "]";
+		return "[anim="
+				+ getAnimation()
+				+ ",msg="
+				+ getMessage()
+				+ ",interact="
+				+ (inter == null ? "null" : inter.isValid() ? inter
+						.getMessage() : "Invalid") + "]";
 	}
 
 }
