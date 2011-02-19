@@ -226,13 +226,8 @@ public class GrandExchange extends MethodProvider {
 		 * 
 		 * @return The market price of this item.
 		 */
-<<<<<<< .mine
 		public int getGuidePrice() {
 			return guidePrice;
-=======
-		public int getGuidePrice() {
-			return this.guidePrice;
->>>>>>> .r72
 		}
 
 		/**
@@ -252,7 +247,6 @@ public class GrandExchange extends MethodProvider {
 		public String getDescription() {
 			return this.examine;
 		}
-<<<<<<< .mine
 
 		@Deprecated
 		public int getMarketPrice() {
@@ -268,23 +262,6 @@ public class GrandExchange extends MethodProvider {
 		public int getMinPrice() {
 			return guidePrice;
 		}
-=======
-
-		@Deprecated
-		public int getMarketPrice() {
-			return this.guidePrice;
-		}
-
-		@Deprecated
-		public int getMaxPrice() {
-			return this.guidePrice;
-		}
-
-		@Deprecated
-		public int getMinPrice() {
-			return this.guidePrice;
-		}
->>>>>>> .r72
 	}
 
 	@Deprecated
