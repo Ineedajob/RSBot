@@ -1,13 +1,14 @@
 .classpath
 .project
 .svn
+/*.class
 /*.diff
 /*.iml
 /*.ipr
 /*.iws
 /*.jar
 /*.patch
-/*.class
+/.settings
 /bin
 /scripts/*.class
 /temp.txt
