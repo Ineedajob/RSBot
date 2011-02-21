@@ -97,4 +97,31 @@ public class Tiles extends MethodProvider {
 		}
 		return close;
 	}
+	
+	/**
+	 * Gets the tile under a point.
+	 * @param p
+	 * @return
+	 */
+	public RSTile getTileUnderMouse(Point p) {
+		if (!methods.calc.pointOnScreen(p)) {
+			return null;
+		}
+		RSTile close = null;
+		for (int x = 0; x < 104; x++) {
+			for (int y = 0; y < 104; y++) {
+				RSTile t = new RSTile(x + methods.client.getBaseX(), y + methods.client.getBaseY());
+				Point s = methods.calc.tileToScreen(t);
+				if (s.x != -1 && s.y != -1) {
+					if (close == null) {
+						close = t;
+					}
+					if (methods.calc.tileToScreen(close).distance(p) > methods.calc.tileToScreen(t).distance(p)) {
+						close = t;
+					}
+				}
+			}
+		}
+		return close;
+	}
 }

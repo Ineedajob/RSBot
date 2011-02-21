@@ -14,7 +14,7 @@ import org.rsbot.script.util.Filter;
 /**
  * A screen space model.
  * 
- * @author Jacmob
+ * @author Jacmob, SpeedWing
  */
 public abstract class RSModel extends MethodProvider {
 
@@ -60,6 +60,64 @@ public abstract class RSModel extends MethodProvider {
 	protected abstract void update();
 
 	/**
+	 * @param p
+	 *            A point on the screen
+	 * @return true of the point is within the bounds of the model
+	 */
+	private boolean contains(Point p) {
+		if (this == null)
+			return false;
+
+		Polygon[] triangles = this.getTriangles();
+		for (Polygon poly : triangles)
+			if (poly.contains(p))
+				return true;
+
+		return false;
+	}
+
+	/**
+	 * Clicks the RSModel.
+	 * 
+	 * @param leftClick
+	 *            if true it left clicks.
+	 * @return true if clicked.
+	 */
+	public boolean doClick(boolean leftClick) {
+		for (int i = 0; i < 10; i++) {
+			methods.mouse.move(getPoint());
+			if (this.contains(methods.mouse.getLocation())) {
+				methods.mouse.click(leftClick);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Clicks the RSModel and clicks the menu action
+	 * 
+	 * @param action
+	 *            the action to be clicked in the menu
+	 * @return true if clicked, false if failed.
+	 */
+	public boolean doAction(String action) {
+		for (int i = 0; i < 10; i++) {
+			methods.mouse.move(getPoint());
+			if (this.contains(methods.mouse.getLocation())) {
+				if (methods.menu.contains(action)) {
+					if (!methods.menu.doAction(action)) {
+						continue;
+					} else {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * Returns a random screen point.
 	 * 
 	 * @see #getCentralPoint()
@@ -81,6 +139,25 @@ public abstract class RSModel extends MethodProvider {
 			return point;
 		}
 		return new Point(-1, -1);
+	}
+
+	/**
+	 * Returns all the screen points.
+	 * 
+	 * @return All the points that are on the screen, if the model is not on the
+	 *         screen it will return null.
+	 */
+	public Point[] getPoints() {
+		if (this == null)
+			return null;
+		Polygon[] polys = getTriangles();
+		Point[] points = new Point[polys.length * 3];
+		int index = 0;
+		for (Polygon poly : polys)
+			for (int i = 0; i < 3; i++) {
+				points[index++] = new Point(poly.xpoints[i], poly.ypoints[i]);
+			}
+		return points;
 	}
 
 	/**
@@ -181,6 +258,13 @@ public abstract class RSModel extends MethodProvider {
 			}
 		}
 		return polygons.toArray(new Polygon[polygons.size()]);
+	}
+
+	/**
+	 * Moves the mouse onto the RSModel.
+	 */
+	public void hover() {
+		methods.mouse.move(getPoint());
 	}
 
 	/**
