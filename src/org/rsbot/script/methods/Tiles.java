@@ -103,7 +103,7 @@ public class Tiles extends MethodProvider {
 	 * @param p
 	 * @return
 	 */
-	public RSTile getTileUnderMouse(Point p) {
+	public RSTile getTileUnderPoint(Point p) {
 		if (!methods.calc.pointOnScreen(p)) {
 			return null;
 		}
