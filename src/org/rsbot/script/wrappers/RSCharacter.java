@@ -10,6 +10,8 @@ import org.rsbot.script.methods.MethodProvider;
 
 /**
  * Represents a character.
+ * 
+ * @author SpeedWing
  */
 public abstract class RSCharacter extends MethodProvider {
 
@@ -26,30 +28,6 @@ public abstract class RSCharacter extends MethodProvider {
 	 */
 	protected abstract org.rsbot.client.RSCharacter getAccessor();
 
-	/*
-	 * Clicks a humanoid character (tall and skinny).
-	 * 
-	 * @param action The option to be clicked (if available).
-	 * 
-	 * @return <tt>true</tt> if the option was found; otherwise <tt>false</tt>.
-	 */
-	/*
-	 * public boolean doAction(String action) { for (int i = 0; i < 20; i++) {
-	 * if (getAccessor() == null ||
-	 * !methods.calc.pointOnScreen(getScreenLocation()) ||
-	 * !methods.calc.tileOnScreen(getLocation())) return false;
-	 * methods.mouse.move(new Point((int) Math.round(getScreenLocation().getX())
-	 * + random(-5, 5), (int) Math.round(getScreenLocation().getY()) +
-	 * random(-5, 5))); String[] items = methods.menu.getItems(); if
-	 * (items.length > 0 &&
-	 * items[0].toLowerCase().startsWith(action.toLowerCase())) {
-	 * methods.mouse.click(true); return true; } else { String[] menuItems =
-	 * methods.menu.getItems(); for (String item : menuItems) { if
-	 * (item.toLowerCase().contains(action.toLowerCase())) {
-	 * methods.mouse.click(false); return methods.menu.doAction(action); } } } }
-	 * return false; }
-	 */
-
 	/**
 	 * Clicks a humanoid character (tall and skinny).
 	 * 
@@ -58,47 +36,7 @@ public abstract class RSCharacter extends MethodProvider {
 	 * @return <tt>true</tt> if the option was found; otherwise <tt>false</tt>.
 	 */
 	public boolean doAction(final String action) {
-		for (int i = 0; i < 20; i++) {
-			if (getAccessor() == null || getModel().getPointOnScreen() == null
-					|| !methods.calc.tileOnScreen(getLocation()))
-				return false;
-			if (getModel().getPointOnScreen() != null) {
-				Point p;
-				if (isOnScreen()) {
-					p = getModel().getCentralPoint();
-				} else {
-					p = getModel().getPoint();
-				}
-				if (p == null || !methods.calc.pointOnScreen(p)) {
-					return false;
-				}
-				methods.mouse.move(
-						p,
-						(int) Math.round(getScreenLocation().getX())
-								+ random(-5, 5),
-						(int) Math.round(getScreenLocation().getY())
-								+ random(-5, 5));
-				String[] items = methods.menu.getItems();
-				if (items.length > 0
-						&& items[0].toLowerCase().startsWith(
-								action.toLowerCase())) {
-					methods.mouse.click(true);
-					return true;
-				} else {
-					methods.mouse.click(false);
-					sleep(random(100, 200));
-					for (int x = 0; x < 4; x++) {
-						if (!methods.menu.contains(action)) {
-							break;
-						} else if (methods.menu.contains(action)) {
-							return methods.menu.doAction(action);
-						}
-					}
-				}
-			}
-		}
-		return false;
-
+		return this.getModel().doAction(action);
 	}
 
 	public RSModel getModel() {
@@ -201,6 +139,13 @@ public abstract class RSCharacter extends MethodProvider {
 		} else {
 			return model.getPoint();
 		}
+	}
+
+	/**
+	 * Hovers this Player/NPC
+	 */
+	public void hover() {
+		this.getModel().hover();
 	}
 
 	public boolean isInCombat() {
