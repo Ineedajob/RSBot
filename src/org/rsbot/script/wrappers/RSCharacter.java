@@ -36,7 +36,11 @@ public abstract class RSCharacter extends MethodProvider {
 	 * @return <tt>true</tt> if the option was found; otherwise <tt>false</tt>.
 	 */
 	public boolean doAction(final String action) {
-		return this.getModel().doAction(action);
+		RSModel model = this.getModel();
+		if (model != null && this.isValid())
+			return this.getModel().doAction(action);
+		else
+			return false;
 	}
 
 	public RSModel getModel() {

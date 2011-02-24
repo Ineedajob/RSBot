@@ -84,12 +84,15 @@ public abstract class RSModel extends MethodProvider {
 	 * @return true if clicked.
 	 */
 	public boolean doClick(boolean leftClick) {
-		for (int i = 0; i < 10; i++) {
-			methods.mouse.move(getPoint());
-			if (this.contains(methods.mouse.getLocation())) {
-				methods.mouse.click(leftClick);
-				return true;
+		try {
+			for (int i = 0; i < 10; i++) {
+				methods.mouse.move(getPoint());
+				if (this.contains(methods.mouse.getLocation())) {
+					methods.mouse.click(leftClick);
+					return true;
+				}
 			}
+		} catch (Exception e) {
 		}
 		return false;
 	}
@@ -102,17 +105,20 @@ public abstract class RSModel extends MethodProvider {
 	 * @return true if clicked, false if failed.
 	 */
 	public boolean doAction(String action) {
-		for (int i = 0; i < 10; i++) {
-			methods.mouse.move(getPoint());
-			if (this.contains(methods.mouse.getLocation())) {
-				if (methods.menu.contains(action)) {
-					if (!methods.menu.doAction(action)) {
-						continue;
-					} else {
-						return true;
+		try {
+			for (int i = 0; i < 10; i++) {
+				methods.mouse.move(getPoint());
+				if (this.contains(methods.mouse.getLocation())) {
+					if (methods.menu.contains(action)) {
+						if (methods.menu.doAction(action)) {
+							return true;
+						} else {
+							continue;
+						}
 					}
 				}
 			}
+		} catch (Exception e) {
 		}
 		return false;
 	}
