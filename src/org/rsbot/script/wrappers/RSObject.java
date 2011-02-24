@@ -166,27 +166,26 @@ public class RSObject extends MethodProvider {
 	 */
 	public boolean doClick(boolean leftClick) {
 		RSModel model = this.getModel();
-		Point p;
 		if (model != null) {
 			return model.doClick(leftClick);
 		} else {
-			p = methods.calc.tileToScreen(getLocation());
-		}
-		if (methods.calc.pointOnScreen(p)) {
-			methods.mouse.move(p);
+			Point p = methods.calc.tileToScreen(getLocation());
 			if (methods.calc.pointOnScreen(p)) {
-				methods.mouse.click(leftClick);
-				return true;
-			} else {
-				p = methods.calc.tileToScreen(getLocation());
+				methods.mouse.move(p);
 				if (methods.calc.pointOnScreen(p)) {
-					methods.mouse.move(p);
 					methods.mouse.click(leftClick);
 					return true;
+				} else {
+					p = methods.calc.tileToScreen(getLocation());
+					if (methods.calc.pointOnScreen(p)) {
+						methods.mouse.move(p);
+						methods.mouse.click(leftClick);
+						return true;
+					}
 				}
 			}
+			return false;
 		}
-		return false;
 	}
 
 	/**
