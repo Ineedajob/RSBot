@@ -2,6 +2,7 @@ package org.rsbot.script.randoms;
 
 import java.awt.Rectangle;
 
+import org.rsbot.gui.AccountManager;
 import org.rsbot.script.Random;
 import org.rsbot.script.ScriptManifest;
 import org.rsbot.script.wrappers.RSComponent;
@@ -10,7 +11,7 @@ import org.rsbot.script.wrappers.RSInterface;
 /**
  * @author Iscream
  */
-@ScriptManifest(authors = { "Iscream" }, name = "Login", version = 1.4)
+@ScriptManifest(authors = { "Iscream", "Pervy Shuya" }, name = "Login", version = 1.5)
 public class LoginBot extends Random {
 
 	private static final int INTERFACE_MAIN = 905;
@@ -27,7 +28,9 @@ public class LoginBot extends Random {
 	private static final int INTERFACE_WELCOME_SCREEN = 906;
 	private static final int INTERFACE_WELCOME_SCREEN_BUTTON_PLAY_1 = 145;
 	private static final int INTERFACE_WELCOME_SCREEN_BUTTON_PLAY_2 = 155;
+	private static final int INTERFACE_WELCOME_SCREEN_BUTTON_LOGOUT = 178;
 	private static final int INTERFACE_WELCOME_SCREEN_TEXT_RETURN = 221;
+	private static final int INTERFACE_WELCOME_SCREEN_BUTTON_BACK = 228;
 	private static final int INTERFACE_WELCOME_SCREEN_HIGH_RISK_WORLD_TEXT = 74;
 	private static final int INTERFACE_WELCOME_SCREEN_HIGH_RISK_WORLD_LOGIN_BUTTON = 82;
 	private static final int INTERFACE_GRAPHICS_NOTICE = 976;
@@ -77,6 +80,22 @@ public class LoginBot extends Random {
 						.getComponent(INTERFACE_WELCOME_SCREEN_TEXT_RETURN)
 						.getText().toLowerCase();
 
+				if (returnText.contains("total skill level of")) {
+					log("Log back in when you total level of 1000/1500+");
+					interfaces.getComponent(INTERFACE_WELCOME_SCREEN,
+							INTERFACE_WELCOME_SCREEN_BUTTON_BACK).doClick();
+					stopScript(false);
+				}
+
+				if (returnText.contains("login limit exceeded")) {
+					log("If login limit screws up, tell Pervy.");
+					if (interfaces.getComponent(INTERFACE_WELCOME_SCREEN,
+							INTERFACE_WELCOME_SCREEN_BUTTON_BACK).doClick())
+						interfaces.getComponent(INTERFACE_WELCOME_SCREEN,
+								INTERFACE_WELCOME_SCREEN_BUTTON_LOGOUT)
+								.doClick();
+				}
+
 				if (returnText.contains("member")) {
 					log("Unable to login to a members world. Stopping script.");
 					RSComponent back_button1 = interfaces.get(
@@ -116,16 +135,20 @@ public class LoginBot extends Random {
 				stopScript(false);
 			}
 			if (returnText.contains("disable")) {
-				log("Your account is banned/disabled.");
+				log.severe("Your account is banned/disabled.");
+				stopScript(false);
+			}
+			if (returnText.contains("your account has not logged out")) {
+				log.warning("Make sure you're logged off or hasn't been h@x0r3d.");
 				stopScript(false);
 			}
 			if (returnText.contains("incorrect")) {
-				log("Failed to login five times in a row. Stopping script.");
+				log.warning("Failed to login five times in a row. Stopping script.");
 				stopScript(false);
 			}
 			if (returnText.contains("invalid")) {
 				if (invalidCount > 6) {
-					log("Unable to login after 6 attempts. Stopping script.");
+					log.warning("Unable to login after 6 attempts. Stopping script.");
 					log("Please verify that your RSBot account profile is correct.");
 					stopScript(false);
 				}
@@ -150,10 +173,10 @@ public class LoginBot extends Random {
 				worldFullCount++;
 			}
 			if (returnText.contains("world")) {
-				return random(1000, 1200);
+				return random(1500, 2000);
 			}
 			if (returnText.contains("performing login")) {
-				return random(1000, 1200);
+				return random(1500, 2000);
 			}
 		}
 		if (game.getClientState() == INDEX_LOGGED_OUT) {
@@ -203,7 +226,8 @@ public class LoginBot extends Random {
 						sleep(random(25, 100));
 					}
 				}
-				keyboard.sendText(account.getPassword(), false);
+				keyboard.sendText(AccountManager.getPassword(account.getName(),
+						LoginBot.class), false);
 			}
 		}
 		return random(500, 2000);
@@ -263,8 +287,10 @@ public class LoginBot extends Random {
 	}
 
 	private boolean isPasswordFilled() {
+		String passWord = AccountManager.getPassword(account.getName(),
+				LoginBot.class);
 		return interfaces.get(INTERFACE_LOGIN_SCREEN)
 				.getComponent(INTERFACE_PASSWORD).getText().toLowerCase()
-				.length() == account.getPassword().length();
+				.length() == (passWord == null ? 0 : passWord.length());
 	}
 }

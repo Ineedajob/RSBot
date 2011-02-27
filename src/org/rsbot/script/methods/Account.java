@@ -36,7 +36,7 @@ public class Account extends MethodProvider {
 	 * @return <tt>true</tt> if the currently selected account is a member.
 	 */
 	public boolean isMember() {
-		return AccountManager.isMember(getName());
+		return AccountManager.isMember(this.getName());
 	}
 
 	/**
@@ -47,7 +47,8 @@ public class Account extends MethodProvider {
 	}
 
 	/**
-	 * @return The currently selected account's reward choice, or <code>null</code>.
+	 * @return The currently selected account's reward choice, or
+	 *         <code>null</code>.
 	 */
 	public String getPreferredReward() {
 		return getName() == null ? null : AccountManager.getReward(getName());
