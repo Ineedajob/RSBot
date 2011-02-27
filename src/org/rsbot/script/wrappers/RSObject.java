@@ -7,12 +7,8 @@ import org.rsbot.script.methods.MethodProvider;
 
 import java.awt.*;
 
-/**
- * Represents a physical in-game object.
- * 
- * @author SpeedWing
- */
-public class RSObject extends MethodProvider {
+
+public class RSObject extends MethodProvider implements RSVerifiable{
 
 	public static enum Type {
 		INTERACTABLE, FLOOR_DECORATION, BOUNDARY, WALL_DECORATION
