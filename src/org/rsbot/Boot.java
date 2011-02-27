@@ -17,10 +17,10 @@ public class Boot {
 			Runtime.getRuntime().exec(new String[]{"/bin/sh",
 					"-c", "java " + flags + " -Xdock:name=\"RSBot\"" +
 							" -Xdock:icon=resources/images/icon.png" +
-							" -classpath lib2/*;"+ location +" org.rsbot.Application"});
+							" -classpath lib/*;"+ location +" org.rsbot.Application"});
 		} else {
 			Runtime.getRuntime().exec(new String[]{"/bin/sh",
-					"-c", "java " + flags +" -classpath lib2/*;"+ location +" org.rsbot.Application"});
+					"-c", "java " + flags +" -classpath lib/*;"+ location +" org.rsbot.Application"});
 		}
 	}
 
