@@ -1,4 +1,4 @@
-package org.rsbot.script.util;
+package org.rsbot.util;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;

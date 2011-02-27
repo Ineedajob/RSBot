@@ -1,6 +1,6 @@
 package org.rsbot.gui;
 
-import org.rsbot.script.util.Serializer;
+import org.rsbot.util.Serializer;
 
 /**
  *

@@ -7,12 +7,14 @@
 package org.rsbot.gui;
 
 import java.io.File;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
-import org.rsbot.script.util.FrameUtil;
-import org.rsbot.script.util.Serializer;
+import org.rsbot.util.FrameUtil;
+import org.rsbot.util.Serializer;
 import org.rsbot.util.GlobalConfiguration;
+import org.rsbot.util.UpdateUtil;
 
 /**
  *
@@ -22,6 +24,8 @@ public class ThemesGui extends javax.swing.JFrame {
 
     private JFrame gui;
     private JFrame curr;
+    private static final Logger log = Logger.getLogger(ThemesGui.class.getName());
+    private static boolean updated;
 
     /** Creates new form ThemesGui */
     public ThemesGui(JFrame f) {
@@ -35,9 +39,40 @@ public class ThemesGui extends javax.swing.JFrame {
         curr = this;
     }
 
+    protected static boolean isProcessing() {
+        return th != null && th.isAlive();
+    }
+
+    protected static boolean isUpdated() {
+        return updated;
+    }
+
     private void addOptions() {
         jComboBox1.addItem("SubstanceAutumnLookAndFeel");
         jComboBox1.addItem("SubstanceNebulaLookAndFeel");
+        jComboBox1.addItem("SubstanceNebulaBrickWallLookAndFeel");
+        jComboBox1.addItem("SubstanceSaharaLookAndFeel");
+        jComboBox1.addItem("SubstanceRavenLookAndFeel");
+        jComboBox1.addItem("SubstanceOfficeSilver2007LookAndFeel");
+        jComboBox1.addItem("SubstanceOfficeBlue2007LookAndFeel");
+        jComboBox1.addItem("SubstanceModerateLookAndFeel");
+        jComboBox1.addItem("SubstanceMistSilverLookAndFeel");
+        jComboBox1.addItem("SubstanceMistAquaLookAndFeel");
+        jComboBox1.addItem("SubstanceMagellanLookAndFeel");
+        jComboBox1.addItem("SubstanceGraphiteLookAndFeel");
+        jComboBox1.addItem("SubstanceGraphiteGlassLookAndFeel");
+        jComboBox1.addItem("SubstanceGraphiteAquaLookAndFeel");
+        jComboBox1.addItem("SubstanceGeminiLookAndFeel");
+        jComboBox1.addItem("SubstanceEmeraldDuskLookAndFeel");
+        jComboBox1.addItem("SubstanceDustLookAndFeel");
+        jComboBox1.addItem("SubstanceDustCoffeeLookAndFeel");
+        jComboBox1.addItem("SubstanceCremeLookAndFeel");
+        jComboBox1.addItem("SubstanceCremeCoffeeLookAndFeel");
+        jComboBox1.addItem("SubstanceChallengerDeepLookAndFeel");
+        jComboBox1.addItem("SubstanceBusinessLookAndFeel");
+        jComboBox1.addItem("SubstanceBusinessBlueSteelLookAndFeel");
+        jComboBox1.addItem("SubstanceBusinessBlackSteelLookAndFeel");
+
     }
 
     /** This method is called from within the constructor to
@@ -103,7 +138,7 @@ public class ThemesGui extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         try {
-        
+
             Serializer.serlialize(jComboBox1.getSelectedItem().toString(), new File(GlobalConfiguration.Paths.Resources.THEME));
         } catch (Exception e) {
             e.printStackTrace();
@@ -111,19 +146,48 @@ public class ThemesGui extends javax.swing.JFrame {
         dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
     private String name = "";
+    static private Thread th = null;
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
         name = jComboBox1.getSelectedItem().toString();
+
         SwingUtilities.invokeLater(new Runnable() {
 
-           public void run() {
+            public void run() {
                 if (!FrameUtil.setTheme(gui, name)) {
-                    JOptionPane.showMessageDialog(null," Couldn't load the look and feel Substance,please make ." + '\n' + "sure that dependancies are in the lib folder int the jar's folder.");
+                    JOptionPane.showMessageDialog(null, " Couldn't load the look and feel Substance,please make ." + '\n' + "sure that dependancies are in the lib folder int the jar's folder.");
                     dispose();
-                    return;
+                    int resp = JOptionPane.showConfirmDialog(null, "Do you want to download the dependency files to the lib" + '\n' + "folder in this jar's directory?" + '\n' + "you have to restart bot right after", "Question",
+                            JOptionPane.YES_NO_OPTION);
+                    if (resp == JOptionPane.YES_OPTION) {
+                        File f = new File("lib");
+                        try {
+                            if (f.mkdir()) {
+                                System.out.println("Directory Created");
+                            }
+                        } catch (Exception e) {
+                            log.info("couldnt create lib file, try again please");
+                            return;
+                        }
+                        th = new Thread(new Runnable() {
+
+                            public void run() {
+
+                                log.info("Downloading Themes Components, please wait ...");
+                                if (UpdateUtil.download("http://f.nikkii.us/~pervyshuya/substance.jar", "lib/Substance.jar")) {
+                                    if (UpdateUtil.download("http://f.nikkii.us/~pervyshuya/trident.jar", "lib/trident.jar")) {
+                                        log.info("Downloaded needed dependancies! ,please restart bot and try selecting themes again!");
+                                        updated = true;
+                                    }
+                                }
+                            }
+                        });
+                        th.start();
+                    }
+
                 }
                 SwingUtilities.updateComponentTreeUI(curr);
             }
-      });
+        });
     }//GEN-LAST:event_jComboBox1ActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
