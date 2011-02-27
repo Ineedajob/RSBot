@@ -5,6 +5,7 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Frame;
+import java.awt.SystemTray;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFrame;
@@ -32,10 +34,11 @@ import org.rsbot.script.ScriptManifest;
 import org.rsbot.script.internal.ScriptHandler;
 import org.rsbot.script.internal.event.ScriptListener;
 import org.rsbot.script.methods.Environment;
-import org.rsbot.script.util.FrameUtil;
-import org.rsbot.script.util.Serializer;
+import org.rsbot.util.FrameUtil;
+import org.rsbot.util.Serializer;
 import org.rsbot.script.util.WindowUtil;
 import org.rsbot.util.GlobalConfiguration;
+import org.rsbot.util.Minimizer;
 import org.rsbot.util.ScreenshotUtil;
 import org.rsbot.util.UpdateUtil;
 
@@ -54,6 +57,7 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
     private JFrame frame = this;
     private List<Bot> bots = new ArrayList<Bot>();
     private String theme_name = null;
+    private static final Logger log = Logger.getLogger(BotGUI.class.getName());
 
     public BotGUI() {
         init();
@@ -125,6 +129,20 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
                 Bot current = getCurrentBot();
                 if (current != null) {
                     pauseScript(current);
+                }
+            } else if (option.equals("Snap to Tray")) {
+                Bot current = getCurrentBot();
+                if (current != null) {
+                    try {
+                        if (!SystemTray.isSupported()) {
+                            JOptionPane.showMessageDialog(this, "System-Tray feature is not supported by your OS.", "Error", JOptionPane.ERROR_MESSAGE);
+                            return;
+                        }
+                        this.setVisible(false);
+                        Minimizer.snapToTray(this);
+                    } catch (Exception e) {
+                    }
+
                 }
             } else if (option.equals("Save Screenshot")) {
                 Bot current = getCurrentBot();
@@ -200,7 +218,14 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 
         } else if (menu.equals("Layout")) {
             if (option.equals("Themes")) {
-                new ThemesGui(this).setVisible(true);
+
+                if (ThemesGui.isUpdated()) {
+                    log.info("The bot just updated dependancies, please restart the bot before you select themes.");
+                } else if (ThemesGui.isProcessing()) {
+                    log.info("its currently downloading dependancies, please wait ...");
+                } else {
+                    new ThemesGui(this).setVisible(true);
+                }
             }
 
         } else if (menu.equals("Tab")) {
