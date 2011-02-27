@@ -1,16 +1,16 @@
 package org.rsbot.script.randoms;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.rsbot.script.Random;
 import org.rsbot.script.ScriptManifest;
 import org.rsbot.script.wrappers.RSComponent;
 
-import java.util.LinkedList;
-import java.util.List;
-
 /**
  * Closes interfaces that scripts may open by mistake.
  */
-@ScriptManifest(authors = {"Jacmob", "HeyyamaN"}, name = "InterfaceCloser", version = 1.8)
+@ScriptManifest(authors = { "Jacmob", "HeyyamaN", "Pervy Shuya" }, name = "InterfaceCloser", version = 1.9)
 public class CloseAllInterface extends Random {
 
 	static class ComponentDef {
@@ -27,7 +27,7 @@ public class CloseAllInterface extends Random {
 
 	}
 
-	private List<ComponentDef> components = new LinkedList<ComponentDef>();
+	private final List<ComponentDef> components = new LinkedList<ComponentDef>();
 
 	{
 		addChild(743, 20); // Audio
@@ -35,15 +35,18 @@ public class CloseAllInterface extends Random {
 		addChild(499, 29); // Stats
 		addChild(594, 48); // Report
 		addChild(275, 8); // Quest
-		addChild(206, 16); // Price check
+		addChild(206, 13); // Price check
 		addChild(266, 11); // Grove
 		addChild(102, 13); // Death items
 		addChild(14, 88, true); // New pin
-		addChild(14, 3); // Pin settings
+		addChild(14, 11); // Pin settings
 		addChild(157, 13); // Quick chat help
 		addChild(764, 2); // Objectives
 		addChild(895, 19); // Advisor
-		addChild(109, 13); // Grand exchange collection
+		addChild(109, 14); // Grand exchange collection
+		addChild(667, 74); // Equipment Bonus
+		addChild(742, 14); // Graphic
+		addChild(917, 69); // Task List
 	}
 
 	private void addChild(int parent, int idx) {
@@ -54,6 +57,7 @@ public class CloseAllInterface extends Random {
 		components.add(new ComponentDef(parent, idx, text));
 	}
 
+	@Override
 	public boolean activateCondition() {
 		if (game.isLoggedIn()) {
 			if (interfaces.get(755).getComponent(44).isValid()) { // World map
@@ -63,7 +67,9 @@ public class CloseAllInterface extends Random {
 			}
 			for (ComponentDef c : components) {
 				RSComponent comp = interfaces.getComponent(c.parent, c.child);
-				if (comp.isValid() && !(c.text && (comp.getText() == null || comp.getText().isEmpty()))) {
+				if (comp.isValid()
+						&& !(c.text && (comp.getText() == null || comp
+								.getText().isEmpty()))) {
 					return true;
 				}
 			}
@@ -71,10 +77,12 @@ public class CloseAllInterface extends Random {
 		return false;
 	}
 
+	@Override
 	public int loop() {
 		sleep(random(500, 900));
 
-		if (interfaces.get(755).isValid() && (interfaces.getComponent(755, 0).getComponents().length > 0)) {
+		if (interfaces.get(755).isValid()
+				&& (interfaces.getComponent(755, 0).getComponents().length > 0)) {
 			interfaces.getComponent(755, 44).doClick();
 			return random(500, 900);
 		}

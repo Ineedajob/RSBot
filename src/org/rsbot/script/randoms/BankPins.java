@@ -1,5 +1,6 @@
 package org.rsbot.script.randoms;
 
+import org.rsbot.gui.AccountManager;
 import org.rsbot.script.Random;
 import org.rsbot.script.ScriptManifest;
 import org.rsbot.script.wrappers.RSComponent;
@@ -37,7 +38,7 @@ public class BankPins extends Random {
 
 	@Override
 	public int loop() {
-		String pin = account.getPin();
+		String pin = AccountManager.getPin(account.getName(), BankPins.class);
 		if ((pin == null) || (pin.length() != 4)) {
 			log.severe("You must add a bank pin to your account.");
 			stopScript(false);
