@@ -1,4 +1,3 @@
-
 package org.rsbot.script.util;
 
 import javax.swing.JFrame;
@@ -12,17 +11,15 @@ import javax.swing.UIManager;
  */
 public class FrameUtil {
 
-    public static void setTheme(JFrame f,String name)
-    {
-            try {
+    public static boolean setTheme(JFrame f, String name) {
+        try {
 
-                    f.setDefaultLookAndFeelDecorated(true);
-                    UIManager.setLookAndFeel("org.pushingpixels.substance.api.skin."+name);
-                    SwingUtilities.updateComponentTreeUI(f);
-                     SwingUtilities.updateComponentTreeUI(f);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    JOptionPane.showMessageDialog(null, "Couldn't load the look and feel Substance.");
-                }
-}
+            f.setDefaultLookAndFeelDecorated(true);
+            UIManager.setLookAndFeel("org.pushingpixels.substance.api.skin." + name);
+            SwingUtilities.updateComponentTreeUI(f);
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
 }

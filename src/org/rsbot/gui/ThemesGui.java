@@ -8,9 +8,11 @@ package org.rsbot.gui;
 
 import java.io.File;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import org.rsbot.script.util.FrameUtil;
 import org.rsbot.script.util.Serializer;
+import org.rsbot.util.GlobalConfiguration;
 
 /**
  *
@@ -29,7 +31,6 @@ public class ThemesGui extends javax.swing.JFrame {
         setLocationRelativeTo(getOwner());
         setTitle("Themes Selector");
         addOptions();
-        jComboBox1.setSelectedIndex(0);
         setResizable(false);
         curr = this;
     }
@@ -102,8 +103,8 @@ public class ThemesGui extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         try {
-            String FILENAME = "themes.dat";
-            Serializer.serlialize(jComboBox1.getSelectedItem().toString(), new File(FILENAME));
+        
+            Serializer.serlialize(jComboBox1.getSelectedItem().toString(), new File(GlobalConfiguration.Paths.Resources.THEME));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -114,11 +115,15 @@ public class ThemesGui extends javax.swing.JFrame {
         name = jComboBox1.getSelectedItem().toString();
         SwingUtilities.invokeLater(new Runnable() {
 
-            public void run() {
-                FrameUtil.setTheme(gui, name);
+           public void run() {
+                if (!FrameUtil.setTheme(gui, name)) {
+                    JOptionPane.showMessageDialog(null," Couldn't load the look and feel Substance,please make ." + '\n' + "sure that dependancies are in the lib folder int the jar's folder.");
+                    dispose();
+                    return;
+                }
                 SwingUtilities.updateComponentTreeUI(curr);
             }
-        });
+      });
     }//GEN-LAST:event_jComboBox1ActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;

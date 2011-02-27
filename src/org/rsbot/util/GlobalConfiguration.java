@@ -33,8 +33,8 @@ public class GlobalConfiguration {
 	public static class Paths {
 		public static class Resources {
 			public static final String ROOT = "resources";
+                        public static final String THEME = "theme.pb";
 			public static final String SCRIPTS = Paths.SCRIPTS_NAME_SRC + "/";
-
 			public static final String ROOT_IMG = "/" + Resources.ROOT + "/images";
 			public static final String ICON = Resources.ROOT_IMG + "/icon.png";
 			public static final String ICON_DELETE = Resources.ROOT_IMG + "/delete.png";
