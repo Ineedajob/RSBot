@@ -38,7 +38,7 @@ public class BankPins extends Random {
 
 	@Override
 	public int loop() {
-		String pin = AccountManager.getPin(account.getName(), BankPins.class);
+		String pin = AccountManager.getPin(account.getName(), getClass());
 		if ((pin == null) || (pin.length() != 4)) {
 			log.severe("You must add a bank pin to your account.");
 			stopScript(false);
