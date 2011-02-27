@@ -8,12 +8,7 @@ import org.rsbot.client.RSNPCNode;
 import org.rsbot.script.methods.MethodContext;
 import org.rsbot.script.methods.MethodProvider;
 
-/**
- * Represents a character.
- * 
- * @author SpeedWing
- */
-public abstract class RSCharacter extends MethodProvider {
+public abstract class RSCharacter extends MethodProvider implements RSVerifiable {
 
 	public RSCharacter(MethodContext ctx) {
 		super(ctx);

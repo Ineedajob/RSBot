@@ -175,4 +175,5 @@ public class WindowUtil {
 		frame.setExtendedState(frame.getExtendedState() | JFrame.MAXIMIZED_BOTH);
 	}
 
+
 }

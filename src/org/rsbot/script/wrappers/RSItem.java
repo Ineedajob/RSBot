@@ -9,7 +9,7 @@ import org.rsbot.script.methods.MethodProvider;
  * Represents an item (with an id and stack size). May or may not
  * wrap a component.
  */
-public class RSItem extends MethodProvider {
+public class RSItem extends MethodProvider implements RSVerifiable{
 
 	private int id;
 	private int stack;
