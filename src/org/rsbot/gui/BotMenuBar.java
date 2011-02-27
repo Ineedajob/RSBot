@@ -52,12 +52,12 @@ public class BotMenuBar extends JMenuBar {
 		// Other
 		DEBUG_MAP.put("Log Messages", MessageLogger.class);
 
-		TITLES = new String[]{"File", "Edit", "View", "Help"};
+		TITLES = new String[]{"File", "Edit", "View", "Help","Layout"};
 		ELEMENTS = new String[][]{
 				{"New Bot", "Close Bot", "-", "Run Script", "Stop Script", "Pause Script", "-", "Save Screenshot", "-", "Exit"},
 				{"Accounts", "-", "ToggleF Force Input", "ToggleF Less CPU", "-", "ToggleF Disable Anti-Randoms", "ToggleF Disable Auto Login"},
 				constructDebugs(),
-				{"Site", "Project", "About"}};
+				{"Site", "Project", "About"},{"Themes"}};
 	}
 
 	private static String[] constructDebugs() {
@@ -146,6 +146,7 @@ public class BotMenuBar extends JMenuBar {
 				}
 			}
 			enable("All Debugging", selections == eventCheckMap.size());
+                        enable("Mouse",true);
 			enable("Force Input", bot.overrideInput);
 			enable("Less CPU", bot.disableRendering);
 			enable("Disable Anti-Randoms", bot.disableRandoms);
@@ -165,6 +166,7 @@ public class BotMenuBar extends JMenuBar {
 	}
 
 	private void enable(String item, boolean selected) {
+         
 		commandCheckMap.get(item).setSelected(selected);
 		commandCheckMap.get(item).setEnabled(true);
 	}
@@ -176,6 +178,7 @@ public class BotMenuBar extends JMenuBar {
 				menu.add(new JSeparator());
 			} else {
 				JMenuItem jmi;
+
 				if (e.startsWith("Toggle")) {
 					e = e.substring("Toggle".length());
 					char state = e.charAt(0);
@@ -185,11 +188,14 @@ public class BotMenuBar extends JMenuBar {
 						jmi.setSelected(true);
 					}
 					if (DEBUG_MAP.containsKey(e)) {
-						eventCheckMap.put(e, (JCheckBoxMenuItem) jmi);
+                                             JCheckBoxMenuItem ji = (JCheckBoxMenuItem) jmi;
+						eventCheckMap.put(e, ji);
 					}
-					commandCheckMap.put(e, (JCheckBoxMenuItem) jmi);
+                                           JCheckBoxMenuItem ji = (JCheckBoxMenuItem) jmi;
+					commandCheckMap.put(e,ji);
 				} else {
 					jmi = new JMenuItem(e);
+     
 					commandMenuItem.put(e, jmi);
 				}
 				jmi.addActionListener(listener);
