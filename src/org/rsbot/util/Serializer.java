@@ -50,9 +50,7 @@ public class Serializer {
         Object obj = null;
         try {
             FileInputStream fin = new FileInputStream(f);
-            ObjectInputStream ois = new ObjectInputStream(fin);
-            obj = ois.readObject();
-            ois.close();
+            deserialize(f);
             fin.close();
         } catch (Exception e) {
         }
