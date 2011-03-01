@@ -71,12 +71,11 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
         Object o = Serializer.deserialize(new File(GlobalConfiguration.Paths.Resources.THEME));
         theme_name = o == null ? "SubstanceTwilightLookAndFeel" : (String) o;
         SwingUtilities.invokeLater(new Runnable() {
-
+ 
             public void run() {
-
                 JPopupMenu.setDefaultLightWeightPopupEnabled(false);
                 ToolTipManager.sharedInstance().setLightWeightPopupEnabled(false);
-                FrameUtil.setTheme(frame, theme_name);
+              //  FrameUtil.setTheme(frame, theme_name);TODO:fix bug
                 if (GlobalConfiguration.RUNNING_FROM_JAR) {
                     UpdateUtil updater = new UpdateUtil(BotGUI.this);
                     updater.checkUpdate(false);
@@ -224,7 +223,8 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
                 } else if (ThemesGui.isProcessing()) {
                     log.info("its currently downloading dependancies, please wait ...");
                 } else {
-                    new ThemesGui(this).setVisible(true);
+                   log.info("Wait for next release for a better implementation");
+                   // new ThemesGui(this).setVisible(true);
                 }
             }
 
@@ -453,20 +453,26 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
         }
     }
 
-    public void scriptStarted(ScriptHandler handler, Script script) {
-        Bot bot = handler.getBot();
-        if (bot == getCurrentBot()) {
-            bot.inputFlags = Environment.INPUT_KEYBOARD;
-            bot.overrideInput = false;
-            toolBar.setScriptButton(BotToolBar.PAUSE_SCRIPT);
-            toolBar.setInputState(bot.inputFlags);
-            toolBar.setOverrideInput(false);
-            menuBar.setOverrideInput(false);
-            String acct = bot.getAccountName();
-            toolBar.setTabLabel(bots.indexOf(bot) + 1, acct == null ? "RuneScape" : acct);
-            toolBar.updateInputButton();
-            setTitle(acct);
-        }
+    public void scriptStarted(final ScriptHandler handler, Script script) {
+        java.awt.EventQueue.invokeLater(new Runnable() {
+
+            public void run() {
+
+                Bot bot = handler.getBot();
+                if (bot == getCurrentBot()) {
+                    bot.inputFlags = Environment.INPUT_KEYBOARD;
+                    bot.overrideInput = false;
+                    toolBar.setScriptButton(BotToolBar.PAUSE_SCRIPT);
+                    toolBar.setInputState(bot.inputFlags);
+                    toolBar.setOverrideInput(false);
+                    menuBar.setOverrideInput(false);
+                    String acct = bot.getAccountName();
+                    toolBar.setTabLabel(bots.indexOf(bot) + 1, acct == null ? "RuneScape" : acct);
+                    toolBar.updateInputButton();
+                    setTitle(acct);
+                }
+            }
+        });
     }
 
     public void scriptStopped(ScriptHandler handler, Script script) {
