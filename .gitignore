@@ -10,5 +10,6 @@
 /*.patch
 /.settings
 /bin
+/lib/*.jar
 /scripts/*.class
 /temp.txt
