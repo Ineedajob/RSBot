@@ -4,7 +4,7 @@ public interface RSCharacter extends RSAnimable {
 
 	int getAnimation();
 
-	int getGraphic();
+	Graphic[] getGraphicsData();
 
 	int getHeight();
 

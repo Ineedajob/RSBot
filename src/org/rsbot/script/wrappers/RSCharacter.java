@@ -54,7 +54,7 @@ public abstract class RSCharacter extends MethodProvider implements RSVerifiable
 	}
 
 	public int getGraphic() {
-		return getAccessor().getGraphic();
+		return getAccessor().getGraphicsData()[0].getID();
 	}
 
 	public int getHeight() {
