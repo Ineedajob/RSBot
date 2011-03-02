@@ -13,15 +13,18 @@ public class Boot {
         String flags = "-Xmx512m -Dsun.java2d.d3d=false";
 
         if (os.contains("windows")) {
-            Runtime.getRuntime().exec("javaw " + flags + " -classpath lib/*;" + location + " org.rsbot.Application");
+            Runtime.getRuntime().exec("javaw " + flags + " -classpath \"" +
+					location + "\" org.rsbot.Application");
         } else if (os.contains("mac")) {
             Runtime.getRuntime().exec(new String[]{"/bin/sh",
                         "-c", "java " + flags + " -Xdock:name=\"RSBot\""
                         + " -Xdock:icon=resources/images/icon.png"
-                        + " -classpath lib/*;" + location + " org.rsbot.Application"});
+                       + " -classpath \"" +
+					location + "\" org.rsbot.Application"});
         } else {
             Runtime.getRuntime().exec(new String[]{"/bin/sh",
-                        "-c", "java " + flags + " -classpath lib/*;" + location + " org.rsbot.Application"});
+                        "-c", "java " + flags + " -classpath \"" +
+					location + "\" org.rsbot.Application"});
         }
     }
 }
