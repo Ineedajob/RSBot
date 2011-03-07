@@ -5,12 +5,13 @@ import org.rsbot.script.Random;
 import org.rsbot.script.ScriptManifest;
 import org.rsbot.script.wrappers.RSComponent;
 
-@ScriptManifest(authors = { "Holo", "Gnarly", "Salty_Fish", "Pervy Shuya" }, name = "BankPin", version = 2.2)
+@ScriptManifest(authors = { "Holo", "Gnarly", "Salty_Fish", "Pervy Shuya" }, name = "BankPin", version = 2.3)
 public class BankPins extends Random {
 
 	@Override
 	public boolean activateCondition() {
-		return interfaces.get(13).isValid();
+		return interfaces.get(13).isValid()
+				|| interfaces.getComponent(14, 34).isValid();
 	}
 
 	public void enterCode(final String pin) {
@@ -29,7 +30,7 @@ public class BankPins extends Random {
 		final RSComponent[] bankPin = interfaces.get(759).getComponents();
 		for (int i = 0; i < bankPin.length; i++) {
 			if (bankPin[i].containsText(pin.substring(state, state + 1))) {
-				bankPin[i].doClick(true);
+				bankPin[i].doClick();
 				sleep(random(500, 1000));
 				break;
 			}
@@ -39,19 +40,24 @@ public class BankPins extends Random {
 	@Override
 	public int loop() {
 		String pin = AccountManager.getPin(account.getName(), getClass());
-		if ((pin == null) || (pin.length() != 4)) {
-			log.severe("You must add a bank pin to your account.");
-			stopScript(false);
-		}
-		if (interfaces.get(14).isValid() || !interfaces.get(13).isValid()) {
-			interfaces.get(14).getComponent(3).doClick();
-			return -1;
-		}
-		enterCode(pin);
-		if (interfaces.get(211).isValid()) {
-			interfaces.get(211).getComponent(3).doClick();
-		} else if (interfaces.get(217).isValid()) {
-			sleep(random(10500, 12000));
+		if (interfaces.get(14).isValid()) {
+			if (interfaces.getComponent(14, 34).doClick())
+				return -1;
+		} else if (interfaces.get(13).isValid()) {
+			if ((pin == null) || (pin.length() != 4)) {
+				log.severe("You must add a bank pin to your account.");
+				stopScript(false);
+			}
+			if (interfaces.get(14).isValid() || !interfaces.get(13).isValid()) {
+				interfaces.get(14).getComponent(3).doClick();
+				return -1;
+			}
+			enterCode(pin);
+			if (interfaces.get(211).isValid()) {
+				interfaces.get(211).getComponent(3).doClick();
+			} else if (interfaces.get(217).isValid()) {
+				sleep(random(10500, 12000));
+			}
 		}
 		return 500;
 	}

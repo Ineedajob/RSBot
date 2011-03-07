@@ -1,8 +1,8 @@
 package org.rsbot.script.wrappers;
 
-import org.rsbot.script.methods.MethodContext;
-
 import java.lang.ref.SoftReference;
+
+import org.rsbot.script.methods.MethodContext;
 
 /**
  * Represents a non-player character.
@@ -16,6 +16,7 @@ public class RSNPC extends RSCharacter {
 		this.npc = new SoftReference<org.rsbot.client.RSNPC>(npc);
 	}
 
+	@Override
 	protected org.rsbot.client.RSCharacter getAccessor() {
 		return npc.get();
 	}
@@ -50,6 +51,17 @@ public class RSNPC extends RSCharacter {
 		return -1;
 	}
 
+	/**
+	 * @return <tt>true</tt> if RSNPC is interacting with RSPlayer; otherwise
+	 *         <tt>false</tt>.
+	 */
+	@Override
+	public boolean isInteractingWithLocalPlayer() {
+		RSNPC npc = methods.npcs.getNearest(getID());
+		return npc.getInteracting() != null ? npc.getInteracting().equals(
+				methods.players.getMyPlayer()) : false;
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
@@ -60,7 +72,8 @@ public class RSNPC extends RSCharacter {
 		if (sb.length() > 0) {
 			sb.setLength(sb.length() - 1);
 		}
-		return "NPC[" + getName() + "],actions=[" + sb.toString() + "]" + super.toString();
+		return "NPC[" + getName() + "],actions=[" + sb.toString() + "]"
+				+ super.toString();
 	}
 
 	org.rsbot.client.RSNPCDef getDefInternal() {
