@@ -1,4 +1,3 @@
-// <editor-fold defaultstate="collapsed" desc="Imports">
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
@@ -36,17 +35,11 @@ import org.rsbot.script.wrappers.RSPath;
 import org.rsbot.script.wrappers.RSPlayer;
 import org.rsbot.script.wrappers.RSTile;
 
-/* DebaucherySoulWars!
- * @author Debauchery
- * Please do not use/copy any methods used in the following script with out the authors consent.
- * Please do not adjust/modify and claim the any of the following as yours.
- */
-@SuppressWarnings("unused")
-@ScriptManifest(authors = "Debauchery", name = "DebaucherySoulWars", version = 0.32, description = "")
+@SuppressWarnings({ "unused", "serial" })
+@ScriptManifest(authors = "Debauchery", name = "DebaucherySoulWars", version = 0.33, description = "")
 public class DebaucherySoulWars extends Script implements MouseListener,
 		MessageListener, PaintListener {
 
-	// <editor-fold defaultstate="collapsed" desc="Constants & Variables">
 	private final int randomTeamID = 42031, blueBarrierID = 42029,
 			bandageID = 14640, pyresID = 8598, jelliesID = 8599,
 			redBarrierID = 42030, bonesID = 14638;
@@ -62,9 +55,9 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 	private boolean randomTeam, lastWonTeam, lastLostTeam, redTeam, blueTeam,
 			clanChatTeam, takeBreak, attackAvatar, attackPyres, attackJellies,
 			getSupplies, healOthers, pickUpBones, attackPlayers, randomStrat,
-			pureMode, blueLast, redLast, buryAtGrave, pickUpArrows, weaponSpec,
-			quickPrayer, takingBreak, startedBreak, stoppedBreak, startScript,
-			hide;
+			pureMode, blueLast, redLast, inClan, buryAtGrave, pickUpArrows,
+			weaponSpec, quickPrayer, takingBreak, startedBreak, stoppedBreak,
+			startScript, hide;
 	private SWGUI gui;
 	private Pitch pitch;
 	private Angle angle;
@@ -97,6 +90,13 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 			breakHandler = new BreakHandler();
 			breakHandler.start();
 		}
+		if (clanChatTeam) {
+			inClan = clanChat.isInChannel();
+			if (!inClan) {
+				clanChat.join(clanChat.getLastChannel());
+				inClan = clanChat.isInChannel();
+			}
+		}
 		combat.setAutoRetaliate((pureMode ? false : true));
 		extraAntiban = new ExtraAntiban();
 		extraAntiban.start();
@@ -121,12 +121,21 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 			startedBreak = true;
 			stoppedBreak = false;
 			env.disbleRandoms();
+			inClan = false;
 		} else {
 			env.enableRandoms();
 			startedBreak = false;
 			stoppedBreak = true;
 			if (game.isLoggedIn()
 					&& game.getClientState() != Game.INDEX_LOBBY_SCREEN) {
+				if (clanChatTeam) {
+					if (!inClan) {
+						if (clanChat.isInChannel()) {
+							clanChat.join(clanChat.getLastChannel());
+						}
+						inClan = clanChat.isInChannel();
+					}
+				}
 				if (interfaces.get(Game.INTERFACE_LEVEL_UP).isValid()) {
 					if (interfaces.canContinue()) {
 						interfaces.clickContinue();
@@ -442,14 +451,14 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 		if (interfaces.get(211).getComponent(3).isValid()
 				&& interfaces.get(211).getComponent(3) != null) {
 			interfaces.get(211).getComponent(3).doClick();
-			sleep(2000, 3000);
+			sleep(1200, 2000);
 		} else if (interfaces.get(228).getComponent(2).isValid()
 				&& interfaces.get(228).getComponent(2) != null) {
 			interfaces.get(228).getComponent(2).doClick();
-			sleep(2000, 3000);
+			sleep(1200, 2000);
 		} else {
-			int team = chooseTeam();
-			if (team == 0) {
+			switch (chooseTeam()) {
+			case 0:
 				// random
 				RSObject randomTeam = objects.getNearest(randomTeamID);
 				if (randomTeam != null) {
@@ -459,8 +468,9 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 							switch (random(0, 2)) {
 							case 0:
 								if (getLocation().equals(Location.OUTSIDE)) {
-									randomTeam.doAction("Join-team");
-									sleep(1000, 1300);
+									if (randomTeam.doAction("Join-team")) {
+										sleep(1000, 1300);
+									}
 								}
 								break;
 							// Join-team
@@ -492,7 +502,8 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 						}
 					}
 				}
-			} else if (team == 1) {
+				break;
+			case 1:
 				// blue
 				RSObject blueBarrier = objects.getNearest(blueBarrierID);
 				if (blueBarrier != null) {
@@ -535,7 +546,8 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 						}
 					}
 				}
-			} else if (team == 2) {
+				break;
+			case 2:
 				// red
 				RSObject redBarrier = objects.getNearest(redBarrierID);
 				if (redBarrier != null) {
@@ -559,8 +571,9 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 								break;
 							case 1:
 								if (getLocation().equals(Location.OUTSIDE)) {
-									redBarrier.doAction("Pass");
-									sleep(800, 1000);
+									if (redBarrier.doAction("Pass")) {
+										sleep(800, 1000);
+									}
 								}
 								break;
 							}
@@ -578,6 +591,7 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 						}
 					}
 				}
+				break;
 			}
 		}
 
@@ -623,70 +637,78 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 	}
 
 	private void leave() {
-		RSObject Barrier = objects.getNearest(BarrierID);
-		if (getLocation().equals(Location.RED_SPAWN)
-				|| getLocation().equals(Location.BLUE_SPAWN)
-				|| getLocation().equals(Location.EAST_GRAVE)
-				|| getLocation().equals(Location.WEST_GRAVE)) {
-			if (getMyPlayer().getNPCID() == 8623) {
-				if (random(1, 100) < 25) {
-					if (Barrier != null) {
-						walking.walkTileMM(Barrier.getLocation());
-						sleep(600, 1000);
-					}
-				}
-				if (random(1, 100) < 10) {
-					if (getLocation().equals(Location.RED_SPAWN)
-							|| getLocation().equals(Location.BLUE_SPAWN)
-							|| getLocation().equals(Location.EAST_GRAVE)
-							|| getLocation().equals(Location.WEST_GRAVE)) {
-						Barrier.doAction("Pass");
-					}
-				}
-				sleep(100, 600);
-			} else if (Barrier != null) {
-				if (!Barrier.isOnScreen()
-						&& calc.distanceTo(Barrier.getLocation()) < 2) {
-					camera.turnToObject(Barrier);
-				}
-				if (!Barrier.isOnScreen()) {
-					walking.walkTileMM(Barrier.getLocation());
-				}
-				if (Barrier.isOnScreen() && getMyPlayer().getAnimation() != 1) {
-					RSModel mod = Barrier.getModel();
-					camera.turnToObject(Barrier);
-					sleep(2000, 4000);
-					switch (random(0, 5)) {
-					case 2:
-						if (mod != null) {
-							Point p = mod.getPoint();
-							if (p != null) {
-								if (getLocation().equals(Location.RED_SPAWN)
-										|| getLocation().equals(
-												Location.BLUE_SPAWN)
-										|| getLocation().equals(
-												Location.EAST_GRAVE)
-										|| getLocation().equals(
-												Location.WEST_GRAVE)) {
-									mouse.hop(p);
-									mouse.click(true);
-								}
-							}
+		try {
+			RSObject Barrier = objects.getNearest(BarrierID);
+			if (getLocation().equals(Location.RED_SPAWN)
+					|| getLocation().equals(Location.BLUE_SPAWN)
+					|| getLocation().equals(Location.EAST_GRAVE)
+					|| getLocation().equals(Location.WEST_GRAVE)) {
+				if (getMyPlayer().getNPCID() == 8623) {
+					if (random(1, 100) < 25) {
+						if (Barrier != null) {
+							walking.walkTileMM(Barrier.getLocation());
+							sleep(600, 1000);
 						}
-						break;
-					default:
+					}
+					if (random(1, 100) < 10) {
 						if (getLocation().equals(Location.RED_SPAWN)
 								|| getLocation().equals(Location.BLUE_SPAWN)
 								|| getLocation().equals(Location.EAST_GRAVE)
 								|| getLocation().equals(Location.WEST_GRAVE)) {
 							Barrier.doAction("Pass");
 						}
-						break;
+					}
+					sleep(100, 600);
+				} else if (Barrier != null) {
+					if (!Barrier.isOnScreen()
+							&& calc.distanceTo(Barrier.getLocation()) < 2) {
+						camera.turnToObject(Barrier);
+					}
+					if (!Barrier.isOnScreen()) {
+						walking.walkTileMM(Barrier.getLocation());
+					}
+					if (Barrier.isOnScreen()
+							&& getMyPlayer().getAnimation() != 1) {
+						RSModel mod = Barrier.getModel();
+						camera.turnToObject(Barrier);
+						sleep(2000, 4000);
+						switch (random(0, 5)) {
+						case 2:
+							if (mod != null) {
+								Point p = mod.getPoint();
+								if (p != null) {
+									if (getLocation()
+											.equals(Location.RED_SPAWN)
+											|| getLocation().equals(
+													Location.BLUE_SPAWN)
+											|| getLocation().equals(
+													Location.EAST_GRAVE)
+											|| getLocation().equals(
+													Location.WEST_GRAVE)) {
+										mouse.hop(p);
+										mouse.click(true);
+									}
+								}
+							}
+							break;
+						default:
+							if (getLocation().equals(Location.RED_SPAWN)
+									|| getLocation()
+											.equals(Location.BLUE_SPAWN)
+									|| getLocation()
+											.equals(Location.EAST_GRAVE)
+									|| getLocation()
+											.equals(Location.WEST_GRAVE)) {
+								Barrier.doAction("Pass");
+							}
+							break;
+						}
 					}
 				}
 			}
+			sleep(1000, 2000);
+		} catch (Exception e) {
 		}
-		sleep(1000, 2000);
 	}
 
 	private boolean getSupplies() {
@@ -695,12 +717,15 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 		}
 		RSObject bandages = objects.getNearest(bandageTableID);
 		int supplyNum = random(28, 100);
-		if (bandages != null && getMyPlayer().getInteracting() != null) {
+		if (bandages != null && getMyPlayer().getInteracting() == null) {
+			if (!bandages.isOnScreen()) {
+				camera.turnToObject(bandages);
+			}
 			if (bandages.isOnScreen()) {
 				if (bandages.doAction("Take-x")) {
 					sleep(2500, 3000);
 					if (calc.distanceTo(bandages) <= 1
-							&& !getMyPlayer().isInCombat()) {
+							&& getMyPlayer().getInteracting() == null) {
 						if (interfaces.getComponent(752, 5) != null
 								&& !interfaces.getComponent(752, 5).getText()
 										.contains(String.valueOf(supplyNum))) {
@@ -719,9 +744,7 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 				if (!getMyPlayer().isMoving()) {
 					walking.walkTileMM(walking.getClosestTileOnMap(bandages
 							.getLocation()));
-					sleep(300);
-				} else {
-					sleep(800);
+					sleep(1000, 2000);
 				}
 			}
 		}
@@ -825,6 +848,14 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 					}
 				}
 			} else {
+				if (pickUpBones) {
+					if (getActivityBarPercent() < 100 || buryAtGrave) {
+						RSGroundItem bones = groundItems.getNearest(bonesID);
+						bones.doAction("Take " + bones.getItem().getName());
+						return;
+					}
+				}
+				pickUpArrows();
 				if (!getMyPlayer().isMoving()
 						|| calc.distanceTo(walking.getDestination()) < 5) {
 					walking.walkTileMM(walking
@@ -915,22 +946,26 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 	}
 
 	private boolean barricade() {
-		RSNPC barricade = npcs.getNearest(barricadeID);
-		if (barricade != null) {
-			RSTile barricadeLoc = barricade.getLocation();
-			if (barricadeLoc != null) {
-				if (calc.distanceTo(barricadeLoc) <= 2) {
-					if (getMyPlayer().getInteracting() != null) {
-						return true;
-					} else {
-						barricade.doAction("Attack " + barricade.getName());
-						sleep(3000, 5000);
-						return true;
+		try {
+			RSNPC barricade = npcs.getNearest(barricadeID);
+			if (barricade != null) {
+				RSTile barricadeLoc = barricade.getLocation();
+				if (barricadeLoc != null) {
+					if (calc.distanceTo(barricadeLoc) <= 2) {
+						if (getMyPlayer().getInteracting().equals(barricade)) {
+							return true;
+						} else {
+							barricade.doAction("Attack " + barricade.getName());
+							sleep(3000, 5000);
+							return true;
+						}
 					}
 				}
+				return true;
+			} else {
+				return false;
 			}
-			return true;
-		} else {
+		} catch (Exception e) {
 			return false;
 		}
 	}
@@ -1093,10 +1128,7 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 		try {
 			BufferedImage image = env.takeScreenshot(false);
 			int c = image.getRGB(x, y);
-			int red = (c & 0x00ff0000) >> 16;
-			int green = (c & 0x0000ff00) >> 8;
-			int blue = c & 0x000000ff;
-			return new Color(red, green, blue);
+			return new Color(c);
 		} catch (Exception e) {
 			return null;
 		}
@@ -1117,55 +1149,10 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 				if (getLocation().equals(nearestSupplies())) {
 					getSupplies();
 				} else {
-					path = walking.getPath(nearestSupplies().getRSArea()
-							.getCentralTile());
-					tempTile = nearestSupplies().getRSArea().getCentralTile();
-					while (path.getNext() == null) {
-						if (game.getClientState() == Game.INDEX_LOBBY_SCREEN
-								|| !game.isLoggedIn()
-								|| getLocation().equals(Location.OUTSIDE)
-								|| getLocation().equals(Location.RED_SPAWN)
-								|| getLocation().equals(Location.BLUE_SPAWN)
-								|| getLocation().equals(Location.EAST_GRAVE)
-								|| getLocation().equals(Location.WEST_GRAVE)) {
-							return;
-						}
-						tempTile = divideTile(tempTile);
-						path = walking.getPath(tempTile);
-						if (path.getNext() == null
-								&& calc.distanceTo(tempTile) < 30) {
-							walking.walkTileMM(walking
-									.getClosestTileOnMap(nearestSupplies()
-											.getRSArea().getCentralTile()), 3,
-									3);
-						}
-					}
-					path.traverse();
+					walkTo(nearestSupplies());
 				}
 			} else {
-				path = walking.getPath(Location.OBELISK.getRSArea()
-						.getCentralTile());
-				tempTile = Location.OBELISK.getRSArea().getCentralTile();
-				while (path.getNext() == null) {
-					if (game.getClientState() == Game.INDEX_LOBBY_SCREEN
-							|| !game.isLoggedIn()
-							|| getLocation().equals(Location.OUTSIDE)
-							|| getLocation().equals(Location.RED_SPAWN)
-							|| getLocation().equals(Location.BLUE_SPAWN)
-							|| getLocation().equals(Location.EAST_GRAVE)
-							|| getLocation().equals(Location.WEST_GRAVE)) {
-						return;
-					}
-					tempTile = divideTile(tempTile);
-					path = walking.getPath(tempTile);
-					if (path.getNext() == null
-							&& calc.distanceTo(tempTile) < 30) {
-						walking.walkTileMM(walking
-								.getClosestTileOnMap(Location.OBELISK
-										.getRSArea().getCentralTile()), 3, 3);
-					}
-				}
-				path.traverse();
+				walkTo(Location.OBELISK);
 			}
 		}
 	}
@@ -1181,64 +1168,11 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 					&& (getSupplies || healOthers)) {
 				if (getLocation().equals(nearestSupplies())) {
 					getSupplies();
-
 				} else {
-					path = walking.getPath(nearestSupplies().getRSArea()
-							.getCentralTile());
-					tempTile = nearestSupplies().getRSArea().getCentralTile();
-
-					while (path.getNext() == null) {
-						if (game.getClientState() == Game.INDEX_LOBBY_SCREEN
-								|| !game.isLoggedIn()
-								|| getLocation().equals(Location.OUTSIDE)
-								|| getLocation().equals(Location.RED_SPAWN)
-								|| getLocation().equals(Location.BLUE_SPAWN)
-								|| getLocation().equals(Location.EAST_GRAVE)
-								|| getLocation().equals(Location.WEST_GRAVE)) {
-							return;
-						}
-						tempTile = divideTile(tempTile);
-						path = walking.getPath(tempTile);
-
-						if (path.getNext() == null
-								&& calc.distanceTo(tempTile) < 30) {
-							walking.walkTileMM(walking
-									.getClosestTileOnMap(nearestSupplies()
-											.getRSArea().getCentralTile()), 3,
-									3);
-						}
-					}
-					path.traverse();
-
+					walkTo(nearestSupplies());
 				}
 			} else {
-				path = walking.getPath(nearestPyres().getRSArea()
-						.getCentralTile());
-				tempTile = nearestPyres().getRSArea().getCentralTile();
-
-				while (path.getNext() == null) {
-					if (game.getClientState() == Game.INDEX_LOBBY_SCREEN
-							|| !game.isLoggedIn()
-							|| getLocation().equals(Location.OUTSIDE)
-							|| getLocation().equals(Location.RED_SPAWN)
-							|| getLocation().equals(Location.BLUE_SPAWN)
-							|| getLocation().equals(Location.EAST_GRAVE)
-							|| getLocation().equals(Location.WEST_GRAVE)) {
-						return;
-
-					}
-					tempTile = divideTile(tempTile);
-					path = walking.getPath(tempTile);
-
-					if (path.getNext() == null
-							&& calc.distanceTo(tempTile) < 30) {
-						walking.walkTileMM(walking
-								.getClosestTileOnMap(nearestPyres().getRSArea()
-										.getCentralTile()), 3, 3);
-					}
-				}
-				path.traverse();
-
+				walkTo(nearestPyres());
 			}
 		}
 	}
@@ -1257,64 +1191,10 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 					getSupplies();
 
 				} else {
-					path = walking.getPath(nearestSupplies().getRSArea()
-							.getCentralTile());
-					tempTile = nearestSupplies().getRSArea().getCentralTile();
-
-					while (path.getNext() == null) {
-						if (game.getClientState() == Game.INDEX_LOBBY_SCREEN
-								|| !game.isLoggedIn()
-								|| getLocation().equals(Location.OUTSIDE)
-								|| getLocation().equals(Location.RED_SPAWN)
-								|| getLocation().equals(Location.BLUE_SPAWN)
-								|| getLocation().equals(Location.EAST_GRAVE)
-								|| getLocation().equals(Location.WEST_GRAVE)) {
-							return;
-
-						}
-						tempTile = divideTile(tempTile);
-						path = walking.getPath(tempTile);
-
-						if (path.getNext() == null
-								&& calc.distanceTo(tempTile) < 30) {
-							walking.walkTileMM(walking
-									.getClosestTileOnMap(nearestSupplies()
-											.getRSArea().getCentralTile()), 3,
-									3);
-						}
-					}
-					path.traverse();
-
+					walkTo(nearestSupplies());
 				}
 			} else {
-				path = walking.getPath(nearestJellies().getRSArea()
-						.getCentralTile());
-				tempTile = nearestJellies().getRSArea().getCentralTile();
-
-				while (path.getNext() == null) {
-					if (game.getClientState() == Game.INDEX_LOBBY_SCREEN
-							|| !game.isLoggedIn()
-							|| getLocation().equals(Location.OUTSIDE)
-							|| getLocation().equals(Location.RED_SPAWN)
-							|| getLocation().equals(Location.BLUE_SPAWN)
-							|| getLocation().equals(Location.EAST_GRAVE)
-							|| getLocation().equals(Location.WEST_GRAVE)) {
-						return;
-
-					}
-
-					tempTile = divideTile(tempTile);
-					path = walking.getPath(tempTile);
-
-					if (path.getNext() == null
-							&& calc.distanceTo(tempTile) < 30) {
-						walking.walkTileMM(walking
-								.getClosestTileOnMap(nearestJellies()
-										.getRSArea().getCentralTile()), 3, 3);
-					}
-				}
-				path.traverse();
-
+				walkTo(nearestJellies());
 			}
 		}
 	}
@@ -1325,31 +1205,7 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 				if (getLocation().equals(nearestSupplies())) {
 					getSupplies();
 				} else {
-					path = walking.getPath(nearestSupplies().getRSArea()
-							.getCentralTile());
-					tempTile = nearestSupplies().getRSArea().getCentralTile();
-					while (path.getNext() == null) {
-						if (game.getClientState() == Game.INDEX_LOBBY_SCREEN
-								|| !game.isLoggedIn()
-								|| getLocation().equals(Location.OUTSIDE)
-								|| getLocation().equals(Location.RED_SPAWN)
-								|| getLocation().equals(Location.BLUE_SPAWN)
-								|| getLocation().equals(Location.EAST_GRAVE)
-								|| getLocation().equals(Location.WEST_GRAVE)) {
-							return;
-						}
-						tempTile = divideTile(tempTile);
-						path = walking.getPath(tempTile);
-
-						if (path.getNext() == null
-								&& calc.distanceTo(tempTile) < 30) {
-							walking.walkTileMM(walking
-									.getClosestTileOnMap(nearestSupplies()
-											.getRSArea().getCentralTile()), 3,
-									3);
-						}
-					}
-					path.traverse();
+					walkTo(nearestSupplies());
 				}
 			} else {
 				if (getLocation().equals(Location.OBELISK)) {
@@ -1359,31 +1215,7 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 						pickUpArrows();
 					}
 				} else {
-					RSPath path = walking.getPath(Location.OBELISK.getRSArea()
-							.getCentralTile());
-					tempTile = Location.OBELISK.getRSArea().getCentralTile();
-					while (path.getNext() == null) {
-						if (game.getClientState() == Game.INDEX_LOBBY_SCREEN
-								|| !game.isLoggedIn()
-								|| getLocation().equals(Location.OUTSIDE)
-								|| getLocation().equals(Location.RED_SPAWN)
-								|| getLocation().equals(Location.BLUE_SPAWN)
-								|| getLocation().equals(Location.EAST_GRAVE)
-								|| getLocation().equals(Location.WEST_GRAVE)) {
-							return;
-						}
-						tempTile = divideTile(tempTile);
-						path = walking.getPath(tempTile);
-
-						if (path.getNext() == null
-								&& calc.distanceTo(tempTile) < 30) {
-							walking.walkTileMM(walking
-									.getClosestTileOnMap(Location.OBELISK
-											.getRSArea().getCentralTile()), 3,
-									3);
-						}
-					}
-					path.traverse();
+					walkTo(Location.OBELISK);
 				}
 			}
 		} catch (Exception e) {
@@ -1403,7 +1235,6 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 					if (bones != null) {
 						if (bones.isOnScreen() && !inventory.isFull()) {
 							bones.doAction("Take " + bones.getItem().getName());
-							sleep(600, 1000);
 							return;
 						}
 					}
@@ -1411,34 +1242,7 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 			} else {
 				if (buryAtGrave && inventory.isFull()) {
 					if (nearestOwnedGrave() != null) {
-						path = walking.getPath(nearestOwnedGrave().getRSArea()
-								.getCentralTile());
-						tempTile = nearestOwnedGrave().getRSArea()
-								.getCentralTile();
-						while (path.getNext() == null) {
-							if (game.getClientState() == Game.INDEX_LOBBY_SCREEN
-									|| !game.isLoggedIn()
-									|| getLocation().equals(Location.OUTSIDE)
-									|| getLocation().equals(Location.RED_SPAWN)
-									|| getLocation()
-											.equals(Location.BLUE_SPAWN)
-									|| getLocation()
-											.equals(Location.EAST_GRAVE)
-									|| getLocation()
-											.equals(Location.WEST_GRAVE)) {
-								return;
-							}
-							tempTile = divideTile(tempTile);
-							path = walking.getPath(tempTile);
-							if (path.getNext() == null
-									&& calc.distanceTo(tempTile) < 30) {
-								walking.walkTileMM(
-										walking.getClosestTileOnMap(nearestOwnedGrave()
-												.getRSArea().getCentralTile()),
-										3, 3);
-							}
-						}
-						path.traverse();
+						walkTo(nearestOwnedGrave());
 						return;
 					}
 				}
@@ -1449,7 +1253,6 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 						if (getActivityBarPercent() < random(50, 80)
 								|| buryAtGrave) {
 							bones.doAction("Take " + bones.getItem().getName());
-							sleep(600, 1000);
 							return;
 						}
 					}
@@ -1468,10 +1271,8 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 								if (getActivityBarPercent() < 70) {
 									bones.doAction("Take "
 											+ bones.getItem().getName());
-									sleep(600, 1000);
 								} else {
 									pickUpArrows();
-									sleep(700, 1200);
 								}
 							} else {
 								if (!buryAtGrave && nearestOwnedGrave() != null) {
@@ -1481,30 +1282,7 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 						}
 					}
 				} else {
-					path = walking.getPath(Location.OBELISK.getRSArea()
-							.getCentralTile());
-					tempTile = Location.OBELISK.getRSArea().getCentralTile();
-					while (path.getNext() == null) {
-						if (game.getClientState() == Game.INDEX_LOBBY_SCREEN
-								|| !game.isLoggedIn()
-								|| getLocation().equals(Location.OUTSIDE)
-								|| getLocation().equals(Location.RED_SPAWN)
-								|| getLocation().equals(Location.BLUE_SPAWN)
-								|| getLocation().equals(Location.EAST_GRAVE)
-								|| getLocation().equals(Location.WEST_GRAVE)) {
-							return;
-						}
-						tempTile = divideTile(tempTile);
-						path = walking.getPath(tempTile);
-						if (path.getNext() == null
-								&& calc.distanceTo(tempTile) < 30) {
-							walking.walkTileMM(walking
-									.getClosestTileOnMap(Location.OBELISK
-											.getRSArea().getCentralTile()), 3,
-									3);
-						}
-					}
-					path.traverse();
+					walkTo(Location.OBELISK);
 				}
 			}
 		} catch (Exception e) {
@@ -1522,79 +1300,12 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 					&& (getSupplies || healOthers)) {
 				if (getLocation().equals(nearestSupplies())) {
 					getSupplies();
-
 				} else {
-					path = walking.getPath(nearestSupplies().getRSArea()
-							.getCentralTile());
-					tempTile = nearestSupplies().getRSArea().getCentralTile();
-
-					while (path.getNext() == null) {
-						if (game.getClientState() == Game.INDEX_LOBBY_SCREEN
-								|| !game.isLoggedIn()
-								|| getLocation().equals(Location.OUTSIDE)
-								|| getLocation().equals(Location.RED_SPAWN)
-								|| getLocation().equals(Location.BLUE_SPAWN)
-								|| getLocation().equals(Location.EAST_GRAVE)
-								|| getLocation().equals(Location.WEST_GRAVE)) {
-							return;
-						}
-						tempTile = divideTile(tempTile);
-						path = walking.getPath(tempTile);
-						if (path.getNext() == null
-								&& calc.distanceTo(tempTile) < 30) {
-							walking.walkTileMM(walking
-									.getClosestTileOnMap(nearestSupplies()
-											.getRSArea().getCentralTile()), 3,
-									3);
-						}
-					}
-					path.traverse();
-
+					walkTo(nearestSupplies());
 				}
 			} else {
-				if (getMyPlayer().getTeam() == 1) {
-					path = walking.getPath(Location.RED_AVATAR.getRSArea()
-							.getCentralTile());
-					tempTile = Location.RED_AVATAR.getRSArea().getCentralTile();
-
-				} else {
-					path = walking.getPath(Location.BLUE_AVATAR.getRSArea()
-							.getCentralTile());
-					tempTile = Location.BLUE_AVATAR.getRSArea()
-							.getCentralTile();
-
-				}
-				while (path.getNext() == null) {
-					if (game.getClientState() == Game.INDEX_LOBBY_SCREEN
-							|| !game.isLoggedIn()
-							|| getLocation().equals(Location.OUTSIDE)
-							|| getLocation().equals(Location.RED_SPAWN)
-							|| getLocation().equals(Location.BLUE_SPAWN)
-							|| getLocation().equals(Location.EAST_GRAVE)
-							|| getLocation().equals(Location.WEST_GRAVE)) {
-						return;
-
-					}
-					tempTile = divideTile(tempTile);
-					path = walking.getPath(tempTile);
-
-					if (path.getNext() == null
-							&& calc.distanceTo(tempTile) < 30) {
-						if (getMyPlayer().getTeam() == 1) {
-							walking.walkTileMM(walking
-									.getClosestTileOnMap(Location.RED_AVATAR
-											.getRSArea().getCentralTile()), 3,
-									3);
-						} else {
-							walking.walkTileMM(walking
-									.getClosestTileOnMap(Location.BLUE_AVATAR
-											.getRSArea().getCentralTile()), 3,
-									3);
-						}
-					}
-				}
-				path.traverse();
-
+				walkTo((getMyPlayer().getTeam() == 1 ? Location.RED_AVATAR
+						: Location.BLUE_AVATAR));
 			}
 		}
 
@@ -1646,15 +1357,13 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 				return Strategies.HEAL_PLAYERS;
 			}
 		}
-		if (getActivityBarPercent() < 55) {
+		if (getActivityBarPercent() < 70) {
 			if (pickUpBones && healOthers) {
 				switch (random(0, 2)) {
 				case 0:
 					return Strategies.PICKUP_BONES;
-
 				case 1:
 					return Strategies.HEAL_PLAYERS;
-
 				}
 			}
 			if (pickUpBones) {
@@ -1727,21 +1436,49 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 
 	private Location getLocation() {
 		RSTile player = getMyPlayer().getLocation();
-
 		for (Location loc : Location.values()) {
 			if (loc.containsTile(player)) {
 				return loc;
-
 			}
 		}
 		return Location.OTHER;
+	}
 
+	private void walkTo(Location loc) {
+		long startTime = System.currentTimeMillis();
+		try {
+			path = walking.getPath(loc.getRSArea().getCentralTile());
+			tempTile = loc.getRSArea().getCentralTile();
+			while (path.getNext() == null) {
+				if (game.getClientState() == Game.INDEX_LOBBY_SCREEN
+						|| !game.isLoggedIn()
+						|| getLocation().equals(Location.OUTSIDE)
+						|| getLocation().equals(Location.RED_SPAWN)
+						|| getLocation().equals(Location.BLUE_SPAWN)
+						|| getLocation().equals(Location.EAST_GRAVE)
+						|| getLocation().equals(Location.WEST_GRAVE)) {
+					return;
+				}
+				tempTile = divideTile(tempTile);
+				path = walking.getPath(tempTile);
+				if (path.getNext() == null) {
+					if (startTime + 2000 < System.currentTimeMillis()
+							&& getMyPlayer().isMoving()) {
+						walking.walkTileMM(walking.getClosestTileOnMap(loc
+								.getRSArea().getCentralTile()));
+					}
+				}
+			}
+			if (path.getNext() != null) {
+				path.traverse();
+			}
+		} catch (Exception e) {
+		}
 	}
 
 	// </editor-fold>
 
 	// <editor-fold defaultstate="collapsed" desc="GUI">
-	@SuppressWarnings("serial")
 	public class SWGUI extends javax.swing.JFrame {
 
 		public SWGUI() {
@@ -2817,6 +2554,21 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 				won++;
 				result = "wonLast";
 				zeal += 3;
+			} else if (message.contains("This chat is currently full")) {
+				inClan = false;
+			} else if (message
+					.contains("You have been kicked from the channel")) {
+				inClan = false;
+				log("You got kicked from clan channel!");
+			} else if (message
+					.contains("You are temporarily banned from this clan channel")) {
+				inClan = false;
+				log("You got banned from clan channel!");
+			} else if (message
+					.contains("You cannot take non-combat items into the arena")) {
+				log("You have something that it stopping us from entering a game.");
+				game.logout(true);
+				stopScript();
 			}
 		}
 		if (clanChatTeam && listenTime()) {

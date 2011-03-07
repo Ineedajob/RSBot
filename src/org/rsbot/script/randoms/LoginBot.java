@@ -1,6 +1,7 @@
 package org.rsbot.script.randoms;
 
 import java.awt.Rectangle;
+import java.awt.event.KeyEvent;
 
 import org.rsbot.gui.AccountManager;
 import org.rsbot.script.Random;
@@ -11,7 +12,7 @@ import org.rsbot.script.wrappers.RSInterface;
 /**
  * @author Iscream
  */
-@ScriptManifest(authors = { "Iscream", "Pervy Shuya" }, name = "Login", version = 1.5)
+@ScriptManifest(authors = { "Iscream", "Pervy Shuya" }, name = "Login", version = 1.6)
 public class LoginBot extends Random {
 
 	private static final int INTERFACE_MAIN = 905;
@@ -45,7 +46,7 @@ public class LoginBot extends Random {
 	public boolean activateCondition() {
 		int idx = game.getClientState();
 		return (idx == INDEX_LOGGED_OUT || idx == INDEX_LOBBY)
-				&& account.getName() != null;
+				&& !switchingWorlds() && account.getName() != null;
 	}
 
 	@Override
@@ -80,20 +81,32 @@ public class LoginBot extends Random {
 						.getComponent(INTERFACE_WELCOME_SCREEN_TEXT_RETURN)
 						.getText().toLowerCase();
 
-				if (returnText.contains("total skill level of")) {
-					log("Log back in when you total level of 1000/1500+");
+				if (returnText.contains("total skill level of")
+						&& !account.isMember()) {
+					log("Log back in when you total level of 1000+");
+					interfaces.getComponent(INTERFACE_WELCOME_SCREEN,
+							INTERFACE_WELCOME_SCREEN_BUTTON_BACK).doClick();
+					stopScript(false);
+				} else if (returnText.contains("total skill level of")
+						&& account.isMember()) {
+					log("Log back in when you total level of 1500+");
 					interfaces.getComponent(INTERFACE_WELCOME_SCREEN,
 							INTERFACE_WELCOME_SCREEN_BUTTON_BACK).doClick();
 					stopScript(false);
 				}
 
 				if (returnText.contains("login limit exceeded")) {
-					log("If login limit screws up, tell Pervy.");
+					log("If login limit screws up & doesn't login, tell Pervy.");
 					if (interfaces.getComponent(INTERFACE_WELCOME_SCREEN,
 							INTERFACE_WELCOME_SCREEN_BUTTON_BACK).doClick())
 						interfaces.getComponent(INTERFACE_WELCOME_SCREEN,
 								INTERFACE_WELCOME_SCREEN_BUTTON_LOGOUT)
 								.doClick();
+				}
+
+				if (returnText.contains("your account has not logged out")) {
+					log.warning("Make sure you're logged off or hasn't been h@x0r3d.");
+					stopScript(false);
 				}
 
 				if (returnText.contains("member")) {
@@ -130,6 +143,17 @@ public class LoginBot extends Random {
 			return -1;
 		}
 		if (!game.isLoggedIn()) {
+			if (returnText.contains("no reply from login server")) {
+				if (invalidCount > 10) {
+					log.warning("Unable to login after 10 attempts. Stopping script.");
+					log.severe("It seems the login server is down.");
+					stopScript(false);
+				}
+				interfaces.get(INTERFACE_LOGIN_SCREEN)
+						.getComponent(INTERFACE_BUTTON_BACK).doClick();
+				invalidCount++;
+				return random(500, 2000);
+			}
 			if (returnText.contains("update")) {
 				log("Runescape has been updated, please reload RSBot.");
 				stopScript(false);
@@ -193,8 +217,11 @@ public class LoginBot extends Random {
 				return random(500, 600);
 			}
 			if (isUsernameFilled() && isPasswordFilled()) {
-				interfaces.get(INTERFACE_LOGIN_SCREEN)
-						.getComponent(INTERFACE_BUTTON_LOGIN).doClick();
+				if (random(0, 2) == 0)
+					keyboard.pressKey((char) KeyEvent.VK_ENTER);
+				else
+					interfaces.get(INTERFACE_LOGIN_SCREEN)
+							.getComponent(INTERFACE_BUTTON_LOGIN).doClick();
 				return random(500, 600);
 			}
 			if (!isUsernameFilled()) {
@@ -231,6 +258,14 @@ public class LoginBot extends Random {
 			}
 		}
 		return random(500, 2000);
+	}
+
+	private boolean switchingWorlds() {
+		return interfaces.get(INTERFACE_WELCOME_SCREEN)
+				.getComponent(INTERFACE_WELCOME_SCREEN_TEXT_RETURN).isValid()
+				&& interfaces.get(INTERFACE_WELCOME_SCREEN)
+						.getComponent(INTERFACE_WELCOME_SCREEN_TEXT_RETURN)
+						.containsText("just left another world");
 	}
 
 	// Clicks past all of the letters
