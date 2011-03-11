@@ -18,17 +18,26 @@ public class Camera extends MethodProvider {
 
 	/**
 	 * Turns to an RSCharacter (RSNPC or RSPlayer).
-	 *
+	 * @deprecated
 	 * @param c The RSCharacter to turn to.
 	 */
 	public void turnToCharacter(RSCharacter c) {
 		int angle = getCharacterAngle(c);
 		setAngle(angle);
 	}
+	
+	/**
+	 * Turns to a RSCharacter (RSNPC or RSPlayer).
+	 * @param c The RSCharacter to turn to.
+	 */
+	public void turnTo(final RSCharacter c) {
+		int angle = getCharacterAngle(c);
+		setAngle(angle);
+	}
 
 	/**
 	 * Turns to within a few degrees of an RSCharacter (RSNPC or RSPlayer).
-	 *
+	 * @deprecated 
 	 * @param c   The RSCharacter to turn to.
 	 * @param dev The maximum difference in the angle.
 	 */
@@ -37,20 +46,40 @@ public class Camera extends MethodProvider {
 		angle = random(angle - dev, angle + dev + 1);
 		setAngle(angle);
 	}
+	
+	/**
+	 * Turns to within a few degrees of an RSCharacter (RSNPC or RSPlayer).
+	 * @param c   The RSCharacter to turn to.
+	 * @param dev The maximum difference in the angle.
+	 */
+	public void turnTo(final RSCharacter c, final int dev) {
+		int angle = getCharacterAngle(c);
+		angle = random(angle - dev, angle + dev + 1);
+		setAngle(angle);
+	}
 
 	/**
 	 * Turns to an RSObject
-	 *
+	 * @deprecated
 	 * @param o The RSObject to turn to.
 	 */
 	public void turnToObject(RSObject o) {
 		int angle = getObjectAngle(o);
 		setAngle(angle);
 	}
+	
+	/**
+	 * Turns to an RSObject.
+	 * @param o The RSObject to turn to.
+	 */
+	public void turnTo(final RSObject o) {
+		int angle = getObjectAngle(o);
+		setAngle(angle);
+	}
 
 	/**
 	 * Turns to within a few degrees of an RSObject.
-	 *
+	 * @deprecated
 	 * @param o   The RSObject to turn to.
 	 * @param dev The maximum difference in the turn angle.
 	 */
@@ -59,24 +88,57 @@ public class Camera extends MethodProvider {
 		angle = random(angle - dev, angle + dev + 1);
 		setAngle(angle);
 	}
+	
+	/**
+	 * Turns to within a few degrees of an RSObject.
+	 * @param o The RSObject to turn to.
+	 * @param dev The maximum difference in the turn angle.
+	 */
+	public void turnTo(final RSObject o, final int dev) {
+		int angle = getObjectAngle(o);
+		angle = random(angle - dev, angle + dev + 1);
+		setAngle(angle);
+	}
 
 	/**
 	 * Turns to a specific RSTile.
-	 *
+	 * @deprecated
 	 * @param tile Tile to turn to.
 	 */
 	public void turnToTile(RSTile tile) {
 		int angle = getTileAngle(tile);
 		setAngle(angle);
 	}
+	
+	/**
+	 * Turns to a specific RSTile.
+	 * 
+	 * @param tile Tile to turn to.
+	 */
+	public void turnTo(final RSTile tile) {
+		int angle = getTileAngle(tile);
+		setAngle(angle);
+	}
 
+	/**
+	 * Turns within a few degrees to a specific RSTile.
+	 * @deprecated
+	 * @param tile Tile to turn to.
+	 * @param dev  Maximum deviation from the angle to the tile.
+	 */
+	public void turnToTile(RSTile tile, int dev) {
+		int angle = getTileAngle(tile);
+		angle = random(angle - dev, angle + dev + 1);
+		setAngle(angle);
+	}
+	
 	/**
 	 * Turns within a few degrees to a specific RSTile.
 	 *
 	 * @param tile Tile to turn to.
 	 * @param dev  Maximum deviation from the angle to the tile.
 	 */
-	public void turnToTile(RSTile tile, int dev) {
+	public void turnTo(final RSTile tile, final int dev) {
 		int angle = getTileAngle(tile);
 		angle = random(angle - dev, angle + dev + 1);
 		setAngle(angle);
