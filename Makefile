@@ -20,7 +20,7 @@ all: Bot Scripts
 	@echo "Specification-Version: \"$(VERSION)\"" >> $(LSTF)
 	@echo "Implementation-Version: \"$(VERSION)\"" >> $(LSTF)
 	@if [ -e $(DIST) ]; then rm -fv $(DIST); fi
-	jar cfm $(DIST) $(LSTF) -C $(BINDIR) . $(SCRIPTS)/*.class $(IMGDIR)/*.png $(RES)/*.bat $(RES)/*.sh $(RES)/version.dat
+	jar cfm $(DIST) $(LSTF) -C $(BINDIR) . $(SCRIPTS)/*.class $(IMGDIR)/* $(RES)/*.bat $(RES)/*.sh $(RES)/version.dat
 	@rm -fv $(LSTF)
 
 Bot:
