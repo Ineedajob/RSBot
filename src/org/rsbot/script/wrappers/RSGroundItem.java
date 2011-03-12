@@ -10,7 +10,7 @@ import org.rsbot.script.methods.MethodProvider;
  *
  * @author Jacmob
  */
-public class RSGroundItem extends MethodProvider implements RSVerifiable {
+public class RSGroundItem extends MethodProvider {
 
 	private RSItem groundItem;
 	private RSTile location;

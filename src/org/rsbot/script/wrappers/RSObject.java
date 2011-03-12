@@ -8,7 +8,7 @@ import org.rsbot.script.methods.MethodProvider;
 import java.awt.*;
 
 
-public class RSObject extends MethodProvider implements RSVerifiable{
+public class RSObject extends MethodProvider {
 
 	public static enum Type {
 		INTERACTABLE, FLOOR_DECORATION, BOUNDARY, WALL_DECORATION
