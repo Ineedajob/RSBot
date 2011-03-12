@@ -35,7 +35,7 @@ public class GrandExchange extends MethodProvider {
 	 * @return The name of the given item ID or an empty String if unavailable.
 	 * @see GrandExchange#lookup(int)
 	 */
-	public String getItemName(int itemID) {
+	public String getItemName(final int itemID) {
 		GEItem geItem = lookup(itemID);
 		if (geItem != null) {
 			return geItem.getName();
@@ -51,7 +51,7 @@ public class GrandExchange extends MethodProvider {
 	 * @return The ID of the given item name or -1 if unavailable.
 	 * @see GrandExchange#lookup(java.lang.String)
 	 */
-	public int getItemID(String itemName) {
+	public int getItemID(final String itemName) {
 		GEItem geItem = lookup(itemName);
 		if (geItem != null) {
 			return geItem.getID();
@@ -67,7 +67,7 @@ public class GrandExchange extends MethodProvider {
 	 * @return An instance of GrandExchange.GEItem; <code>null</code> if unable
 	 *         to fetch data.
 	 */
-	public GEItem lookup(int itemID) {
+	public GEItem lookup(final int itemID) {
 		try {
 			URL url = new URL(GrandExchange.HOST + GrandExchange.GET + itemID);
 			BufferedReader br = new BufferedReader(new InputStreamReader(
@@ -109,7 +109,7 @@ public class GrandExchange extends MethodProvider {
 	 * @return An instance of GrandExchange.GEItem; <code>null</code> if unable
 	 *         to fetch data.
 	 */
-	public GEItem lookup(String itemName) {
+	public GEItem lookup(final String itemName) {
 		try {
 			URL url = new URL(GrandExchange.HOST
 					+ "/m=itemdb_rs/results.ws?query=" + itemName
@@ -156,7 +156,7 @@ public class GrandExchange extends MethodProvider {
 		return -1D;
 	}
 
-	private String stripFormatting(String str) {
+	private String stripFormatting(final String str) {
 		if (str != null && !str.isEmpty())
 			return str.replaceAll("(^[^<]+>|<[^>]+>|<[^>]+$)", "");
 		return "";

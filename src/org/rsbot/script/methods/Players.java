@@ -48,7 +48,7 @@ public class Players extends MethodProvider {
 	 * @param filter Filters out unwanted matches.
 	 * @return All valid RSPlayers.
 	 */
-	public RSPlayer[] getAll(Filter<RSPlayer> filter) {
+	public RSPlayer[] getAll(final Filter<RSPlayer> filter) {
 		int[] indices = methods.client.getRSPlayerIndexArray();
 		org.rsbot.client.RSPlayer[] array = methods.client.getRSPlayerArray();
 		Set<RSPlayer> players = new HashSet<RSPlayer>();
@@ -72,7 +72,7 @@ public class Players extends MethodProvider {
 	 *         was accepted by the provided Filter; or null if there are no matching
 	 *         players in the current region.
 	 */
-	public RSPlayer getNearest(Filter<RSPlayer> filter) {
+	public RSPlayer getNearest(final Filter<RSPlayer> filter) {
 		int min = 20;
 		RSPlayer closest = null;
 		org.rsbot.client.RSPlayer[] players = methods.client.getRSPlayerArray();

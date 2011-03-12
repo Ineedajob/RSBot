@@ -1,12 +1,12 @@
 package org.rsbot.script.methods;
 
+import java.awt.Point;
+
 import org.rsbot.script.wrappers.RSComponent;
 import org.rsbot.script.wrappers.RSInterface;
 import org.rsbot.script.wrappers.RSItem;
 import org.rsbot.script.wrappers.RSNPC;
 import org.rsbot.script.wrappers.RSObject;
-
-import java.awt.*;
 
 /**
  * Bank related operations.
@@ -17,8 +17,8 @@ public class Bank extends MethodProvider {
 			2271, 2354, 2355, 3824, 5488, 5901, 5912, 5913, 6362, 6532, 6533,
 			6534, 6535, 7605, 8948, 9710, 14367 };
 	public static final int[] BANK_BOOTHS = { 2213, 4483, 6084, 11402, 11758,
-		12759, 14367, 19230, 24914, 25808, 26972, 27663, 29085, 34752,
-		35647, 36786 };
+			12759, 14367, 19230, 24914, 25808, 26972, 27663, 29085, 34752,
+			35647, 36786 };
 	public static final int[] BANK_CHESTS = { 4483, 12308, 21301, 27663, 42192 };
 	public static final int[] BANK_DEPOSIT_BOX = { 9398, 20228, 26969, 36788 };
 
@@ -113,8 +113,8 @@ public class Bank extends MethodProvider {
 			if (!isOpen()) {
 				boolean match = false;
 				for (int i = 0; i < 28; i++) {
-					RSComponent comp = methods.interfaces.get(11).getComponent(
-							17).getComponent(i);
+					RSComponent comp = methods.interfaces.get(11)
+							.getComponent(17).getComponent(i);
 					if (comp.getComponentID() == itemID) {
 						itemCount += comp.getComponentStackSize();
 						if (!match) {
@@ -280,8 +280,9 @@ public class Bank extends MethodProvider {
 	 */
 	public int getCurrentTab() {
 		for (int i = 0; i < INTERFACE_BANK_TAB.length; i++) {
-			if (methods.interfaces.get(INTERFACE_BANK).getComponent(
-					INTERFACE_BANK_TAB[i] - 1).getBackgroundColor() == 1419)
+			if (methods.interfaces.get(INTERFACE_BANK)
+					.getComponent(INTERFACE_BANK_TAB[i] - 1)
+					.getBackgroundColor() == 1419)
 				return i;
 		}
 		return -1; // no selected ones. Bank may not be open.
@@ -443,8 +444,8 @@ public class Bank extends MethodProvider {
 								&& (methods.calc.distanceTo(bankChest) < 8)
 								&& methods.calc.tileOnMap(bankChest
 										.getLocation())
-								&& methods.calc.canReach(bankChest
-										.getLocation(), true) && !isOpen())) {
+								&& methods.calc.canReach(
+										bankChest.getLocation(), true) && !isOpen())) {
 					if (bankBooth != null) {
 						if (bankBooth.doAction("Use-Quickly")) {
 							int count = 0;
@@ -543,6 +544,19 @@ public class Bank extends MethodProvider {
 			e.printStackTrace();
 			return false;
 		}
+	}
+
+	/**
+	 * Opens the bank tab.
+	 * 
+	 * @param tabNumber
+	 *            The tab number - e.g. view all is 1.
+	 * @return <tt>true</tt> on success.
+	 */
+	public boolean openTab(final int tabNumber) {
+		return isOpen()
+				&& methods.interfaces.getComponent(INTERFACE_BANK,
+						INTERFACE_BANK_TAB[tabNumber - 1]).doClick();
 	}
 
 	/**
@@ -672,17 +686,19 @@ public class Bank extends MethodProvider {
 			RSComponent item = rsi.getComponent();
 			if (item == null)
 				return false;
-			
-			//Check tab
-			while(item.getRelativeX() == 0 && getCurrentTab() != 0) {
-				methods.interfaces.getComponent(INTERFACE_BANK, INTERFACE_BANK_TAB[0]).doClick();
+
+			// Check tab
+			while (item.getRelativeX() == 0 && getCurrentTab() != 0) {
+				methods.interfaces.getComponent(INTERFACE_BANK,
+						INTERFACE_BANK_TAB[0]).doClick();
 				sleep(random(800, 1300));
 			}
-			
-			//Scroll to the item
-			if(!methods.interfaces.scrollTo(item, (INTERFACE_BANK << 16) + INTERFACE_BANK_SCROLLBAR))
+
+			// Scroll to the item
+			if (!methods.interfaces.scrollTo(item, (INTERFACE_BANK << 16)
+					+ INTERFACE_BANK_SCROLLBAR))
 				return false;
-			
+
 			int invCount = methods.inventory.getCount(true);
 			switch (count) {
 			case 0:
@@ -755,92 +771,99 @@ public class Bank extends MethodProvider {
 		}
 		return count;
 	}
-    
+
 	/**
 	 * Gets the equipment items from the bank interface.
-	 * @return All equipment items that are being worn. 
+	 * 
+	 * @return All equipment items that are being worn.
 	 * @author LastCoder
 	 */
 	public RSItem[] getEquipmentItems() {
-		if (methods.interfaces.get(INTERFACE_EQUIPMENT).getComponent(
-				INTERFACE_EQUIPMENT_COMPONENT).isValid()) 
+		if (methods.interfaces.get(INTERFACE_EQUIPMENT)
+				.getComponent(INTERFACE_EQUIPMENT_COMPONENT).isValid())
 			return new RSItem[0];
-		
+
 		RSComponent[] components = methods.interfaces.get(INTERFACE_EQUIPMENT)
 				.getComponent(INTERFACE_EQUIPMENT_COMPONENT).getComponents();
 		RSItem[] items = new RSItem[components.length];
-		for(int i = 0; i < items.length; i++)
+		for (int i = 0; i < items.length; i++)
 			items[i] = new RSItem(methods, components[i]);
 
 		return items;
 	}
-	
+
 	/**
-	 * Gets a equipment item from the bank interface. 
+	 * Gets a equipment item from the bank interface.
+	 * 
 	 * @param id
 	 * @return RSItem
 	 * @author LastCoder
 	 */
 	public RSItem getEquipmentItem(final int id) {
 		RSItem[] items = getEquipmentItems();
-		if(items != null) {
-			for(final RSItem item : items) {
-				if(item.getID() == id)
+		if (items != null) {
+			for (final RSItem item : items) {
+				if (item.getID() == id)
 					return item;
 			}
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Gets the ID of a equipment item based on name.
+	 * 
 	 * @author LastCoder
 	 * @param name
 	 * @return -1 if item is not found.
 	 */
 	public int getEquipmentItemID(final String name) {
 		RSItem[] items = getEquipmentItems();
-		if(items != null) {
-			for(final RSItem item : items) {
-				if(item.getName().contains(name))
+		if (items != null) {
+			for (final RSItem item : items) {
+				if (item.getName().contains(name))
 					return item.getID();
 			}
 		}
 		return -1;
 	}
-	
+
 	/**
 	 * Opens the equipment interface.
+	 * 
 	 * @return <tt>true</tt> if opened.
 	 * @author LastCoder
 	 */
 	public boolean openEquipment() {
-		if(!getInterface().getComponent(INTERFACE_BANK_BUTTON_OPEN_EQUIP).isValid()) 
+		if (!getInterface().getComponent(INTERFACE_BANK_BUTTON_OPEN_EQUIP)
+				.isValid())
 			return false;
-		return getInterface().getComponent(INTERFACE_BANK_BUTTON_OPEN_EQUIP).doClick();
+		return getInterface().getComponent(INTERFACE_BANK_BUTTON_OPEN_EQUIP)
+				.doClick();
 	}
-	
+
 	/**
 	 * Gets the item ID of a item side the bank.
+	 * 
 	 * @author LastCoder
 	 * @param name
 	 * @return -1 if item is not found.
 	 */
 	public int getItemID(final String name) {
 		RSItem[] items = getItems();
-		if(items != null) {
-			//Search matching name first
-			for(final RSItem item : items)
-				if(item.getName().toLowerCase().equals(name.toLowerCase()))
+		if (items != null) {
+			// Search matching name first
+			for (final RSItem item : items)
+				if (item.getName().toLowerCase().equals(name.toLowerCase()))
 					return item.getID();
-			
-			//No exact match found, search partial match
-			for(final RSItem item : items)
-				if(item.getName().toLowerCase().contains(name.toLowerCase()))
+
+			// No exact match found, search partial match
+			for (final RSItem item : items)
+				if (item.getName().toLowerCase().contains(name.toLowerCase()))
 					return item.getID();
 		}
-		
-		//No matches
+
+		// No matches
 		return -1;
 	}
 

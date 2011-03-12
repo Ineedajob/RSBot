@@ -42,7 +42,7 @@ public class NPCs extends MethodProvider {
 	 * @param filter Filters out unwanted matches.
 	 * @return An array of the loaded RSNPCs.
 	 */
-	public RSNPC[] getAll(Filter<RSNPC> filter) {
+	public RSNPC[] getAll(final Filter<RSNPC> filter) {
 		int[] indices = methods.client.getRSNPCIndexArray();
 		Set<RSNPC> npcs = new HashSet<RSNPC>();
 		for (int index : indices) {
@@ -65,7 +65,7 @@ public class NPCs extends MethodProvider {
 	 * @return An RSNPC object representing the nearest RSNPC accepted by the
 	 *         provided Filter; or null if there are no matching NPCs in the current region.
 	 */
-	public RSNPC getNearest(Filter<RSNPC> filter) {
+	public RSNPC getNearest(final Filter<RSNPC> filter) {
 		int min = 20;
 		RSNPC closest = null;
 		int[] indices = methods.client.getRSNPCIndexArray();

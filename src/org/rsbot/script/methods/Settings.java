@@ -49,7 +49,7 @@ public class Settings extends MethodProvider {
 	 * @return <tt>int</tt> representing the setting of the given setting id;
 	 *         otherwise <tt>-1</tt>.
 	 */
-	public int getSetting(int setting) {
+	public int getSetting(final int setting) {
 		int[] settings = getSettingArray();
 		if (setting < settings.length)
 			return settings[setting];
