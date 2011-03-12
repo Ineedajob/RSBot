@@ -8,7 +8,7 @@ import org.rsbot.client.RSNPCNode;
 import org.rsbot.script.methods.MethodContext;
 import org.rsbot.script.methods.MethodProvider;
 
-public abstract class RSCharacter extends MethodProvider implements RSVerifiable {
+public abstract class RSCharacter extends MethodProvider {
 
 	public RSCharacter(MethodContext ctx) {
 		super(ctx);
