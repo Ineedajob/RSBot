@@ -32,8 +32,8 @@ public class Tiles extends MethodProvider {
 	 * @return <tt>true</tt> if no exceptions were thrown; otherwise
 	 *         <tt>false</tt>.
 	 */
-	public boolean doAction(RSTile tile, double xd, double yd, int h,
-			String action) {
+	public boolean doAction(final RSTile tile, final double xd, final double yd, final int h,
+			final String action) {
 		Point location = methods.calc.tileToScreen(tile, xd, yd, h);
 		if (location.x != -1 && location.y != -1) {
 			methods.mouse.move(location, 3, 3);
@@ -56,7 +56,7 @@ public class Tiles extends MethodProvider {
 	 * @return <tt>true</tt> if the Character was clicked; otherwise
 	 *         <tt>false</tt>.
 	 */
-	public boolean doAction(RSTile tile, String action) {
+	public boolean doAction(final RSTile tile, final String action) {
 		int counter = 0;
 		try {
 			Point location = methods.calc.tileToScreen(tile);
@@ -121,7 +121,7 @@ public class Tiles extends MethodProvider {
 	 * @param p
 	 * @return RSTile at the point's location
 	 */
-	public RSTile getTileUnderPoint(Point p) {
+	public RSTile getTileUnderPoint(final Point p) {
 		if (!methods.calc.pointOnScreen(p)) {
 			return null;
 		}

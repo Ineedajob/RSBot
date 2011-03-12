@@ -60,7 +60,7 @@ public class Inventory extends MethodProvider {
 	 * @param items
 	 *            The item IDs to drop
 	 */
-	public void dropAllExcept(boolean leftToRight, int... items) {
+	public void dropAllExcept(final boolean leftToRight, final int... items) {
 		RSTile startLocation = methods.players.getMyPlayer().getLocation();
 		while (getCountExcept(items) != 0) {
 			if (methods.calc.distanceTo(startLocation) > 100) {
@@ -105,7 +105,7 @@ public class Inventory extends MethodProvider {
 	 * @return <tt>true</tt> at all times.
 	 * @see #dropAllExcept(boolean, int...)
 	 */
-	public boolean dropAllExcept(int... items) {
+	public boolean dropAllExcept(final int... items) {
 		dropAllExcept(false, items);
 		return true;
 	}
@@ -118,7 +118,7 @@ public class Inventory extends MethodProvider {
 	 * @param row
 	 *            The row the item is in.
 	 */
-	public void dropItem(int col, int row) {
+	public void dropItem(final int col, final int row) {
 		if (methods.interfaces.canContinue()) {
 			methods.interfaces.clickContinue();
 			sleep(random(800, 1300));
@@ -156,7 +156,7 @@ public class Inventory extends MethodProvider {
 	 * @see #containsOneOf(int...)
 	 * @see #containsAll(int...)
 	 */
-	public boolean contains(int itemID) {
+	public boolean contains(final int itemID) {
 		return getItem(itemID) != null;
 	}
 
@@ -170,7 +170,7 @@ public class Inventory extends MethodProvider {
 	 *         the item IDs provided; otherwise <tt>false</tt>.
 	 * @see #containsOneOf(int...)
 	 */
-	public boolean containsAll(int... itemID) {
+	public boolean containsAll(final int... itemID) {
 		for (int i : itemID) {
 			if (getItem(i) == null)
 				return false;
@@ -188,7 +188,7 @@ public class Inventory extends MethodProvider {
 	 *         otherwise <tt>false</tt>.
 	 * @see #containsAll(int...)
 	 */
-	public boolean containsOneOf(int... itemID) {
+	public boolean containsOneOf(final int... itemID) {
 		RSItem[] items = getItems();
 		for (RSItem item : items) {
 			for (int i : itemID) {
@@ -229,7 +229,7 @@ public class Inventory extends MethodProvider {
 	 * @return <tt>true</tt> if the "use" action had been used on both items;
 	 *         otherwise <tt>false</tt>.
 	 */
-	public boolean useItem(RSItem item, RSItem targetItem) {
+	public boolean useItem(final RSItem item, final RSItem targetItem) {
 		if (methods.game.getCurrentTab() != Game.TAB_INVENTORY) {
 			methods.game.openTab(Game.TAB_INVENTORY);
 		}
@@ -261,7 +261,7 @@ public class Inventory extends MethodProvider {
 	 * @return A randomized <tt>Point</tt> from the center of the given
 	 *         <tt>Point</tt>.
 	 */
-	public Point randomizeItemPoint(Point inventoryPoint) {
+	public Point randomizeItemPoint(final Point inventoryPoint) {
 		return new Point(inventoryPoint.x + random(-10, 10), inventoryPoint.y
 				+ random(-10, 10));
 	}
@@ -310,7 +310,7 @@ public class Inventory extends MethodProvider {
 	 *            button.
 	 * @return <tt>true</tt> if item was selected, <tt>false</tt> if not.
 	 */
-	public boolean clickSelectedItem(boolean leftClick) {
+	public boolean clickSelectedItem(final boolean leftClick) {
 		RSItem item = getSelectedItem();
 		return item != null && item.doClick(true);
 	}
@@ -332,7 +332,7 @@ public class Inventory extends MethodProvider {
 	 *            The index of inventory item.
 	 * @return The item, or <tt>null</tt> if not found.
 	 */
-	public RSItem getItemAt(int index) {
+	public RSItem getItemAt(final int index) {
 		RSComponent comp = getInterface().getComponent(index);
 		return 0 <= index && index < 28 && comp != null ? new RSItem(methods,
 				comp) : null;
@@ -379,7 +379,7 @@ public class Inventory extends MethodProvider {
 	 *            Valid IDs.
 	 * @return <tt>RSItem</tt> array of the matching inventory items.
 	 */
-	public RSItem[] getItems(int... ids) {
+	public RSItem[] getItems(final int... ids) {
 		LinkedList<RSItem> items = new LinkedList<RSItem>();
 		for (RSItem item : getItems()) {
 			for (int i : ids) {
@@ -436,7 +436,7 @@ public class Inventory extends MethodProvider {
 	 *            The name of the item you wish to find.
 	 * @return The ID of the item or -1 if not in inventory.
 	 */
-	public int getItemID(String name) {
+	public int getItemID(final String name) {
 		RSItem[] items = getItems();
 		int slot = -1;
 		for (RSItem item : items) {
@@ -456,7 +456,7 @@ public class Inventory extends MethodProvider {
 	 *            The IDs of the item to find.
 	 * @return The first <tt>RSItem</tt> for the given IDs; otherwise null.
 	 */
-	public RSItem getItem(int... ids) {
+	public RSItem getItem(final int... ids) {
 		RSItem[] items = getItems();
 		for (RSItem item : items) {
 			for (int id : ids) {
@@ -475,7 +475,7 @@ public class Inventory extends MethodProvider {
 	 *            The item IDs to exclude.
 	 * @return The count.
 	 */
-	public int getCountExcept(int... ids) {
+	public int getCountExcept(final int... ids) {
 		return getCountExcept(false, ids);
 	}
 
@@ -490,7 +490,7 @@ public class Inventory extends MethodProvider {
 	 *            The item IDs to exclude.
 	 * @return The count.
 	 */
-	public int getCountExcept(boolean includeStacks, int... ids) {
+	public int getCountExcept(final boolean includeStacks, final int... ids) {
 		RSItem[] items = getItems();
 		int count = 0;
 		for (RSItem i : items) {
@@ -519,7 +519,7 @@ public class Inventory extends MethodProvider {
 	 *            the item IDs to include
 	 * @return The count.
 	 */
-	public int getCount(int... itemIDs) {
+	public int getCount(final int... itemIDs) {
 		return getCount(false, itemIDs);
 	}
 
@@ -534,7 +534,7 @@ public class Inventory extends MethodProvider {
 	 *            the item IDs to include
 	 * @return The count.
 	 */
-	public int getCount(boolean includeStacks, int... itemIDs) {
+	public int getCount(final boolean includeStacks, final int... itemIDs) {
 		int total = 0;
 
 		for (RSItem item : getItems()) {
@@ -569,7 +569,7 @@ public class Inventory extends MethodProvider {
 	 *            item; otherwise <tt>true</tt>.
 	 * @return The count.
 	 */
-	public int getCount(boolean includeStacks) {
+	public int getCount(final boolean includeStacks) {
 		int count = 0;
 		RSItem[] items = getItems();
 		for (RSItem item : items) {

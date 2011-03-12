@@ -30,7 +30,7 @@ public class Walking extends MethodProvider {
 	 * @param tiles The waypoint tiles.
 	 * @return An RSTilePath.
 	 */
-	public RSTilePath newTilePath(RSTile[] tiles) {
+	public RSTilePath newTilePath(final RSTile[] tiles) {
 		if (tiles == null) {
 			throw new IllegalArgumentException("null waypoint list");
 		}
@@ -44,7 +44,7 @@ public class Walking extends MethodProvider {
 	 * @param destination The destination tile.
 	 * @return The path as an RSTile array.
 	 */
-	public RSPath getPath(RSTile destination) {
+	public RSPath getPath(final RSTile destination) {
 		return new RSLocalPath(methods, destination);
 	}
 
@@ -55,7 +55,7 @@ public class Walking extends MethodProvider {
 	 * @param tile The tile to check.
 	 * @return <tt>true</tt> if local; otherwise <tt>false</tt>.
 	 */
-	public boolean isLocal(RSTile tile) {
+	public boolean isLocal(final RSTile tile) {
 		int[][] flags = getCollisionFlags(methods.game.getPlane());
 		int x = tile.getX() - methods.game.getBaseX();
 		int y = tile.getY() - methods.game.getBaseY();
@@ -70,7 +70,7 @@ public class Walking extends MethodProvider {
 	 * @return <tt>true</tt> if the next tile was walked
 	 *         to; otherwise <tt>false</tt>.
 	 */
-	public boolean walkTo(RSTile destination) {
+	public boolean walkTo(final RSTile destination) {
 		if (destination.equals(lastDestination) &&
 				methods.calc.distanceTo(lastStep) < 10) {
 			return lastPath.traverse();
@@ -91,7 +91,7 @@ public class Walking extends MethodProvider {
 	 * @return <tt>true</tt> if the tile was clicked; otherwise <tt>false</tt>.
 	 * @see #walkTileMM(RSTile, int, int)
 	 */
-	public boolean walkTileMM(RSTile t) {
+	public boolean walkTileMM(final RSTile t) {
 		return walkTileMM(t, 0, 0);
 	}
 
@@ -103,7 +103,7 @@ public class Walking extends MethodProvider {
 	 * @param y The y randomness (between 0 and y-1).
 	 * @return <tt>true</tt> if the tile was clicked; otherwise <tt>false</tt>.
 	 */
-	public boolean walkTileMM(RSTile t, int x, int y) {
+	public boolean walkTileMM(final RSTile t, final int x, final int y) {
 		RSTile dest = new RSTile(t.getX() + random(0, x), t.getY() + random(0, y));
 		Point p = methods.calc.tileToMinimap(dest);
 		if (p.x != -1 && p.y != -1) {
@@ -125,7 +125,7 @@ public class Walking extends MethodProvider {
 	 * @param tileToWalk Tile to walk.
 	 * @return True if successful.
 	 */
-	public boolean walkTileOnScreen(RSTile tileToWalk) {
+	public boolean walkTileOnScreen(final RSTile tileToWalk) {
 		return methods.tiles.doAction(methods.calc.getTileOnScreen(tileToWalk), "Walk ");
 	}
 
@@ -145,7 +145,7 @@ public class Walking extends MethodProvider {
 	 * @param stopEnergy Amount of energy at which it should stop resting.
 	 * @return <tt>true</tt> if rest was enabled; otherwise false.
 	 */
-	public boolean rest(int stopEnergy) {
+	public boolean rest(final int stopEnergy) {
 		int energy = getEnergy();
 		for (int d = 0; d < 5; d++) {
 			methods.interfaces.getComponent(INTERFACE_RUN_ORB, 1).doAction("Rest");
@@ -171,7 +171,7 @@ public class Walking extends MethodProvider {
 	 *
 	 * @param enable <tt>true</tt> to enable run, <tt>false</tt> to disable it.
 	 */
-	public void setRun(boolean enable) {
+	public void setRun(final boolean enable) {
 		if (isRunEnabled() != enable) {
 			methods.interfaces.getComponent(INTERFACE_RUN_ORB, 0).doClick();
 		}
@@ -216,7 +216,7 @@ public class Walking extends MethodProvider {
 	 * @param tile The destination tile.
 	 * @return Returns the closest tile to the destination on the minimap.
 	 */
-	public RSTile getClosestTileOnMap(RSTile tile) {
+	public RSTile getClosestTileOnMap(final RSTile tile) {
 		if (!methods.calc.tileOnMap(tile) && methods.game.isLoggedIn()) {
 			RSTile loc = methods.players.getMyPlayer().getLocation();
 			RSTile walk = new RSTile((loc.getX() + tile.getX()) / 2, (loc.getY() + tile.getY()) / 2);
@@ -268,7 +268,7 @@ public class Walking extends MethodProvider {
 	 * @param plane The floor level (0, 1, 2 or 3).
 	 * @return the collision flags.
 	 */
-	public int[][] getCollisionFlags(int plane) {
+	public int[][] getCollisionFlags(final int plane) {
 		return methods.client.getRSGroundDataArray()[plane].getBlocks();
 	}
 
@@ -279,7 +279,7 @@ public class Walking extends MethodProvider {
 	 * @param plane The floor level.
 	 * @return The offset as an RSTile.
 	 */
-	public RSTile getCollisionOffset(int plane) {
+	public RSTile getCollisionOffset(final int plane) {
 		org.rsbot.client.RSGroundData data = methods.client.getRSGroundDataArray()[plane];
 		return new RSTile(data.getX(), data.getY());
 	}

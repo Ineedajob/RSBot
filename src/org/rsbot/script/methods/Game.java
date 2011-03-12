@@ -10,7 +10,7 @@ import org.rsbot.script.wrappers.RSTile;
  * Game state and GUI operations.
  */
 public class Game extends MethodProvider {
-
+	
 	public enum CHAT_MODE {
 		VIEW, ON, FRIENDS, OFF, HIDE
 	}

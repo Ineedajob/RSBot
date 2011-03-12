@@ -69,7 +69,7 @@ public class Menu extends MethodProvider {
      * @param action The action or action substring.
      * @return <tt>true</tt> if present, otherwise <tt>false</tt>.
      */
-    public boolean contains(String action) {
+    public boolean contains(final String action) {
         return getIndex(action) != -1;
     }
  
@@ -79,7 +79,7 @@ public class Menu extends MethodProvider {
      * @param i The index of the item.
      * @return <tt>true</tt> if the mouse was clicked; otherwise <tt>false</tt>.
      */
-    public boolean clickIndex(int i) {
+    public boolean clickIndex(final int i) {
         if (!isOpen()) {
             return false;
         }
@@ -109,7 +109,7 @@ public class Menu extends MethodProvider {
         }
     }
  
-    private boolean clickMain(String[] items, int i) {
+    private boolean clickMain(final String[] items, final int i) {
         Point menu = getLocation();
         int xOff = random(4, items[i].length() * 4);
         int yOff = 21 + 16 * i + random(3, 12);
@@ -121,7 +121,7 @@ public class Menu extends MethodProvider {
         return false;
     }
  
-    private boolean clickSub(String[] items, int mIdx, int sIdx) {
+    private boolean clickSub(final String[] items, final int mIdx, final int sIdx) {
         Point menuLoc = getLocation();
         int x = random(4, items[mIdx].length() * 4);
         int y = 21 + 16 * mIdx + random(3, 12);
@@ -219,7 +219,7 @@ public class Menu extends MethodProvider {
         return null;
     }
  
-    private String[] getMenuItemPart(boolean firstPart) {
+    private String[] getMenuItemPart(final boolean firstPart) {
         LinkedList<String> itemsList = new LinkedList<String>();
         if (isCollapsed()) {
             Queue<MenuGroupNode> menu = new Queue<MenuGroupNode>(methods.client.getCollapsedMenuItems());

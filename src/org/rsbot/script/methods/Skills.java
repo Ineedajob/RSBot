@@ -211,7 +211,7 @@ public class Skills extends MethodProvider {
 			return 0;
 		return Skills.XP_TABLE[lvl + 1] - getCurrentExp(index);
 	}
-
+		
 	/**
 	 * Moves the mouse over a given component in the stats tab.
 	 *

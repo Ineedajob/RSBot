@@ -199,7 +199,7 @@ public class Magic extends MethodProvider {
 	 * @param spell The spell to cast.
 	 * @return <tt>true</tt> if the spell was clicked; otherwise <tt>false</tt>.
 	 */
-	public boolean castSpell(int spell) {
+	public boolean castSpell(final int spell) {
 		if (methods.game.getCurrentTab() != Game.TAB_MAGIC) {
 			methods.game.openTab(Game.TAB_MAGIC);
 			for (int i = 0; i < 100; i++) {
@@ -227,7 +227,7 @@ public class Magic extends MethodProvider {
 	 * @return <tt>true</tt> if the "Auto-cast" interface option was clicked;
 	 *         otherwise <tt>false</tt>.
 	 */
-	public boolean autoCastSpell(int spell) {
+	public boolean autoCastSpell(final int spell) {
 		if (methods.settings.getSetting(43) != 4) {
 			if (methods.game.getCurrentTab() != Game.TAB_MAGIC) {
 				methods.game.openTab(Game.TAB_MAGIC);
