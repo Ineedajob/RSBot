@@ -6,11 +6,14 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 
 import org.rsbot.Application;
 import org.rsbot.client.Loader;
@@ -23,149 +26,165 @@ import org.rsbot.util.GlobalConfiguration;
  */
 public class RSLoader extends Applet implements Runnable, Loader {
 
-	private final Logger log = Logger.getLogger(RSLoader.class.getName());
+    private final Logger log = Logger.getLogger(RSLoader.class.getName());
+    private BufferedImage img;
+    public boolean painting;
 
-	private static final long serialVersionUID = 6288499508495040201L;
+    public RSLoader() {
+        try {
 
-	/**
-	 * The applet of the client
-	 */
-	private Applet client;
+            img = ImageIO.read(new File("resources//images/gold4rs.jpg"));
+        } catch (Exception e) {
+            log.log(Level.SEVERE, e.getMessage());
+        }
 
-	private Runnable loadedCallback;
+    }
+    private static final long serialVersionUID = 6288499508495040201L;
+    /**
+     * The applet of the client
+     */
+    private Applet client;
+    private Runnable loadedCallback;
+    private String targetName;
+    private Dimension size = Application.getPanelSize();
+    /**
+     * The game class loader
+     */
+    public RSClassLoader classLoader;
 
-	private String targetName;
+    @Override
+    public final synchronized void destroy() {
+        if (client != null) {
+            client.destroy();
+        }
+    }
 
-	private Dimension size = Application.getPanelSize();
+    @Override
+    public boolean isShowing() {
+        return true;
+    }
 
-	/**
-	 * The game class loader
-	 */
-	public RSClassLoader classLoader;
+    @Override
+    public final synchronized void init() {
+        if (client != null) {
+            client.init();
+        }
+    }
+    int c = 0;
 
-	@Override
-	public final synchronized void destroy() {
-		if (client != null) {
-			client.destroy();
-		}
-	}
+    @Override
+    public final void paint(final Graphics graphics) {
 
-	@Override
-	public boolean isShowing() {
-		return true;
-	}
+        if (client != null) {
+            painting = false;
+            client.paint(graphics);
+        } else {
+            painting = true;
+            Font font = new Font("Helvetica", 1, 13);
+            FontMetrics fontMetrics = getFontMetrics(font);
+            graphics.setColor(Color.black);
+            graphics.fillRect(0, 0, 768, 503);
+            graphics.drawImage(img, 270, 133, null);
+            graphics.setColor(new Color(150, 0, 0));
+            graphics.drawRect(230, 350, 303, 33);
+            String s = "Loading...";
+            graphics.setFont(font);
+            graphics.setColor(Color.WHITE);
+            graphics.drawString(s, (768 - fontMetrics.stringWidth(s)) / 2, 370);
 
-	@Override
-	public final synchronized void init() {
-		if (client != null) {
-			client.init();
-		}
-	}
+        }
+    }
 
-	@Override
-	public final void paint(final Graphics graphics) {
-		if (client != null) {
-			client.paint(graphics);
-		} else {
-			Font font = new Font("Helvetica", 1, 13);
-			FontMetrics fontMetrics = getFontMetrics(font);
-			graphics.setColor(Color.black);
-			graphics.fillRect(0, 0, 768, 503);
-			graphics.setColor(new Color(150, 0, 0));
-			graphics.drawRect(230, 233, 303, 33);
-			String s = "Loading...";
-			graphics.setFont(font);
-			graphics.setColor(Color.WHITE);
-			graphics.drawString(s, (768 - fontMetrics.stringWidth(s)) / 2, 255);
-		}
-	}
+    /**
+     * The run void of the loader
+     */
+    public void run() {
+        try {
 
-	/**
-	 * The run void of the loader
-	 */
-	public void run() {
-		try {
-			Class<?> c = classLoader.loadClass("client");
-			client = (Applet) c.newInstance();
-			loadedCallback.run();
-			c.getMethod("provideLoaderApplet", new Class[]{java.applet.Applet.class}).invoke(null, this);
-			client.init();
-			client.start();
-		} catch (final Throwable e) {
-			log.severe("Unable to load client, please check your firewall and internet connection.");
-			File versionFile = new File(GlobalConfiguration.Paths.getVersionCache());
-			if (versionFile.exists() && !versionFile.delete()) {
-				log.warning("Unable to clear cache.");
-			}
-			
-			log.log(Level.SEVERE, "Error reason:", e);
-		}
-	}
+            Class<?> c = classLoader.loadClass("client");
+            client = (Applet) c.newInstance();
+            loadedCallback.run();
+            c.getMethod("provideLoaderApplet", new Class[]{java.applet.Applet.class}).invoke(null, this);
+            client.init();
+            client.start();
+        } catch (final Throwable e) {
+            log.severe("Unable to load client, please check your firewall and internet connection.");
+            File versionFile = new File(GlobalConfiguration.Paths.getVersionCache());
+            if (versionFile.exists() && !versionFile.delete()) {
+                log.warning("Unable to clear cache.");
+            }
 
-	public Applet getClient() {
-		return client;
-	}
+            log.log(Level.SEVERE, "Error reason:", e);
+        }
+    }
 
-	public void load() {
-		ClientLoader cl = new ClientLoader();
-		try {
-			cl.init(new URL(GlobalConfiguration.Paths.URLs.UPDATE), new File(GlobalConfiguration.Paths.getModScriptCache()));
-			cl.load(new File(GlobalConfiguration.Paths.getClientCache()), new File(GlobalConfiguration.Paths.getVersionCache()));
-			targetName = cl.getTargetName();
-			classLoader = new RSClassLoader(cl.getClasses(), new URL("http://" + targetName + ".com/"));
-		} catch (IOException ex) {
-			log.severe("Unable to load client - " + ex.getMessage());
-		} catch (ParseException ex) {
-			log.severe("Unable to load client - " + ex.toString());
-		}
-	}
+    public Applet getClient() {
+        return client;
+    }
 
-	public void setCallback(final Runnable r) {
-		loadedCallback = r;
-	}
+    public void load() {
+        ClientLoader cl = new ClientLoader();
+        try {
+            cl.init(new URL(GlobalConfiguration.Paths.URLs.UPDATE), new File(GlobalConfiguration.Paths.getModScriptCache()));
+            cl.load(new File(GlobalConfiguration.Paths.getClientCache()), new File(GlobalConfiguration.Paths.getVersionCache()));
+            targetName = cl.getTargetName();
+            classLoader = new RSClassLoader(cl.getClasses(), new URL("http://" + targetName + ".com/"));
+        } catch (IOException ex) {
+            log.severe("Unable to load client - " + ex.getMessage());
+        } catch (ParseException ex) {
+            log.severe("Unable to load client - " + ex.toString());
+        }
+    }
 
-	public String getTargetName() {
-		return targetName;
-	}
+    public void setCallback(final Runnable r) {
+        loadedCallback = r;
+    }
 
-	/**
-	 * Overridden void start()
-	 */
-	@Override
-	public final synchronized void start() {
-		if (client != null) {
-			client.start();
-		}
-	}
+    public String getTargetName() {
+        return targetName;
+    }
 
-	/**
-	 * Overridden void deactivate()
-	 */
-	@Override
-	public final synchronized void stop() {
-		if (client != null) {
-			client.stop();
-		}
-	}
+    /**
+     * Overridden void start()
+     */
+    @Override
+    public final synchronized void start() {
 
-	/**
-	 * Overridden void update(Graphics)
-	 */
-	@Override
-	public final void update(Graphics graphics) {
-		if (client != null) {
-			client.update(graphics);
-		} else
-			paint(graphics);
-	}
+        if (client != null) {
+            client.start();
+        }
+    }
 
-	public final void setSize(int width, int height) {
-		super.setSize(width, height);
-		size = new Dimension(width, height);
-	}
+    /**
+     * Overridden void deactivate()
+     */
+    @Override
+    public final synchronized void stop() {
+        if (client != null) {
+            client.stop();
+        }
+    }
 
-	public final Dimension getSize() {
-		return size;
-	}
+    /**
+     * Overridden void update(Graphics)
+     */
+    @Override
+    public final void update(Graphics graphics) {
+        if (client != null) {
+            client.update(graphics);
+        } else {
 
+
+            paint(graphics);
+        }
+    }
+
+    public final void setSize(int width, int height) {
+        super.setSize(width, height);
+        size = new Dimension(width, height);
+    }
+
+    public final Dimension getSize() {
+        return size;
+    }
 }
