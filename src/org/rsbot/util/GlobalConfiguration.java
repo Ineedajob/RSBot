@@ -37,7 +37,6 @@ public class GlobalConfiguration {
 			public static final String SCRIPTS = Paths.SCRIPTS_NAME_SRC + "/";
 			public static final String ROOT_IMG = "/" + Resources.ROOT + "/images";
 			public static final String ICON = Resources.ROOT_IMG + "/icon.png";
-			public static final String ICON_GOLD4RS = Resources.ROOT_IMG + "/gold4rs.jpg";
 			public static final String ICON_DELETE = Resources.ROOT_IMG + "/delete.png";
 			public static final String ICON_PLAY = Resources.ROOT_IMG + "/control_play_blue.png";
 			public static final String ICON_PAUSE = Resources.ROOT_IMG + "/control_pause.png";
@@ -71,6 +70,7 @@ public class GlobalConfiguration {
 			public static final String SITE = "http://www.powerbot.org";
 			public static final String STATS = "http://stats.powerbot.org/sync/";
 			public static final String GOLD4RS = UPDATER + "gold4rs";
+			public static final String GOLD4RS_IMG = UPDATER + "gold4rs-img";
 		}
 
 		public static final String ROOT = "." + File.separator + "resources";
