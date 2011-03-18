@@ -47,31 +47,8 @@ import org.rsbot.script.wrappers.RSNPC;
 import org.rsbot.script.wrappers.RSObject;
 import org.rsbot.script.wrappers.RSTile;
 
-@ScriptManifest(authors = { "Conderoga" }, keywords = "Woodcutting", name = "Conderoga's Chopper", version = 1.23, description = "Simply the best.")
-/*
- * UpdateLog: v1.00 - New Combined Script v1.01 - New GUI, Added Grand Exchange
- * Ivy v1.02 - Added Taverly and Yanille Ivy, Willow Chopping in Draynor v1.03 -
- * Nothing really.. v1.04 - Added Seer's Village yew and maple chopping, new
- * walking method, Ardougne and Varrock Palace Ivy v1.05 - Walking fixes and
- * autoupdate v1.06 - More options with autoupdate, tweaked banking and walking
- * v1.07 - Fixed Maple Chopping, added mage training area magics and Falador
- * yews v1.08 - Fixed Falador Yew Chopping and banking problems in Seer's
- * village v1.09 - Improved Tree Clicking, added Mouse Hovering, new paint,
- * falador ivy locations v1.10 - Quick walking, banking, and animation fixes
- * v1.11 - Added Timeout feature to get rid of script stopping error v1.12 -
- * Failed attempt at fixing stuff v1.13 - Fixed walking problems, added cool
- * mouse stuff. v1.14 - Added Draynor Yews - new Walking Method - Fixed Mage
- * Training Area Problems v1.15 - Fixed lag issues added breaking antiban fixed
- * Draynor yews improved mouse hover v1.16 - Reverted to old version of walking,
- * added Tree Gnome Stronghold Yews v1.17 - Lag gone for good, fixed south
- * falador and edgeville, Merry Christmas! v1.18 - Fixed lots of problems v1.19
- * - Fixed South Falador Banking problems, Draynor Yew banking, Catherby Bee
- * Hive error v1.20 - Fixed small banking errors and errors in South Falador
- * Yews v1.21 - Added Failsafe for banking problems, shortened break length
- * v1.22 - Fixed walking methods, fixed Mage Training magics, added Port Salim
- * Willows and Draynor Oaks v1.23 - Added failsafe fixed run issues
- */
-@SuppressWarnings({ "deprecation", "unused" })
+@SuppressWarnings("deprecation")
+@ScriptManifest(authors = { "Conderoga" }, keywords = "Woodcutting", name = "Conderoga's Chopper", version = 1.23, description = "Chops trees and stuff.")
 public class CChop extends Script implements PaintListener, MessageListener,
 		MouseListener {
 
@@ -124,13 +101,9 @@ public class CChop extends Script implements PaintListener, MessageListener,
 	private int lvlsGained;
 	private long startTime, failSafeTimer;
 	private double startTimeDbl;
-	private long ExpHr;
 	private int safety = 0;
 	private String status;
-	private final int tempX = 0;
-	private final int tempY = 0;
 	private Point p;
-	private int randomInt;
 	private final String version = "v1.23";
 	private String currentVersion = "";
 	private String treeType = ".";
@@ -141,7 +114,6 @@ public class CChop extends Script implements PaintListener, MessageListener,
 	private RSTile bankLocation;
 	private String chopType;
 	private String command;
-	private final boolean done = false;
 	private boolean showPaint = true;
 	private boolean fancyPaint = true;
 	private final Image img1 = getImage("http://i263.photobucket.com/albums/ii158/zpogo/Logo.png");
@@ -151,24 +123,18 @@ public class CChop extends Script implements PaintListener, MessageListener,
 
 	@Override
 	public boolean onStart() {
-		final int checkUpdate = JOptionPane.showConfirmDialog(null,
-				"Would you like to check for a script update?",
-				"Check for update?", JOptionPane.YES_NO_OPTION);
-		if (checkUpdate == 0) {
-			if (!checkCurrentVersion()) {
-				final int updateQ = JOptionPane
-						.showConfirmDialog(
-								null,
-								"Your script is out of date. Would you like to update?",
-								"Update?", JOptionPane.YES_NO_OPTION);
-				if (updateQ == 0) {
-					final String notice = "Commencing Update!";
-					JOptionPane.showMessageDialog(null, notice);
-					update();
-				}
-			} else
-				log("Your script is up to date.");
-		}
+		/*
+		 * final int checkUpdate = JOptionPane.showConfirmDialog(null,
+		 * "Would you like to check for a script update?"
+		 * ,"Check for update?",JOptionPane.YES_NO_OPTION); if(checkUpdate==0) {
+		 * if(!checkCurrentVersion()) { final int updateQ =
+		 * JOptionPane.showConfirmDialog
+		 * (null,"Your script is out of date. Would you like to update?"
+		 * ,"Update?",JOptionPane.YES_NO_OPTION); if(updateQ==0){ final String
+		 * notice = "Commencing Update!";
+		 * JOptionPane.showMessageDialog(null,notice); update(); } } else
+		 * log("Your script is up to date."); }
+		 */
 		startTime = System.currentTimeMillis();
 		startTimeDbl = System.currentTimeMillis();
 		// Credits to Zombieknight for this:-----------------
@@ -180,7 +146,7 @@ public class CChop extends Script implements PaintListener, MessageListener,
 		if (welcome == 0) {
 			final String message = "<html>Thank you for your support!<br /></html>";
 			JOptionPane.showMessageDialog(null, message);
-			openURL("http://adf.ly/AgSn");
+			openURL("http://adf.ly/317631/agsn");
 		}
 		// =------------------------------------------------------
 		if (Integer.parseInt(account.getPin()) != -1)
@@ -1767,13 +1733,11 @@ public class CChop extends Script implements PaintListener, MessageListener,
 	}
 
 	public boolean atBank() {
-		boolean temp = false;
 		if (command.equals("Grand Exchange - Yews")
 				|| command.equals("Grand Exchange - Ivy")) {
 			if (getMyPlayer().getLocation().getX() < 3171
-					&& getMyPlayer().getLocation().getX() >= 3167)
-				temp = true;
-			else
+					&& getMyPlayer().getLocation().getX() >= 3167) {
+			} else
 				return false;
 			if (getMyPlayer().getLocation().getY() >= 3486
 					&& getMyPlayer().getLocation().getY() <= 3492)
@@ -1781,9 +1745,8 @@ public class CChop extends Script implements PaintListener, MessageListener,
 		}
 		if (command.equals("Edgeville - Yews")) {
 			if (getMyPlayer().getLocation().getX() < 3096
-					&& getMyPlayer().getLocation().getX() >= 3091)
-				temp = true;
-			else
+					&& getMyPlayer().getLocation().getX() >= 3091) {
+			} else
 				return false;
 			if (getMyPlayer().getLocation().getY() >= 3488
 					&& getMyPlayer().getLocation().getY() <= 3494)
@@ -1792,9 +1755,8 @@ public class CChop extends Script implements PaintListener, MessageListener,
 		if (command.equals("South Falador - Yews")
 				|| command.equals("South Falador - Ivy")) {
 			if (getMyPlayer().getLocation().getX() < 3016
-					&& getMyPlayer().getLocation().getX() >= 3010)
-				temp = true;
-			else
+					&& getMyPlayer().getLocation().getX() >= 3010) {
+			} else
 				return false;
 			if (getMyPlayer().getLocation().getY() >= 3355
 					&& getMyPlayer().getLocation().getY() <= 3359)
@@ -1809,9 +1771,8 @@ public class CChop extends Script implements PaintListener, MessageListener,
 
 		if (command.equals("Catherby - Yews")) {
 			if (getMyPlayer().getLocation().getX() <= 2811
-					&& getMyPlayer().getLocation().getX() >= 2807)
-				temp = true;
-			else
+					&& getMyPlayer().getLocation().getX() >= 2807) {
+			} else
 				return false;
 			if (getMyPlayer().getLocation().getY() >= 3439
 					&& getMyPlayer().getLocation().getY() <= 3441)
@@ -1819,9 +1780,8 @@ public class CChop extends Script implements PaintListener, MessageListener,
 		}
 		if (command.equals("Tree Gnome - Yews")) {
 			if (getMyPlayer().getLocation().getX() <= 2446
-					&& getMyPlayer().getLocation().getX() >= 2445)
-				temp = true;
-			else
+					&& getMyPlayer().getLocation().getX() >= 2445) {
+			} else
 				return false;
 			if (getMyPlayer().getLocation().getY() >= 3423
 					&& getMyPlayer().getLocation().getY() <= 3428)
@@ -1830,9 +1790,8 @@ public class CChop extends Script implements PaintListener, MessageListener,
 		if (location.equals("Seer's Village")
 				|| command.equals("Sorcerer's Tower - Magics")) {
 			if (getMyPlayer().getLocation().getX() >= 2724
-					&& getMyPlayer().getLocation().getX() <= 2728)
-				temp = true;
-			else
+					&& getMyPlayer().getLocation().getX() <= 2728) {
+			} else
 				return false;
 			if (getMyPlayer().getLocation().getY() >= 3491
 					&& getMyPlayer().getLocation().getY() <= 3495)
@@ -1843,9 +1802,8 @@ public class CChop extends Script implements PaintListener, MessageListener,
 		}
 		if (command.equals("Castle Wars - Ivy")) {
 			if (getMyPlayer().getLocation().getX() < 2445
-					&& getMyPlayer().getLocation().getX() >= 3086)
-				temp = true;
-			else
+					&& getMyPlayer().getLocation().getX() >= 3086) {
+			} else
 				return false;
 			if (getMyPlayer().getLocation().getY() >= 3083
 					&& getMyPlayer().getLocation().getY() <= 3086)
@@ -1853,9 +1811,8 @@ public class CChop extends Script implements PaintListener, MessageListener,
 		}
 		if (command.equals("Yanille - Ivy")) {
 			if (getMyPlayer().getLocation().getX() < 2614
-					&& getMyPlayer().getLocation().getX() >= 2611)
-				temp = true;
-			else
+					&& getMyPlayer().getLocation().getX() >= 2611) {
+			} else
 				return false;
 			if (getMyPlayer().getLocation().getY() >= 3092
 					&& getMyPlayer().getLocation().getY() <= 3095)
@@ -1863,9 +1820,8 @@ public class CChop extends Script implements PaintListener, MessageListener,
 		}
 		if (command.equals("Ardougne - Ivy")) {
 			if (getMyPlayer().getLocation().getX() < 2616
-					&& getMyPlayer().getLocation().getX() >= 2613)
-				temp = true;
-			else
+					&& getMyPlayer().getLocation().getX() >= 2613) {
+			} else
 				return false;
 			if (getMyPlayer().getLocation().getY() >= 3332
 					&& getMyPlayer().getLocation().getY() <= 3334)
@@ -1873,9 +1829,8 @@ public class CChop extends Script implements PaintListener, MessageListener,
 		}
 		if (command.equals("Varrock Palace - Ivy")) {
 			if (getMyPlayer().getLocation().getX() < 3255
-					&& getMyPlayer().getLocation().getX() >= 3250)
-				temp = true;
-			else
+					&& getMyPlayer().getLocation().getX() >= 3250) {
+			} else
 				return false;
 			if (getMyPlayer().getLocation().getY() >= 3252
 					&& getMyPlayer().getLocation().getY() <= 3422)
@@ -1883,9 +1838,8 @@ public class CChop extends Script implements PaintListener, MessageListener,
 		}
 		if (command.equals("North Falador - Ivy")) {
 			if (getMyPlayer().getLocation().getX() < 2948
-					&& getMyPlayer().getLocation().getX() >= 2944)
-				temp = true;
-			else
+					&& getMyPlayer().getLocation().getX() >= 2944) {
+			} else
 				return false;
 			if (getMyPlayer().getLocation().getY() >= 3368
 					&& getMyPlayer().getLocation().getY() <= 3371)
@@ -1893,9 +1847,8 @@ public class CChop extends Script implements PaintListener, MessageListener,
 		}
 		if (location.equals("Draynor")) {
 			if (getMyPlayer().getLocation().getX() < 3094
-					&& getMyPlayer().getLocation().getX() >= 3092)
-				temp = true;
-			else
+					&& getMyPlayer().getLocation().getX() >= 3092) {
+			} else
 				return false;
 			if (getMyPlayer().getLocation().getY() >= 3244
 					&& getMyPlayer().getLocation().getY() <= 3246)
@@ -1905,14 +1858,12 @@ public class CChop extends Script implements PaintListener, MessageListener,
 	}
 
 	public boolean atTrees() {
-		boolean temp = false;
 		if (command.equals("Draynor - Oaks"))
 			return playerIsNear(tree1, 4) || playerIsNear(tree2, 4);
 		if (command.equals("Grand Exchange - Yews")) {
 			if (getMyPlayer().getLocation().getX() >= 3203
-					&& getMyPlayer().getLocation().getX() <= 3222)
-				temp = true;
-			else
+					&& getMyPlayer().getLocation().getX() <= 3222) {
+			} else
 				return false;
 			if (getMyPlayer().getLocation().getY() >= 3500
 					&& getMyPlayer().getLocation().getY() <= 3505)
@@ -1920,9 +1871,8 @@ public class CChop extends Script implements PaintListener, MessageListener,
 		}
 		if (command.equals("Edgeville - Yews")) {
 			if (getMyPlayer().getLocation().getX() < 3090
-					&& getMyPlayer().getLocation().getX() >= 3085)
-				temp = true;
-			else
+					&& getMyPlayer().getLocation().getX() >= 3085) {
+			} else
 				return false;
 			if (getMyPlayer().getLocation().getY() >= 3468
 					&& getMyPlayer().getLocation().getY() <= 3482)
@@ -1930,9 +1880,8 @@ public class CChop extends Script implements PaintListener, MessageListener,
 		}
 		if (command.equals("Rimmington - Yews")) {
 			if (getMyPlayer().getLocation().getX() < 2942
-					&& getMyPlayer().getLocation().getX() >= 2932)
-				temp = true;
-			else
+					&& getMyPlayer().getLocation().getX() >= 2932) {
+			} else
 				return false;
 			if (getMyPlayer().getLocation().getY() >= 3225
 					&& getMyPlayer().getLocation().getY() <= 3236)
@@ -1940,9 +1889,8 @@ public class CChop extends Script implements PaintListener, MessageListener,
 		}
 		if (command.equals("Catherby - Yews")) {
 			if (getMyPlayer().getLocation().getX() < 2769
-					&& getMyPlayer().getLocation().getX() >= 2751)
-				temp = true;
-			else
+					&& getMyPlayer().getLocation().getX() >= 2751) {
+			} else
 				return false;
 			if (getMyPlayer().getLocation().getY() >= 3427
 					&& getMyPlayer().getLocation().getY() <= 3438)
@@ -1950,9 +1898,8 @@ public class CChop extends Script implements PaintListener, MessageListener,
 		}
 		if (command.equals("Seer's Village - Yews")) {
 			if (getMyPlayer().getLocation().getX() < 2717
-					&& getMyPlayer().getLocation().getX() >= 2712)
-				temp = true;
-			else
+					&& getMyPlayer().getLocation().getX() >= 2712) {
+			} else
 				return false;
 			if (getMyPlayer().getLocation().getY() >= 3462
 					&& getMyPlayer().getLocation().getY() <= 3464)
@@ -1960,9 +1907,8 @@ public class CChop extends Script implements PaintListener, MessageListener,
 		}
 		if (command.equals("South Falador - Yews")) {
 			if (getMyPlayer().getLocation().getX() < 3010
-					&& getMyPlayer().getLocation().getX() >= 3004)
-				temp = true;
-			else
+					&& getMyPlayer().getLocation().getX() >= 3004) {
+			} else
 				return false;
 			if (getMyPlayer().getLocation().getY() >= 3317
 					&& getMyPlayer().getLocation().getY() <= 3325)
@@ -1977,9 +1923,8 @@ public class CChop extends Script implements PaintListener, MessageListener,
 		}
 		if (command.equals("Seer's Village - Magics")) {
 			if (getMyPlayer().getLocation().getX() >= 2690
-					&& getMyPlayer().getLocation().getX() <= 2699)
-				temp = true;
-			else
+					&& getMyPlayer().getLocation().getX() <= 2699) {
+			} else
 				return false;
 			if (getMyPlayer().getLocation().getY() >= 3422
 					&& getMyPlayer().getLocation().getY() <= 3426)
@@ -1987,9 +1932,8 @@ public class CChop extends Script implements PaintListener, MessageListener,
 		}
 		if (command.equals("Sorcerer's Tower - Magics")) {
 			if (getMyPlayer().getLocation().getX() <= 2704
-					&& getMyPlayer().getLocation().getX() >= 2700)
-				temp = true;
-			else
+					&& getMyPlayer().getLocation().getX() >= 2700) {
+			} else
 				return false;
 			if (getMyPlayer().getLocation().getY() >= 3396
 					&& getMyPlayer().getLocation().getY() <= 3400)
@@ -1997,9 +1941,8 @@ public class CChop extends Script implements PaintListener, MessageListener,
 		}
 		if (command.equals("Mage Training Area - Magics")) {
 			if (getMyPlayer().getLocation().getX() <= 3365
-					&& getMyPlayer().getLocation().getX() >= 3361)
-				temp = true;
-			else
+					&& getMyPlayer().getLocation().getX() >= 3361) {
+			} else
 				return false;
 			if (getMyPlayer().getLocation().getY() >= 3296
 					&& getMyPlayer().getLocation().getY() <= 3300)
@@ -2007,9 +1950,8 @@ public class CChop extends Script implements PaintListener, MessageListener,
 		}
 		if (command.equals("Castle Wars - Ivy")) {
 			if (getMyPlayer().getLocation().getX() < 2431
-					&& getMyPlayer().getLocation().getX() >= 2423)
-				temp = true;
-			else
+					&& getMyPlayer().getLocation().getX() >= 2423) {
+			} else
 				return false;
 			if (getMyPlayer().getLocation().getY() >= 3067
 					&& getMyPlayer().getLocation().getY() <= 3068)
@@ -2017,9 +1959,8 @@ public class CChop extends Script implements PaintListener, MessageListener,
 		}
 		if (command.equals("Grand Exchange - Ivy")) {
 			if (getMyPlayer().getLocation().getX() < 3220
-					&& getMyPlayer().getLocation().getX() >= 3215)
-				temp = true;
-			else
+					&& getMyPlayer().getLocation().getX() >= 3215) {
+			} else
 				return false;
 			if (getMyPlayer().getLocation().getY() >= 3498
 					&& getMyPlayer().getLocation().getY() <= 3502)
@@ -2027,9 +1968,8 @@ public class CChop extends Script implements PaintListener, MessageListener,
 		}
 		if (command.equals("Yanille - Ivy")) {
 			if (getMyPlayer().getLocation().getX() < 2599
-					&& getMyPlayer().getLocation().getX() >= 2594)
-				temp = true;
-			else
+					&& getMyPlayer().getLocation().getX() >= 2594) {
+			} else
 				return false;
 			if (getMyPlayer().getLocation().getY() >= 3111
 					&& getMyPlayer().getLocation().getY() <= 3112)
@@ -2037,9 +1977,8 @@ public class CChop extends Script implements PaintListener, MessageListener,
 		}
 		if (command.equals("Ardougne - Ivy")) {
 			if (getMyPlayer().getLocation().getX() < 2624
-					&& getMyPlayer().getLocation().getX() >= 2622)
-				temp = true;
-			else
+					&& getMyPlayer().getLocation().getX() >= 2622) {
+			} else
 				return false;
 			if (getMyPlayer().getLocation().getY() >= 3304
 					&& getMyPlayer().getLocation().getY() <= 3310)
@@ -2047,9 +1986,8 @@ public class CChop extends Script implements PaintListener, MessageListener,
 		}
 		if (command.equals("Varrock Palace - Ivy")) {
 			if (getMyPlayer().getLocation().getX() < 3234
-					&& getMyPlayer().getLocation().getX() >= 3232)
-				temp = true;
-			else
+					&& getMyPlayer().getLocation().getX() >= 3232) {
+			} else
 				return false;
 			if (getMyPlayer().getLocation().getY() >= 3456
 					&& getMyPlayer().getLocation().getY() <= 3461)
@@ -2057,9 +1995,8 @@ public class CChop extends Script implements PaintListener, MessageListener,
 		}
 		if (command.equals("South Falador - Ivy")) {
 			if (getMyPlayer().getLocation().getX() < 3053
-					&& getMyPlayer().getLocation().getX() >= 3044)
-				temp = true;
-			else
+					&& getMyPlayer().getLocation().getX() >= 3044) {
+			} else
 				return false;
 			if (getMyPlayer().getLocation().getY() >= 3326
 					&& getMyPlayer().getLocation().getY() <= 3328)
@@ -2067,9 +2004,8 @@ public class CChop extends Script implements PaintListener, MessageListener,
 		}
 		if (command.equals("North Falador - Ivy")) {
 			if (getMyPlayer().getLocation().getX() < 3019
-					&& getMyPlayer().getLocation().getX() >= 3010)
-				temp = true;
-			else
+					&& getMyPlayer().getLocation().getX() >= 3010) {
+			} else
 				return false;
 			if (getMyPlayer().getLocation().getY() >= 3392
 					&& getMyPlayer().getLocation().getY() <= 3394)
@@ -2077,9 +2013,8 @@ public class CChop extends Script implements PaintListener, MessageListener,
 		}
 		if (command.equals("Draynor - Willows")) {
 			if (getMyPlayer().getLocation().getX() < 3092
-					&& getMyPlayer().getLocation().getX() >= 3083)
-				temp = true;
-			else
+					&& getMyPlayer().getLocation().getX() >= 3083) {
+			} else
 				return false;
 			if (getMyPlayer().getLocation().getY() >= 3233
 					&& getMyPlayer().getLocation().getY() <= 3239)
@@ -2087,9 +2022,8 @@ public class CChop extends Script implements PaintListener, MessageListener,
 		}
 		if (command.equals("Port Salim - Willows")) {
 			if (getMyPlayer().getLocation().getX() < 3064
-					&& getMyPlayer().getLocation().getX() >= 3056)
-				temp = true;
-			else
+					&& getMyPlayer().getLocation().getX() >= 3056) {
+			} else
 				return false;
 			if (getMyPlayer().getLocation().getY() >= 3250
 					&& getMyPlayer().getLocation().getY() <= 3256)
@@ -2097,9 +2031,8 @@ public class CChop extends Script implements PaintListener, MessageListener,
 		}
 		if (command.equals("Seer's Village - Maples")) {
 			if (getMyPlayer().getLocation().getX() < 2731
-					&& getMyPlayer().getLocation().getX() >= 2727)
-				temp = true;
-			else
+					&& getMyPlayer().getLocation().getX() >= 2727) {
+			} else
 				return false;
 			if (getMyPlayer().getLocation().getY() >= 3499
 					&& getMyPlayer().getLocation().getY() <= 3502)
@@ -2146,13 +2079,12 @@ public class CChop extends Script implements PaintListener, MessageListener,
 	}
 
 	public void walkToBank() {
-		long startTime = System.currentTimeMillis();
+		System.currentTimeMillis();
 		status = "Walking to bank.";
 		if (random(1, 3) == 2)
 			camera.setPitch(true);
 		int lastTileToWalkTo = -1;
 		int tempTileToWalkTo = 0;
-		boolean clickedLastTile = false;
 		while (!atBank()) {
 			if (!walking.isRunEnabled() && walking.getEnergy() > 20) {
 				walking.setRun(true);
@@ -2397,11 +2329,10 @@ public class CChop extends Script implements PaintListener, MessageListener,
 	}
 
 	public void walkToTrees() {
-		long startTime = System.currentTimeMillis();
+		System.currentTimeMillis();
 		status = "Walking to trees.";
 		int lastTileToWalkTo = -1;
 		int tempTileToWalkTo = walkPath(bankToTrees);
-		boolean clickedLastTile = false;
 		while (!atTrees()) {
 			if (!walking.isRunEnabled() && walking.getEnergy() > 20) {
 				walking.setRun(true);
@@ -2811,11 +2742,11 @@ public class CChop extends Script implements PaintListener, MessageListener,
 				chop(false);
 			} else if (status.equals("Waiting.")) {
 				if (safety == 3) {
-					long tempTimer = System.currentTimeMillis();
+					System.currentTimeMillis();
 					while (!playerIsNear(trees[nextTree - 1], 4))
 						moveToNextTree();
 					if (!chopType.equals("ivy"))
-						camera.turnToTile(trees[nextTree - 1]);
+						camera.turnTo(trees[nextTree - 1]);
 					camera.setPitch(random(20, 50));
 				}
 				if (safety < 5)
@@ -3344,9 +3275,6 @@ public class CChop extends Script implements PaintListener, MessageListener,
 		}
 	}
 
-	private final Color color1 = new Color(1, 1, 1);
-	private final Font font1 = new Font("Arial", 0, 12);
-
 	public void onRepaint2(Graphics g1, boolean fancy) {
 		Graphics2D g = (Graphics2D) g1;
 		if (fancy) {
@@ -3704,7 +3632,6 @@ public class CChop extends Script implements PaintListener, MessageListener,
 		private JLabel label4;
 		private JComboBox comboBox2;
 		private JButton button2;
-		private JButton button3;
 		private JButton button4;
 	}
 }

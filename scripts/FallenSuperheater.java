@@ -854,7 +854,7 @@ public class FallenSuperheater extends Script implements PaintListener,
 						}
 					}
 				} else {
-					camera.turnToTile(Chest.getLocation());
+					camera.turnTo(Chest.getLocation());
 				}
 			} else if (Banker != null) {
 				if (Banker.isOnScreen()) {
@@ -870,7 +870,7 @@ public class FallenSuperheater extends Script implements PaintListener,
 						}
 					}
 				} else {
-					camera.turnToTile(Banker.getLocation());
+					camera.turnTo(Banker.getLocation());
 				}
 			} else if (Booth != null) {
 				if (Booth.isOnScreen()) {
@@ -886,7 +886,7 @@ public class FallenSuperheater extends Script implements PaintListener,
 						}
 					}
 				} else {
-					camera.turnToTile(Booth.getLocation());
+					camera.turnTo(Booth.getLocation());
 				}
 			} else {
 				return false;

@@ -543,7 +543,7 @@ public class YakAttack extends Script implements PaintListener, MessageListener 
 					int angle = camera.getCharacterAngle(npc);
 					if (calc.distanceTo(npc) < 10
 							&& Math.abs(angle - camera.getAngle()) > 20) {
-						camera.turnToCharacter(npc);
+						camera.turnTo(npc);
 					}
 				} else {
 					walking.walkTileMM(closerTile(npc.getLocation(), 1), 2, 2);

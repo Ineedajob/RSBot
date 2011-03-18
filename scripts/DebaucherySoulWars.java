@@ -662,7 +662,7 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 				} else if (Barrier != null) {
 					if (!Barrier.isOnScreen()
 							&& calc.distanceTo(Barrier.getLocation()) < 2) {
-						camera.turnToObject(Barrier);
+						camera.turnTo(Barrier);
 					}
 					if (!Barrier.isOnScreen()) {
 						walking.walkTileMM(Barrier.getLocation());
@@ -670,7 +670,7 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 					if (Barrier.isOnScreen()
 							&& getMyPlayer().getAnimation() != 1) {
 						RSModel mod = Barrier.getModel();
-						camera.turnToObject(Barrier);
+						camera.turnTo(Barrier);
 						sleep(2000, 4000);
 						switch (random(0, 5)) {
 						case 2:
@@ -719,7 +719,7 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 		int supplyNum = random(28, 100);
 		if (bandages != null && getMyPlayer().getInteracting() == null) {
 			if (!bandages.isOnScreen()) {
-				camera.turnToObject(bandages);
+				camera.turnTo(bandages);
 			}
 			if (bandages.isOnScreen()) {
 				if (bandages.doAction("Take-x")) {
@@ -980,7 +980,7 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 							.getLocation()));
 				}
 				if (!jellies.isOnScreen()) {
-					camera.turnToCharacter(jellies);
+					camera.turnTo(jellies);
 				}
 				if (jellies.isOnScreen()
 						&& (getMyPlayer().getInteracting() == null || !getMyPlayer()
@@ -1003,7 +1003,7 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 							.getLocation()));
 				}
 				if (!pyres.isOnScreen()) {
-					camera.turnToCharacter(pyres);
+					camera.turnTo(pyres);
 				}
 				if (pyres.isOnScreen()
 						&& (getMyPlayer().getInteracting() == null || !getMyPlayer()
@@ -1261,7 +1261,7 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 					bones = groundItems.getNearest(bonesID);
 					if (bones != null) {
 						if (!bones.isOnScreen()) {
-							camera.turnToTile(bones.getLocation());
+							camera.turnTo(bones.getLocation());
 							if (!bones.isOnScreen()) {
 								walking.walkTileMM(bones.getLocation());
 								sleep(1000, 1200);

@@ -610,6 +610,10 @@ public class Calculations extends MethodProvider {
 					foundPath = true;
 					break;
 				}
+				/*
+				 * ^This can be simplified to: if (Math.abs(curr_x - destX) +
+				 * Math.abs(curr_y - destY) == 1) { foundPath = true; break; }
+				 */
 			} else if ((curr_x == destX) && (curr_y == destY)) {
 				foundPath = true;
 			}
@@ -619,7 +623,7 @@ public class Calculations extends MethodProvider {
 
 			// south
 			if ((curr_y > 0) && (prev[curr_x][curr_y - 1] == 0)
-					&& ((blocks[curr_x][curr_y - 1] & 0x1280102) == 0)) {
+					&& ((blocks[curr_x + 1][curr_y] & 0x1280102) == 0)) {
 				path_x[path_ptr] = curr_x;
 				path_y[path_ptr] = curr_y - 1;
 				path_ptr = (path_ptr + 1) % pathLength;
@@ -628,7 +632,7 @@ public class Calculations extends MethodProvider {
 			}
 			// west
 			if ((curr_x > 0) && (prev[curr_x - 1][curr_y] == 0)
-					&& ((blocks[curr_x - 1][curr_y] & 0x1280108) == 0)) {
+					&& ((blocks[curr_x][curr_y + 1] & 0x1280108) == 0)) {
 				path_x[path_ptr] = curr_x - 1;
 				path_y[path_ptr] = curr_y;
 				path_ptr = (path_ptr + 1) % pathLength;
@@ -637,7 +641,7 @@ public class Calculations extends MethodProvider {
 			}
 			// north
 			if ((curr_y < 104 - 1) && (prev[curr_x][curr_y + 1] == 0)
-					&& ((blocks[curr_x][curr_y + 1] & 0x1280120) == 0)) {
+					&& ((blocks[curr_x + 1][curr_y + 2] & 0x1280120) == 0)) {
 				path_x[path_ptr] = curr_x;
 				path_y[path_ptr] = curr_y + 1;
 				path_ptr = (path_ptr + 1) % pathLength;
@@ -646,7 +650,7 @@ public class Calculations extends MethodProvider {
 			}
 			// east
 			if ((curr_x < 104 - 1) && (prev[curr_x + 1][curr_y] == 0)
-					&& ((blocks[curr_x + 1][curr_y] & 0x1280180) == 0)) {
+					&& ((blocks[curr_x + 2][curr_y + 1] & 0x1280180) == 0)) {
 				path_x[path_ptr] = curr_x + 1;
 				path_y[path_ptr] = curr_y;
 				path_ptr = (path_ptr + 1) % pathLength;
@@ -656,9 +660,9 @@ public class Calculations extends MethodProvider {
 			// south west
 			if ((curr_x > 0) && (curr_y > 0)
 					&& (prev[curr_x - 1][curr_y - 1] == 0)
-					&& ((blocks[curr_x - 1][curr_y - 1] & 0x128010e) == 0)
-					&& ((blocks[curr_x - 1][curr_y] & 0x1280108) == 0)
-					&& ((blocks[curr_x][curr_y - 1] & 0x1280102) == 0)) {
+					&& ((blocks[curr_x][curr_y] & 0x128010e) == 0)
+					&& ((blocks[curr_x][curr_y + 1] & 0x1280108) == 0)
+					&& ((blocks[curr_x + 1][curr_y] & 0x1280102) == 0)) {
 				path_x[path_ptr] = curr_x - 1;
 				path_y[path_ptr] = curr_y - 1;
 				path_ptr = (path_ptr + 1) % pathLength;
@@ -668,9 +672,9 @@ public class Calculations extends MethodProvider {
 			// north west
 			if ((curr_x > 0) && (curr_y < 104 - 1)
 					&& (prev[curr_x - 1][curr_y + 1] == 0)
-					&& ((blocks[curr_x - 1][curr_y + 1] & 0x1280138) == 0)
-					&& ((blocks[curr_x - 1][curr_y] & 0x1280108) == 0)
-					&& ((blocks[curr_x][curr_y + 1] & 0x1280120) == 0)) {
+					&& ((blocks[curr_x][curr_y + 2] & 0x1280138) == 0)
+					&& ((blocks[curr_x][curr_y + 1] & 0x1280108) == 0)
+					&& ((blocks[curr_x + 1][curr_y + 2] & 0x1280120) == 0)) {
 				path_x[path_ptr] = curr_x - 1;
 				path_y[path_ptr] = curr_y + 1;
 				path_ptr = (path_ptr + 1) % pathLength;
@@ -680,9 +684,9 @@ public class Calculations extends MethodProvider {
 			// south east
 			if ((curr_x < 104 - 1) && (curr_y > 0)
 					&& (prev[curr_x + 1][curr_y - 1] == 0)
-					&& ((blocks[curr_x + 1][curr_y - 1] & 0x1280183) == 0)
-					&& ((blocks[curr_x + 1][curr_y] & 0x1280180) == 0)
-					&& ((blocks[curr_x][curr_y - 1] & 0x1280102) == 0)) {
+					&& ((blocks[curr_x + 2][curr_y] & 0x1280183) == 0)
+					&& ((blocks[curr_x + 2][curr_y + 1] & 0x1280180) == 0)
+					&& ((blocks[curr_x + 1][curr_y] & 0x1280102) == 0)) {
 				path_x[path_ptr] = curr_x + 1;
 				path_y[path_ptr] = curr_y - 1;
 				path_ptr = (path_ptr + 1) % pathLength;
@@ -692,9 +696,9 @@ public class Calculations extends MethodProvider {
 			// north east
 			if ((curr_x < 104 - 1) && (curr_y < 104 - 1)
 					&& (prev[curr_x + 1][curr_y + 1] == 0)
-					&& ((blocks[curr_x + 1][curr_y + 1] & 0x12801e0) == 0)
-					&& ((blocks[curr_x + 1][curr_y] & 0x1280180) == 0)
-					&& ((blocks[curr_x][curr_y + 1] & 0x1280120) == 0)) {
+					&& ((blocks[curr_x + 2][curr_y + 2] & 0x12801e0) == 0)
+					&& ((blocks[curr_x + 2][curr_y + 1] & 0x1280180) == 0)
+					&& ((blocks[curr_x + 1][curr_y + 2] & 0x1280120) == 0)) {
 				path_x[path_ptr] = curr_x + 1;
 				path_y[path_ptr] = curr_y + 1;
 				path_ptr = (path_ptr + 1) % pathLength;
@@ -702,9 +706,6 @@ public class Calculations extends MethodProvider {
 				dist[curr_x + 1][curr_y + 1] = cost;
 			}
 		}
-		if (foundPath) {
-			return dist[curr_x][curr_y];
-		}
-		return -1;
+		return foundPath ? dist[curr_x][curr_y] : -1;
 	}
 }

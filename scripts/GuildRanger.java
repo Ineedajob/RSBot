@@ -1,3 +1,11 @@
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.RenderingHints;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.rsbot.event.listeners.PaintListener;
 import org.rsbot.script.Script;
 import org.rsbot.script.ScriptManifest;
@@ -10,12 +18,8 @@ import org.rsbot.script.wrappers.RSNPC;
 import org.rsbot.script.wrappers.RSObject;
 import org.rsbot.script.wrappers.RSTile;
 
-import java.awt.*;
-import java.util.HashSet;
-import java.util.Set;
-
-@ScriptManifest(name = "Guild Ranger", authors = {"Vastico"}, description = "Trains range at the ranging guild on the targets.", version = 1.7, keywords = {
-		"Combat", "Ranged"})
+@ScriptManifest(name = "Guild Ranger", authors = { "Vastico" }, description = "Trains range at the ranging guild on the targets.", version = 1.7, keywords = {
+		"Combat", "Ranged" })
 public class GuildRanger extends Script implements PaintListener {
 
 	private interface GameConstants {
@@ -77,6 +81,7 @@ public class GuildRanger extends Script implements PaintListener {
 			this.action = action;
 		}
 
+		@Override
 		public void execute() {
 			if (location != null) {
 				mouse.move(location, 1, 1);
@@ -97,17 +102,19 @@ public class GuildRanger extends Script implements PaintListener {
 					if (obj.isOnScreen()) {
 						location = obj.getModel().getPoint();
 					} else {
-						camera.turnToObject(obj, 10);
+						camera.turnTo(obj, 10);
 					}
 				}
 			}
 		}
 
+		@Override
 		public void complete() {
 			attempts = 0;
 			location = null;
 		}
 
+		@Override
 		public String getDescription() {
 			return "Object Action [" + action + "]";
 		}
@@ -116,21 +123,22 @@ public class GuildRanger extends Script implements PaintListener {
 
 	private abstract class NPCAction extends Action {
 
-		private int id;
-		private String action;
+		private final int id;
+		private final String action;
 
 		public NPCAction(int id, String action) {
 			this.id = id;
 			this.action = action;
 		}
 
+		@Override
 		public void execute() {
 			if (judge == null) {
 				judge = npcs.getNearest(id);
 			}
 			if (judge != null) {
 				if (!judge.isOnScreen()) {
-					camera.turnToCharacter(judge, 10);
+					camera.turnTo(judge, 10);
 				} else if (judge.doAction(action)) {
 					if (!getMyPlayer().isIdle()) {
 						sleep(500);
@@ -140,10 +148,12 @@ public class GuildRanger extends Script implements PaintListener {
 			}
 		}
 
+		@Override
 		public void complete() {
 
 		}
 
+		@Override
 		public String getDescription() {
 			return "NPC Action [" + action + "]";
 		}
@@ -152,16 +162,20 @@ public class GuildRanger extends Script implements PaintListener {
 
 	private abstract class UniversalAction extends Action {
 
+		@Override
 		public void execute() {
 		}
 
+		@Override
 		public void complete() {
 		}
 
+		@Override
 		public boolean isValid() {
 			return false;
 		}
 
+		@Override
 		public String getDescription() {
 			return "";
 		}
@@ -181,6 +195,7 @@ public class GuildRanger extends Script implements PaintListener {
 
 		public abstract boolean isTargetValid();
 
+		@Override
 		public void execute() {
 			if (!walking.isRunEnabled() && walking.getEnergy() > random(20, 50)) {
 				walking.setRun(true);
@@ -190,7 +205,7 @@ public class GuildRanger extends Script implements PaintListener {
 			if (location == null
 					|| getMyPlayer().isIdle()
 					|| (calc.distanceTo(location) < 10 && !destination
-					.contains(location))) {
+							.contains(location))) {
 				if (calc.tileOnScreen(tile) && random(0, 10) > 7) {
 					walking.walkTileOnScreen(calc.getTileOnScreen(tile));
 				} else {
@@ -201,15 +216,18 @@ public class GuildRanger extends Script implements PaintListener {
 			}
 		}
 
+		@Override
 		public void complete() {
 			location = null;
 		}
 
+		@Override
 		public boolean isValid() {
 			return isTargetValid()
 					&& !destination.contains(getMyPlayer().getLocation());
 		}
 
+		@Override
 		public String getDescription() {
 			return "Walk To Area [" + description + "]";
 		}
@@ -224,11 +242,13 @@ public class GuildRanger extends Script implements PaintListener {
 	private Action action;
 	private boolean failsafe = false;
 
+	@Override
 	public boolean onStart() {
 		actions = new HashSet<Action>();
 
 		actions.add(new UniversalAction() {
 
+			@Override
 			public void execute() {
 				RSComponent closeInterface = interfaces.getComponent(
 						GameConstants.TARGET_INTERFACE, 40);
@@ -239,10 +259,12 @@ public class GuildRanger extends Script implements PaintListener {
 				failsafe = false;
 			}
 
+			@Override
 			public boolean isValid() {
 				return failsafe && isTargetInterfaceOpen();
 			}
 
+			@Override
 			public String getDescription() {
 				return "Closing Failsafe Interface";
 			}
@@ -251,6 +273,7 @@ public class GuildRanger extends Script implements PaintListener {
 
 		actions.add(new UniversalAction() {
 
+			@Override
 			public void execute() {
 				RSComponent paymentInterface = interfaces.getComponent(
 						GameConstants.PAYMENT_INTERFACE, 1);
@@ -260,10 +283,12 @@ public class GuildRanger extends Script implements PaintListener {
 				}
 			}
 
+			@Override
 			public boolean isValid() {
 				return isPaymentInterfaceOpen();
 			}
 
+			@Override
 			public String getDescription() {
 				return "Paying Competition Judge";
 			}
@@ -272,6 +297,7 @@ public class GuildRanger extends Script implements PaintListener {
 
 		actions.add(new UniversalAction() {
 
+			@Override
 			public void execute() {
 				RSItem bronzeArrow = inventory
 						.getItem(GameConstants.BRONZE_ARROW);
@@ -281,10 +307,12 @@ public class GuildRanger extends Script implements PaintListener {
 				}
 			}
 
+			@Override
 			public boolean isValid() {
 				return hasArrowsInInventory();
 			}
 
+			@Override
 			public String getDescription() {
 				return "Wielding Arrows";
 			}
@@ -292,11 +320,12 @@ public class GuildRanger extends Script implements PaintListener {
 		});
 
 		actions.add(new WalkToArea(GameConstants.SAFE_AREA, "safe area") {
+			@Override
 			public void execute() {
 				RSObject obj = objects.getNearest(GameConstants.GUILD_DOOR);
 				if (obj != null
 						&& calc.distanceBetween(obj.getLocation(),
-						GameConstants.GUILD_DOOR_TILE) < 2) {
+								GameConstants.GUILD_DOOR_TILE) < 2) {
 					if (obj.isOnScreen()) {
 						if (obj.doAction("Open")) {
 							sleep(random(1000, 2000));
@@ -310,17 +339,19 @@ public class GuildRanger extends Script implements PaintListener {
 				}
 			}
 
+			@Override
 			public boolean isTargetValid() {
 				return isAttackingRanger();
 			}
 		});
 
 		actions.add(new WalkToArea(GameConstants.SHOOTING_AREA, "shooting area") {
+			@Override
 			public void execute() {
 				RSObject obj = objects.getNearest(GameConstants.GUILD_DOOR);
 				if (obj != null
 						&& calc.distanceBetween(obj.getLocation(),
-						GameConstants.SAFE_DOOR_TILE) < 2) {
+								GameConstants.SAFE_DOOR_TILE) < 2) {
 					if (obj.isOnScreen()) {
 						if (obj.doAction("Open")) {
 							sleep(random(1000, 2000));
@@ -334,16 +365,19 @@ public class GuildRanger extends Script implements PaintListener {
 				}
 			}
 
+			@Override
 			public boolean isTargetValid() {
 				return !inShootingArea() && !isAttackingRanger();
 			}
 		});
 
 		actions.add(new ObjectAction(GameConstants.TARGET, "Fire-at") {
+			@Override
 			public void execute() {
 				super.execute();
 			}
 
+			@Override
 			public boolean isValid() {
 				return !canCompete() && inShootingArea()
 						&& !hasArrowsInInventory() && !failsafe;
@@ -351,6 +385,7 @@ public class GuildRanger extends Script implements PaintListener {
 		});
 
 		actions.add(new NPCAction(GameConstants.COMPETITION_JUDGE, "Compete") {
+			@Override
 			public boolean isValid() {
 				return canCompete() && !isPaymentInterfaceOpen()
 						&& !hasArrowsInInventory();
@@ -360,6 +395,7 @@ public class GuildRanger extends Script implements PaintListener {
 		return true;
 	}
 
+	@Override
 	public int loop() {
 		mouse.setSpeed(random(6, 8));
 		if (camera.getPitch() > 1) {
@@ -383,6 +419,7 @@ public class GuildRanger extends Script implements PaintListener {
 		return random(50, 100);
 	}
 
+	@Override
 	public void onFinish() {
 	}
 
@@ -413,6 +450,7 @@ public class GuildRanger extends Script implements PaintListener {
 		return interfaces.get(GameConstants.PAYMENT_INTERFACE).isValid();
 	}
 
+	@Override
 	public void onRepaint(Graphics render) {
 		if (game.isLoggedIn() && skills.getRealLevel(Skills.RANGE) >= 40) {
 			Graphics2D g = (Graphics2D) render;
@@ -454,7 +492,7 @@ public class GuildRanger extends Script implements PaintListener {
 
 	private int calculateXpPerHour() {
 		int gainedXp = (skills.getCurrentExp(Skills.RANGE) - startXp);
-		return (int) ((3600000.0 / (double) (System.currentTimeMillis() - startTime)) * gainedXp);
+		return (int) ((3600000.0 / (System.currentTimeMillis() - startTime)) * gainedXp);
 	}
 
 }
