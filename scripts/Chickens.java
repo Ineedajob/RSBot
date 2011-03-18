@@ -1,3 +1,11 @@
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.RenderingHints;
+import java.text.DecimalFormat;
+
 import org.rsbot.event.listeners.PaintListener;
 import org.rsbot.script.Script;
 import org.rsbot.script.ScriptManifest;
@@ -7,24 +15,26 @@ import org.rsbot.script.wrappers.RSGroundItem;
 import org.rsbot.script.wrappers.RSItem;
 import org.rsbot.script.wrappers.RSNPC;
 
-import java.awt.*;
-import java.text.DecimalFormat;
-
-@ScriptManifest(authors = {"Foulwerp"}, name = "Chickens", keywords = {"Combat"}, description = "Kills Chickens & Loots Feathers", version = 1.03)
+@ScriptManifest(authors = { "Foulwerp" }, name = "Chickens", keywords = { "Combat" }, description = "Kills Chickens & Loots Feathers", version = 1.03)
 public class Chickens extends Script implements PaintListener {
 
 	private static final DecimalFormat k = new DecimalFormat("#.#");
-	private static final int[] skill = {0, 1, 2, 3, 4, 6};
-	private static final int[] drop = {526, 1925, 1944, 2138};
-	private static final String[] skillNames = {"Attack", "Defence", "Strength", "Constitution", "Range", "Magic"};
-	private static final Color[] skillColors = {new Color(145, 25, 25).brighter(), new Color(95, 115, 185),
-			Color.GREEN.darker(), Color.WHITE.darker(), new Color(70, 95, 20).brighter(), new Color(95, 115, 230)};
+	private static final int[] skill = { 0, 1, 2, 3, 4, 6 };
+	private static final int[] drop = { 526, 1925, 1944, 2138 };
+	private static final String[] skillNames = { "Attack", "Defence",
+			"Strength", "Constitution", "Range", "Magic" };
+	private static final Color[] skillColors = {
+			new Color(145, 25, 25).brighter(), new Color(95, 115, 185),
+			Color.GREEN.darker(), Color.WHITE.darker(),
+			new Color(70, 95, 20).brighter(), new Color(95, 115, 230) };
 
 	private long start;
 	private int[] startXP;
 	private RSArea area;
-	private static final RSArea[] areas = {new RSArea(3014, 3282, 3020, 3298), new RSArea(3022, 3281, 3037, 3290),
-			new RSArea(3225, 3295, 3236, 3301), new RSArea(3195, 2252, 3198, 3359)};
+	private static final RSArea[] areas = { new RSArea(3014, 3282, 3020, 3298),
+			new RSArea(3022, 3281, 3037, 3290),
+			new RSArea(3225, 3295, 3236, 3301),
+			new RSArea(3195, 2252, 3198, 3359) };
 
 	@Override
 	public boolean onStart() {
@@ -32,18 +42,18 @@ public class Chickens extends Script implements PaintListener {
 			if (areas[i].contains(players.getMyPlayer().getLocation())) {
 				area = areas[i];
 				switch (i) {
-					case 0:
-						log("Falador Chickens Inside Pen...");
-						break;
-					case 1:
-						log("Falador Chickens Outside House...");
-						break;
-					case 2:
-						log("Lumbridge Chickens...");
-						break;
-					case 3:
-						log("Champions Guild Chickens...");
-						break;
+				case 0:
+					log("Falador Chickens Inside Pen...");
+					break;
+				case 1:
+					log("Falador Chickens Outside House...");
+					break;
+				case 2:
+					log("Lumbridge Chickens...");
+					break;
+				case 3:
+					log("Champions Guild Chickens...");
+					break;
 				}
 			}
 		}
@@ -82,9 +92,10 @@ public class Chickens extends Script implements PaintListener {
 				return random(400, 600);
 			}
 			if (!feather.isOnScreen()) {
-				camera.turnToTile(feather.getLocation(), 15);
+				camera.turnTo(feather.getLocation(), 15);
 				if (!feather.isOnScreen()) {
-					walking.walkTileMM(walking.getClosestTileOnMap(feather.getLocation()));
+					walking.walkTileMM(walking.getClosestTileOnMap(feather
+							.getLocation()));
 					return random(900, 1200);
 				}
 			}
@@ -108,7 +119,8 @@ public class Chickens extends Script implements PaintListener {
 		if (!chicken.isOnScreen()) {
 			turnTo(camera.getCharacterAngle(chicken), chicken);
 			if (!chicken.isOnScreen()) {
-				walking.walkTileMM(walking.getClosestTileOnMap(chicken.getLocation()));
+				walking.walkTileMM(walking.getClosestTileOnMap(chicken
+						.getLocation()));
 				return random(800, 1000);
 			}
 		}
@@ -116,22 +128,28 @@ public class Chickens extends Script implements PaintListener {
 		return random(900, 1100);
 	}
 
+	@Override
 	public void onRepaint(Graphics render) {
 		int y = 365, z = 356, w = 196, x = 201;
 		final Graphics2D g = (Graphics2D) render;
 		long runTime = System.currentTimeMillis() - start;
-		g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+				RenderingHints.VALUE_ANTIALIAS_ON);
 		Point m = mouse.getLocation();
-		g.drawLine((int) m.getX() - 3, (int) m.getY(), (int) m.getX() + 3, (int) m.getY());
-		g.drawLine((int) m.getX(), (int) m.getY() - 3, (int) m.getX(), (int) m.getY() + 3);
+		g.drawLine((int) m.getX() - 3, (int) m.getY(), (int) m.getX() + 3,
+				(int) m.getY());
+		g.drawLine((int) m.getX(), (int) m.getY() - 3, (int) m.getX(),
+				(int) m.getY() + 3);
 		g.setFont(new Font("Comic Sans MS", Font.PLAIN, 10));
 		g.setColor(Color.BLACK);
 		g.drawRect(w, 345, 300, 11);
 		g.setColor(new Color(0, 0, 0, 220));
 		g.fillRect(w, 345, 300, 11);
 		g.setColor(Color.WHITE);
-		g.drawString("Chickens - Run Time: " + format(runTime) + " - Version 1.03", x, 354);
+		g.drawString("Chickens - Run Time: " + format(runTime)
+				+ " - Version 1.03", x, 354);
 		double eph;
 		int exp;
 		long ttl;
@@ -145,8 +163,9 @@ public class Chickens extends Script implements PaintListener {
 				g.setColor(new Color(0, 0, 0, 220));
 				g.fillRect(w, z, 300, 11);
 				g.setColor(skillColors[i]);
-				g.drawString(skillNames[i] + ": " + k.format(exp / 1000D) + " K Earned - " + k.format(eph / 1000)
-						+ " K P/H - " + format(ttl) + " TTL", x, y);
+				g.drawString(skillNames[i] + ": " + k.format(exp / 1000D)
+						+ " K Earned - " + k.format(eph / 1000) + " K P/H - "
+						+ format(ttl) + " TTL", x, y);
 				y += 11;
 				z += 11;
 			}
@@ -183,25 +202,34 @@ public class Chickens extends Script implements PaintListener {
 
 	private RSGroundItem pickup() {
 		return groundItems.getNearest(new Filter<RSGroundItem>() {
+			@Override
 			public boolean accept(RSGroundItem g) {
-				return g.getItem().getID() == 314 && area.contains(g.getLocation());
+				return g.getItem().getID() == 314
+						&& area.contains(g.getLocation());
 			}
 		});
 	}
 
 	private RSNPC newNPC() {
 		RSNPC interacting = interactingNPC();
-		return interacting != null ? interacting : npcs.getNearest(new Filter<RSNPC>() {
-			public boolean accept(RSNPC npc) {
-				return npc.getName().equals("Chicken") && npc.getHPPercent() > 0 && !npc.isInCombat() && area.contains(npc.getLocation());
-			}
-		});
+		return interacting != null ? interacting : npcs
+				.getNearest(new Filter<RSNPC>() {
+					@Override
+					public boolean accept(RSNPC npc) {
+						return npc.getName().equals("Chicken")
+								&& npc.getHPPercent() > 0 && !npc.isInCombat()
+								&& area.contains(npc.getLocation());
+					}
+				});
 	}
 
 	private RSNPC interactingNPC() {
 		return npcs.getNearest(new Filter<RSNPC>() {
+			@Override
 			public boolean accept(RSNPC n) {
-				return n.getInteracting() != null && n.getInteracting().equals(players.getMyPlayer()) && area.contains(n.getLocation());
+				return n.getInteracting() != null
+						&& n.getInteracting().equals(players.getMyPlayer())
+						&& area.contains(n.getLocation());
 			}
 		});
 	}
@@ -229,7 +257,8 @@ public class Chickens extends Script implements PaintListener {
 		degrees %= 360;
 		keyboard.pressKey(whichDir);
 		int timeWaited = 0;
-		while (!n.isOnScreen() && camera.getAngle() > degrees + 10 || !n.isOnScreen() && camera.getAngle() < degrees - 10) {
+		while (!n.isOnScreen() && camera.getAngle() > degrees + 10
+				|| !n.isOnScreen() && camera.getAngle() < degrees - 10) {
 			sleep(10);
 			timeWaited += 10;
 			if (timeWaited > 500) {
