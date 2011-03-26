@@ -5,15 +5,23 @@ import org.rsbot.client.Client;
 import org.rsbot.client.input.Mouse;
 import org.rsbot.event.listeners.PaintListener;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Paint;
+import java.awt.Point;
+import java.awt.RadialGradientPaint;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.geom.Point2D;
-import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 public class DrawMouse implements PaintListener {
 
 	private Client client;
-	private MouseTrailing mouseTrailing = new MouseTrailing();
-	private ArrayList<Mouses> Click = new ArrayList<Mouses>();
+	private MouseTrail trail = new MouseTrail();
+	private List<Particle> clicks = new LinkedList<Particle>();
 
 	public DrawMouse(Bot bot) {
 		client = bot.getClient();
@@ -24,21 +32,18 @@ public class DrawMouse implements PaintListener {
 		if (mouse != null) {
 			Point Location = new Point(mouse.getX(), mouse.getY());
 			if (mouse.isPressed())
-				if (Click.size() <= 5)
-					Click.add(new Mouses(System.currentTimeMillis(), Location));
-			mouseTrailing.draw((Graphics2D) render, Color.red);
+				if (clicks.size() <= 5)
+					clicks.add(new Particle(System.currentTimeMillis(), Location));
+			trail.draw((Graphics2D) render, Color.red);
 			render.setColor(Color.GREEN);
-			render.drawLine(Location.x - 5, Location.y, Location.x + 5,
-					Location.y);
-			render.drawLine(Location.x, Location.y - 5, Location.x,
-					Location.y + 5);
-			if (Click.size() > 1)
-				for (Mouses click : Click) {
+			render.drawLine(Location.x - 5, Location.y, Location.x + 5, Location.y);
+			render.drawLine(Location.x, Location.y - 5, Location.x, Location.y + 5);
+			if (!clicks.isEmpty())
+				for (Particle click : clicks) {
 					if (mouse.isPressed())
-						if (Click.size() <= 5)
-							Click.add(new Mouses(System.currentTimeMillis(),
-									Location));
-					if (System.currentTimeMillis() - click.getTime() < 1000) {
+						if (clicks.size() <= 5)
+							clicks.add(new Particle(System.currentTimeMillis(), Location));
+					if (click.getAge() < 1000) {
 						render.setColor(Color.red);
 						render.drawLine(click.getLocation().x - 5, click
 								.getLocation().y, click.getLocation().x + 5,
@@ -46,8 +51,8 @@ public class DrawMouse implements PaintListener {
 						render.drawLine(click.getLocation().x, click
 								.getLocation().y - 5, click.getLocation().x,
 								click.getLocation().y + 5);
-					} else if (System.currentTimeMillis() - click.getTime() >= 1000) {
-						Click.remove(click);
+					} else {
+						clicks.remove(click);
 					}
 				}
 
@@ -57,22 +62,29 @@ public class DrawMouse implements PaintListener {
 	/**
 	 * @author Baheer (Doout).
 	 */
-	public class MouseTrailing {
-		private int LifeTime = 1500;
-		private ArrayList<Mouses> Info = new ArrayList<Mouses>();
+	public class MouseTrail {
+
+		private int lifeTime = 1500;
+		private LinkedList<Particle> trail = new LinkedList<Particle>();
+		private Point prev = new Point(-1, -1);
 
 		private void getLocation() {
-			Point m = new Point(client.getMouse().getX(), client.getMouse()
-					.getY());
-			if (Add(m)) {
-				Info.add(new Mouses(System.currentTimeMillis(), m));
+			Point m = new Point(client.getMouse().getX(), client.getMouse().getY());
+			if (accept(m)) {
+				prev = m;
+				trail.add(new Particle(System.currentTimeMillis(), m));
 			}
 		}
 
-		public boolean Add(Point p) {
-			for (Mouses Trailing : Info)
-				if (Trailing.getLocation().equals(p))
+		private boolean accept(Point p) {
+			if (p.equals(prev)) {
+				return false;
+			}
+			for (Particle t : trail) {
+				if (t.getLocation().equals(p)) {
 					return false;
+				}
+			}
 			return true;
 		}
 
@@ -81,56 +93,54 @@ public class DrawMouse implements PaintListener {
 			g.setRenderingHints(new RenderingHints(
 					RenderingHints.KEY_TEXT_ANTIALIASING,
 					RenderingHints.VALUE_TEXT_ANTIALIAS_ON));
-			if (Info.size() > 1)
-				for (Mouses Trailing : Info) {
-					int i = (int) (Trailing.getTime() + LifeTime - System
-							.currentTimeMillis()) / 100;
+			if (!trail.isEmpty())
+				for (Particle particle : trail) {
+					int i = (int) (lifeTime - particle.getAge()) / 100;
 					if (i >= 2) {
-						Rectangle localRectangle = new Rectangle(Trailing
-								.getLocation().x
-								- i / 2, Trailing.getLocation().y - i / 2, i, i);
-						java.awt.Paint localPaint = g.getPaint();
-						RadialGradientPaint localRadialGradientPaint = new RadialGradientPaint(
-								new Point2D.Double(localRectangle.x
-										+ localRectangle.width / 2.0D,
-										localRectangle.y
-												+ localRectangle.height / 2.0D),
-								(float) (localRectangle.getWidth() / 2.0D),
+						Rectangle rect = new Rectangle(particle.getLocation().x - i / 2,
+								particle.getLocation().y - i / 2, i, i);
+						Paint prevPaint = g.getPaint();
+						RadialGradientPaint gradPaint = new RadialGradientPaint(
+								new Point2D.Double(rect.x + rect.width / 2.0D,
+										rect.y + rect.height / 2.0D),
+										(float) (rect.getWidth() / 2.0D),
 								new float[] { 0.0F, 1.0F }, new Color[] {
-										new Color(c.getRed(), c.getGreen(), c
-												.getBlue(), 40),
+										new Color(c.getRed(), c.getGreen(), c.getBlue(), 40),
 										new Color(0.0F, 0.0F, 0.0F, 0.4F) });
-						g.setPaint(localRadialGradientPaint);
-						g.fillRoundRect(localRectangle.x, localRectangle.y,
-								localRectangle.width, localRectangle.height,
-								localRectangle.width, localRectangle.height);
-						g.setPaint(localPaint);
+						g.setPaint(gradPaint);
+						g.fillRoundRect(rect.x, rect.y,
+								rect.width, rect.height,
+								rect.width, rect.height);
+						g.setPaint(prevPaint);
 					}
 				}
-			if (Info.size() > 1) {
-				if (System.currentTimeMillis() > Info.get(0).getTime() + 1000) {
-					Info.remove(0);
+			if (!trail.isEmpty()) {
+				if (trail.getFirst().getAge() > 1000) {
+					trail.removeFirst();
 				}
 			}
 		}
 
 	}
 
-	private class Mouses {
-		private long Time;
-		private Point Location;
+	private class Particle {
 
-		public Mouses(long time, Point loc) {
-			Time = time;
-			Location = loc;
+		private long time;
+		private Point location;
+
+		public Particle(long time, Point loc) {
+			this.time = time;
+			location = loc;
 		}
 
-		public long getTime() {
-			return Time;
+		public long getAge() {
+			return System.currentTimeMillis() - time;
 		}
 
 		public Point getLocation() {
-			return Location;
+			return location;
 		}
+
 	}
+
 }

@@ -50,12 +50,12 @@ public class BotMenuBar extends JMenuBar {
         // Other
         DEBUG_MAP.put("Log Messages", MessageLogger.class);
 
-        TITLES = new String[]{"File", "Edit", "View", "Help", "Layout"};
+        TITLES = new String[]{"File", "Edit", "View", "Help"};
         ELEMENTS = new String[][]{
                     {"New Bot", "Close Bot", "-", "Run Script", "Stop Script", "Pause Script", "-", "Snap to Tray", "Save Screenshot", "-", "Exit"},
                     {"Accounts", "-", "ToggleF Force Input", "ToggleF Less CPU", "-", "ToggleF Disable Anti-Randoms", "ToggleF Disable Auto Login"},
                     constructDebugs(),
-                    {"Site", "Project", "About"}, {"Themes"}};
+                    {"Site", "Project", "About"}};
     }
 
     private static String[] constructDebugs() {
@@ -163,7 +163,6 @@ public class BotMenuBar extends JMenuBar {
     }
 
     private void enable(String item, boolean selected) {
-
         commandCheckMap.get(item).setSelected(selected);
         commandCheckMap.get(item).setEnabled(true);
     }

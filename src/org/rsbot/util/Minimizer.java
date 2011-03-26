@@ -1,114 +1,93 @@
-
 package org.rsbot.util;
 
 import java.awt.Component;
 import java.awt.HeadlessException;
 import java.awt.Image;
 import java.awt.MenuItem;
-import java.awt.Panel;
 import java.awt.PopupMenu;
 import java.awt.SystemTray;
 import java.awt.TrayIcon;
 import java.awt.TrayIcon.MessageType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
-import javax.swing.Icon;
-import javax.swing.plaf.metal.MetalIconFactory;
 
 /**
- *
  * @author Nader Sleiman
  */
 public class Minimizer {
 
-    private static Image getImage() throws HeadlessException {
+	private static Image getImage() throws HeadlessException {
+		return GlobalConfiguration.getImage(
+				GlobalConfiguration.Paths.Resources.ICON,
+				GlobalConfiguration.Paths.ICON);
 
+	}
 
-        Image img = GlobalConfiguration.getImage(
-                GlobalConfiguration.Paths.Resources.ICON,
-                GlobalConfiguration.Paths.ICON);
+	private static PopupMenu createPopupMenu() throws HeadlessException {
+		PopupMenu menu = new PopupMenu();
+		MenuItem release = new MenuItem("Release from Tray");
 
-        return img;
+		release.addActionListener(new ActionListener() {
 
-    }
+			public void actionPerformed(ActionEvent e) {
 
-    private static PopupMenu createPopupMenu() throws
-            HeadlessException {
+				comp.setVisible(true);
+				SystemTray.getSystemTray().remove(icon);
+				icon = null;
 
-        PopupMenu menu = new PopupMenu();
+			}
+		});
+		menu.add(release);
+		MenuItem exit = new MenuItem("Exit Bot");
 
+		exit.addActionListener(new ActionListener() {
 
-        MenuItem release = new MenuItem("Release from Tray");
+			public void actionPerformed(ActionEvent e) {
 
-        release.addActionListener(new ActionListener() {
+				System.exit(0);
 
-            public void actionPerformed(ActionEvent e) {
+			}
+		});
+		menu.add(exit);
 
-                comp.setVisible(true);
-                SystemTray.getSystemTray().remove(icon);
-                icon = null;
+		return menu;
+	}
 
-            }
-        });
-menu.add(release);
-         MenuItem exit = new MenuItem("Exit Bot");
+	private static TrayIcon icon;
+	private static Component comp;
+	private static SystemTray tray;
 
-        exit.addActionListener(new ActionListener() {
+	public static void snapToTray(final Component c) throws Exception {
+		comp = c;
+		tray = SystemTray.getSystemTray();
 
-            public void actionPerformed(ActionEvent e) {
+		icon = new TrayIcon(getImage(), "Rsbot", createPopupMenu());
 
-              System.exit(0);
+		icon.addActionListener(new ActionListener() {
 
-            }
-        });
-         menu.add(exit);
-          
-       
-       
-        return menu;
+			public void actionPerformed(ActionEvent e) {
+				c.setVisible(true);
+				tray.remove(icon);
+			}
+		});
 
+		tray.add(icon);
 
+	}
 
-    }
-    private static TrayIcon icon;
-    private static Component comp;
-    private static SystemTray tray;
-
-    public static void snapToTray(final Component c) throws Exception {
-        comp = c;
-        tray = SystemTray.getSystemTray();
-
-        icon = new TrayIcon(getImage(),
-                "Rsbot", createPopupMenu());
-
-        icon.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-
-                c.setVisible(true);
-                tray.remove(icon);
-
-            }
-        });
-
-        tray.add(icon);
-
-    }
-
-    public static void displayMessage(Object o, MessageType t) {
-        String option = null;
-        switch (t) {
-            case INFO:
-                option = "Information";
-                break;
-            case ERROR:
-                option = "Error !";
-                break;
-            case WARNING:
-                option = "Warning !";
-                break;
-        }
-        icon.displayMessage(option, o.toString(), t);
-    }
+	public static void displayMessage(Object o, MessageType t) {
+		String option = null;
+		switch (t) {
+			case INFO:
+				option = "Information";
+				break;
+			case ERROR:
+				option = "Error !";
+				break;
+			case WARNING:
+				option = "Warning !";
+				break;
+		}
+		icon.displayMessage(option, o.toString(), t);
+	}
 }

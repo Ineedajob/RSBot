@@ -1,11 +1,5 @@
 package org.rsbot.loader.script;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.rsbot.loader.asm.ClassAdapter;
 import org.rsbot.loader.asm.ClassReader;
 import org.rsbot.loader.asm.ClassVisitor;
@@ -15,9 +9,15 @@ import org.rsbot.loader.script.adapter.AddGetterAdapter;
 import org.rsbot.loader.script.adapter.AddInterfaceAdapter;
 import org.rsbot.loader.script.adapter.AddMethodAdapter;
 import org.rsbot.loader.script.adapter.InsertCodeAdapter;
-import org.rsbot.loader.script.adapter.OverrideJavaClassAdapter;
+import org.rsbot.loader.script.adapter.OverrideClassAdapter;
 import org.rsbot.loader.script.adapter.SetSignatureAdapter;
 import org.rsbot.loader.script.adapter.SetSuperAdapter;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Jacmob
@@ -34,7 +34,7 @@ public class ModScript {
 		int SET_SUPER = 7;
 		int SET_SIGNATURE = 8;
 		int INSERT_CODE = 9;
-		int OVERRIDE_JAVA_CLASS = 10;
+		int OVERRIDE_CLASS = 10;
 	}
 
 	public static final int MAGIC = 0xFADFAD;
@@ -184,14 +184,13 @@ public class ModScript {
 				}
 				adapters.put(clazz, new InsertCodeAdapter(delegate(clazz),
 						name, desc, fragments, buff.g1(), buff.g1()));
-			} else if(op == Opcodes.OVERRIDE_JAVA_CLASS) {
+			} else if(op == Opcodes.OVERRIDE_CLASS) {
 				String old_clazz = buff.gstr();
 				String new_clazz = buff.gstr();
-				
 				int count = buff.g1();
-				while( count -- > 0) {
+				while(count-- > 0) {
 					String clazz = buff.gstr();
-					adapters.put(clazz, new OverrideJavaClassAdapter(delegate(clazz), old_clazz, new_clazz));
+					adapters.put(clazz, new OverrideClassAdapter(delegate(clazz), old_clazz, new_clazz));
 				}
 			}
 		}
