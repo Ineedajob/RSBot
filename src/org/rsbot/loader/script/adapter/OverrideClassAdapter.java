@@ -11,12 +11,12 @@ import org.rsbot.loader.asm.MethodVisitor;
 /**
  * @author Liang
  */
-public class OverrideJavaClassAdapter extends ClassAdapter {
+public class OverrideClassAdapter extends ClassAdapter {
 
 	private String old_clazz;
 	private String new_clazz;
 
-	public OverrideJavaClassAdapter(ClassVisitor delegate, String old_clazz, String new_clazz) {
+	public OverrideClassAdapter(ClassVisitor delegate, String old_clazz, String new_clazz) {
 		super(delegate);
 		this.old_clazz = old_clazz;
 		this.new_clazz = new_clazz;
@@ -108,7 +108,6 @@ public class OverrideJavaClassAdapter extends ClassAdapter {
 				owner = new_clazz;
 				desc = desc.replace("L" + old_clazz + ";", "L" + new_clazz + ";");
 			}
-
 			mv.visitMethodInsn(opcode, owner, name, desc);
 		}
 

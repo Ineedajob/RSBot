@@ -1,5 +1,11 @@
 package org.rsbot.loader;
 
+import org.rsbot.loader.asm.ClassReader;
+import org.rsbot.loader.script.ModScript;
+import org.rsbot.loader.script.ParseException;
+import org.rsbot.util.GlobalConfiguration;
+
+import javax.swing.JOptionPane;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -25,13 +31,6 @@ import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
 import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
-
-import javax.swing.JOptionPane;
-
-import org.rsbot.loader.asm.ClassReader;
-import org.rsbot.loader.script.ModScript;
-import org.rsbot.loader.script.ParseException;
-import org.rsbot.util.GlobalConfiguration;
 
 /**
  * @author Jacmob
@@ -141,7 +140,6 @@ public class ClientLoader {
 				if (name.endsWith(".class")) {
 					name = name.substring(0, name.length() - 6).replace('/', '.');
 					if (replace.contains(name)) {
-						log.info("Name: " + name);
 						classes.put(name, load(loader.getInputStream(entry)));
 					}
 				}

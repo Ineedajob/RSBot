@@ -26,7 +26,7 @@ public class CodeReader {
 		int LABEL = 15;
 	}
 
-	private final Buffer code;
+	private Buffer code;
 
 	public CodeReader(byte[] code) {
 		this.code = new Buffer(code);
@@ -34,7 +34,6 @@ public class CodeReader {
 
 	public void accept(MethodVisitor v) {
 		int len = code.g2();
-
 		Label[] labels = new Label[code.g1()];
 		for (int i = 0, l = labels.length; i < l; ++i) {
 			labels[i] = new Label();
@@ -50,15 +49,9 @@ public class CodeReader {
 			} else if (op == Opcodes.TYPE_INSN) {
 				v.visitTypeInsn(code.g1(), code.gstr());
 			} else if (op == Opcodes.FIELD_INSN) {
-				int opcode = code.g1();
-				String owner = code.gstr();
-				String name = code.gstr();
-				String desc = code.gstr();
-				System.out.println(owner + "." + name + " " + desc);
-				v.visitFieldInsn(opcode, owner, name, desc);
+				v.visitFieldInsn(code.g1(), code.gstr(), code.gstr(), code.gstr());
 			} else if (op == Opcodes.METHOD_INSN) {
-				v.visitMethodInsn(code.g1(), code.gstr(), code.gstr(),
-						code.gstr());
+				v.visitMethodInsn(code.g1(), code.gstr(), code.gstr(), code.gstr());
 			} else if (op == Opcodes.JUMP_INSN) {
 				v.visitJumpInsn(code.g1(), labels[code.g1()]);
 			} else if (op == Opcodes.LDC_INSN) {
@@ -103,15 +96,13 @@ public class CodeReader {
 			} else if (op == Opcodes.MULTIANEWARRAY_INSN) {
 				v.visitMultiANewArrayInsn(code.gstr(), code.g1());
 			} else if (op == Opcodes.TRY_CATCH_BLOCK) {
-				v.visitTryCatchBlock(labels[code.g1()], labels[code.g1()],
-						labels[code.g1()], code.gstr());
+				v.visitTryCatchBlock(labels[code.g1()], labels[code.g1()], labels[code.g1()], code.gstr());
 			} else if (op == Opcodes.LOCAL_VARIABLE) {
-				v.visitLocalVariable(code.gstr(), code.gstr(), code.gstr(),
-						labels[code.g1()], labels[code.g1()], code.g1());
+				v.visitLocalVariable(code.gstr(), code.gstr(), code.gstr(), labels[code.g1()], labels[code.g1()], code.g1());
 			} else if (op == Opcodes.LABEL) {
 				v.visitLabel(labels[code.g1()]);
 			}
 		}
 	}
-	
+
 }

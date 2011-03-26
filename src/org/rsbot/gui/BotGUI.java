@@ -1,5 +1,26 @@
 package org.rsbot.gui;
 
+import org.rsbot.bot.Bot;
+import org.rsbot.log.TextAreaLogHandler;
+import org.rsbot.script.Script;
+import org.rsbot.script.ScriptManifest;
+import org.rsbot.script.internal.ScriptHandler;
+import org.rsbot.script.internal.event.ScriptListener;
+import org.rsbot.script.methods.Environment;
+import org.rsbot.script.util.WindowUtil;
+import org.rsbot.util.GlobalConfiguration;
+import org.rsbot.util.Minimizer;
+import org.rsbot.util.ScreenshotUtil;
+import org.rsbot.util.UpdateUtil;
+
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
+import javax.swing.ToolTipManager;
+import javax.swing.UIManager;
 import java.awt.AWTKeyStroke;
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -10,7 +31,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.File;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -18,46 +38,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.SwingUtilities;
-import javax.swing.ToolTipManager;
-import javax.swing.UIManager;
-
-import org.rsbot.bot.Bot;
-import org.rsbot.log.TextAreaLogHandler;
-import org.rsbot.script.Script;
-import org.rsbot.script.ScriptManifest;
-import org.rsbot.script.internal.ScriptHandler;
-import org.rsbot.script.internal.event.ScriptListener;
-import org.rsbot.script.methods.Environment;
-import org.rsbot.util.FrameUtil;
-import org.rsbot.util.Serializer;
-import org.rsbot.script.util.WindowUtil;
-import org.rsbot.util.GlobalConfiguration;
-import org.rsbot.util.Minimizer;
-import org.rsbot.util.ScreenshotUtil;
-import org.rsbot.util.UpdateUtil;
-
 /**
  * @author Jacmob
  */
 public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 
     public static final int PANEL_WIDTH = 765, PANEL_HEIGHT = 503, LOG_HEIGHT = 120;
+
     private static final long serialVersionUID = -5411033752001988794L;
+    private static final Logger log = Logger.getLogger(BotGUI.class.getName());
+
     private BotPanel panel;
     private BotToolBar toolBar;
     private BotMenuBar menuBar;
     private JScrollPane textScroll;
     private BotHome home;
-    private JFrame frame = this;
     private List<Bot> bots = new ArrayList<Bot>();
-    private String theme_name = null;
-    private static final Logger log = Logger.getLogger(BotGUI.class.getName());
 
     public BotGUI() {
         init();
@@ -66,24 +62,18 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
         setLocationRelativeTo(getOwner());
         setMinimumSize(getSize());
         setResizable(true);
-        theme_name = null;
 
-        Object o = Serializer.deserialize(new File(GlobalConfiguration.Paths.Resources.THEME));
-        theme_name = o == null ? "SubstanceTwilightLookAndFeel" : (String) o;
         SwingUtilities.invokeLater(new Runnable() {
- 
             public void run() {
                 JPopupMenu.setDefaultLightWeightPopupEnabled(false);
                 ToolTipManager.sharedInstance().setLightWeightPopupEnabled(false);
-              //  FrameUtil.setTheme(frame, theme_name);TODO:fix bug
+        		new SplashAd(BotGUI.this).display();
                 if (GlobalConfiguration.RUNNING_FROM_JAR) {
                     UpdateUtil updater = new UpdateUtil(BotGUI.this);
                     updater.checkUpdate(false);
                 }
             }
         });
-        
-        new SplashAd(this);
     }
 
     @Override
@@ -216,20 +206,6 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
                             "Visit " + GlobalConfiguration.Paths.URLs.SITE + "/ for more information."},
                         "About", JOptionPane.INFORMATION_MESSAGE);
             }
-
-        } else if (menu.equals("Layout")) {
-            if (option.equals("Themes")) {
-
-                if (ThemesGui.isUpdated()) {
-                    log.info("The bot just updated dependancies, please restart the bot before you select themes.");
-                } else if (ThemesGui.isProcessing()) {
-                    log.info("its currently downloading dependancies, please wait ...");
-                } else {
-                   log.info("Wait for next release for a better implementation");
-                   // new ThemesGui(this).setVisible(true);
-                }
-            }
-
         } else if (menu.equals("Tab")) {
             Bot curr = getCurrentBot();
             menuBar.setBot(curr);
@@ -427,39 +403,9 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
         add(textScroll, BorderLayout.SOUTH);
     }
 
-    private void openURL(final String url) {
-        GlobalConfiguration.OperatingSystem os = GlobalConfiguration.getCurrentOperatingSystem();
-        try {
-            if (os == GlobalConfiguration.OperatingSystem.MAC) {
-                Class<?> fileMgr = Class.forName("com.apple.eio.FileManager");
-                Method openURL = fileMgr.getDeclaredMethod("openURL", new Class[]{String.class});
-                openURL.invoke(null, url);
-            } else if (os == GlobalConfiguration.OperatingSystem.WINDOWS) {
-                Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + url);
-            } else { // assume Unix or Linux
-                String[] browsers = {"firefox", "opera", "konqueror", "epiphany", "mozilla", "netscape"};
-                String browser = null;
-                for (int count = 0; (count < browsers.length) && (browser == null); count++) {
-                    if (Runtime.getRuntime().exec(new String[]{"which", browsers[count]}).waitFor() == 0) {
-                        browser = browsers[count];
-                    }
-                }
-                if (browser == null) {
-                    throw new Exception("Could not find web browser");
-                } else {
-                    Runtime.getRuntime().exec(new String[]{browser, url});
-                }
-            }
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Error Opening Browser", "Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
     public void scriptStarted(final ScriptHandler handler, Script script) {
         java.awt.EventQueue.invokeLater(new Runnable() {
-
             public void run() {
-
                 Bot bot = handler.getBot();
                 if (bot == getCurrentBot()) {
                     bot.inputFlags = Environment.INPUT_KEYBOARD;
@@ -512,4 +458,33 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
         toolBar.setInputState(mask);
         toolBar.updateInputButton();
     }
+
+    public static void openURL(final String url) {
+        GlobalConfiguration.OperatingSystem os = GlobalConfiguration.getCurrentOperatingSystem();
+        try {
+            if (os == GlobalConfiguration.OperatingSystem.MAC) {
+                Class<?> fileMgr = Class.forName("com.apple.eio.FileManager");
+                Method openURL = fileMgr.getDeclaredMethod("openURL", new Class[]{String.class});
+                openURL.invoke(null, url);
+            } else if (os == GlobalConfiguration.OperatingSystem.WINDOWS) {
+                Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + url);
+            } else { // assume Unix or Linux
+                String[] browsers = {"firefox", "opera", "konqueror", "epiphany", "mozilla", "netscape"};
+                String browser = null;
+                for (int count = 0; (count < browsers.length) && (browser == null); count++) {
+                    if (Runtime.getRuntime().exec(new String[]{"which", browsers[count]}).waitFor() == 0) {
+                        browser = browsers[count];
+                    }
+                }
+                if (browser == null) {
+                    throw new Exception("Could not find web browser");
+                } else {
+                    Runtime.getRuntime().exec(new String[]{browser, url});
+                }
+            }
+        } catch (Exception e) {
+           log.warning("Unable to open " + url);
+        }
+    }
+
 }

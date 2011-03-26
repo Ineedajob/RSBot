@@ -8,7 +8,6 @@ import org.rsbot.util.Extractor;
 import org.rsbot.util.GlobalConfiguration;
 
 import java.awt.*;
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
@@ -17,9 +16,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.SwingUtilities;
-import org.rsbot.util.FrameUtil;
-import org.rsbot.util.Serializer;
 
 public class Application {
 
