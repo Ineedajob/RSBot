@@ -202,7 +202,7 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
             } else if (option.equals("Project")) {
                 openURL(GlobalConfiguration.Paths.URLs.PROJECT);
             } else if (option.equals("About")) {
-                JOptionPane.showMessageDialog(this, new String[]{"An open source bot,currently developed by Nader Sleiman as " + '\n' + "Lead developer and his team of devs and contributers.",
+                JOptionPane.showMessageDialog(this, new String[]{"An open source bot,currently developed by Aut0r as " + '\n' + "Lead developer and his team of devs and contributers.",
                             "Visit " + GlobalConfiguration.Paths.URLs.SITE + "/ for more information."},
                         "About", JOptionPane.INFORMATION_MESSAGE);
             }
