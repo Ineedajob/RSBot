@@ -29,7 +29,7 @@ public class LoginBot extends Random {
 	private static final int INTERFACE_WELCOME_SCREEN = 906;
 	private static final int INTERFACE_WELCOME_SCREEN_BUTTON_PLAY_1 = 160;
 	private static final int INTERFACE_WELCOME_SCREEN_BUTTON_PLAY_2 = 171;
-	private static final int INTERFACE_WELCOME_SCREEN_BUTTON_LOGOUT = 193;
+	//private static final int INTERFACE_WELCOME_SCREEN_BUTTON_LOGOUT = 193;
 	private static final int INTERFACE_WELCOME_SCREEN_TEXT_RETURN = 221;
 	private static final int INTERFACE_WELCOME_SCREEN_BUTTON_BACK = 228;
 	private static final int INTERFACE_WELCOME_SCREEN_HIGH_RISK_WORLD_TEXT = 86;
@@ -42,6 +42,8 @@ public class LoginBot extends Random {
 
 	private int invalidCount, worldFullCount;
 
+	public Random Rand;
+	
 	@Override
 	public boolean activateCondition() {
 		int idx = game.getClientState();
@@ -82,13 +84,13 @@ public class LoginBot extends Random {
 						.getText().toLowerCase();
 
 				if (returnText.contains("total skill level of")
-						&& !account.isMember()) {
+						&& !AccountManager.isMember(account.getName())) {
 					log("Log back in when you total level of 1000+");
 					interfaces.getComponent(INTERFACE_WELCOME_SCREEN,
 							INTERFACE_WELCOME_SCREEN_BUTTON_BACK).doClick();
 					stopScript(false);
 				} else if (returnText.contains("total skill level of")
-						&& account.isMember()) {
+						&& AccountManager.isMember(account.getName())) {
 					log("Log back in when you total level of 1500+");
 					interfaces.getComponent(INTERFACE_WELCOME_SCREEN,
 							INTERFACE_WELCOME_SCREEN_BUTTON_BACK).doClick();

@@ -7,7 +7,7 @@ import org.rsbot.script.wrappers.RSComponent;
 
 @ScriptManifest(authors = { "Holo", "Gnarly", "Salty_Fish", "Pervy Shuya", "Doout" }, name = "BankPin", version = 3.0)
 public class BankPins extends Random {
-
+	
 	public boolean activateCondition() {
 		return interfaces.get(13).isValid() || interfaces.get(14).isValid();
 	}

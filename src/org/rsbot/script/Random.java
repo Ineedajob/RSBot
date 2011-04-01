@@ -66,7 +66,7 @@ public abstract class Random extends Methods implements PaintListener {
 		super.init(ctx);
 		onStart();
 	}
-
+	
 	public final boolean isActive() {
 		return script != null;
 	}

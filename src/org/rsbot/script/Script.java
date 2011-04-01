@@ -2,6 +2,7 @@ package org.rsbot.script;
 
 import org.rsbot.event.EventMulticaster;
 import org.rsbot.event.listeners.PaintListener;
+import org.rsbot.gui.AccountManager;
 import org.rsbot.script.internal.BreakHandler;
 import org.rsbot.script.methods.MethodContext;
 import org.rsbot.script.methods.Methods;
@@ -22,7 +23,7 @@ public abstract class Script extends Methods implements EventListener, Runnable 
         private volatile boolean running = false;
         private volatile boolean paused = false;
         private volatile boolean random = false;
-
+        
         private int id = -1;
         private long lastNotice;
 
@@ -219,7 +220,7 @@ public abstract class Script extends Methods implements EventListener, Runnable 
                         try {
                                 while (running) {
                                         if (!paused) {
-                                                if (account.isTakingBreaks()) {
+                                                if (AccountManager.isTakingBreaks(account.getName())) {
                                                         BreakHandler h = ctx.bot.getBreakHandler();
                                                         if (h.isBreaking()) {
                                                                 if (System.currentTimeMillis() - lastNotice > 600000) {
