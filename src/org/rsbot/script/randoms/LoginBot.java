@@ -10,9 +10,9 @@ import org.rsbot.script.wrappers.RSComponent;
 import org.rsbot.script.wrappers.RSInterface;
 
 /**
- * @author Iscream
+ * @author Iscream, Aut0r, Doout, Pervy
  */
-@ScriptManifest(authors = { "Iscream", "Pervy Shuya" }, name = "Login", version = 1.6)
+@ScriptManifest(authors = { "Iscream", "Pervy Shuya", "Aut0r" }, name = "Login", version = 2.0)
 public class LoginBot extends Random {
 
 	private static final int INTERFACE_MAIN = 905;
@@ -25,7 +25,7 @@ public class LoginBot extends Random {
 	private static final int INTERFACE_PASSWORD_WINDOW = 39;
 	private static final int INTERFACE_BUTTON_LOGIN = 42;
 	private static final int INTERFACE_TEXT_RETURN = 11;
-	private static final int INTERFACE_BUTTON_BACK = 55;
+	private static final int INTERFACE_BUTTON_BACK = 60;
 	private static final int INTERFACE_WELCOME_SCREEN = 906;
 	private static final int INTERFACE_WELCOME_SCREEN_BUTTON_PLAY_1 = 160;
 	private static final int INTERFACE_WELCOME_SCREEN_BUTTON_PLAY_2 = 171;
@@ -96,17 +96,19 @@ public class LoginBot extends Random {
 				}
 
 				if (returnText.contains("login limit exceeded")) {
-					log("If login limit screws up & doesn't login, tell Pervy.");
-					if (interfaces.getComponent(INTERFACE_WELCOME_SCREEN,
-							INTERFACE_WELCOME_SCREEN_BUTTON_BACK).doClick())
-						interfaces.getComponent(INTERFACE_WELCOME_SCREEN,
-								INTERFACE_WELCOME_SCREEN_BUTTON_LOGOUT)
-								.doClick();
+						if(interfaces.getComponent(INTERFACE_WELCOME_SCREEN_BUTTON_BACK).isValid())
+							interfaces.getComponent(INTERFACE_WELCOME_SCREEN_BUTTON_BACK).doClick();
 				}
 
 				if (returnText.contains("your account has not logged out")) {
-					log.warning("Make sure you're logged off or hasn't been h@x0r3d.");
-					stopScript(false);
+					if (invalidCount > 10) {
+						log.warning("Unable to login after 10 attempts. Stopping script.");
+						log.severe("It seems you are actually already logged in?");
+						stopScript(false);
+					}
+					invalidCount++;
+					log.severe("Waiting for logout..");
+					sleep(5000,15000);
 				}
 
 				if (returnText.contains("member")) {
@@ -143,14 +145,14 @@ public class LoginBot extends Random {
 			return -1;
 		}
 		if (!game.isLoggedIn()) {
+			if(interfaces.get(INTERFACE_LOGIN_SCREEN).getComponent(INTERFACE_BUTTON_BACK).isValid())
+				interfaces.get(INTERFACE_LOGIN_SCREEN).getComponent(INTERFACE_BUTTON_BACK).doClick();
 			if (returnText.contains("no reply from login server")) {
 				if (invalidCount > 10) {
 					log.warning("Unable to login after 10 attempts. Stopping script.");
 					log.severe("It seems the login server is down.");
 					stopScript(false);
 				}
-				interfaces.get(INTERFACE_LOGIN_SCREEN)
-						.getComponent(INTERFACE_BUTTON_BACK).doClick();
 				invalidCount++;
 				return random(500, 2000);
 			}
@@ -163,8 +165,14 @@ public class LoginBot extends Random {
 				stopScript(false);
 			}
 			if (returnText.contains("your account has not logged out")) {
-				log.warning("Make sure you're logged off or hasn't been h@x0r3d.");
-				stopScript(false);
+				if (invalidCount > 10) {
+					log.warning("Unable to login after 10 attempts. Stopping script.");
+					log.severe("It seems you are actually already logged in?");
+					stopScript(false);
+				}
+				invalidCount++;
+				log.severe("Waiting for logout..");
+				sleep(5000,15000);
 			}
 			if (returnText.contains("incorrect")) {
 				log.warning("Failed to login five times in a row. Stopping script.");
@@ -176,8 +184,6 @@ public class LoginBot extends Random {
 					log("Please verify that your RSBot account profile is correct.");
 					stopScript(false);
 				}
-				interfaces.get(INTERFACE_LOGIN_SCREEN)
-						.getComponent(INTERFACE_BUTTON_BACK).doClick();
 				invalidCount++;
 				return random(500, 2000);
 			}
@@ -196,6 +202,15 @@ public class LoginBot extends Random {
 				sleep(random(1000, 1200));
 				worldFullCount++;
 			}
+			if (returnText.contains("login limit exceeded")) {
+				if (invalidCount > 10) {
+					log.warning("Unable to login after 10 attempts. Stopping script.");
+					log.severe("It seems you are actually already logged in?");
+					stopScript(false);
+				}
+				invalidCount++;
+				sleep(5000,15000);
+			}
 			if (returnText.contains("world")) {
 				return random(1500, 2000);
 			}
@@ -208,6 +223,8 @@ public class LoginBot extends Random {
 					INTERFACE_GRAPHICS_LEAVE_ALONE).isValid()) {
 				interfaces.getComponent(INTERFACE_GRAPHICS_NOTICE,
 						INTERFACE_GRAPHICS_LEAVE_ALONE).doClick();
+			if(interfaces.getComponent(INTERFACE_BUTTON_BACK).isValid())
+					interfaces.getComponent(INTERFACE_BUTTON_BACK).doClick();
 				return random(500, 600);
 			}
 			if (!atLoginScreen()) {

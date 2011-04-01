@@ -15,6 +15,10 @@ public abstract class Random extends Methods implements PaintListener {
 
 	private volatile boolean enabled = true;
 
+	public int i = 50;
+	
+	public boolean up = false;
+	
 	private Script script;
 
 	private long timeout = random(240, 300);
@@ -130,7 +134,16 @@ public abstract class Random extends Methods implements PaintListener {
 	public final void onRepaint(Graphics g) {
 		Point p = mouse.getLocation();
 		int w = game.getWidth(), h = game.getHeight();
-		g.setColor(new Color(0, 0, 0, 100));
+		if(i >= 70 && !up) {
+			i--;
+		} else {
+			i++;
+			up = true;
+			if(i >= 130) {
+				up = false;
+			}
+		}
+		g.setColor(new Color(255, 0, 0, i));
 		g.fillRect(0, 0, p.x - 1, p.y - 1);
 		g.fillRect(p.x + 1, 0, w - (p.x + 1), p.y - 1);
 		g.fillRect(0, p.y + 1, p.x - 1, h - (p.y - 1));

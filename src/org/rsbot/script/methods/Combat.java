@@ -55,6 +55,22 @@ public class Combat extends MethodProvider {
 	public Combat(MethodContext ctx) {
 		super(ctx);
 	}
+	
+	/**
+	 * Eats at the desired HP %.
+	 * 
+	 * @param percent
+	 *            The health percentage to eat at; 10%-90%
+	 * @param foods
+	 *            Array of Foods we can eat.
+	 * @return <tt>true</tt> once we eaten to the health % (percent); otherwise
+	 *         <tt>false</tt>.
+	 * @author Pervy Shuya
+	 */
+	@Deprecated
+	public boolean Eat(final int percent, final int... foods) {
+		return eat(percent, foods);
+	}
 
 	/**
 	 * Eats at the desired HP %.
@@ -67,7 +83,7 @@ public class Combat extends MethodProvider {
 	 *         <tt>false</tt>.
 	 * @author Pervy Shuya
 	 */
-	public boolean Eat(final int percent, final int... foods) {
+	public boolean eat(final int percent, final int... foods) {
 		int firstPercent = getHealth();
 		for (int food : foods) {
 			if (!methods.inventory.contains(food)) {
