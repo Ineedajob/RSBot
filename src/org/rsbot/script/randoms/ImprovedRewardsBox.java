@@ -1,5 +1,6 @@
 package org.rsbot.script.randoms;
 
+import org.rsbot.gui.AccountManager;
 import org.rsbot.script.Random;
 import org.rsbot.script.ScriptManifest;
 import org.rsbot.script.wrappers.RSComponent;
@@ -54,6 +55,8 @@ public class ImprovedRewardsBox extends Random {
 	private int endofselection = 0;
 	private int XPSelection;
 
+	public Random Rand;
+	
 	public boolean activateCondition() {
 		return game.isLoggedIn() && !getMyPlayer().isInCombat() && !bank.isOpen()
 				&& cachedInventoryContainedOneOf(BOX_ID, BOOK_KNOWLEDGE_ID, LAMP_ID, MYSTERY_BOX_ID);
@@ -224,7 +227,7 @@ public class ImprovedRewardsBox extends Random {
 		choices[0] = "XP Item";
 		choices[1] = "Cash";
 
-		String a = account.getPreferredReward();
+		String a = account.getName() == null ? null : AccountManager.getReward(account.getName());
 		if (a.equals("Attack")) {
 			XPSelection = ATT_ID;
 		} else if (a.equals("Strength")) {
@@ -277,7 +280,7 @@ public class ImprovedRewardsBox extends Random {
 			XPSelection = DUNGEONEERING_ID;
 		} else {
 			XPSelection = WOODCUTTING_ID;
-			choices[0] = account.getPreferredReward();
+			choices[0] = account.getName() == null ? null : AccountManager.getReward(account.getName());
 		}
 		return choices;
 	}

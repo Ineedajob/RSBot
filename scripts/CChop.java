@@ -149,8 +149,8 @@ public class CChop extends Script implements PaintListener, MessageListener,
 			openURL("http://adf.ly/317631/agsn");
 		}
 		// =------------------------------------------------------
-		if (Integer.parseInt(account.getPin()) != -1)
-			log("Your account has a pin and may not be able to bank.");
+		//if (Integer.parseInt(account.getPin()) != -1)
+		//	log("Your account has a pin and may not be able to bank.");
 		gui = new CChopGUI();
 		gui.setVisible(true);
 		while (guiWait) {
