@@ -6,11 +6,14 @@ import java.util.LinkedList;
 import org.rsbot.script.wrappers.RSComponent;
 import org.rsbot.script.wrappers.RSItem;
 import org.rsbot.script.wrappers.RSItemDef;
+import org.rsbot.script.wrappers.RSModel;
+import org.rsbot.script.wrappers.RSObjectDef;
 import org.rsbot.script.wrappers.RSObject;
 import org.rsbot.script.wrappers.RSTile;
 
 /**
  * Inventory related operations.
+ * @author Jacmob, Aut0r, kiko
  */
 public class Inventory extends MethodProvider {
 
@@ -52,6 +55,54 @@ public class Inventory extends MethodProvider {
 		return methods.interfaces.getComponent(INTERFACE_INVENTORY, 0);
 	}
 
+	/**
+	 * Destroys any inventory items with the given ID.
+	 * 
+	 * @param itemID
+	 *            The ID of items to destroy.
+	 * @return <tt>true</tt> if the items were destroyed; otherwise
+	 *         <tt>false</tt>.
+	 */
+	public boolean destroyItem(final int itemID) {
+		RSItem item = getItem(itemID);
+		if (!itemHasAction(item, "Destroy"))
+			return false;
+		while (item != null) {
+			if (methods.interfaces.get(94).isValid()) {
+				methods.interfaces.getComponent(94, 3).doClick();
+			} else {
+				item.doAction("Destroy");
+			}
+			sleep(random(700, 1100));
+			item = getItem(itemID);
+		}
+		return true;
+	}
+	
+	/**
+	 * Determines if the item contains the desired action.
+	 * 
+	 * @param item
+	 *            The item to check.
+	 * @param action
+	 *            The item menu action to check.
+	 * @return <tt>true</tt> if the item has the action; otherwise
+	 *         <tt>false</tt>.
+	 */
+	public boolean itemHasAction(final RSItem item, final String action) {
+		// Used to determine if an item is droppable/destroyable
+		if (item == null)
+			return false;
+		RSItemDef itemDef = item.getDefinition();
+		if (itemDef != null) {
+			for (String a : itemDef.getActions()) {
+				if (a.equalsIgnoreCase(action))
+					return true;
+			}
+		}
+		return false;
+	}
+	
 	/**
 	 * Drops all items with the same specified id.
 	 * 
@@ -220,6 +271,28 @@ public class Inventory extends MethodProvider {
 	}
 
 	/**
+	 * Selects the first item in the inventory with the provided ID.
+	 * 
+	 * @param itemID
+	 *            The ID of the item to select.
+	 * @return <tt>true</tt> if the item was selected; otherwise <tt>false</tt>.
+	 */
+	public boolean selectItem(final int itemID) {
+		RSItem selItem = getSelectedItem(), iItem = getItem(itemID);
+		if (selItem != null && selItem.getID() == itemID)
+			return true;
+		if (!iItem.doAction("Use"))
+			return false;
+		for (int c = 0; c < 5; c++) {
+			if (getSelectedItem() != null)
+				break;
+			sleep(random(200, 300));
+		}
+		selItem = getSelectedItem();
+		return selItem != null && selItem.getID() == itemID;
+	}
+	
+	/**
 	 * Uses two items together.
 	 * 
 	 * @param item
@@ -237,6 +310,24 @@ public class Inventory extends MethodProvider {
 	}
 
 	/**
+	 * Uses two items together.
+	 * 
+	 * @param itemID
+	 *            The first item ID to use.
+	 * @param targetID
+	 *            The item ID you want the first parameter to be used on.
+	 * @return <tt>true</tt> if the first item has been "used" on the other;
+	 *         otherwise <tt>false</tt>.
+	 */
+	public boolean useItem(final int itemID, final int targetID) {
+		if (methods.game.getCurrentTab() != Game.TAB_INVENTORY) {
+			methods.game.openTab(Game.TAB_INVENTORY);
+		}
+		RSItem target = getItem(targetID);
+		return target != null && selectItem(itemID) && target.doAction("Use");
+	}
+	
+	/**
 	 * Uses an item on an object.
 	 * 
 	 * @param item
@@ -253,6 +344,32 @@ public class Inventory extends MethodProvider {
 		return item.doAction("Use") && targetObject.doAction("Use");
 	}
 
+	/**
+	 * Uses an item on an object.
+	 * 
+	 * @param itemID
+	 *            The item ID to use on the object.
+	 * @param targetObject
+	 *            The RSObject you want the item to be used on.
+	 * @return <tt>true</tt> if the "use" action had been used on both the
+	 *         RSItem and RSObject; otherwise <tt>false</tt>.
+	 */
+	public boolean useItem(final int itemID, final RSObject object) {
+		if (methods.game.getCurrentTab() != Game.TAB_INVENTORY) {
+			methods.game.openTab(Game.TAB_INVENTORY);
+		}
+		RSItem item = getItem(itemID);
+		if (item == null)
+			return false;
+		RSTile objTile = object.getLocation();
+		String iName = item.getName(), oName = methods.objects.getName(object);
+		if (!selectItem(itemID))
+			return false;
+		if (oName.isEmpty())
+			methods.camera.turnTo(objTile, random(5, 15));
+		return object.doAction(!iName.isEmpty() ? "Use " + iName + " -> " + oName : "Use");
+	}
+	
 	/**
 	 * Randomizes a point.
 	 * 

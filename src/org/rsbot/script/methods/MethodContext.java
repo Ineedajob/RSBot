@@ -162,6 +162,11 @@ public class MethodContext {
 	public final Environment env = new Environment(this);
 
 	/**
+	 * The singleton of Prayer
+	 */
+	public final Prayer prayer = new Prayer(this);
+	
+	/**
 	 * The Bot's input manager
 	 */
 	public final InputManager inputManager;

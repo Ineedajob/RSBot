@@ -3,6 +3,7 @@ package org.rsbot.script.methods;
 import org.rsbot.script.wrappers.RSComponent;
 import org.rsbot.script.wrappers.RSInterface;
 
+import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -139,6 +140,55 @@ public class Interfaces extends MethodProvider {
 		return null;
 	}
 
+	/**
+	 * Performs the given action on this RSInterfaceChild if it is showing
+	 * (valid).
+	 * 
+	 * @param action
+	 *            The menu action to click.
+	 * @return <tt>true</tt> if the action was clicked; otherwise <tt>false</tt>.
+	 */
+	public boolean clickComponent(final RSComponent c, final String action) {
+		if (!c.isValid())
+			return false;
+		Rectangle rect = c.getArea();
+		if (rect.x == -1)
+			return false;
+		// 1 pixel is not enough for all components
+		int minX = rect.x + 2, minY = rect.y + 2, width = rect.width - 4, height = rect.height - 4;
+		Rectangle actual = new Rectangle(minX, minY, width, height);
+		// Check if the menu already contains the action otherwise reposition
+		// before clicking
+		if (actual.contains(methods.mouse.getLocation()) && methods.menu.contains(action)
+				&& methods.menu.doAction(action))
+			return true;
+		methods.mouse.move(random(minX, minX + width), random(minY, minY + height));
+		return methods.menu.doAction(action);
+	}
+
+	/**
+	 * Clicks the dialogue option that contains the desired string.
+	 * 
+	 * @param inter
+	 *            The interface of the dialogue menu.
+	 * @param option
+	 *            The text we want to click.
+	 * @return <tt>true</tt> if the option was clicked; otherwise <tt>false</tt>.
+	 */
+	public boolean clickDialogueOption(final RSInterface inter, String option) {
+		// This is superfluous but it just makes life a little easier
+		// so you don't have to look up the component.
+		// Just grab the interface and the text you want to click.
+		if (inter.isValid()) {
+			option = option.toLowerCase();
+			for (RSComponent c : inter.getComponents()) {
+				if (c.getText().toLowerCase().contains(option))
+					return c.doClick();
+			}
+		}
+		return false;
+	}
+	
 	/**
 	 * @param text The text to search each interface for.
 	 * @return <tt>RSInterface</tt> array of the interfaces containing specified text.

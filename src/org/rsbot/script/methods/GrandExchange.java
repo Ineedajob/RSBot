@@ -162,6 +162,11 @@ public class GrandExchange extends MethodProvider {
 		return "";
 	}
 
+	/**
+	 * Provides access to GEItem Information.
+	 * 
+	 * @author Jacmob, Aut0r
+	 */
 	public static class GEItem {
 
 		private final String name;

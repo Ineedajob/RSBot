@@ -132,6 +132,10 @@ public class Methods {
 	 * The singleton of Environment
 	 */
 	protected Environment env;
+	/**
+	 * The singleton of Prayer
+	 */
+	protected Prayer prayer;
 
 	/**
 	 * For internal use only: initializes the method providers.
@@ -167,6 +171,7 @@ public class Methods {
 		this.account = ctx.account;
 		this.summoning = ctx.summoning;
 		this.env = ctx.env;
+		this.prayer = ctx.prayer;
 	}
 
 	/**

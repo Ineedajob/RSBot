@@ -54,6 +54,11 @@ public class Hiscores extends MethodProvider {
 		return null;
 	}
 
+	/**
+	 * Provides access to High Scores Information.
+	 * 
+	 * @author Jacmob, Aut0r
+	 */
 	public static class Stats {
 
 		private String username;
