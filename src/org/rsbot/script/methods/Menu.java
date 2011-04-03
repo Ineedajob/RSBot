@@ -13,6 +13,8 @@ import org.rsbot.event.EventMulticaster;
 import org.rsbot.event.listeners.PaintListener;
 import org.rsbot.script.internal.wrappers.Deque;
 import org.rsbot.script.internal.wrappers.Queue;
+import org.rsbot.script.wrappers.RSItem;
+import org.rsbot.script.wrappers.RSItemDef;
  
 /**
  * Context menu related operations.
@@ -73,6 +75,30 @@ public class Menu extends MethodProvider {
         return getIndex(action) != -1;
     }
  
+    /**
+	 * Determines if the item contains the desired action.
+	 * 
+	 * @param item
+	 *            The item to check.
+	 * @param action
+	 *            The item menu action to check.
+	 * @return <tt>true</tt> if the item has the action; otherwise
+	 *         <tt>false</tt>.
+	 */
+	public boolean itemHasAction(final RSItem item, final String action) {
+		// Used to determine if an item is droppable/destroyable
+		if (item == null)
+			return false;
+		RSItemDef itemDef = item.getDefinition();
+		if (itemDef != null) {
+			for (String a : itemDef.getActions()) {
+				if (a.equalsIgnoreCase(action))
+					return true;
+			}
+		}
+		return false;
+	}
+    
     /**
      * Left clicks at the given index.
      *

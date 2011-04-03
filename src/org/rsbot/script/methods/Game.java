@@ -11,7 +11,12 @@ import org.rsbot.script.wrappers.RSTile;
  */
 public class Game extends MethodProvider {
 	
-	public enum CHAT_MODE {
+	/**
+	 * Different Types of Chat Modes
+	 * 
+	 * @author Aut0r
+	 */
+	public enum ChatMode {
 		VIEW, ON, FRIENDS, OFF, HIDE
 	}
 
@@ -98,14 +103,14 @@ public class Game extends MethodProvider {
 	 * Sets the trade accept mode
 	 * 
 	 * @param mode
-	 *            The <tt>CHAT_MODE</tt> to set the trade button to.
+	 *            The <tt>ChatMode</tt> to set the trade button to.
 	 * @return <tt>true</tt> if item in menu was clicked; otherwise
 	 *         <tt>false</tt>.
-	 * @see #setChatOption(int, CHAT_MODE)
+	 * @see #setChatOption(int, ChatMode)
 	 */
 	@Deprecated
-	public boolean setTradeMode(Game.CHAT_MODE mode) {
-		if (mode.equals(Game.CHAT_MODE.HIDE))
+	public boolean setTradeMode(Game.ChatMode mode) {
+		if (mode.equals(Game.ChatMode.HIDE))
 			throw new IllegalArgumentException("Bad mode: HIDE");
 		mouseChatButton(CHAT_OPTION_TRADE, false);
 		return methods.menu.doAction(mode.toString());
@@ -115,7 +120,7 @@ public class Game extends MethodProvider {
 	 * Left clicks the first chat button at the bottom of the screen to turn on
 	 * the showing of all chat messages.
 	 * 
-	 * @see #setChatOption(int, CHAT_MODE)
+	 * @see #setChatOption(int, ChatMode)
 	 */
 	@Deprecated
 	public void showAllChatMessages() {
@@ -126,7 +131,7 @@ public class Game extends MethodProvider {
 	 * Left clicks the game chat messages button at the bottom of the screen to
 	 * enable the showing of all game messages.
 	 * 
-	 * @see #setChatOption(int, CHAT_MODE)
+	 * @see #setChatOption(int, ChatMode)
 	 */
 	@Deprecated
 	public void showGameChatMessages() {
@@ -137,14 +142,14 @@ public class Game extends MethodProvider {
 	 * Set private chat mode.
 	 * 
 	 * @param mode
-	 *            The <tt>CHAT_MODE</tt> to set the private chat button to.
+	 *            The <tt>ChatMode</tt> to set the private chat button to.
 	 * @return <tt>true</tt> if item in menu was clicked; otherwise
 	 *         <tt>false</tt>.
-	 * @see #setChatOption(int, CHAT_MODE)
+	 * @see #setChatOption(int, ChatMode)
 	 */
 	@Deprecated
-	public boolean setPrivateChat(Game.CHAT_MODE mode) {
-		if (mode.equals(Game.CHAT_MODE.HIDE))
+	public boolean setPrivateChat(Game.ChatMode mode) {
+		if (mode.equals(Game.ChatMode.HIDE))
 			throw new IllegalArgumentException("Bad mode: HIDE");
 		mouseChatButton(CHAT_OPTION_PRIVATE, false);
 		return methods.menu.doAction(mode.toString());
@@ -154,13 +159,13 @@ public class Game extends MethodProvider {
 	 * Sets the public chat mode.
 	 * 
 	 * @param mode
-	 *            The <tt>CHAT_MODE</tt> to set the public chat button to.
+	 *            The <tt>ChatMode</tt> to set the public chat button to.
 	 * @return <tt>true</tt> if item in menu was clicked; otherwise
 	 *         <tt>false</tt>.
-	 * @see #setChatOption(int, CHAT_MODE)
+	 * @see #setChatOption(int, ChatMode)
 	 */
 	@Deprecated
-	public boolean setPublicChat(Game.CHAT_MODE mode) {
+	public boolean setPublicChat(Game.ChatMode mode) {
 		mouseChatButton(CHAT_OPTION_PUBLIC, false);
 		return methods.menu.doAction(mode.toString());
 	}
@@ -169,14 +174,14 @@ public class Game extends MethodProvider {
 	 * Sets the request assistance mode.
 	 * 
 	 * @param mode
-	 *            The <tt>CHAT_MODE</tt> to set the assist button to.
+	 *            The <tt>ChatMode</tt> to set the assist button to.
 	 * @return <tt>true</tt> if item in menu was clicked; otherwise
 	 *         <tt>false</tt>.
-	 * @see #setChatOption(int, CHAT_MODE)
+	 * @see #setChatOption(int, ChatMode)
 	 */
 	@Deprecated
-	public boolean setAssistMode(Game.CHAT_MODE mode) {
-		if (mode.equals(Game.CHAT_MODE.HIDE))
+	public boolean setAssistMode(Game.ChatMode mode) {
+		if (mode.equals(Game.ChatMode.HIDE))
 			throw new IllegalArgumentException("Bad mode: HIDE");
 		mouseChatButton(CHAT_OPTION_ASSIST, false);
 		return methods.menu.doAction(mode.toString());
@@ -186,14 +191,14 @@ public class Game extends MethodProvider {
 	 * Sets the clan chat mode
 	 * 
 	 * @param mode
-	 *            The <tt>CHAT_MODE</tt> to set the clan button to.
+	 *            The <tt>ChatMode</tt> to set the clan button to.
 	 * @return <tt>true</tt> if item in menu was clicked; otherwise
 	 *         <tt>false</tt>.
-	 * @see #setChatOption(int, CHAT_MODE)
+	 * @see #setChatOption(int, ChatMode)
 	 */
 	@Deprecated
-	public boolean setClanMode(Game.CHAT_MODE mode) {
-		if (mode.equals(Game.CHAT_MODE.HIDE))
+	public boolean setClanMode(Game.ChatMode mode) {
+		if (mode.equals(Game.ChatMode.HIDE))
 			throw new IllegalArgumentException("Bad mode: HIDE");
 		mouseChatButton(CHAT_OPTION_CLAN, false);
 		return methods.menu.doAction(mode.toString());
@@ -205,11 +210,11 @@ public class Game extends MethodProvider {
 	 * @param chatOption
 	 *            one of CHAT_OPTION_
 	 * @param mode
-	 *            one of CHAT_MODE
+	 *            one of ChatMode
 	 * @return <tt>true</tt> if item was clicked correctly; otherwise
 	 *         <tt>false</tt>
 	 */
-	public boolean setChatOption(int chatOption, CHAT_MODE mode) {
+	public boolean setChatOption(int chatOption, ChatMode mode) {
 		mouseChatButton(chatOption, false);
 		return methods.menu.doAction(mode.toString());
 	}
@@ -252,6 +257,41 @@ public class Game extends MethodProvider {
 	 * @return <tt>true</tt> if tab successfully selected; otherwise
 	 *         <tt>false</tt>.
 	 */
+	public boolean open(final int tab, final boolean functionKey) {
+		/*
+		 * Only attempts by fn key if there is a valid hotkey available Returns
+		 * faster when the new tab has been selected
+		 */
+		if (tab == getCurrentTab())
+			return true;
+		if (functionKey && tab < TAB_FUNCTION_KEYS.length
+				&& TAB_FUNCTION_KEYS[tab] != 0) {
+			methods.keyboard.pressKey((char) TAB_FUNCTION_KEYS[tab]);
+			sleep(random(80, 200));
+			methods.keyboard.releaseKey((char) TAB_FUNCTION_KEYS[tab]);
+		} else {
+			org.rsbot.client.RSInterface iTab = methods.gui.getTab(tab);
+			if (iTab == null)
+				return false;
+			methods.interfaces.getComponent(iTab.getID()).doClick();
+		}
+		for (int i = 0; i < 4; i++) {
+			if (tab == getCurrentTab())
+				break;
+			sleep(random(100, 150));
+		}
+		return tab == getCurrentTab();
+	}
+	
+	/**
+	 * Opens the specified tab at the specified index.
+	 * 
+	 * @param tab
+	 *            The tab to open, functionKey if wanting to use function keys
+	 *            to switch.
+	 * @return <tt>true</tt> if tab successfully selected; otherwise
+	 *         <tt>false</tt>.
+	 */
 	public boolean openTab(int tab, boolean functionKey) {
 		// Check current tab
 		if (tab == getCurrentTab())
@@ -275,6 +315,7 @@ public class Game extends MethodProvider {
 		sleep(random(400, 600));
 		return tab == getCurrentTab();
 	}
+
 
 	/**
 	 * Closes the currently open tab if in resizable mode.

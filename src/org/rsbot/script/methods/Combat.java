@@ -2,7 +2,9 @@ package org.rsbot.script.methods;
 
 import java.util.ArrayList;
 
+import org.rsbot.script.wrappers.RSCharacter;
 import org.rsbot.script.wrappers.RSComponent;
+import org.rsbot.script.wrappers.RSNPC;
 
 /**
  * Combat related operations.
@@ -12,6 +14,7 @@ public class Combat extends MethodProvider {
 	/**
 	 * Modern prayers.
 	 */
+	@Deprecated
 	public static enum Prayer {
 
 		THICK_SKIN(0, 1), BURST_OF_STRENGTH(1, 4), CLARITY_OF_THOUGHT(2, 7), SHARP_EYE(
@@ -36,16 +39,16 @@ public class Combat extends MethodProvider {
 
 		private int index;
 		private int level;
-
+		@Deprecated
 		Prayer(int index, int level) {
 			this.index = index;
 			this.level = level;
 		}
-
+		@Deprecated
 		public int getIndex() {
 			return index;
 		}
-
+		@Deprecated
 		public int getRequiredLevel() {
 			return level;
 		}
@@ -202,6 +205,7 @@ public class Combat extends MethodProvider {
 	 *            The prayer to check.
 	 * @return <tt>true</tt> if enabled; otherwise <tt>false</tt>.
 	 */
+	@Deprecated
 	public boolean isPrayerOn(Prayer prayer) {
 		RSComponent[] prayers = methods.interfaces.getComponent(271, 7)
 				.getComponents();
@@ -219,6 +223,7 @@ public class Combat extends MethodProvider {
 	 * 
 	 * @return <tt>true</tt> if quick prayer is on; otherwise <tt>false</tt>.
 	 */
+	@Deprecated
 	public boolean isQuickPrayerOn() {
 		return methods.interfaces.getComponent(Game.INTERFACE_PRAYER_ORB, 2)
 				.getBackgroundColor() == 782;
@@ -234,6 +239,7 @@ public class Combat extends MethodProvider {
 	 * @return <tt>true</tt> if the interface was clicked; otherwise
 	 *         <tt>false</tt>.
 	 */
+	@Deprecated
 	public boolean setPrayer(Prayer prayer, boolean activate) {
 		methods.game.openTab(Game.TAB_PRAYER);
 		return methods.interfaces.getComponent(271, 7).getComponents()[prayer
@@ -250,6 +256,7 @@ public class Combat extends MethodProvider {
 	 * @return An <code>RSComponent</code> array containing all the components
 	 *         that represent selected prayers.
 	 */
+	@Deprecated
 	public RSComponent[] getSelectedPrayers() {
 		ArrayList<RSComponent> selected = new ArrayList<RSComponent>();
 		RSComponent[] prayers = methods.interfaces.getComponent(271, 7)
@@ -316,4 +323,32 @@ public class Combat extends MethodProvider {
 				.getRealLevel(Skills.CONSTITUTION));
 	}
 
+	/**
+	 * Checks if your character is interacting with an Npc.
+	 * 
+	 * @param npc
+	 *            The Npc we want to fight.
+	 * @return <tt>true</tt> if interacting; otherwise <tt>false</tt>.
+	 */
+	public boolean isAttacking(final RSNPC npc) {
+		// Helpful for new scripters confused by the function of isInCombat()
+		RSCharacter interact = methods.players.getMyPlayer().getInteracting();
+		return interact != null && interact.equals(npc);
+	}
+	
+	/**
+	 * Checks whether the desired Npc is dead.
+	 * 
+	 * @param npc
+	 *            The RSNPC to check.
+	 * @return <tt>true</tt> if the Npc is dead or dying; otherwise
+	 *         <tt>false</tt>.
+	 */
+	public boolean isDead(final RSNPC npc) {
+		// getHPPercent() can return 0 when the Npc has a sliver of health left
+		// getAnimation() confirms a death animation is playing (to prevent false positives)
+		// getInteracting() confirms because it will no longer interact if dead/dying
+		return npc == null || !npc.isValid() || (npc.getHPPercent() == 0 && npc.getAnimation() != -1 && npc.getInteracting() == null);
+	}
+	
 }

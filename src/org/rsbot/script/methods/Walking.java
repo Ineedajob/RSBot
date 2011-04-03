@@ -118,6 +118,37 @@ public class Walking extends MethodProvider {
 	}
 
 	/**
+	 * Walks to the given tile using the minimap with given randomness.
+	 * 
+	 * @param t
+	 *            The tile to walk to.
+	 * @param r
+	 *            The maximum deviation from the tile to allow.
+	 * @return <tt>true</tt> if the tile was clicked; otherwise <tt>false</tt>.
+	 */
+	public boolean walkTileMM(final RSTile t, final int r) {
+		// Just a few ideas that could improve this method.
+		RSTile dest = r > 0 ? new RSTile(t.getX() + random(-r, r + 1), t.getY()
+				+ random(-r, r + 1)) : t;
+		if (methods.players.getMyPlayer().getLocation().equals(dest))
+			return false;
+		Point p = methods.calc.tileToMinimap(dest);
+		if (p.x == -1) {
+			dest = getClosestTileOnMap(t);
+			p = methods.calc.tileToMinimap(dest);
+		}
+		if (p.x != -1) {
+			methods.mouse.move(p);
+			p = methods.calc.tileToMinimap(dest);
+			if (p.x != -1) {
+				methods.mouse.click(p, true);
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
 	 * Walks to a tile using onScreen clicks and not the MiniMap. If the tile is
 	 * not on the screen, it will find the closest tile that is on screen and it
 	 * will walk there instead.

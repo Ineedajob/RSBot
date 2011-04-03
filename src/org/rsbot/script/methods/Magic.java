@@ -8,6 +8,11 @@ import org.rsbot.script.wrappers.RSInterface;
  */
 public class Magic extends MethodProvider {
 
+	/**
+	 * Provides Magic Book(s) Information.
+	 * 
+	 * @author Jacmob, Aut0r
+	 */
 	public static enum Book {
 
 		MODERN(192), ANCIENT(193), LUNAR(430);
@@ -191,6 +196,15 @@ public class Magic extends MethodProvider {
 		return methods.client.isSpellSelected();
 	}
 
+	/**
+	 * Determines whether a spell is currently set to autocast.
+	 * 
+	 * @return <tt>true</tt> if autocasting; otherwise <tt>false</tt>.
+	 */
+	public boolean isAutoCasting() {
+		return methods.combat.getFightMode() == 4;
+	}
+	
 	/**
 	 * Clicks a specified spell, opens magic tab if not open and uses interface
 	 * of the spell to click it, so it works if the spells are layout in any
