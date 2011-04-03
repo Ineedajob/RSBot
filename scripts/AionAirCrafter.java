@@ -1,3 +1,10 @@
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Point;
+import java.awt.Polygon;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.rsbot.event.events.MessageEvent;
 import org.rsbot.event.listeners.MessageListener;
 import org.rsbot.event.listeners.PaintListener;
@@ -17,15 +24,9 @@ import org.rsbot.script.wrappers.RSPath;
 import org.rsbot.script.wrappers.RSTile;
 import org.rsbot.script.wrappers.RSTilePath;
 
-import java.awt.*;
-import java.util.HashSet;
-import java.util.Set;
-
-@ScriptManifest(authors = "Aion",
-		name = "Aion's Air Crafter",
-		version = 0.2,
-		description = "Either wear an air tiara or have an air talisman in your inventory.")
-public class AionAirCrafter extends Script implements PaintListener, MessageListener {
+@ScriptManifest(authors = "Aion", name = "Aion's Air Crafter", version = 0.2, description = "Either wear an air tiara or have an air talisman in your inventory.")
+public class AionAirCrafter extends Script implements PaintListener,
+		MessageListener {
 
 	public static interface Constants {
 
@@ -43,27 +44,31 @@ public class AionAirCrafter extends Script implements PaintListener, MessageList
 
 		int NPC_BANKER = 5912;
 
-		double VERSION = AionAirCrafter.class.getAnnotation(ScriptManifest.class).version();
+		double VERSION = AionAirCrafter.class.getAnnotation(
+				ScriptManifest.class).version();
 
 		Filter<RSNPC> FILTER_NPC = new Filter<RSNPC>() {
+			@Override
 			public boolean accept(RSNPC t) {
 				return t != null && t.getID() == Constants.NPC_BANKER;
 			}
 		};
 
-		RSTile[] PATH = {
-				new RSTile(3185, 3434), new RSTile(3173, 3428),
+		RSTile[] PATH = { new RSTile(3185, 3434), new RSTile(3173, 3428),
 				new RSTile(3159, 3423), new RSTile(3147, 3415),
-				new RSTile(3135, 3407), new RSTile(3129, 3405)
-		};
+				new RSTile(3135, 3407), new RSTile(3129, 3405) };
 
-		RSArea AREA_ALTAR = new RSArea(new RSTile(2835, 4823), new RSTile(2851, 4843));
+		RSArea AREA_ALTAR = new RSArea(new RSTile(2835, 4823), new RSTile(2851,
+				4843));
 
-		RSArea AREA_BANK = new RSArea(new RSTile(3178, 3431), new RSTile(3195, 3447));
+		RSArea AREA_BANK = new RSArea(new RSTile(3178, 3431), new RSTile(3195,
+				3447));
 
-		RSArea AREA_RUINS = new RSArea(new RSTile(3122, 3401), new RSTile(3132, 3409));
+		RSArea AREA_RUINS = new RSArea(new RSTile(3122, 3401), new RSTile(3132,
+				3409));
 
-		RSArea AREA_MUSICIAN = new RSArea(new RSTile(3149, 3419), new RSTile(3157, 3424));
+		RSArea AREA_MUSICIAN = new RSArea(new RSTile(3149, 3419), new RSTile(
+				3157, 3424));
 	}
 
 	public static abstract class Action {
@@ -77,6 +82,7 @@ public class AionAirCrafter extends Script implements PaintListener, MessageList
 
 	public class BankAction extends Action {
 
+		@Override
 		public String getDesc() {
 			if (!bank.isOpen()) {
 				return "Opening bank.";
@@ -86,15 +92,19 @@ public class AionAirCrafter extends Script implements PaintListener, MessageList
 			return "Withdrawing items.";
 		}
 
+		@Override
 		public boolean isValid() {
 			return !canCraft() && inBank();
 		}
 
+		@Override
 		public void process() {
 			if (bank.isOpen()) {
 				if (inventory.contains(Constants.ITEM_AIR_RUNE)) {
-					if (inventory.containsOneOf(Constants.ITEM_AIR_TALISMAN, Constants.ITEM_RUNE_ESS)) {
-						bank.depositAllExcept(Constants.ITEM_AIR_TALISMAN, Constants.ITEM_RUNE_ESS);
+					if (inventory.containsOneOf(Constants.ITEM_AIR_TALISMAN,
+							Constants.ITEM_RUNE_ESS)) {
+						bank.depositAllExcept(Constants.ITEM_AIR_TALISMAN,
+								Constants.ITEM_RUNE_ESS);
 					} else {
 						bank.depositAll();
 					}
@@ -118,7 +128,7 @@ public class AionAirCrafter extends Script implements PaintListener, MessageList
 						}
 						waitForIface(Bank.INTERFACE_BANK, random(600, 800));
 					} else {
-						camera.turnToCharacter(banker);
+						camera.turnTo(banker);
 						if (!banker.isOnScreen()) {
 							walking.getPath(banker.getLocation()).traverse();
 						}
@@ -130,18 +140,20 @@ public class AionAirCrafter extends Script implements PaintListener, MessageList
 
 	public abstract class ObjectAction extends Action {
 
-		private String action;
-		private int id;
+		private final String action;
+		private final int id;
 
 		public ObjectAction(String action, int id) {
 			this.action = action;
 			this.id = id;
 		}
 
+		@Override
 		public String getDesc() {
 			return "Interacting with object.";
 		}
 
+		@Override
 		public void process() {
 			RSObject object = objects.getNearest(id);
 			if (object != null) {
@@ -151,7 +163,7 @@ public class AionAirCrafter extends Script implements PaintListener, MessageList
 						waitToMove(random(600, 900));
 					}
 				} else {
-					camera.turnToObject(object);
+					camera.turnTo(object);
 					if (!object.isOnScreen()) {
 						walking.getPath(object.getLocation()).traverse();
 					}
@@ -162,7 +174,7 @@ public class AionAirCrafter extends Script implements PaintListener, MessageList
 
 	public abstract class WalkToArea extends Action {
 
-		private RSPath path;
+		private final RSPath path;
 
 		public WalkToArea(RSPath path) {
 			this.path = path;
@@ -172,16 +184,21 @@ public class AionAirCrafter extends Script implements PaintListener, MessageList
 
 		protected abstract boolean isTargetValid();
 
+		@Override
 		public boolean isValid() {
 			return isTargetValid();
 		}
 
+		@Override
 		public void process() {
 			if (walking.getEnergy() < 20) {
 				if (canRest() && inMusician()) {
-					RSTilePath tilePath = walking.newTilePath(Constants.AREA_MUSICIAN.getTileArray());
+					RSTilePath tilePath = walking
+							.newTilePath(Constants.AREA_MUSICIAN.getTileArray());
 					if (!tilePath.traverse()) {
-						walking.newTilePath(new RSTile[]{Constants.AREA_MUSICIAN.getCentralTile()}).traverse();
+						walking.newTilePath(
+								new RSTile[] { Constants.AREA_MUSICIAN
+										.getCentralTile() }).traverse();
 					}
 					waitToMove(random(600, 900));
 					walking.rest(100);
@@ -218,14 +235,17 @@ public class AionAirCrafter extends Script implements PaintListener, MessageList
 				return "Entering mysterious ruins.";
 			}
 
+			@Override
 			public boolean isValid() {
 				return canCraft() && inRuins();
 			}
 
+			@Override
 			public void process() {
 				if (inventory.contains(Constants.ITEM_AIR_TALISMAN)) {
 					if (!inventory.isItemSelected()) {
-						inventory.getItem(Constants.ITEM_AIR_TALISMAN).doClick(true);
+						inventory.getItem(Constants.ITEM_AIR_TALISMAN).doClick(
+								true);
 					} else {
 						RSItem selItem = inventory.getSelectedItem();
 						if (selItem.getID() != Constants.ITEM_AIR_TALISMAN) {
@@ -248,7 +268,7 @@ public class AionAirCrafter extends Script implements PaintListener, MessageList
 								waitToMove(random(600, 900));
 							}
 						} else {
-							camera.turnToObject(obj);
+							camera.turnTo(obj);
 							if (!obj.isOnScreen())
 								walking.getPath(obj.getLocation()).traverse();
 						}
@@ -267,16 +287,19 @@ public class AionAirCrafter extends Script implements PaintListener, MessageList
 				return "Crafting runes.";
 			}
 
+			@Override
 			public boolean isValid() {
 				return canCraft() && inAltar();
 			}
 
+			@Override
 			public void process() {
 				super.process();
 				sleep(200, 400);
 				waitForAnim(random(900, 1200));
 				if (random(1, 6) == 3) {
-					RSObject portal = objects.getNearest(Constants.OBJECT_PORTAL);
+					RSObject portal = objects
+							.getNearest(Constants.OBJECT_PORTAL);
 					if (portal != null) {
 						Point toClick = getScreenPoint(portal);
 						if (toClick.x != -1 && toClick.y != -1) {
@@ -298,14 +321,17 @@ public class AionAirCrafter extends Script implements PaintListener, MessageList
 
 		actions.add(new ObjectAction("Enter", Constants.OBJECT_PORTAL) {
 
+			@Override
 			public String getDesc() {
 				return "Leaving mysterious ruins";
 			}
 
+			@Override
 			public boolean isValid() {
 				return !canCraft() && inAltar();
 			}
 
+			@Override
 			public void process() {
 				if (menu.isOpen()) {
 					if (menu.contains("Enter")) {
@@ -321,16 +347,20 @@ public class AionAirCrafter extends Script implements PaintListener, MessageList
 			}
 		});
 
-		actions.add(new WalkToArea(walking.newTilePath(Constants.PATH).reverse()) {
+		actions.add(new WalkToArea(walking.newTilePath(Constants.PATH)
+				.reverse()) {
 
+			@Override
 			protected boolean canRest() {
 				return true;
 			}
 
+			@Override
 			protected boolean isTargetValid() {
 				return !canCraft() && !inAltar() && !inBank();
 			}
 
+			@Override
 			public String getDesc() {
 				return "Heading to bank";
 			}
@@ -338,14 +368,17 @@ public class AionAirCrafter extends Script implements PaintListener, MessageList
 
 		actions.add(new WalkToArea(walking.newTilePath(Constants.PATH)) {
 
+			@Override
 			protected boolean canRest() {
 				return true;
 			}
 
+			@Override
 			protected boolean isTargetValid() {
 				return canCraft() && !inRuins() && !inAltar();
 			}
 
+			@Override
 			public String getDesc() {
 				return "Heading to mysterious ruins";
 			}
@@ -356,6 +389,7 @@ public class AionAirCrafter extends Script implements PaintListener, MessageList
 		return true;
 	}
 
+	@Override
 	public int loop() {
 		if (interfaces.get(741).isValid()) {
 			interfaces.getComponent(741, 9).doClick();
@@ -394,6 +428,7 @@ public class AionAirCrafter extends Script implements PaintListener, MessageList
 		return random(200, 400);
 	}
 
+	@Override
 	public void onRepaint(Graphics g) {
 		if (game.isLoggedIn() && !game.isLoginScreen()) {
 			g.setColor(new Color(16, 16, 16, 123));
@@ -409,14 +444,17 @@ public class AionAirCrafter extends Script implements PaintListener, MessageList
 			g.drawString("Aion's Air Crafter v" + getVersion(), 65, 192);
 			g.drawString("Runtime: " + getRuntime(), 13, 206);
 
-			g.drawString("Crafted " + format(getRunesCrafted()) + " air runes", 13, 225);
+			g.drawString("Crafted " + format(getRunesCrafted()) + " air runes",
+					13, 225);
 			g.drawString("Gained " + format(getExpGained()) + " exp", 13, 239);
-			g.drawString("Runes/Hour: " + format((int) getRunesHour()), 140, 225);
+			g.drawString("Runes/Hour: " + format((int) getRunesHour()), 140,
+					225);
 			g.drawString("Exp/Hour: " + format((int) getExpHour()), 140, 239);
 
 			int lvlGained = getLvlGained();
 			String text = lvlGained == 0 ? "runecrafting" : "";
-			g.drawString("Current " + text + " level: " + getRunecraftLvl(), 13, 258);
+			g.drawString("Current " + text + " level: " + getRunecraftLvl(),
+					13, 258);
 			if (lvlGained != 0) {
 				text = lvlGained == 1 ? "" : "s";
 				g.drawString("Gained " + lvlGained + " level" + text, 140, 258);
@@ -448,6 +486,7 @@ public class AionAirCrafter extends Script implements PaintListener, MessageList
 		g.drawOval(mPoint.x - 9, mPoint.y - 9, 18, 18);
 	}
 
+	@Override
 	public void messageReceived(MessageEvent e) {
 		String message = e.getMessage().toLowerCase();
 		if (message.contains("bind the temple")) {
@@ -459,38 +498,39 @@ public class AionAirCrafter extends Script implements PaintListener, MessageList
 
 	private void antiban() {
 		switch (random(1, 50)) {
-			case 2:
-				if (random(1, 5) != 1) {
-					break;
-				}
-				mouse.moveSlightly();
+		case 2:
+			if (random(1, 5) != 1) {
 				break;
-			case 6:
-				if (random(1, 18) != 7) {
-					break;
-				}
-				if (game.getCurrentTab() != Game.TAB_STATS) {
-					game.openTab(Game.TAB_STATS);
-					sleep(500, 900);
-				}
-				skills.doHover(Skills.INTERFACE_RUNECRAFTING);
-				sleep(random(1400, 2000), 3000);
-				if (random(0, 5) != 3) {
-					break;
-				}
-				mouse.moveSlightly();
+			}
+			mouse.moveSlightly();
+			break;
+		case 6:
+			if (random(1, 18) != 7) {
 				break;
-			case 9:
-			case 14:
-			case 17:
-			case 25:
-				camera.setAngle(random(-360, 360));
+			}
+			if (game.getCurrentTab() != Game.TAB_STATS) {
+				game.openTab(Game.TAB_STATS);
+				sleep(500, 900);
+			}
+			skills.doHover(Skills.INTERFACE_RUNECRAFTING);
+			sleep(random(1400, 2000), 3000);
+			if (random(0, 5) != 3) {
 				break;
-			case 30:
-			case 34:
-			case 37:
-			case 40:
-				camera.setPitch(camera.getPitch() >= random(65, 101) ? random(0, 61) : random(61, 101));
+			}
+			mouse.moveSlightly();
+			break;
+		case 9:
+		case 14:
+		case 17:
+		case 25:
+			camera.setAngle(random(-360, 360));
+			break;
+		case 30:
+		case 34:
+		case 37:
+		case 40:
+			camera.setPitch(camera.getPitch() >= random(65, 101) ? random(0, 61)
+					: random(61, 101));
 		}
 	}
 

@@ -42,19 +42,25 @@ import org.rsbot.script.wrappers.RSPlayer;
 import org.rsbot.script.wrappers.RSTile;
 
 @ScriptManifest(authors = "Aut0r", keywords = "Crafting", name = "Aut0Jewelry", version = 1.21, description = "Supports Jewelry and Gem Cutting")
-
 public class Aut0Jewelry extends Script implements PaintListener, MouseListener {
 	public double version = 1.21;
 	public String scriptName = "Aut0Jewelry";
 	public boolean canceled = false, gem, globalBanking = false;
 	public String status, craftLoc, hh, ss, mm, action, t;
-	public int cosmic = 564, goldBarID = 2357, silverBarID = 2355, openBank = 0, failCounter = 0, chiselID;
-	public int gemID, sapphire = 1607, emerald = 1605, ruby = 1603, diamond = 1601, dragonstone = 1615, uncutGemID;
-	public int uncutSapphire = 1623, uncutEmerald = 1621, uncutRuby = 1619, uncutDiamond = 1617, uncutDragonstone = 1631;
+	public int cosmic = 564, goldBarID = 2357, silverBarID = 2355,
+			openBank = 0, failCounter = 0, chiselID;
+	public int gemID, sapphire = 1607, emerald = 1605, ruby = 1603,
+			diamond = 1601, dragonstone = 1615, uncutGemID;
+	public int uncutSapphire = 1623, uncutEmerald = 1621, uncutRuby = 1619,
+			uncutDiamond = 1617, uncutDragonstone = 1631;
 	public int barID, gainedXp, gainedLvl;
-	public String furnaceAction, gemName, itemName, barName, enchantedName, spellName;
-	public int animation, session, itemsInBank, bankID, smithID, itemID, mouldID, exp, itemsPrice, gemPrice = 0, barPrice = 0, itemsMade, startExp, startLvl, ifParent, ifChild, enchantedID, component, speedMouse;
-	public long startTime, checkMin=1, totalseconds;
+	public String furnaceAction, gemName, itemName, barName, enchantedName,
+			spellName;
+	public int animation, session, itemsInBank, bankID, smithID, itemID,
+			mouldID, exp, itemsPrice, gemPrice = 0, barPrice = 0, itemsMade,
+			startExp, startLvl, ifParent, ifChild, enchantedID, component,
+			speedMouse;
+	public long startTime, checkMin = 1, totalseconds;
 	public float secCraExp;
 	int expToCraLvl = 0, secCraLvl, minCraLvl, hrCraLvl, itemsTL;
 	String secC0, minC0, hrC0;
@@ -69,17 +75,17 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 	private static final int LAMP_ID = 2528;
 	private static final int MYSTERY_BOX_ID = 6199;
 	private static final int BOX_ID = 14664;
-	
 
 	private enum State {
 		OPENBANK, OPENCHEST, BANK, CRAFT, WALKTOBANK, WALKTOFURNACE, CUTTING, OPENGBANK, GBANK, ANTIBAN, CHILL
 	}
 
 	public State getState() {
-		if(globalBanking) {
+		if (globalBanking) {
 			if (inventory.contains(chiselID) && inventory.contains(uncutGemID)) {
 				return State.CUTTING;
-			} else if (!inventory.contains(chiselID) || !inventory.contains(uncutGemID)) {
+			} else if (!inventory.contains(chiselID)
+					|| !inventory.contains(uncutGemID)) {
 				if (!bank.isOpen()) {
 					return State.OPENGBANK;
 				} else {
@@ -88,7 +94,7 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 			}
 		} else {
 			int randAntiBanGen = random(1, 40);
-			if(randAntiBanGen <= 2 && !atBank()) {
+			if (randAntiBanGen <= 2 && !atBank()) {
 				return State.ANTIBAN;
 			}
 			//
@@ -121,41 +127,46 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 			// } else {
 			// return State.WALKTOBANK;
 			// }
-			// 
-			if(atBank()) {
-				if(inventory.contains(itemID)) {
-					if(!bank.isOpen()) {
+			//
+			if (atBank()) {
+				if (inventory.contains(itemID)) {
+					if (!bank.isOpen()) {
 						return State.OPENBANK;
 					} else {
 						return State.BANK;
 					}
-				} else if(atBank() && inventory.contains(enchantedID) && !inventory.contains(itemID)) {
-						if(!bank.isOpen()) {
-							return State.OPENBANK;
-						} else {
-							return State.BANK;
-						}				
-				} else if(atBank() && !inventory.contains(barID) || !inventory.contains(gemID) && gem) {
-					if(!bank.isOpen()) {
+				} else if (atBank() && inventory.contains(enchantedID)
+						&& !inventory.contains(itemID)) {
+					if (!bank.isOpen()) {
 						return State.OPENBANK;
 					} else {
 						return State.BANK;
 					}
-				} else if(atBank() && readyToCraft()) {
+				} else if (atBank() && !inventory.contains(barID)
+						|| !inventory.contains(gemID) && gem) {
+					if (!bank.isOpen()) {
+						return State.OPENBANK;
+					} else {
+						return State.BANK;
+					}
+				} else if (atBank() && readyToCraft()) {
 					return State.WALKTOFURNACE;
 				}
-			} 
-			if(atFurnace()) {
-				if(inventory.getCount(barID) >= 1 || inventory.getCount(gemID) >= 1) {
+			}
+			if (atFurnace()) {
+				if (inventory.getCount(barID) >= 1
+						|| inventory.getCount(gemID) >= 1) {
 					return State.CRAFT;
-				} else if(inventory.getCount(barID) < 1 || inventory.getCount(gemID) < 1) {
+				} else if (inventory.getCount(barID) < 1
+						|| inventory.getCount(gemID) < 1) {
 					return State.WALKTOBANK;
 				}
 			}
-			if(!atBank() || !atFurnace()) {
-				if(inventory.getCount(barID) >= 1) {
+			if (!atBank() || !atFurnace()) {
+				if (inventory.getCount(barID) >= 1) {
 					return State.WALKTOFURNACE;
-				} else if(!inventory.contains(barID) || inventory.contains(itemID)) {
+				} else if (!inventory.contains(barID)
+						|| inventory.contains(itemID)) {
 					return State.WALKTOBANK;
 				}
 			}
@@ -173,19 +184,20 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 		try {
 			GUI g = new GUI();
 			g.setVisible(true);
-			while(g.isVisible()) sleep(100);
-			if(!globalBanking) {
+			while (g.isVisible())
+				sleep(100);
+			if (!globalBanking) {
 				path = generatePath(pathToBank);
 				structType = pathToBank;
 				path = generatePath(pathToFurnace);
 				structType = pathToFurnace;
 			}
-			if(canceled) {
+			if (canceled) {
 				log.severe("User terminated script from gui.");
 				log.severe("Quitting...");
 				return false;
 			}
-			if(game.isLoggedIn()) {
+			if (game.isLoggedIn()) {
 				startExp = skills.getCurrentExp(Skills.CRAFTING);
 				startLvl = skills.getCurrentLevel(Skills.CRAFTING);
 			} else {
@@ -202,43 +214,45 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 	}
 
 	public void priceLoader() {
-		if(gem && !globalBanking) {
-			log("Loading "+gemName+" Prices...");
+		if (gem && !globalBanking) {
+			log("Loading " + gemName + " Prices...");
 			gemPrice = grandExchange.lookup(gemID).getGuidePrice();
-			log("Loading "+barName+" Prices...");
+			log("Loading " + barName + " Prices...");
 			barPrice = grandExchange.lookup(barID).getGuidePrice();
-			log("Loading "+itemName+" Prices...");
+			log("Loading " + itemName + " Prices...");
 			itemsPrice = grandExchange.lookup(itemID).getGuidePrice();
 		} else {
-			log("Loading "+barName+" Prices...");
+			log("Loading " + barName + " Prices...");
 			barPrice = grandExchange.lookup(barID).getGuidePrice();
-			log("Loading "+itemName+" Prices...");
+			log("Loading " + itemName + " Prices...");
 			itemsPrice = grandExchange.lookup(itemID).getGuidePrice();
 		}
 
 	}
 
-
+	@Override
 	public int loop() {
 		try {
-			if(bank.isOpen()) {
-				if(inventory.containsOneOf(BOX_ID, BOOK_KNOWLEDGE_ID, LAMP_ID, MYSTERY_BOX_ID)) {
+			if (bank.isOpen()) {
+				if (inventory.containsOneOf(BOX_ID, BOOK_KNOWLEDGE_ID, LAMP_ID,
+						MYSTERY_BOX_ID)) {
 					bank.close();
-					sleep(random(300,500));
+					sleep(random(300, 500));
 					log("Rewards-Box failsafed.");
 					game.openTab(Game.TAB_INVENTORY);
 					return 200;
-				}		
+				}
 			}
-			if(!bank.isOpen() && !walking.isRunEnabled() && walking.getEnergy() > 60){
+			if (!bank.isOpen() && !walking.isRunEnabled()
+					&& walking.getEnergy() > 60) {
 				walking.setRun(true);
 				waitForEnableRun(1000);
 			}
-			furnaceAction = "Use "+barName+" -> Furnace";
+			furnaceAction = "Use " + barName + " -> Furnace";
 			RSObject banker = objects.getNearest(bankID);
 			mouse.setSpeed(speedMouse);
-			final State state = getState(); //Gets the state	    
-			switch (state) { //Switches between these states based on getState
+			final State state = getState(); // Gets the state
+			switch (state) { // Switches between these states based on getState
 			case OPENGBANK:
 				status = "Opening Bank";
 				if (openBank < 2) {
@@ -288,10 +302,9 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 			case CUTTING:
 				status = "Cutting " + barName;
 				if (!isCutting()
-						&& interfaces.getComponent(ifParent,
-								ifChild).isValid()) {
-					interfaces.getComponent(ifParent, ifChild)
-					.doAction("Cut All");
+						&& interfaces.getComponent(ifParent, ifChild).isValid()) {
+					interfaces.getComponent(ifParent, ifChild).doAction(
+							"Cut All");
 				}
 				if (isCutting() && inventory.contains(uncutGemID)) {
 					sleep(random(500, 750));
@@ -309,8 +322,7 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 						}
 						if (inventory.isItemSelected()) {
 							if (RSI_uncut != null) {
-								RSI_uncut.doAction("Use Chisel -> "
-										+ barName);
+								RSI_uncut.doAction("Use Chisel -> " + barName);
 								waitForIF(interfaces.get(ifParent),
 										random(2000, 3000));
 							}
@@ -322,16 +334,16 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 			case OPENBANK:
 				status = "Opening Bank";
 				if (openBank < 2) {
-					if(!banker.doAction("Use-quickly")) {
-						camera.turnToObject(banker);
+					if (!banker.doAction("Use-quickly")) {
+						camera.turnTo(banker);
 					}
 					mouse.moveRandomly(50);
 					waitForBankIF(2000);
-					sleep(random(100,200));
+					sleep(random(100, 200));
 					openBank++;
 				} else {
-					game.openTab(random(0,17));
-					sleep(random(300,600));
+					game.openTab(random(0, 17));
+					sleep(random(300, 600));
 					game.openTab(Game.TAB_INVENTORY);
 					openBank = 0;
 				}
@@ -339,104 +351,109 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 			case OPENCHEST:
 				status = "Opening Bank Chest";
 				if (openBank < 2) {
-					if(!banker.doAction("Bank")) {
-						camera.turnToObject(banker);
+					if (!banker.doAction("Bank")) {
+						camera.turnTo(banker);
 					}
 					mouse.moveRandomly(50);
 					waitForBankIF(2000);
 					openBank++;
 				} else {
-					game.openTab(random(0,17));
-					sleep(random(300,600));
+					game.openTab(random(0, 17));
+					sleep(random(300, 600));
 					game.openTab(Game.TAB_INVENTORY);
 					openBank = 0;
 				}
 				break;
 			case BANK:
 				status = "Banking";
-				if(!bank.isOpen()) {
+				if (!bank.isOpen()) {
 					break;
 				}
 				openBank = 0;
-				if(inventory.contains(itemID)) {
+				if (inventory.contains(itemID)) {
 					bank.depositAllExcept(mouldID);
 					waitForDepositedItem(2500);
 				}
-				if(!gem){
-					if(checkBank(barID, 27) == 27) {
+				if (!gem) {
+					if (checkBank(barID, 27) == 27) {
 						withdraw(barID, itemsInBank);
 						waitForWithdrawnItem(barID, 2000);
-					} else if(checkBank(barID, 27) <= 26) {
+					} else if (checkBank(barID, 27) <= 26) {
 						log.severe("Last run.");
 						withdraw(barID, itemsInBank);
 						waitForWithdrawnItem(barID, 2000);
-					} 
+					}
 				} else {
-					if(checkBank(barID, 13) == 13) {
+					if (checkBank(barID, 13) == 13) {
 						withdraw(barID, itemsInBank);
 						waitForWithdrawnItem(barID, 2000);
-					} else if(checkBank(barID, 13) <= 12) {
+					} else if (checkBank(barID, 13) <= 12) {
 						log.severe("Last run.");
 						withdraw(barID, itemsInBank);
 						waitForWithdrawnItem(barID, 2000);
-					} 
-					if(checkBank(gemID, 13) == 13) {
+					}
+					if (checkBank(gemID, 13) == 13) {
 						withdraw(gemID, itemsInBank);
 						waitForWithdrawnItem(gemID, 2000);
-					} else if(checkBank(gemID, 13) <= 12) {
+					} else if (checkBank(gemID, 13) <= 12) {
 						log.severe("Last run.");
 						withdraw(gemID, itemsInBank);
 						waitForWithdrawnItem(gemID, 2000);
 					}
 				}
-				if(readyToCraft()) {
+				if (readyToCraft()) {
 					bank.close();
 					break;
 				}
 			case CRAFT:
 				status = "Crafting " + itemName;
-				if(interfaces.getComponent(ifParent, ifChild).isValid()) {
-					interfaces.getComponent(ifParent, ifChild).doAction("Make All");
+				if (interfaces.getComponent(ifParent, ifChild).isValid()) {
+					interfaces.getComponent(ifParent, ifChild).doAction(
+							"Make All");
 					sleep(random(400, 700));
-				} else if(!isIdle() && inventory.contains(barID)) {
-					if(!gem) {
+				} else if (!isIdle() && inventory.contains(barID)) {
+					if (!gem) {
 						sleep(random(750, 1000));
-					} else if(gem) {
+					} else if (gem) {
 						sleep(random(500, 750));
-					}					
-				} else if(isIdle() && !interfaces.getComponent(ifParent, ifChild).isValid()) {
+					}
+				} else if (isIdle()
+						&& !interfaces.getComponent(ifParent, ifChild)
+								.isValid()) {
 					RSObject smithObj = objects.getNearest(smithID);
 					RSItem itemOnFurn = inventory.getItem(barID);
-					if(smithObj != null && itemOnFurn != null && inventory.contains(barID)) {
-						if(!inventory.isItemSelected()) {
-							if(itemOnFurn != null) {
+					if (smithObj != null && itemOnFurn != null
+							&& inventory.contains(barID)) {
+						if (!inventory.isItemSelected()) {
+							if (itemOnFurn != null) {
 								itemOnFurn.doAction("Use");
 								waitForInventoryAction(1000);
-							} 
+							}
 						}
 						RSModel furModel = smithObj.getModel();
-						if(furModel != null) {
-							if(failCounter > 2) {
+						if (furModel != null) {
+							if (failCounter > 2) {
 								failCounter = 0;
 								inventory.clickSelectedItem();
 								break;
-							} 
-							if(doActionAtModel(furModel, furnaceAction)) {
-								waitForIF(interfaces.get(ifParent),random(2000,3000));
+							}
+							if (doActionAtModel(furModel, furnaceAction)) {
+								waitForIF(interfaces.get(ifParent),
+										random(2000, 3000));
 								break;
 							} else {
-								camera.turnToObject(smithObj);
+								camera.turnTo(smithObj);
 								failCounter++;
 							}
-							sleep(random(300, 600));	
-						} 
+							sleep(random(300, 600));
+						}
 					}
 				}
 				break;
 			case WALKTOFURNACE:
 				status = "Walking to Furnace";
 				try {
-					if(readyToCraft() && atFurnace()) {
+					if (readyToCraft() && atFurnace()) {
 						break;
 					}
 					if (step(path) == path.size()) {
@@ -444,12 +461,12 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 						structType = pathToFurnace;
 					}
 				} catch (Exception e) {
-				}		
+				}
 				break;
 			case WALKTOBANK:
 				status = "Walking to Bank";
 				try {
-					if(readyToBank() && atBank()) {
+					if (readyToBank() && atBank()) {
 						break;
 					}
 					if (step(path) == path.size()) {
@@ -457,15 +474,15 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 						structType = pathToBank;
 					}
 				} catch (Exception e) {
-				}	
+				}
 				break;
 			case ANTIBAN:
 				try {
 					int ran = random(0, 6);
 					switch (ran) {
 					case 0:
-						int cam = random(0,3);
-						switch(cam) {
+						int cam = random(0, 3);
+						switch (cam) {
 						case 0:
 							status = "Camera Thread 1";
 							new CameraRotateThread().start();
@@ -481,21 +498,21 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 							new CameraRotateThread().start();
 							break;
 						}
-						break;		
+						break;
 					case 1:
 						status = "Hover Player Thread";
 						hoverPlayer();
-						sleep(random(550,1800));
+						sleep(random(550, 1800));
 						mouse.moveRandomly(750);
 						sleep(random(400, 1000));
-						break;	
+						break;
 					case 2:
 						status = "Hover Object Thread";
 						hoverObject();
-						sleep(random(550,1800));
+						sleep(random(550, 1800));
 						mouse.moveRandomly(750);
 						sleep(random(400, 1000));
-						break;		
+						break;
 					case 3:
 						status = "Mouse Thread 1";
 						if (System.currentTimeMillis() - mouse.getPressTime() > 5000) {
@@ -531,7 +548,7 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 				break;
 			case CHILL:
 				break;
-			}	 
+			}
 		} catch (Exception ignored) {
 		}
 		return 50;
@@ -562,17 +579,18 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 		RSPlayer[] validPlayers = players.getAll();
 
 		player = validPlayers[random(0, validPlayers.length - 1)];
-		if(player != null) {
+		if (player != null) {
 			try {
 				String playerName = player.getName();
 				String myPlayerName = getMyPlayer().getName();
 				if (playerName.equals(myPlayerName)) {
 					return false;
 				}
-			} catch(NullPointerException e) {}
+			} catch (NullPointerException e) {
+			}
 			try {
 				RSTile targetLoc = player.getLocation();
-				//String name = player.getName();
+				// String name = player.getName();
 				Point checkPlayer = calc.tileToScreen(targetLoc);
 				if (calc.pointOnScreen(checkPlayer) && checkPlayer != null) {
 					mouse.click(checkPlayer, 5, 5, false);
@@ -602,16 +620,18 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 	public RSTile examineRandomObject(int scans) {
 		RSTile start = getMyPlayer().getLocation();
 		ArrayList<RSTile> possibleTiles = new ArrayList<RSTile>();
-		for(int h = 1; h < scans * scans; h += 2) {
-			for(int i = 0; i < h; i++) {
-				for(int j = 0; j < h; j++) {
-					int offset = (h + 1)/2 - 1;
-					if(i > 0 && i < h - 1) {
+		for (int h = 1; h < scans * scans; h += 2) {
+			for (int i = 0; i < h; i++) {
+				for (int j = 0; j < h; j++) {
+					int offset = (h + 1) / 2 - 1;
+					if (i > 0 && i < h - 1) {
 						j = h - 1;
 					}
-					RSTile tile = new RSTile(start.getX() - offset + i, start.getY() - offset + j);
+					RSTile tile = new RSTile(start.getX() - offset + i,
+							start.getY() - offset + j);
 					RSObject objectToList = objects.getTopAt(tile);
-					if(objectToList!= null && calc.tileOnScreen(objectToList.getLocation())) {
+					if (objectToList != null
+							&& calc.tileOnScreen(objectToList.getLocation())) {
 						possibleTiles.add(objectToList.getLocation());
 					}
 				}
@@ -620,45 +640,47 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 		if (possibleTiles.size() == 0) {
 			return null;
 		}
-		if(possibleTiles.size() > 0 && possibleTiles != null) {
-			final RSTile objectLoc = possibleTiles.get(random(0,possibleTiles.size()));
+		if (possibleTiles.size() > 0 && possibleTiles != null) {
+			final RSTile objectLoc = possibleTiles.get(random(0,
+					possibleTiles.size()));
 			Point objectPoint = calc.tileToScreen(objectLoc);
-			if(objectPoint != null) {
+			if (objectPoint != null) {
 				try {
 					mouse.move(objectPoint);
-					if(menu.doAction("Examine")) {
+					if (menu.doAction("Examine")) {
 					} else {
 					}
 					try {
-						sleep(random(100,500));
+						sleep(random(100, 500));
 					} catch (Exception ignored) {
 					}
-				} catch(NullPointerException ignored) {}
+				} catch (NullPointerException ignored) {
+				}
 			}
 		}
 		return null;
 	}
 
 	public boolean checkItem(int i) {
-		if(bank.isOpen() && bank.getCount(i) <= 1) {
+		if (bank.isOpen() && bank.getCount(i) <= 1) {
 			sleep(random(25, 100));
 			if (bank.isOpen() && bank.getCount(i) <= 1) {
 				sleep(random(100, 300));
 				if (bank.isOpen() && bank.getCount(i) <= 1) {
 					sleep(random(400, 600));
 					bank.close();
-					log.severe("[FETAL] Out of ("+i+"). Stopping...");
+					log.severe("[FETAL] Out of (" + i + "). Stopping...");
 					return false;
 				}
 			}
 		}
 		return true;
 	}
-	
+
 	public int checkBank(int itemID, int amountToWithdraw) {
-		if(checkItem(itemID)) {
-			if(bank.getCount(itemID) <= amountToWithdraw) {
-				itemsInBank = bank.getCount(itemID)-1;
+		if (checkItem(itemID)) {
+			if (bank.getCount(itemID) <= amountToWithdraw) {
+				itemsInBank = bank.getCount(itemID) - 1;
 			} else {
 				itemsInBank = amountToWithdraw;
 			}
@@ -674,12 +696,12 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 			int iters = random(10, 15);
 			while (--iters > 0 && !menu.contains(action)) {
 				mouse.move(model.getPoint());
-				sleep(random(20,60));
+				sleep(random(20, 60));
 				if (menu.contains(action)) {
-					sleep(random(20,60));
-					if(menu.contains(action)) {
-						sleep(random(20,60));
-						if(menu.contains(action)) {
+					sleep(random(20, 60));
+					if (menu.contains(action)) {
+						sleep(random(20, 60));
+						if (menu.contains(action)) {
 							break;
 						}
 					}
@@ -696,33 +718,36 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 	}
 
 	public boolean readyToCraft() {
-		if(!gem) {
-			if(inventory.contains(barID) && inventory.contains(mouldID)) {
+		if (!gem) {
+			if (inventory.contains(barID) && inventory.contains(mouldID)) {
 				return true;
 			} else {
 				return false;
-			}				
+			}
 		} else {
-			if(inventory.contains(barID) && inventory.contains(gemID) && inventory.contains(mouldID)) {
+			if (inventory.contains(barID) && inventory.contains(gemID)
+					&& inventory.contains(mouldID)) {
 				return true;
 			} else {
 				return false;
-			}	
+			}
 		}
 	}
+
 	public boolean readyToBank() {
-		if(inventory.contains(itemID) && !inventory.contains(barID)) {
+		if (inventory.contains(itemID) && !inventory.contains(barID)) {
 			return true;
 		} else {
 			return false;
 		}
 	}
+
 	public boolean isIdle() {
-		if(getMyPlayer().getAnimation() == -1) {
-			sleep(random(800,1000));
-			if(getMyPlayer().getAnimation() == -1) {
-				sleep(random(400,600));
-				if(getMyPlayer().getAnimation() == -1) {
+		if (getMyPlayer().getAnimation() == -1) {
+			sleep(random(800, 1000));
+			if (getMyPlayer().getAnimation() == -1) {
+				sleep(random(400, 600));
+				if (getMyPlayer().getAnimation() == -1) {
 					return true;
 				}
 			}
@@ -788,7 +813,7 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 			break;
 		}
 		return (inventory.getCount(true) > inventoryCount)
-		|| (inventory.getCount(true) == 28);
+				|| (inventory.getCount(true) == 28);
 	}
 
 	public boolean waitForIF(RSInterface iface, int timeout) {
@@ -826,7 +851,7 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 			sleep(100);
 		}
 		return false;
-	} 
+	}
 
 	private boolean waitForDepositedItem(int timeout) {
 		long start = System.currentTimeMillis();
@@ -863,56 +888,67 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 		return false;
 	}
 
+	@Override
 	public void mouseClicked(MouseEvent e) {
 	}
 
+	@Override
 	public void mousePressed(MouseEvent e) {
 	}
 
+	@Override
 	public void mouseReleased(MouseEvent e) {
 	}
 
+	@Override
 	public void mouseEntered(MouseEvent e) {
 	}
 
+	@Override
 	public void mouseExited(MouseEvent e) {
 	}
 
+	@Override
 	public void onRepaint(Graphics a) {
 		int currentExp = skills.getCurrentExp(Skills.CRAFTING);
 		int currentLvl = skills.getCurrentLevel(Skills.CRAFTING);
-		gainedXp = (int) currentExp - startExp;
-		gainedLvl = (int) currentLvl - startLvl;
-		itemsMade = (int) (gainedXp / exp);
-		int cutPerHour = (int) (itemsMade * 3600000D / (System.currentTimeMillis() - startTime));
-		int expPerHour = (int) ((gainedXp * 3600000D) / (System.currentTimeMillis() - startTime));
+		gainedXp = currentExp - startExp;
+		gainedLvl = currentLvl - startLvl;
+		itemsMade = (gainedXp / exp);
+		int cutPerHour = (int) (itemsMade * 3600000D / (System
+				.currentTimeMillis() - startTime));
+		int expPerHour = (int) ((gainedXp * 3600000D) / (System
+				.currentTimeMillis() - startTime));
 		double profit, r__pph;
-		if(gem) {
+		if (gem) {
 			profit = (double) ((itemsMade * itemsPrice) - ((barPrice * itemsMade) + (gemPrice * itemsMade))) / 1000;
-			r__pph = (double) ((itemsMade * itemsPrice * 3600000D) / ((System.currentTimeMillis() - startTime) - (+cutPerHour * gemPrice) + (+cutPerHour * barPrice)) / 1000);
+			r__pph = ((itemsMade * itemsPrice * 3600000D)
+					/ ((System.currentTimeMillis() - startTime)
+							- (+cutPerHour * gemPrice) + (+cutPerHour * barPrice)) / 1000);
 		} else {
 			profit = (double) ((itemsMade * itemsPrice) - (barPrice * itemsMade)) / 1000;
-			r__pph = (double) ((itemsMade * itemsPrice * 3600000D / (System.currentTimeMillis() - startTime) - (+cutPerHour * barPrice)) / 1000);
+			r__pph = ((itemsMade * itemsPrice * 3600000D
+					/ (System.currentTimeMillis() - startTime) - (+cutPerHour * barPrice)) / 1000);
 		}
-		long yr__pph = (long)(r__pph*100);
-		double profitPerHour = (double)yr__pph/100;
+		long yr__pph = (long) (r__pph * 100);
+		double profitPerHour = (double) yr__pph / 100;
 		long millis = System.currentTimeMillis() - startTime;
 		long hours = millis / (1000 * 60 * 60);
 		millis -= hours * (1000 * 60 * 60);
 		long minutes = millis / (1000 * 60);
 		millis -= minutes * (1000 * 60);
 		long seconds = millis / 1000;
-		if(hours <=9) {
+		if (hours <= 9) {
 			hh = "0";
 		} else {
 			hh = "";
 		}
-		if(minutes <=9) {
+		if (minutes <= 9) {
 			mm = "0";
 		} else {
 			mm = "";
 		}
-		if(seconds <=9) {
+		if (seconds <= 9) {
 			ss = "0";
 		} else {
 			ss = "";
@@ -920,7 +956,7 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 		expToCraLvl = skills.getExpToNextLevel(Skills.CRAFTING);
 		if ((minutes > 0 || hours > 0 || seconds > 0) && gainedXp > 0) {
 			secCraExp = (float) gainedXp
-			/ (float) (seconds + minutes * 60 + hours * 60 * 60);
+					/ (float) (seconds + minutes * 60 + hours * 60 * 60);
 		}
 		if (secCraExp > 0) {
 			secCraLvl = (int) (expToCraLvl / secCraExp);
@@ -937,24 +973,24 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 		} else {
 			hrCraLvl = 0;
 		}
-		if(secCraLvl <= 9) {
+		if (secCraLvl <= 9) {
 			secC0 = "0";
 		} else {
 			secC0 = "";
 		}
-		if(minCraLvl <= 9) {
+		if (minCraLvl <= 9) {
 			minC0 = "0";
 		} else {
 			minC0 = "";
 		}
-		if(hrCraLvl <= 9) {
+		if (hrCraLvl <= 9) {
 			hrC0 = "0";
 		} else {
 			hrC0 = "";
 		}
-		itemsTL = expToCraLvl / (int)exp;
+		itemsTL = expToCraLvl / exp;
 		Graphics2D g = (Graphics2D) a;
-		if(!globalBanking) {
+		if (!globalBanking) {
 			for (int i = 1; i < pathToFurnace.length; i++) {
 				pathToFurnace[i].drawTo(a, pathToFurnace[i - 1]);
 			}
@@ -963,18 +999,18 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 			}
 		}
 		int currentCraftingLevel = skills.getCurrentLevel(Skills.CRAFTING);
-		int percentToNextCraftingLevel = skills.getPercentToNextLevel(Skills.CRAFTING);
+		int percentToNextCraftingLevel = skills
+				.getPercentToNextLevel(Skills.CRAFTING);
 		float t = skills.getPercentToNextLevel(Skills.CRAFTING);
 		float h = t / 100;
 
-
-		//NEWPAINT
+		// NEWPAINT
 		g.setColor(new Color(0, 0, 0, 168));
 		g.fillRect(5, 70, 200, 16);
 		g.setColor(Color.ORANGE);
 		g.drawRect(5, 70, 200, 16);
 		g.setFont(new Font("System", Font.BOLD, 12));
-		g.drawString(scriptName + " v." + version +" by Aut0r", 8, 84);
+		g.drawString(scriptName + " v." + version + " by Aut0r", 8, 84);
 
 		g.setColor(new Color(0, 0, 0, 168));
 		g.fillRect(5, 90, 200, 70);
@@ -984,40 +1020,49 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 		g.setColor(Color.WHITE);
 		g.drawString("Time Running: " + hh + hours + ":" + mm + minutes + ":"
 				+ ss + seconds, 8, 102);
-		g.drawString(itemName + "s " + action + ": " + itemsMade + " (" + cutPerHour + " p/h)", 8, 113);
-		g.drawString("Profit: " + profit + "k (" + profitPerHour + "k p/h)", 8, 124);
-		g.drawString("Xp/Lvls Gained: " + gainedXp + " xp (" + gainedLvl + " lvls)", 8, 135);
+		g.drawString(itemName + "s " + action + ": " + itemsMade + " ("
+				+ cutPerHour + " p/h)", 8, 113);
+		g.drawString("Profit: " + profit + "k (" + profitPerHour + "k p/h)", 8,
+				124);
+		g.drawString("Xp/Lvls Gained: " + gainedXp + " xp (" + gainedLvl
+				+ " lvls)", 8, 135);
 		g.drawString("Xp/Hr: " + expPerHour + " p/h", 8, 146);
 		g.drawString("Status: " + status, 8, 157);
-		//Progress Bar
+		// Progress Bar
 		g.setColor(new Color(0, 0, 0, 168));
-		g.fillRect(5, 153+11, 200, 22);
+		g.fillRect(5, 153 + 11, 200, 22);
 		g.setColor(Color.ORANGE);
-		g.drawRect(5, 153+11, 200, 22);
-		
-		g.setColor(new Color (254, 110, 0, 128));
-		g.fillRect(8, 155+13, (int)(h*194), 14);
+		g.drawRect(5, 153 + 11, 200, 22);
+
+		g.setColor(new Color(254, 110, 0, 128));
+		g.fillRect(8, 155 + 13, (int) (h * 194), 14);
 		g.setColor(Color.ORANGE);
-		g.drawRect(8, 155+13, 194, 14);
+		g.drawRect(8, 155 + 13, 194, 14);
 		g.setColor(Color.WHITE);
 		g.setFont(new Font("System", Font.BOLD, 10));
-		g.drawString("Crafting "+currentCraftingLevel+"  | " + percentToNextCraftingLevel + "% Lvl  | TTL: [ "+ hrC0 + hrCraLvl + ":" + minC0 + minCraLvl + ":" + secC0 + secCraLvl +" ]", 9, 179);
+		g.drawString("Crafting " + currentCraftingLevel + "  | "
+				+ percentToNextCraftingLevel + "% Lvl  | TTL: [ " + hrC0
+				+ hrCraLvl + ":" + minC0 + minCraLvl + ":" + secC0 + secCraLvl
+				+ " ]", 9, 179);
 		g.setFont(new Font("System", Font.BOLD, 12));
 		g.setColor(Color.ORANGE);
 		g.drawString("http://aut0rprogramming.net", 350, 333);
 	}
 
 	public int getDistance2(RSTile t) {
-		return (Math.abs(getMyPlayer().getLocation().getX() - t.getX()) + Math.abs(getMyPlayer().getLocation().getY() - t.getY()));
+		return (Math.abs(getMyPlayer().getLocation().getX() - t.getX()) + Math
+				.abs(getMyPlayer().getLocation().getY() - t.getY()));
 	}
 
 	private boolean tileInNextRange(RSTile t) {
 		return calc.distanceBetween(t, getMyPlayer().getLocation()) < nextStep;
 	}
+
 	private int nextStep = 12;
 
 	private int step(ArrayList<RSTile> path) {
-		if (calc.distanceBetween(getMyPlayer().getLocation(), path.get(path.size() - 1)) < 2) {
+		if (calc.distanceBetween(getMyPlayer().getLocation(),
+				path.get(path.size() - 1)) < 2) {
 			return path.size();
 		}
 		RSTile dest = walking.getDestination();
@@ -1038,12 +1083,16 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 				break;
 			}
 		}
-		if (index >= 0 && (dest == null || (index > shortest) || !getMyPlayer().isMoving())) {
+		if (index >= 0
+				&& (dest == null || (index > shortest) || !getMyPlayer()
+						.isMoving())) {
 			if (walking.walkTileMM(path.get(index))) {
 				waitToMove(random(600, 900));
 			}
 			nextStep = random(13, 15);
-			while (walking.getDestination() != null && (calc.distanceBetween(walking.getDestination(), getMyPlayer().getLocation()) >= 5)) {
+			while (walking.getDestination() != null
+					&& (calc.distanceBetween(walking.getDestination(),
+							getMyPlayer().getLocation()) >= 5)) {
 				sleep(random(50, 100));
 			}
 			restructPath();
@@ -1056,149 +1105,176 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 		path = generatePath(structType);
 	}
 
-	private ArrayList<RSTile> generatePath(Line[] lines) { //you're generating the path at walking start, you need to gernerate it AS YOU WALK.
+	private ArrayList<RSTile> generatePath(Line[] lines) { // you're generating
+															// the path at
+															// walking start,
+															// you need to
+															// gernerate it AS
+															// YOU WALK.
 		double minStep = 5, maxStep = 10, wander = 3;
-	if (lines.length < 2) {
-		return null;
-	}
-	path = new ArrayList<RSTile>();
-	Line l1, l2 = lines[0];
-	double distFromCenter = random(0, l2.getDistance() + 1);
-	RSTile p = l2.translate((int) distFromCenter);
-	distFromCenter = l2.getDistance() / 2 - distFromCenter;
-	double centerXdist, centerYdist, line1Xdist, line1Ydist, line2Xdist, line2Ydist;
-	double line1dist, line2dist, centerDist;
-	double x, y;
-	double distOnLine, last, cap1, cap2, move;
-	double distFromCenterX1, distFromCenterY1, distFromCenterX2, distFromCenterY2;
-	double force1, force2, slopeX, slopeY, slopeDist;
-	boolean finished;
-	int lastX = p.getX(), lastY = p.getY(), curX, curY;
-	double dist, xdist, ydist;
-	for (int i = 1; i < lines.length; i++) {
-		l1 = l2;
-		l2 = lines[i];
-		centerXdist = l2.getCenterX() - l1.getCenterX();
-		centerYdist = l2.getCenterY() - l1.getCenterY();
-		centerDist = Math.sqrt(centerXdist * centerXdist + centerYdist * centerYdist);
-		line1Xdist = l2.getX() - l1.getX();
-		line1Ydist = l2.getY() - l1.getY();
-		line2Xdist = l2.getX2() - l1.getX2();
-		line2Ydist = l2.getY2() - l1.getY2();
-		centerXdist /= centerDist;
-		centerYdist /= centerDist;
-		line1Xdist /= centerDist;
-		line1Ydist /= centerDist;
-		line2Xdist /= centerDist;
-		line2Ydist /= centerDist;
-		distOnLine = 0;
-		last = 0;
-		finished = false;
-		while (!finished) {
-			distOnLine += random(minStep, maxStep);
-			if (distOnLine >= centerDist) {
-				distOnLine = centerDist;
-				finished = true;
-			}
-			x = centerXdist * distOnLine + l1.getCenterX();
-			y = centerYdist * distOnLine + l1.getCenterY();
+		if (lines.length < 2) {
+			return null;
+		}
+		path = new ArrayList<RSTile>();
+		Line l1, l2 = lines[0];
+		double distFromCenter = random(0, l2.getDistance() + 1);
+		RSTile p = l2.translate((int) distFromCenter);
+		distFromCenter = l2.getDistance() / 2 - distFromCenter;
+		double centerXdist, centerYdist, line1Xdist, line1Ydist, line2Xdist, line2Ydist;
+		double line1dist, line2dist, centerDist;
+		double x, y;
+		double distOnLine, last, cap1, cap2, move;
+		double distFromCenterX1, distFromCenterY1, distFromCenterX2, distFromCenterY2;
+		double force1, force2, slopeX, slopeY, slopeDist;
+		boolean finished;
+		int lastX = p.getX(), lastY = p.getY(), curX, curY;
+		double dist, xdist, ydist;
+		for (int i = 1; i < lines.length; i++) {
+			l1 = l2;
+			l2 = lines[i];
+			centerXdist = l2.getCenterX() - l1.getCenterX();
+			centerYdist = l2.getCenterY() - l1.getCenterY();
+			centerDist = Math.sqrt(centerXdist * centerXdist + centerYdist
+					* centerYdist);
+			line1Xdist = l2.getX() - l1.getX();
+			line1Ydist = l2.getY() - l1.getY();
+			line2Xdist = l2.getX2() - l1.getX2();
+			line2Ydist = l2.getY2() - l1.getY2();
+			centerXdist /= centerDist;
+			centerYdist /= centerDist;
+			line1Xdist /= centerDist;
+			line1Ydist /= centerDist;
+			line2Xdist /= centerDist;
+			line2Ydist /= centerDist;
+			distOnLine = 0;
+			last = 0;
+			finished = false;
+			while (!finished) {
+				distOnLine += random(minStep, maxStep);
+				if (distOnLine >= centerDist) {
+					distOnLine = centerDist;
+					finished = true;
+				}
+				x = centerXdist * distOnLine + l1.getCenterX();
+				y = centerYdist * distOnLine + l1.getCenterY();
 
-			distFromCenterX1 = x - (line1Xdist * distOnLine + l1.getX());
-			distFromCenterY1 = y - (line1Ydist * distOnLine + l1.getY());
+				distFromCenterX1 = x - (line1Xdist * distOnLine + l1.getX());
+				distFromCenterY1 = y - (line1Ydist * distOnLine + l1.getY());
 
-			distFromCenterX2 = x - (line2Xdist * distOnLine + l1.getX2());
-			distFromCenterY2 = y - (line2Ydist * distOnLine + l1.getY2());
+				distFromCenterX2 = x - (line2Xdist * distOnLine + l1.getX2());
+				distFromCenterY2 = y - (line2Ydist * distOnLine + l1.getY2());
 
-			slopeX = distFromCenterX2 - distFromCenterX1;
-			slopeY = distFromCenterY2 - distFromCenterY1;
-			slopeDist = Math.sqrt(slopeX * slopeX + slopeY * slopeY);
-			slopeX /= slopeDist;
-			slopeY /= slopeDist;
+				slopeX = distFromCenterX2 - distFromCenterX1;
+				slopeY = distFromCenterY2 - distFromCenterY1;
+				slopeDist = Math.sqrt(slopeX * slopeX + slopeY * slopeY);
+				slopeX /= slopeDist;
+				slopeY /= slopeDist;
 
-			line1dist = Math.sqrt(distFromCenterX1 * distFromCenterX1 + distFromCenterY1 * distFromCenterY1);
-			line2dist = Math.sqrt(distFromCenterX2 * distFromCenterX2 + distFromCenterY2 * distFromCenterY2);
+				line1dist = Math.sqrt(distFromCenterX1 * distFromCenterX1
+						+ distFromCenterY1 * distFromCenterY1);
+				line2dist = Math.sqrt(distFromCenterX2 * distFromCenterX2
+						+ distFromCenterY2 * distFromCenterY2);
 
-			move = (distOnLine - last) / maxStep * wander;
+				move = (distOnLine - last) / maxStep * wander;
 
-			force1 = line1dist + distFromCenter;
-			force2 = line2dist - distFromCenter;
+				force1 = line1dist + distFromCenter;
+				force2 = line2dist - distFromCenter;
 
-			cap1 = Math.min(move, force1);
-			cap2 = Math.min(move, force2);
+				cap1 = Math.min(move, force1);
+				cap2 = Math.min(move, force2);
 
-			if (force1 < 0) {
-				distFromCenter -= force1;
-			} else if (force2 < 0) {
-				distFromCenter += force2;
-			} else {
-				distFromCenter += random(-cap1, cap2);
-			}
-			if (finished) {
-				RSTile t = l2.translateFromCenter(distFromCenter);
-				curX = t.getX();
-				curY = t.getY();
-			} else {
-				curX = (int) Math.round(distOnLine * centerXdist + l1.getCenterX() + distFromCenter * slopeX);
-				curY = (int) Math.round(distOnLine * centerYdist + l1.getCenterY() + distFromCenter * slopeY);
-			}
-			xdist = curX - lastX;
-			ydist = curY - lastY;
-			dist = Math.sqrt(xdist * xdist + ydist * ydist);
-			xdist /= dist;
-			ydist /= dist;
-			for (int j = 0; j < dist; j++) {
-				if (objects.getTopAt(new RSTile((int) Math.round(xdist * j + lastX), (int) Math.round(ydist * j + lastY))) == null) {
-					path.add(new RSTile((int) Math.round(xdist * j + lastX), (int) Math.round(ydist * j + lastY)));
+				if (force1 < 0) {
+					distFromCenter -= force1;
+				} else if (force2 < 0) {
+					distFromCenter += force2;
 				} else {
-					RSTile ran = null;
-					ran = new RSTile((int) Math.round(xdist * j + lastX) + 1, (int) Math.round(ydist * j + lastY));
-					if (objects.getTopAt(ran) == null) {
-						path.add(ran);
-						continue;
-					}
-					ran = new RSTile((int) Math.round(xdist * j + lastX) - 1, (int) Math.round(ydist * j + lastY));
-					if (objects.getTopAt(ran) == null) {
-						path.add(ran);
-						continue;
-					}
-					ran = new RSTile((int) Math.round(xdist * j + lastX), (int) Math.round(ydist * j + lastY) + 1);
-					if (objects.getTopAt(ran) == null) {
-						path.add(ran);
-						continue;
-					}
-					ran = new RSTile((int) Math.round(xdist * j + lastX), (int) Math.round(ydist * j + lastY) - 1);
-					if (objects.getTopAt(ran) == null) {
-						path.add(ran);
-						continue;
-					}
-					ran = new RSTile((int) Math.round(xdist * j + lastX) + 1, (int) Math.round(ydist * j + lastY) + 1);
-					if (objects.getTopAt(ran) == null) {
-						path.add(ran);
-						continue;
-					}
-					ran = new RSTile((int) Math.round(xdist * j + lastX) + 1, (int) Math.round(ydist * j + lastY) - 1);
-					if (objects.getTopAt(ran) == null) {
-						path.add(ran);
-						continue;
-					}
-					ran = new RSTile((int) Math.round(xdist * j + lastX) - 1, (int) Math.round(ydist * j + lastY) + 1);
-					if (objects.getTopAt(ran) == null) {
-						path.add(ran);
-						continue;
-					}
-					ran = new RSTile((int) Math.round(xdist * j + lastX) - 1, (int) Math.round(ydist * j + lastY) - 1);
-					if (objects.getTopAt(ran) == null) {
-						path.add(ran);
-						continue;
+					distFromCenter += random(-cap1, cap2);
+				}
+				if (finished) {
+					RSTile t = l2.translateFromCenter(distFromCenter);
+					curX = t.getX();
+					curY = t.getY();
+				} else {
+					curX = (int) Math.round(distOnLine * centerXdist
+							+ l1.getCenterX() + distFromCenter * slopeX);
+					curY = (int) Math.round(distOnLine * centerYdist
+							+ l1.getCenterY() + distFromCenter * slopeY);
+				}
+				xdist = curX - lastX;
+				ydist = curY - lastY;
+				dist = Math.sqrt(xdist * xdist + ydist * ydist);
+				xdist /= dist;
+				ydist /= dist;
+				for (int j = 0; j < dist; j++) {
+					if (objects.getTopAt(new RSTile((int) Math.round(xdist * j
+							+ lastX), (int) Math.round(ydist * j + lastY))) == null) {
+						path.add(new RSTile(
+								(int) Math.round(xdist * j + lastX), (int) Math
+										.round(ydist * j + lastY)));
+					} else {
+						RSTile ran = null;
+						ran = new RSTile(
+								(int) Math.round(xdist * j + lastX) + 1,
+								(int) Math.round(ydist * j + lastY));
+						if (objects.getTopAt(ran) == null) {
+							path.add(ran);
+							continue;
+						}
+						ran = new RSTile(
+								(int) Math.round(xdist * j + lastX) - 1,
+								(int) Math.round(ydist * j + lastY));
+						if (objects.getTopAt(ran) == null) {
+							path.add(ran);
+							continue;
+						}
+						ran = new RSTile((int) Math.round(xdist * j + lastX),
+								(int) Math.round(ydist * j + lastY) + 1);
+						if (objects.getTopAt(ran) == null) {
+							path.add(ran);
+							continue;
+						}
+						ran = new RSTile((int) Math.round(xdist * j + lastX),
+								(int) Math.round(ydist * j + lastY) - 1);
+						if (objects.getTopAt(ran) == null) {
+							path.add(ran);
+							continue;
+						}
+						ran = new RSTile(
+								(int) Math.round(xdist * j + lastX) + 1,
+								(int) Math.round(ydist * j + lastY) + 1);
+						if (objects.getTopAt(ran) == null) {
+							path.add(ran);
+							continue;
+						}
+						ran = new RSTile(
+								(int) Math.round(xdist * j + lastX) + 1,
+								(int) Math.round(ydist * j + lastY) - 1);
+						if (objects.getTopAt(ran) == null) {
+							path.add(ran);
+							continue;
+						}
+						ran = new RSTile(
+								(int) Math.round(xdist * j + lastX) - 1,
+								(int) Math.round(ydist * j + lastY) + 1);
+						if (objects.getTopAt(ran) == null) {
+							path.add(ran);
+							continue;
+						}
+						ran = new RSTile(
+								(int) Math.round(xdist * j + lastX) - 1,
+								(int) Math.round(ydist * j + lastY) - 1);
+						if (objects.getTopAt(ran) == null) {
+							path.add(ran);
+							continue;
+						}
 					}
 				}
+				last = distOnLine;
+				lastX = curX;
+				lastY = curY;
 			}
-			last = distOnLine;
-			lastX = curX;
-			lastY = curY;
 		}
-	}
-	return cutUp(path);
+		return cutUp(path);
 	}
 
 	public ArrayList<RSTile> cutUp(ArrayList<RSTile> tiles) {
@@ -1217,9 +1293,9 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 
 	private class Line {
 
-		private int x, y, xdist, ydist, x2, y2, centerX, centerY;
-		private RSTile t1, t2;
-		private double dist;
+		private final int x, y, xdist, ydist, x2, y2, centerX, centerY;
+		private final RSTile t1, t2;
+		private final double dist;
 
 		public Line(int x1, int y1, int x2, int y2) {
 
@@ -1273,7 +1349,7 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 				((Graphics2D) g).draw(path);
 			}
 			Point last = null, p;
-			g.setColor(Color.BLACK);//where do you walk.
+			g.setColor(Color.BLACK);// where do you walk.
 			for (RSTile t : path) {
 				if (calc.tileOnMap(t)) {
 					p = calc.tileToMinimap(t);
@@ -1308,11 +1384,14 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 		}
 
 		public RSTile translate(double length) {
-			return new RSTile((int) Math.round(length * (xdist / dist)) + x, (int) Math.round(length * (ydist / dist)) + y);
+			return new RSTile((int) Math.round(length * (xdist / dist)) + x,
+					(int) Math.round(length * (ydist / dist)) + y);
 		}
 
 		public RSTile translateFromCenter(double length) {
-			return new RSTile((int) Math.round(centerX - (xdist / dist) * length), (int) Math.round(centerY - (ydist / dist) * length));
+			return new RSTile((int) Math.round(centerX - (xdist / dist)
+					* length), (int) Math.round(centerY - (ydist / dist)
+					* length));
 		}
 	}
 
@@ -1346,8 +1425,8 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 			okButton = new JButton();
 			cancelButton = new JButton();
 
-			//Title
-			setTitle(scriptName+" v."+version);
+			// Title
+			setTitle(scriptName + " v." + version);
 			Container contentPane = getContentPane();
 			contentPane.setLayout(new BorderLayout());
 
@@ -1360,96 +1439,149 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 
 					{
 
-						//@START - TAB 1
+						// @START - TAB 1
 						{
 							panel1.setLayout(null);
-							//@START CRAFTINGTYPE
-							craftingType.setModel(new javax.swing.DefaultComboBoxModel( new String[] { "", "Gold Jewellery" , "Silver Jewellery", "Cut Gems" }));
+							// @START CRAFTINGTYPE
+							craftingType
+									.setModel(new javax.swing.DefaultComboBoxModel(
+											new String[] { "",
+													"Gold Jewellery",
+													"Silver Jewellery",
+													"Cut Gems" }));
 							panel1.add(craftingType);
-							craftingType.setBounds(5, 30, 115, type.getPreferredSize().height);
-							craftingType.addActionListener(new ActionListener() {
-								public void actionPerformed(final ActionEvent evt) {
-									final String co = (String) craftingType.getSelectedItem();
-									if(co == "Gold Jewellery") {
-										craftObj.setModel(new javax.swing.DefaultComboBoxModel( new String[] { "Gold", "Sapphire", "Emerald", "Ruby", "Diamond" }));
-										type.setModel(new javax.swing.DefaultComboBoxModel( new String[] { "", "Ring", "Necklace", "Bracelet", "Amulet" }));
-										loc.setModel(new DefaultComboBoxModel( new String[] { "Al Kharid", "Edgeville", "Neitiznot(not operational)" }));
-										//@START - COMBOBOX - TYPE
-										panel1.add(type);
-										type.setBounds(170, 70, 115, type.getPreferredSize().height);
-										//@END - COMBOBOX - TYPE
-										label6.setText("Make what?");
-										label6.setFont(new Font("Tahoma", Font.BOLD,
-												11));
-										panel1.add(label6);
-										label6.setBounds(170, 45, 120, 35);
-									} else if(co ==	"Silver Jewellery") {
-										craftObj.setModel(new javax.swing.DefaultComboBoxModel( new String[] { "Silver" }));
-										type.setModel(new javax.swing.DefaultComboBoxModel( new String[] { "", "Holy Symbol", "Tiara" }));
-										loc.setModel(new DefaultComboBoxModel( new String[] { "Al Kharid", "Edgeville", "Neitiznot(not operational)" }));	
-										//@START - COMBOBOX - TYPE
-										panel1.add(type);
-										type.setBounds(170, 70, 115, type.getPreferredSize().height);
-										//@END - COMBOBOX - TYPE
-										label6.setText("Make what?");
-										label6.setFont(new Font("Tahoma", Font.BOLD,
-												11));
-										panel1.add(label6);
-										label6.setBounds(170, 45, 120, 35);
-									} else if(co == "Cut Gems") {
-										craftObj.setModel(new javax.swing.DefaultComboBoxModel( new String[] { "Sapphire", "Emerald", "Ruby", "Diamond", "Dragonstone" }));
-										loc.setModel(new DefaultComboBoxModel( new String[] { "Any Location" }));
-									}
-								}
-							});
-							//@START CRAFTOBJ
+							craftingType.setBounds(5, 30, 115,
+									type.getPreferredSize().height);
+							craftingType
+									.addActionListener(new ActionListener() {
+										@Override
+										public void actionPerformed(
+												final ActionEvent evt) {
+											final String co = (String) craftingType
+													.getSelectedItem();
+											if (co == "Gold Jewellery") {
+												craftObj.setModel(new javax.swing.DefaultComboBoxModel(
+														new String[] { "Gold",
+																"Sapphire",
+																"Emerald",
+																"Ruby",
+																"Diamond" }));
+												type.setModel(new javax.swing.DefaultComboBoxModel(
+														new String[] { "",
+																"Ring",
+																"Necklace",
+																"Bracelet",
+																"Amulet" }));
+												loc.setModel(new DefaultComboBoxModel(
+														new String[] {
+																"Al Kharid",
+																"Edgeville",
+																"Neitiznot(not operational)" }));
+												// @START - COMBOBOX - TYPE
+												panel1.add(type);
+												type.setBounds(
+														170,
+														70,
+														115,
+														type.getPreferredSize().height);
+												// @END - COMBOBOX - TYPE
+												label6.setText("Make what?");
+												label6.setFont(new Font(
+														"Tahoma", Font.BOLD, 11));
+												panel1.add(label6);
+												label6.setBounds(170, 45, 120,
+														35);
+											} else if (co == "Silver Jewellery") {
+												craftObj.setModel(new javax.swing.DefaultComboBoxModel(
+														new String[] { "Silver" }));
+												type.setModel(new javax.swing.DefaultComboBoxModel(
+														new String[] { "",
+																"Holy Symbol",
+																"Tiara" }));
+												loc.setModel(new DefaultComboBoxModel(
+														new String[] {
+																"Al Kharid",
+																"Edgeville",
+																"Neitiznot(not operational)" }));
+												// @START - COMBOBOX - TYPE
+												panel1.add(type);
+												type.setBounds(
+														170,
+														70,
+														115,
+														type.getPreferredSize().height);
+												// @END - COMBOBOX - TYPE
+												label6.setText("Make what?");
+												label6.setFont(new Font(
+														"Tahoma", Font.BOLD, 11));
+												panel1.add(label6);
+												label6.setBounds(170, 45, 120,
+														35);
+											} else if (co == "Cut Gems") {
+												craftObj.setModel(new javax.swing.DefaultComboBoxModel(
+														new String[] {
+																"Sapphire",
+																"Emerald",
+																"Ruby",
+																"Diamond",
+																"Dragonstone" }));
+												loc.setModel(new DefaultComboBoxModel(
+														new String[] { "Any Location" }));
+											}
+										}
+									});
+							// @START CRAFTOBJ
 							panel1.add(craftObj);
-							craftObj.setBounds(170, 30, 115, type.getPreferredSize().height);
+							craftObj.setBounds(170, 30, 115,
+									type.getPreferredSize().height);
 
-							//@START - COMBOBOX - LOCATION
+							// @START - COMBOBOX - LOCATION
 							panel1.add(loc);
 							loc.setBounds(5, 70, 115, 20);
-							//@END - COMBOBOX - LOCATION
+							// @END - COMBOBOX - LOCATION
 
-							//@START - COMBOBOX - MOUSESPEED
-							mouseSpeed.setModel(new javax.swing.DefaultComboBoxModel( new String[] { "Slow", "Slow-Medium", "Medium(Recommended)", "Medium-Fast(Recommended)", "Fast**", "Super Fast**"   }));
+							// @START - COMBOBOX - MOUSESPEED
+							mouseSpeed
+									.setModel(new javax.swing.DefaultComboBoxModel(
+											new String[] { "Slow",
+													"Slow-Medium",
+													"Medium(Recommended)",
+													"Medium-Fast(Recommended)",
+													"Fast**", "Super Fast**" }));
 							panel1.add(mouseSpeed);
-							mouseSpeed.setBounds(170, 110, 115, mouseSpeed.getPreferredSize().height);
-							//@END - COMBOBOX - MOUSESPEED
+							mouseSpeed.setBounds(170, 110, 115,
+									mouseSpeed.getPreferredSize().height);
+							// @END - COMBOBOX - MOUSESPEED
 
-							//@START LABELS(PANEL 1)
+							// @START LABELS(PANEL 1)
 							label7.setText("What to Craft?");
-							label7.setFont(new Font("Tahoma", Font.BOLD,
-									11));
+							label7.setFont(new Font("Tahoma", Font.BOLD, 11));
 							panel1.add(label7);
 							label7.setBounds(5, 5, 100, 35);
 
 							label1.setText("Where?");
-							label1.setFont(new Font("Tahoma", Font.BOLD,
-									11));
+							label1.setFont(new Font("Tahoma", Font.BOLD, 11));
 							panel1.add(label1);
 							label1.setBounds(5, 45, 100, 35);
 
 							label2.setText("Type?");
-							label2.setFont(new Font("Tahoma", Font.BOLD,
-									11));
+							label2.setFont(new Font("Tahoma", Font.BOLD, 11));
 							panel1.add(label2);
 							label2.setBounds(170, 5, 120, 35);
 
 							label5.setText("Mouse Speed?");
-							label5.setFont(new Font("Tahoma", Font.BOLD,
-									11));
+							label5.setFont(new Font("Tahoma", Font.BOLD, 11));
 							panel1.add(label5);
 							label5.setBounds(170, 85, 120, 35);
-							//@END LABELS(PANEL 1)
+							// @END LABELS(PANEL 1)
 							{ // compute preferred size
 								Dimension preferredSize = new Dimension();
 								for (int i = 0; i < panel1.getComponentCount(); i++) {
 									Rectangle bounds = panel1.getComponent(i)
-									.getBounds();
+											.getBounds();
 									preferredSize.width = Math
-									.max(bounds.x + bounds.width,
-											preferredSize.width);
+											.max(bounds.x + bounds.width,
+													preferredSize.width);
 									preferredSize.height = Math.max(bounds.y
 											+ bounds.height,
 											preferredSize.height);
@@ -1475,7 +1607,7 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 									label3.getPreferredSize().width, 15);
 
 							// ---- label4 ----
-							label4.setText("Ver."+version);
+							label4.setText("Ver." + version);
 							label4.setFont(new Font("Cambria", Font.BOLD, 10));
 							panel2.add(label4);
 							label4.setBounds(5, 15,
@@ -1485,10 +1617,10 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 								Dimension preferredSize = new Dimension();
 								for (int i = 0; i < panel2.getComponentCount(); i++) {
 									Rectangle bounds = panel2.getComponent(i)
-									.getBounds();
+											.getBounds();
 									preferredSize.width = Math
-									.max(bounds.x + bounds.width,
-											preferredSize.width);
+											.max(bounds.x + bounds.width,
+													preferredSize.width);
 									preferredSize.height = Math.max(bounds.y
 											+ bounds.height,
 											preferredSize.height);
@@ -1510,7 +1642,7 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 						Dimension preferredSize = new Dimension();
 						for (int i = 0; i < contentPanel.getComponentCount(); i++) {
 							Rectangle bounds = contentPanel.getComponent(i)
-							.getBounds();
+									.getBounds();
 							preferredSize.width = Math.max(bounds.x
 									+ bounds.width, preferredSize.width);
 							preferredSize.height = Math.max(bounds.y
@@ -1535,14 +1667,14 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 							1.0, 0.0, 0.0 };
 
 					// ---- okButton ----
-					okButton.setText("Start "+scriptName);
+					okButton.setText("Start " + scriptName);
 					buttonBar.add(okButton, new GridBagConstraints(1, 0, 1, 1,
 							0.0, 0.0, GridBagConstraints.CENTER,
 							GridBagConstraints.BOTH, new Insets(0, 0, 0, 5), 0,
 							0));
-					okButton
-					.addActionListener(new java.awt.event.ActionListener() {
+					okButton.addActionListener(new java.awt.event.ActionListener() {
 
+						@Override
 						public void actionPerformed(
 								java.awt.event.ActionEvent evt) {
 							StartActionPerformed(evt);
@@ -1556,13 +1688,14 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 							GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0,
 							0));
 					cancelButton
-					.addActionListener(new java.awt.event.ActionListener() {
+							.addActionListener(new java.awt.event.ActionListener() {
 
-						public void actionPerformed(
-								java.awt.event.ActionEvent evt) {
-							CancelActionPerformed(evt);
-						}
-					});
+								@Override
+								public void actionPerformed(
+										java.awt.event.ActionEvent evt) {
+									CancelActionPerformed(evt);
+								}
+							});
 				}
 				dialogPane.add(buttonBar, BorderLayout.SOUTH);
 			}
@@ -1579,80 +1712,92 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 			String go = (String) craftObj.getSelectedItem();
 			String speed = (String) mouseSpeed.getSelectedItem();
 
-			if(speed.equals("Slow")) {
-				speedMouse = random(10,11);
-			} else if(speed.equals("Slow-Medium")) {
-				speedMouse = random(7,10);
-			} else if(speed.equals("Medium(Recommended)")) {
-				speedMouse = random(6,7);
-			} else if(speed.equals("Medium-Fast(Recommended)")) {
-				speedMouse = random(5,6);
-			} else if(speed.equals("Fast**")) {
-				speedMouse = random(3,5);
-			} else if(speed.equals("Super Fast**")) {
-				speedMouse = random(2,3);
+			if (speed.equals("Slow")) {
+				speedMouse = random(10, 11);
+			} else if (speed.equals("Slow-Medium")) {
+				speedMouse = random(7, 10);
+			} else if (speed.equals("Medium(Recommended)")) {
+				speedMouse = random(6, 7);
+			} else if (speed.equals("Medium-Fast(Recommended)")) {
+				speedMouse = random(5, 6);
+			} else if (speed.equals("Fast**")) {
+				speedMouse = random(3, 5);
+			} else if (speed.equals("Super Fast**")) {
+				speedMouse = random(2, 3);
 			}
-			if(location.contains("harid")) {
-				pathToFurnace = new Line[] {new Line(3275, 3172, 3279, 3174),
-						new Line(3280, 3183, 3282, 3187), new Line(3275, 3185, 3275, 3187)};
-				pathToBank = new Line[] {new Line(3280, 3183, 3282, 3187), 
-						new Line(3275, 3172, 3279, 3174), new Line(3269, 3164, 3269, 3170)};
+			if (location.contains("harid")) {
+				pathToFurnace = new Line[] { new Line(3275, 3172, 3279, 3174),
+						new Line(3280, 3183, 3282, 3187),
+						new Line(3275, 3185, 3275, 3187) };
+				pathToBank = new Line[] { new Line(3280, 3183, 3282, 3187),
+						new Line(3275, 3172, 3279, 3174),
+						new Line(3269, 3164, 3269, 3170) };
 				AREAS = new RSArea[] {
-						new RSArea(new RSTile(3269, 3164), new RSTile(3271, 3170)),
-						new RSArea(new RSTile(3274, 3184), new RSTile(3277, 3188))};
+						new RSArea(new RSTile(3269, 3164), new RSTile(3271,
+								3170)),
+						new RSArea(new RSTile(3274, 3184), new RSTile(3277,
+								3188)) };
 				bankID = 35647;
 				smithID = 11666;
 				craftLoc = "Al Kharid";
-			} else if(location.contains("Edgeville")) {
-				pathToFurnace = new Line[] {new Line(3103, 3498, 3105, 3500),  new Line(3108, 3500, 3109, 3502)};
-				pathToBank = new Line[] {new Line(3103, 3498, 3105, 3500), new Line(3096, 3496, 3098, 3497)};
+			} else if (location.contains("Edgeville")) {
+				pathToFurnace = new Line[] { new Line(3103, 3498, 3105, 3500),
+						new Line(3108, 3500, 3109, 3502) };
+				pathToBank = new Line[] { new Line(3103, 3498, 3105, 3500),
+						new Line(3096, 3496, 3098, 3497) };
 				AREAS = new RSArea[] {
-						new RSArea(new RSTile(3095, 3496), new RSTile(3098, 3498)),
-						new RSArea(new RSTile(3107, 3498), new RSTile(3113, 3503))};
+						new RSArea(new RSTile(3095, 3496), new RSTile(3098,
+								3498)),
+						new RSArea(new RSTile(3107, 3498), new RSTile(3113,
+								3503)) };
 				bankID = 26972;
 				smithID = 26814;
 				craftLoc = "Edgeville";
-			} else if(location.contains("Neitiznot")) {
-				pathToFurnace = new Line[] {new Line(2335, 3803, 2337, 3804), 
-						new Line(2341, 3803, 2341, 3805), new Line(2343, 3810, 2345, 3810)};
-				pathToBank = new Line[] {new Line(2341, 3803, 2341, 3805), 
-						new Line(2335, 3803, 2337, 3804), new Line(2335, 3807, 2338, 3807)};
+			} else if (location.contains("Neitiznot")) {
+				pathToFurnace = new Line[] { new Line(2335, 3803, 2337, 3804),
+						new Line(2341, 3803, 2341, 3805),
+						new Line(2343, 3810, 2345, 3810) };
+				pathToBank = new Line[] { new Line(2341, 3803, 2341, 3805),
+						new Line(2335, 3803, 2337, 3804),
+						new Line(2335, 3807, 2338, 3807) };
 				AREAS = new RSArea[] {
-						new RSArea(new RSTile(2334, 3805), new RSTile(2339, 3808)),
-						new RSArea(new RSTile(2343, 3809), new RSTile(2345, 3811))};
+						new RSArea(new RSTile(2334, 3805), new RSTile(2339,
+								3808)),
+						new RSArea(new RSTile(2343, 3809), new RSTile(2345,
+								3811)) };
 				bankID = 21301;
 				smithID = 21303;
 				craftLoc = "Neitiznot";
-			} else if(location.contains("Location")) {
+			} else if (location.contains("Location")) {
 				globalBanking = true;
 			}
-			if(co.equals("Gold Jewellery")) {
+			if (co.equals("Gold Jewellery")) {
 				barName = "Gold bar";
 				barID = goldBarID;
 				action = "crafted";
-				if(go.equals("Gold")) {
-					if(uo.equals("Ring")) {//Gold Ring
+				if (go.equals("Gold")) {
+					if (uo.equals("Ring")) {// Gold Ring
 						ifParent = 446;
 						ifChild = 82;
 						itemID = 1635;
 						mouldID = 1592;
 						exp = 15;
-						itemName = "Gold ring";						
-					} else if(uo.equals("Necklace")) {//Gold Necklace
+						itemName = "Gold ring";
+					} else if (uo.equals("Necklace")) {// Gold Necklace
 						ifParent = 446;
 						ifChild = 68;
 						itemID = 1654;
 						mouldID = 1597;
 						exp = 20;
 						itemName = "Gold necklace";
-					} else if(uo.equals("Bracelet")) {//Gold Bracelet
+					} else if (uo.equals("Bracelet")) {// Gold Bracelet
 						ifParent = 446;
 						ifChild = 33;
 						itemID = 11069;
 						mouldID = 11065;
 						exp = 25;
 						itemName = "Gold bracelet";
-					} else if(uo.equals("Amulet")) {//Gold Amulet
+					} else if (uo.equals("Amulet")) {// Gold Amulet
 						ifParent = 446;
 						ifChild = 53;
 						itemID = 1673;
@@ -1660,11 +1805,11 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 						exp = 30;
 						itemName = "Gold amulet";
 					}
-				} else if(go.equals("Sapphire")) {
-					if(uo.equals("Ring")) {//Sapphire Ring
+				} else if (go.equals("Sapphire")) {
+					if (uo.equals("Ring")) {// Sapphire Ring
 						ifParent = 446;
 						ifChild = 84;
-						itemID = 1637; 
+						itemID = 1637;
 						enchantedID = 2550;
 						mouldID = 1592;
 						gem = true;
@@ -1675,7 +1820,7 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 						enchantedName = "Ring of recoil";
 						gemName = "Sapphire";
 						spellName = "1 Enchant";
-					} else if(uo.equals("Necklace")) {//Sapphire Necklace
+					} else if (uo.equals("Necklace")) {// Sapphire Necklace
 						ifParent = 446;
 						ifChild = 70;
 						itemID = 1656;
@@ -1689,7 +1834,7 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 						gemName = "Sapphire";
 						spellName = "1 Enchant";
 						itemName = "Sapphire necklace";
-					} else if(uo.equals("Bracelet")) {//Sapphire Bracelet
+					} else if (uo.equals("Bracelet")) {// Sapphire Bracelet
 						ifParent = 446;
 						ifChild = 35;
 						itemID = 11072;
@@ -1703,7 +1848,7 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 						gemName = "Sapphire";
 						spellName = "1 Enchant";
 						itemName = "Sapphire Bracelet";
-					} else if(uo.equals("Amulet")) {//Sapphire Amulet
+					} else if (uo.equals("Amulet")) {// Sapphire Amulet
 						ifParent = 446;
 						ifChild = 55;
 						itemID = 1675;
@@ -1711,13 +1856,13 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 						gemID = sapphire;
 						mouldID = 1595;
 						exp = 65;
-						//spellName = "0"; Coming Soon.
+						// spellName = "0"; Coming Soon.
 						enchantedName = "Amulet of magic";
 						gemName = "Sapphire";
 						itemName = "Sapphire amulet";
-					}	
-				} else if(go.equals("Emerald")) {
-					if(uo.equals("Ring")) {//Emerald Ring
+					}
+				} else if (go.equals("Emerald")) {
+					if (uo.equals("Ring")) {// Emerald Ring
 						ifParent = 446;
 						ifChild = 86;
 						itemID = 1639;
@@ -1731,7 +1876,7 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 						gemName = "Emerald";
 						spellName = "2 Enchant";
 						itemName = "Emerald ring";
-					} else if(uo.equals("Necklace")) {//Emerald Necklace
+					} else if (uo.equals("Necklace")) {// Emerald Necklace
 						ifParent = 446;
 						ifChild = 72;
 						itemID = 1658;
@@ -1745,7 +1890,7 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 						gemName = "Emerald";
 						spellName = "2 Enchant";
 						itemName = "Emerald necklace";
-					} else if(uo.equals("Bracelet")) {//Emerald Bracelet
+					} else if (uo.equals("Bracelet")) {// Emerald Bracelet
 						ifParent = 446;
 						ifChild = 37;
 						itemID = 11076;
@@ -1759,7 +1904,7 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 						gemName = "Emerald";
 						spellName = "2 Enchant";
 						itemName = "Emerald bracelet";
-					} else if(uo.equals("Amulet")) {//Emerald Amulet
+					} else if (uo.equals("Amulet")) {// Emerald Amulet
 						ifParent = 446;
 						ifChild = 57;
 						itemID = 1677;
@@ -1767,13 +1912,13 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 						gemID = emerald;
 						mouldID = 1595;
 						exp = 70;
-						//spellName = "0"; Coming Soon
+						// spellName = "0"; Coming Soon
 						enchantedName = "Amulet of defence";
 						gemName = "Emerald";
 						itemName = "Emerald amulet";
-					}	
-				} else if(go.equals("Ruby")) {
-					if(uo.equals("Ring")) {//Ruby Ring
+					}
+				} else if (go.equals("Ruby")) {
+					if (uo.equals("Ring")) {// Ruby Ring
 						ifParent = 446;
 						ifChild = 88;
 						itemID = 1641;
@@ -1787,7 +1932,7 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 						gemName = "Ruby";
 						spellName = "3 Enchant";
 						itemName = "Ruby Ring";
-					} else if(uo.equals("Necklace")) {//Ruby Necklace
+					} else if (uo.equals("Necklace")) {// Ruby Necklace
 						ifParent = 446;
 						ifChild = 74;
 						itemID = 1660;
@@ -1801,7 +1946,7 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 						gemName = "Ruby";
 						spellName = "3 Enchant";
 						itemName = "Ruby necklace";
-					} else if(uo.equals("Bracelet")) {//Ruby Bracelet
+					} else if (uo.equals("Bracelet")) {// Ruby Bracelet
 						ifParent = 446;
 						ifChild = 39;
 						itemID = 11085;
@@ -1815,7 +1960,7 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 						gemName = "Ruby";
 						spellName = "3 Enchant";
 						itemName = "Ruby bracelet";
-					} else if(uo.equals("Amulet")) {//Ruby Amulet
+					} else if (uo.equals("Amulet")) {// Ruby Amulet
 						ifParent = 446;
 						ifChild = 59;
 						itemID = 1679;
@@ -1824,12 +1969,12 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 						mouldID = 1595;
 						exp = 85;
 						enchantedName = "Amulet of strength";
-						//spellName = "0"; Comming Soon
+						// spellName = "0"; Comming Soon
 						gemName = "Ruby";
 						itemName = "Ruby amulet";
-					}	
-				} else if(go.equals("Diamond")) {
-					if(uo.equals("Ring")) {//Diamond Ring
+					}
+				} else if (go.equals("Diamond")) {
+					if (uo.equals("Ring")) {// Diamond Ring
 						ifParent = 446;
 						ifChild = 90;
 						itemID = 1643; // MUST DO
@@ -1843,7 +1988,7 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 						gemName = "Diamond";
 						spellName = "4 Enchant";
 						itemName = "Diamond Ring";
-					} else if(uo.equals("Necklace")) {//Diamond Necklace
+					} else if (uo.equals("Necklace")) {// Diamond Necklace
 						ifParent = 446;
 						ifChild = 76;
 						itemID = 1662;
@@ -1857,7 +2002,7 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 						gemName = "Diamond";
 						spellName = "4 Enchant";
 						itemName = "Diamond necklace";
-					} else if(uo.equals("Bracelet")) {//Diamond Bracelet
+					} else if (uo.equals("Bracelet")) {// Diamond Bracelet
 						ifParent = 446;
 						ifChild = 41;
 						itemID = 11092;
@@ -1869,7 +2014,7 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 						gemName = "Diamond";
 						spellName = "4 Enchant";
 						itemName = "Diamond bracelet";
-					} else if(uo.equals("Amulet")){//Diamond Amulet
+					} else if (uo.equals("Amulet")) {// Diamond Amulet
 						ifParent = 446;
 						ifChild = 61;
 						itemID = 1681;
@@ -1877,17 +2022,17 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 						gemID = diamond;
 						mouldID = 1595;
 						exp = 100;
-						//spellName = "0"; Coming Soon.
+						// spellName = "0"; Coming Soon.
 						enchantedName = "Amulet of power";
 						gemName = "Diamond";
 						itemName = "Diamond amulet";
-					}	
-				}	
-			} else if(co.equals("Silver Jewellery")) {
+					}
+				}
+			} else if (co.equals("Silver Jewellery")) {
 				action = "crafted";
-				if(go.equals("Silver")) {
+				if (go.equals("Silver")) {
 					barName = "Silver bar";
-					if(uo.equals("Holy Symbol")) {
+					if (uo.equals("Holy Symbol")) {
 						ifParent = 438;
 						ifChild = 16;
 						itemID = 1714;
@@ -1895,7 +2040,7 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 						mouldID = 1599;
 						exp = 50;
 						itemName = "Unstrung symbol";
-					} else if(uo.equals("Tiara")) {
+					} else if (uo.equals("Tiara")) {
 						ifParent = 438;
 						ifChild = 44;
 						itemID = 5525;
@@ -1904,52 +2049,54 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 						exp = 52;
 						itemName = "Tiara";
 					}
-				} 
-			} else if(co.equals("Cut Gems")) {
+				}
+			} else if (co.equals("Cut Gems")) {
 				ifParent = 905;
 				ifChild = 14;
 				chiselID = 1755;
 				action = "cut";
-				if(go.equals("Sapphire")) {
+				if (go.equals("Sapphire")) {
 					barName = "Uncut sapphire";
 					gemName = itemName = "Sapphire";
 					gemID = itemID = sapphire;
 					uncutGemID = barID = uncutSapphire;
 					exp = 50;
-				} else if(go.equals("Emerald")) {
+				} else if (go.equals("Emerald")) {
 					barName = "Uncut emerald";
 					gemName = itemName = "Emerald";
 					gemID = itemID = emerald;
 					uncutGemID = barID = uncutEmerald;
 					exp = 67;
-				} else if(go.equals("Ruby")) {
+				} else if (go.equals("Ruby")) {
 					barName = "Uncut ruby";
-					gemName = itemName = "Ruby";	
+					gemName = itemName = "Ruby";
 					gemID = itemID = ruby;
 					uncutGemID = barID = uncutRuby;
 					exp = 85;
-				} else if(go.equals("Diamond")) {
+				} else if (go.equals("Diamond")) {
 					barName = "Uncut diamond";
 					gemName = itemName = "Diamond";
 					gemID = itemID = diamond;
 					uncutGemID = barID = uncutDiamond;
 					exp = 107;
-				} else if(go.equals("Dragonstone")) {
+				} else if (go.equals("Dragonstone")) {
 					barName = "Uncut dragonstone";
-					gemName = itemName = "Dragonstone";	
+					gemName = itemName = "Dragonstone";
 					gemID = itemID = dragonstone;
 					uncutGemID = barID = uncutDragonstone;
 					exp = 137;
 				}
 			}
-			log("[GUI] Making " + itemName+"s at: " + location + "!");
+			log("[GUI] Making " + itemName + "s at: " + location + "!");
 			this.setVisible(false);
 
 		}
+
 		private void CancelActionPerformed(java.awt.event.ActionEvent evt) {
 			canceled = true;
 			this.setVisible(false);
 		}
+
 		private JPanel dialogPane;
 		private JPanel contentPanel;
 		private JTabbedPane tabbedPane2;

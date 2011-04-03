@@ -6,13 +6,12 @@ import java.util.LinkedList;
 import org.rsbot.script.wrappers.RSComponent;
 import org.rsbot.script.wrappers.RSItem;
 import org.rsbot.script.wrappers.RSItemDef;
-import org.rsbot.script.wrappers.RSModel;
-import org.rsbot.script.wrappers.RSObjectDef;
 import org.rsbot.script.wrappers.RSObject;
 import org.rsbot.script.wrappers.RSTile;
 
 /**
  * Inventory related operations.
+ * 
  * @author Jacmob, Aut0r, kiko
  */
 public class Inventory extends MethodProvider {
@@ -78,7 +77,7 @@ public class Inventory extends MethodProvider {
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Determines if the item contains the desired action.
 	 * 
@@ -102,7 +101,7 @@ public class Inventory extends MethodProvider {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Drops all items with the same specified id.
 	 * 
@@ -291,7 +290,7 @@ public class Inventory extends MethodProvider {
 		selItem = getSelectedItem();
 		return selItem != null && selItem.getID() == itemID;
 	}
-	
+
 	/**
 	 * Uses two items together.
 	 * 
@@ -326,7 +325,7 @@ public class Inventory extends MethodProvider {
 		RSItem target = getItem(targetID);
 		return target != null && selectItem(itemID) && target.doAction("Use");
 	}
-	
+
 	/**
 	 * Uses an item on an object.
 	 * 
@@ -367,9 +366,10 @@ public class Inventory extends MethodProvider {
 			return false;
 		if (oName.isEmpty())
 			methods.camera.turnTo(objTile, random(5, 15));
-		return object.doAction(!iName.isEmpty() ? "Use " + iName + " -> " + oName : "Use");
+		return object.doAction(!iName.isEmpty() ? "Use " + iName + " -> "
+				+ oName : "Use");
 	}
-	
+
 	/**
 	 * Randomizes a point.
 	 * 

@@ -1,3 +1,12 @@
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.RenderingHints;
+import java.text.NumberFormat;
+import java.util.Locale;
+
 import org.rsbot.event.listeners.PaintListener;
 import org.rsbot.script.Script;
 import org.rsbot.script.ScriptManifest;
@@ -9,10 +18,6 @@ import org.rsbot.script.wrappers.RSObject;
 import org.rsbot.script.wrappers.RSTile;
 import org.rsbot.script.wrappers.RSTilePath;
 
-import java.awt.*;
-import java.text.NumberFormat;
-import java.util.Locale;
-
 @ScriptManifest(authors = "Vastico", name = "Flaxer", version = 0.12)
 public class Flaxer extends Script implements PaintListener {
 
@@ -23,12 +28,10 @@ public class Flaxer extends Script implements PaintListener {
 		WALK_TO_FIELD, WALK_TO_BANK, PICK, BANK
 	}
 
-	private static final RSTile[] PATH = {
-			new RSTile(2726, 3491), new RSTile(2725, 3481),
-			new RSTile(2728, 3472), new RSTile(2726, 3464),
-			new RSTile(2730, 3453), new RSTile(2735, 3447),
-			new RSTile(2739, 3443)
-	};
+	private static final RSTile[] PATH = { new RSTile(2726, 3491),
+			new RSTile(2725, 3481), new RSTile(2728, 3472),
+			new RSTile(2726, 3464), new RSTile(2730, 3453),
+			new RSTile(2735, 3447), new RSTile(2739, 3443) };
 
 	private static final int FLAX_OBJECT = 2646;
 
@@ -63,7 +66,7 @@ public class Flaxer extends Script implements PaintListener {
 
 	@Override
 	public boolean onStart() {
-		flaxPrice = grandExchange.lookup(FLAX_ITEM).getMarketPrice();
+		flaxPrice = grandExchange.lookup(FLAX_ITEM).getGuidePrice();
 		return true;
 	}
 
@@ -71,6 +74,7 @@ public class Flaxer extends Script implements PaintListener {
 	 * Implemented Methods
 	 */
 
+	@Override
 	public int loop() {
 		if (startTime == 0) {
 			if (skills.getCurrentLevel(Skills.CONSTITUTION) > 1) {
@@ -84,45 +88,48 @@ public class Flaxer extends Script implements PaintListener {
 			walking.setRun(true);
 		}
 		switch (getAction()) {
-			case WALK_TO_BANK:
-				if (pathToBank.traverse()) {
-					sleep(500);
-				}
-				break;
-			case WALK_TO_FIELD:
-				if (pathToFlax.traverse()) {
-					sleep(500);
-				}
-				break;
-			case PICK:
-				RSObject flax = objects.getNearest(FLAX_OBJECT);
-				if (flax != null && flax.isOnScreen()) {
-					int startCount = inventory.getCount();
-					if (pickFlax(flax)) {
-						long picked = System.currentTimeMillis();
-						while (startCount == inventory.getCount() && System.currentTimeMillis() - picked < 10000) {
-							sleep(100);
-						}
-						if (startCount < inventory.getCount()) {
-							flaxCollected++;
-						}
-					}
-				}
-				break;
-			case BANK:
-				if (!bank.isOpen()) {
-					bank.open();
-				} else {
-					bank.depositAll();
-					long deposit = System.currentTimeMillis();
-					while (inventory.getCount() > 0 && System.currentTimeMillis() - deposit < 10000) {
+		case WALK_TO_BANK:
+			if (pathToBank.traverse()) {
+				sleep(500);
+			}
+			break;
+		case WALK_TO_FIELD:
+			if (pathToFlax.traverse()) {
+				sleep(500);
+			}
+			break;
+		case PICK:
+			RSObject flax = objects.getNearest(FLAX_OBJECT);
+			if (flax != null && flax.isOnScreen()) {
+				int startCount = inventory.getCount();
+				if (pickFlax(flax)) {
+					long picked = System.currentTimeMillis();
+					while (startCount == inventory.getCount()
+							&& System.currentTimeMillis() - picked < 10000) {
 						sleep(100);
 					}
+					if (startCount < inventory.getCount()) {
+						flaxCollected++;
+					}
 				}
+			}
+			break;
+		case BANK:
+			if (!bank.isOpen()) {
+				bank.open();
+			} else {
+				bank.depositAll();
+				long deposit = System.currentTimeMillis();
+				while (inventory.getCount() > 0
+						&& System.currentTimeMillis() - deposit < 10000) {
+					sleep(100);
+				}
+			}
 		}
 		return random(100, 200);
 	}
 
+	@Override
 	public void onRepaint(Graphics render) {
 		if (startTime == 0) {
 			return;
@@ -130,7 +137,8 @@ public class Flaxer extends Script implements PaintListener {
 
 		Graphics2D g = (Graphics2D) render;
 		g.setRenderingHints(RENDERING_HINTS);
-		NumberFormat comma = NumberFormat.getNumberInstance(new Locale("en", "IN"));
+		NumberFormat comma = NumberFormat.getNumberInstance(new Locale("en",
+				"IN"));
 		RSInterface chatBox = interfaces.get(Game.INTERFACE_CHAT_BOX);
 		int y = 344;
 		if (chatBox != null && game.isLoggedIn()) {
@@ -153,12 +161,15 @@ public class Flaxer extends Script implements PaintListener {
 		g.setColor(new Color(0, 0, 0, 255));
 		g.setFont(new Font("Arial", Font.PLAIN, 12));
 
-		g.drawString(hours + " Hours " + minutes + " Minutes " + seconds + " Seconds", 120, y + 41);
+		g.drawString(hours + " Hours " + minutes + " Minutes " + seconds
+				+ " Seconds", 120, y + 41);
 		g.drawString(comma.format(flaxCollected), 120, y + 57);
 		g.drawString(comma.format((flaxPrice * flaxCollected)), 120, y + 73);
 
 		g.setFont(new Font("Arial", Font.PLAIN, 9));
-		g.drawString("V. " + getClass().getAnnotation(ScriptManifest.class).version(), 478, y + 124);
+		g.drawString("V. "
+				+ getClass().getAnnotation(ScriptManifest.class).version(),
+				478, y + 124);
 		drawMouse(g);
 
 	}
@@ -220,8 +231,8 @@ public class Flaxer extends Script implements PaintListener {
 	private boolean inArea(RSArea area) {
 		if (area != null && !area.contains(getMyPlayer().getLocation())) {
 			RSTile dest = walking.getDestination();
-			return dest != null && getMyPlayer().isMoving() &&
-					area.contains(dest) && calc.distanceTo(dest) < 8;
+			return dest != null && getMyPlayer().isMoving()
+					&& area.contains(dest) && calc.distanceTo(dest) < 8;
 		}
 		return true;
 	}
