@@ -1,21 +1,9 @@
 package org.rsbot.gui;
 
-import org.rsbot.bot.Bot;
-import org.rsbot.script.Script;
-import org.rsbot.script.internal.ScriptHandler;
-import org.rsbot.script.internal.event.ScriptListener;
-import org.rsbot.service.FileScriptSource;
-import org.rsbot.service.ScriptBoxSource;
-import org.rsbot.service.ScriptDefinition;
-import org.rsbot.service.ScriptSource;
-import org.rsbot.service.ServiceException;
-import org.rsbot.util.GlobalConfiguration;
-
-import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.table.AbstractTableModel;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
@@ -29,6 +17,33 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.Box;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.JToolBar;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.AbstractTableModel;
+
+import org.rsbot.bot.Bot;
+import org.rsbot.script.Script;
+import org.rsbot.script.internal.ScriptHandler;
+import org.rsbot.script.internal.event.ScriptListener;
+import org.rsbot.service.FileScriptSource;
+import org.rsbot.service.ScriptBoxSource;
+import org.rsbot.service.ScriptDefinition;
+import org.rsbot.service.ScriptSource;
+import org.rsbot.service.ServiceException;
+import org.rsbot.util.GlobalConfiguration;
+
 /**
  * @author Jacmob
  */
@@ -40,7 +55,8 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 
 	private static final long serialVersionUID = 5475451138208522511L;
 
-	private static final String[] COLUMN_NAMES = new String[]{"", "Name", "Version", "Author", "Description"};
+	private static final String[] COLUMN_NAMES = new String[] { "", "Name",
+			"Version", "Author", "Description" };
 
 	private static final ScriptSource SRC_SOURCES;
 	private static final ScriptSource SRC_PRECOMPILED;
@@ -48,22 +64,26 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 	private static final ScriptSource SRC_DRM;
 
 	static {
-		SRC_SOURCES = new FileScriptSource(new File(GlobalConfiguration.Paths.getScriptsSourcesDirectory()));
-		SRC_PRECOMPILED = new FileScriptSource(new File(GlobalConfiguration.Paths.getScriptsPrecompiledDirectory()));
+		SRC_SOURCES = new FileScriptSource(new File(
+				GlobalConfiguration.Paths.getScriptsSourcesDirectory()));
+		SRC_PRECOMPILED = new FileScriptSource(new File(
+				GlobalConfiguration.Paths.getScriptsPrecompiledDirectory()));
 		if (GlobalConfiguration.RUNNING_FROM_JAR) {
-			SRC_BUNDLED = new FileScriptSource(new File(GlobalConfiguration.Paths.getScriptsExtractedCache()));
+			SRC_BUNDLED = new FileScriptSource(new File(
+					GlobalConfiguration.Paths.getScriptsExtractedCache()));
 		} else {
-			SRC_BUNDLED = new FileScriptSource(new File("." + File.separator + GlobalConfiguration.Paths.SCRIPTS_NAME_SRC));
+			SRC_BUNDLED = new FileScriptSource(new File("." + File.separator
+					+ GlobalConfiguration.Paths.SCRIPTS_NAME_SRC));
 		}
 		SRC_DRM = new ScriptBoxSource(LoginDialog.CREDENTIALS);
 	}
 
-	private Bot bot;
+	private final Bot bot;
 	private JTable table;
 	private JTextField search;
 	private JComboBox accounts;
-	private ScriptTableModel model;
-	private List<ScriptDefinition> scripts;
+	private final ScriptTableModel model;
+	private final List<ScriptDefinition> scripts;
 	private JButton submit;
 
 	public ScriptSelector(Frame frame, Bot bot) {
@@ -98,19 +118,23 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 		model.search(search.getText());
 	}
 
+	@SuppressWarnings("serial")
 	private void init() {
 		setLayout(new BorderLayout());
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
 		bot.getScriptHandler().addScriptListener(ScriptSelector.this);
 		addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(final WindowEvent e) {
-				bot.getScriptHandler().removeScriptListener(ScriptSelector.this);
+				bot.getScriptHandler()
+						.removeScriptListener(ScriptSelector.this);
 				dispose();
 			}
 		});
 
 		table = new JTable(model) {
+			@Override
 			public String getToolTipText(MouseEvent e) {
 				int row = rowAtPoint(e.getPoint());
 				ScriptDefinition def = model.getDefinition(row);
@@ -138,7 +162,8 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 		table.setRowHeight(20);
 		table.setIntercellSpacing(new Dimension(1, 1));
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		table.getSelectionModel().addListSelectionListener(new TableSelectionListener());
+		table.getSelectionModel().addListSelectionListener(
+				new TableSelectionListener());
 		setColumnWidths(table, 30, 175, 50, 100);
 
 		JToolBar toolBar = new JToolBar();
@@ -147,32 +172,37 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 
 		search = new JTextField();
 		search.addFocusListener(new FocusAdapter() {
+			@Override
 			public void focusGained(FocusEvent e) {
 				table.clearSelection();
 			}
 		});
 		search.addKeyListener(new KeyAdapter() {
+			@Override
 			public void keyTyped(KeyEvent e) {
 				model.search(search.getText());
 				table.revalidate();
 			}
 		});
-		submit = new JButton("Start Script",
-				new ImageIcon(GlobalConfiguration.getImage(
+		submit = new JButton("Start Script", new ImageIcon(
+				GlobalConfiguration.getImage(
 						GlobalConfiguration.Paths.Resources.ICON_START,
 						GlobalConfiguration.Paths.ICON_START)));
-		JButton connect = new JButton(
-				new ImageIcon(GlobalConfiguration.getImage(
+		JButton connect = new JButton(new ImageIcon(
+				GlobalConfiguration.getImage(
 						GlobalConfiguration.Paths.Resources.ICON_DISCONNECT,
 						GlobalConfiguration.Paths.ICON_DISCONNECT)));
 		submit.setEnabled(false);
 		submit.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
-				ScriptDefinition def = model.getDefinition(table.getSelectedRow());
+				ScriptDefinition def = model.getDefinition(table
+						.getSelectedRow());
 				try {
 					bot.setAccount((String) accounts.getSelectedItem());
 					bot.getScriptHandler().runScript(def.source.load(def));
-					bot.getScriptHandler().removeScriptListener(ScriptSelector.this);
+					bot.getScriptHandler().removeScriptListener(
+							ScriptSelector.this);
 					dispose();
 				} catch (ServiceException e) {
 					e.printStackTrace();
@@ -182,6 +212,7 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 
 		connect.setEnabled(false);
 		connect.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 
 			}
@@ -223,28 +254,34 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 		}
 	}
 
+	@Override
 	public void scriptStarted(ScriptHandler handler, Script script) {
 		update();
 	}
 
+	@Override
 	public void scriptStopped(ScriptHandler handler, Script script) {
 		update();
 	}
 
+	@Override
 	public void scriptResumed(ScriptHandler handler, Script script) {
 
 	}
 
+	@Override
 	public void scriptPaused(ScriptHandler handler, Script script) {
 
 	}
 
+	@Override
 	public void inputChanged(Bot bot, int mask) {
 
 	}
 
 	private class TableSelectionListener implements ListSelectionListener {
 
+		@Override
 		public void valueChanged(ListSelectionEvent evt) {
 			if (!evt.getValueIsAdjusting()) {
 				submit.setEnabled(table.getSelectedRow() != -1);
@@ -277,8 +314,8 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 						GlobalConfiguration.Paths.Resources.ICON_SCRIPT_BDL,
 						GlobalConfiguration.Paths.ICON_SCRIPT_BDL));
 
-		private List<ScriptDefinition> scripts;
-		private List<ScriptDefinition> matches;
+		private final List<ScriptDefinition> scripts;
+		private final List<ScriptDefinition> matches;
 
 		public ScriptTableModel(List<ScriptDefinition> scripts) {
 			this.scripts = scripts;
@@ -311,14 +348,17 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 			return matches.get(rowIndex);
 		}
 
+		@Override
 		public int getRowCount() {
 			return matches.size();
 		}
 
+		@Override
 		public int getColumnCount() {
 			return COLUMN_NAMES.length;
 		}
 
+		@Override
 		public Object getValueAt(int rowIndex, int columnIndex) {
 			if (rowIndex >= 0 && rowIndex < matches.size()) {
 				ScriptDefinition def = matches.get(rowIndex);
@@ -366,7 +406,6 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 		public String getColumnName(int col) {
 			return COLUMN_NAMES[col];
 		}
-
 
 	}
 

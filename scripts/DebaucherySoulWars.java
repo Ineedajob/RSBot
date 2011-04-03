@@ -1,3 +1,4 @@
+// <editor-fold defaultstate="collapsed" desc="Imports">
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
@@ -10,9 +11,11 @@ import java.awt.RenderingHints;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
@@ -21,8 +24,11 @@ import org.rsbot.event.listeners.MessageListener;
 import org.rsbot.event.listeners.PaintListener;
 import org.rsbot.script.Script;
 import org.rsbot.script.ScriptManifest;
+import org.rsbot.script.methods.Bank;
+import org.rsbot.script.methods.Equipment;
 import org.rsbot.script.methods.Game;
 import org.rsbot.script.methods.Skills;
+import org.rsbot.script.util.Filter;
 import org.rsbot.script.util.Timer;
 import org.rsbot.script.wrappers.RSArea;
 import org.rsbot.script.wrappers.RSComponent;
@@ -35,72 +41,77 @@ import org.rsbot.script.wrappers.RSPath;
 import org.rsbot.script.wrappers.RSPlayer;
 import org.rsbot.script.wrappers.RSTile;
 
-@SuppressWarnings({ "unused", "serial" })
-@ScriptManifest(authors = "Debauchery", name = "DebaucherySoulWars", version = 0.33, description = "")
+@ScriptManifest(authors = "Debauchery", name = "DebaucherySoulWars", version = 0.51, description = "Start the script in soulwars lobby")
 public class DebaucherySoulWars extends Script implements MouseListener,
 		MessageListener, PaintListener {
 
+	// <editor-fold defaultstate="collapsed" desc="Constants & Variables">
 	private final int randomTeamID = 42031, blueBarrierID = 42029,
 			bandageID = 14640, pyresID = 8598, jelliesID = 8599,
 			redBarrierID = 42030, bonesID = 14638;
 	private int zeal, won, lost, drew, blueShouts, redShouts, kicked,
 			maxiumTimeForBreak, maxiumTimeUntillBreak, minimiumTimeForBreak,
-			minimiumTimeUntillBreak;
+			minimiumTimeUntillBreak, specUsage, lowActivity = 250,
+			EasternGraveyard = 0, WesternGraveyard = 0;
 	private final int[] BarrierID = { 42013, 42014, 42015, 42016, 42017, 42018 },
 			bandageTableID = { 42023, 42024 },
 			barricadeID = { 8600 },
 			blueAvatarID = { 8597 }, redAvatarID = { 8596 }, fragmentID = {
 					14646, 15792 }, arrowsID = { 9242, 13280, 9142, 864, 863 };
 	private String result, task, breakHandlerStatus;
+	@SuppressWarnings("unused")
 	private boolean randomTeam, lastWonTeam, lastLostTeam, redTeam, blueTeam,
 			clanChatTeam, takeBreak, attackAvatar, attackPyres, attackJellies,
 			getSupplies, healOthers, pickUpBones, attackPlayers, randomStrat,
 			pureMode, blueLast, redLast, inClan, buryAtGrave, pickUpArrows,
-			weaponSpec, quickPrayer, takingBreak, startedBreak, stoppedBreak,
-			startScript, hide;
+			weaponSpec, quickPrayer, attackEverywhere, enableSummoning,
+			withdrawPouches, useScrolls, takingBreak, startedBreak,
+			stoppedBreak, startScript, hide;
+	private Summoning chosenFamiliar;
+	private Location chosenLocation;
+	private String chosenLocationString;
 	private SWGUI gui;
 	private Pitch pitch;
 	private Angle angle;
-	private ExtraAntiban extraAntiban;
 	private BreakHandler breakHandler;
 	private Timer run;
 	private RSTile tempTile;
 	private Strategies current;
-	RSPath path;
-	public Rectangle hideRect = new Rectangle(504, 209, 14, 14);
+	private RSPath path;
+	private Rectangle hideRect = new Rectangle(504, 209, 14, 14);
 
 	// </editor-fold>
 
 	// <editor-fold defaultstate="collapsed" desc="Start">
 	@Override
 	public boolean onStart() {
-		gui = new SWGUI();
-		gui.setVisible(true);
-		while (!startScript) {
-			sleep(10);
-		}
-		gui.setVisible(false);
-		run = new Timer(0);
-		mouse.setSpeed(random(8, 10));
-		angle = new Angle();
-		pitch = new Pitch();
-		pitch.start();
-		angle.start();
-		if (takeBreak) {
-			breakHandler = new BreakHandler();
-			breakHandler.start();
-		}
-		if (clanChatTeam) {
-			inClan = clanChat.isInChannel();
-			if (!inClan) {
-				clanChat.join(clanChat.getLastChannel());
-				inClan = clanChat.isInChannel();
+		if (game.isLoggedIn()) {
+			gui = new SWGUI();
+			gui.setVisible(true);
+			while (!startScript) {
+				sleep(10);
 			}
+			gui.setVisible(false);
+			run = new Timer(0);
+			mouse.setSpeed(random(8, 10));
+			angle = new Angle();
+			pitch = new Pitch();
+			pitch.start();
+			angle.start();
+			if (takeBreak) {
+				breakHandler = new BreakHandler();
+				breakHandler.start();
+			}
+			if (weaponSpec) {
+				specUsage = specialUsage();
+			}
+			combat.setAutoRetaliate((pureMode ? false : true));
+			mouse.setSpeed(random(3, 7));
+			return true;
+		} else {
+			log(Color.RED, "Please log in before starting");
+			return false;
 		}
-		combat.setAutoRetaliate((pureMode ? false : true));
-		extraAntiban = new ExtraAntiban();
-		extraAntiban.start();
-		return true;
 	}
 
 	// </editor-fold>
@@ -110,32 +121,25 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 	public int loop() {
 		path = null;
 		tempTile = null;
-		if ((getLocation().equals(Location.OUTSIDE)
-				|| game.getClientState() == Game.INDEX_LOBBY_SCREEN || !game
+		if ((getMyLocation().equals(Location.OUTSIDE)
+				|| interfaces.get(Game.INTERFACE_LOGOUT_LOBBY).isValid() || !game
 				.isLoggedIn()) && takingBreak) {
 			task = "Waiting in lobby.";
-			if (!interfaces.get(Game.INTERFACE_LOGOUT_LOBBY).isValid()) {
+			if (!interfaces.get(Game.INTERFACE_LOGOUT_LOBBY).isValid()
+					|| game.isLoggedIn()) {
 				sleep(1000, 12000);
 				game.logout(true);
 			}
 			startedBreak = true;
 			stoppedBreak = false;
-			env.disbleRandoms();
 			inClan = false;
+			env.disbleRandoms();
 		} else {
 			env.enableRandoms();
 			startedBreak = false;
 			stoppedBreak = true;
 			if (game.isLoggedIn()
-					&& game.getClientState() != Game.INDEX_LOBBY_SCREEN) {
-				if (clanChatTeam) {
-					if (!inClan) {
-						if (clanChat.isInChannel()) {
-							clanChat.join(clanChat.getLastChannel());
-						}
-						inClan = clanChat.isInChannel();
-					}
-				}
+					&& !interfaces.get(Game.INTERFACE_LOGOUT_LOBBY).isValid()) {
 				if (interfaces.get(Game.INTERFACE_LEVEL_UP).isValid()) {
 					if (interfaces.canContinue()) {
 						interfaces.clickContinue();
@@ -149,29 +153,64 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 					redLast = true;
 					blueLast = false;
 				}
-				if (getLocation().equals(Location.OUTSIDE)) {
+				if (getMyLocation().equals(Location.OUTSIDE)) {
 					if (interfaces.getComponent(243, 4).isValid()
 							&& interfaces.getComponent(243, 4).containsText(
 									"You were removed from the game due")) {
 						result = "drewLast";
+						lowActivity = lowActivity + 25;
 						kicked += 1;
 						interfaces.clickContinue();
 					}
+					if (enableSummoning) {
+						if (!summoning.isFamiliarSummoned()) {
+							if (inventory.contains(chosenFamiliar.getPouchID())) {
+								RSItem pouch = inventory.getItem(chosenFamiliar
+										.getPouchID());
+								if (pouch != null
+										&& summoning.getSummoningPoints() <= 0) {
+									pouch.doAction("Summon");
+								}
+							} else if (withdrawPouches) {
+								RSObject chest = objects
+										.getNearest(Bank.BANK_CHESTS);
+								if (chest != null && !chest.isOnScreen()) {
+									for (int i = 0; i > 5; i++) {
+										walking.walkTileMM(chest.getLocation());
+										if (!chest.isOnScreen()) {
+											break;
+										}
+									}
+								}
+								bank.open();
+								if (bank.isOpen()) {
+									bank.withdraw(chosenFamiliar.getPouchID(),
+											5);
+								}
+							}
+						}
+					}
+					if (clanChatTeam && !inClan) {
+						joinLastClan();
+						inClan = inClan();
+					}
 					current = null;
+					WesternGraveyard = 0;
+					EasternGraveyard = 0;
 					task = "Joining Team.";
 					joinTeam();
 					if (waitTime() > 0) {
 						sleep(waitTime() * 50000);
 					}
-				} else if (getLocation().equals(Location.RED_WAITING)
-						|| getLocation().equals(Location.BLUE_WAITING)) {
+				} else if (getMyLocation().equals(Location.RED_WAITING)
+						|| getMyLocation().equals(Location.BLUE_WAITING)) {
 					current = null;
 					task = "Waiting for next game.";
 					waitingAntiban();
-				} else if (getLocation().equals(Location.RED_SPAWN)
-						|| getLocation().equals(Location.BLUE_SPAWN)
-						|| getLocation().equals(Location.EAST_GRAVE)
-						|| getLocation().equals(Location.WEST_GRAVE)) {
+				} else if (getMyLocation().equals(Location.RED_SPAWN)
+						|| getMyLocation().equals(Location.BLUE_SPAWN)
+						|| getMyLocation().equals(Location.EAST_GRAVE)
+						|| getMyLocation().equals(Location.WEST_GRAVE)) {
 					current = null;
 					task = "Leaving grave or spawn.";
 					leave();
@@ -181,6 +220,7 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 						redShouts = 0;
 					}
 				} else {
+					chosenLocation = locationNameToObject(chosenLocationString);
 					if (game.getClientState() == Game.INDEX_LOBBY_SCREEN
 							|| !game.isLoggedIn()) {
 						return 1;
@@ -201,7 +241,7 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 							healPlayersStrat();
 							break;
 						case ATTACK_AVATAR:
-							if (getActivityBarPercent() < 25) {
+							if (getActivityBarPercent() < lowActivity) {
 								if (pickUpBones) {
 									task = "Picking Bones(Low activity).";
 									bonesStrat();
@@ -213,7 +253,7 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 							}
 							break;
 						case ATTACK_PYRES:
-							if (getActivityBarPercent() < 25) {
+							if (getActivityBarPercent() < lowActivity) {
 								if (pickUpBones) {
 									task = "Picking Bones(Low activity).";
 									bonesStrat();
@@ -225,7 +265,7 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 							}
 							break;
 						case ATTACK_JELLIES:
-							if (getActivityBarPercent() < 25) {
+							if (getActivityBarPercent() < lowActivity) {
 								if (pickUpBones) {
 									task = "Picking Bones(Low activity).";
 									bonesStrat();
@@ -237,7 +277,7 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 							}
 							break;
 						case ATTACK_PLAYERS:
-							if (getActivityBarPercent() < 25) {
+							if (getActivityBarPercent() < lowActivity) {
 								if (pickUpBones) {
 									task = "Picking Bones(Low activity).";
 									bonesStrat();
@@ -259,8 +299,8 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 	// </editor-fold>
 
 	// <editor-fold defaultstate="collapsed" desc="Methods">
-	public int findClan() {
-		sleep(10000, 15000);
+	private int findClan() {
+		sleep(1500, 1800);
 		int blueUsers = 0;
 		int redUsers = 0;
 		String[] clanUsers;
@@ -279,17 +319,13 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 					}
 				}
 			}
-			if (blueUsers > redUsers) {
-				return 1;
-			} else if (redUsers > blueUsers) {
-				return 2;
-			}
+			return (blueUsers > redUsers ? 1 : 2);
 		} catch (Exception e) {
 		}
 		return 0;
 	}
 
-	public int waitTime() {
+	private int waitTime() {
 		try {
 			if (interfaces.getComponent(211, 1).isValid()
 					&& interfaces.getComponent(211, 1).containsText(
@@ -303,40 +339,6 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 		} catch (Exception e) {
 		}
 		return 0;
-	}
-
-	private RSTile divideTile(RSTile tile) {
-		RSTile loc = getMyPlayer().getLocation();
-		return new RSTile((loc.getX() + 4 * tile.getX()) / 5,
-				(loc.getY() + 4 * tile.getY()) / 5);
-	}
-
-	private int getOwnAvatarHealth() {
-		String s = null;
-		try {
-			if (getMyPlayer().getTeam() == 1) {
-				RSComponent avatar = interfaces.getComponent(836, 11);
-				if (avatar != null) {
-					s = avatar.getText();
-				}
-			} else {
-				RSComponent avatar = interfaces.getComponent(836, 15);
-				if (avatar != null) {
-					s = avatar.getText();
-				}
-			}
-			if (s.equals("---")) {
-				return 100;
-			}
-			s.replace("%", "");
-			try {
-				return Integer.parseInt(s.trim());
-			} catch (Exception e) {
-			}
-		} catch (Exception e) {
-			return 100;
-		}
-		return 100;
 	}
 
 	private int getOpponentAvatarLevel() {
@@ -360,45 +362,21 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 	}
 
 	private int getActivityBarPercent() {
-		RSComponent c = interfaces.get(836).getComponent(56);
-		if (c != null && c.isValid() && c.getRelativeY() > -1) {
-			return ((c.getHeight() * 100) / 140);
-		}
-		return 0;
+		return settings.getSetting(1380);
 	}
 
 	private boolean controlsWesternGraveyard() {
-		Color color = getColor(272, 25);
-		if (color != null) {
-			if (getMyPlayer().getTeam() == 1) {
-				return (color.getBlue() > color.getRed() ? true : false);
-			} else {
-				return (color.getRed() > color.getBlue() ? true : false);
-			}
-		}
-		return false;
+		return (WesternGraveyard == getMyPlayer().getTeam());
 	}
 
 	private boolean controlsEasternGraveyard() {
-		Color color = getColor(352, 25);
-		if (color != null) {
-			if (getMyPlayer().getTeam() == 1) {
-				return (color.getBlue() > color.getRed() ? true : false);
-			} else {
-				return (color.getRed() > color.getBlue() ? true : false);
-			}
-		}
-		return false;
+		return (EasternGraveyard == getMyPlayer().getTeam());
 	}
 
 	private int chooseTeam() {
 		if (clanChatTeam) {
 			if (blueShouts != redShouts) {
-				if (blueShouts > redShouts) {
-					return 1;
-				} else {
-					return 2;
-				}
+				return (blueShouts > redShouts ? 1 : 2);
 			} else {
 				return findClan();
 			}
@@ -408,31 +386,15 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 					return 0;
 				} else if (result.equals("wonLast")) {
 					if (blueLast) {
-						if (lastWonTeam) {
-							return 1;
-						} else if (lastLostTeam) {
-							return 2;
-						}
+						return (lastWonTeam ? 1 : 2);
 					} else {
-						if (lastWonTeam) {
-							return 2;
-						} else if (lastLostTeam) {
-							return 1;
-						}
+						return (lastWonTeam ? 2 : 1);
 					}
 				} else if (result.equals("lostLast")) {
 					if (redLast) {
-						if (lastWonTeam) {
-							return 1;
-						} else if (lastLostTeam) {
-							return 2;
-						}
+						return (lastWonTeam ? 1 : 2);
 					} else {
-						if (lastWonTeam) {
-							return 2;
-						} else if (lastLostTeam) {
-							return 1;
-						}
+						return (lastWonTeam ? 2 : 1);
 					}
 				}
 			}
@@ -447,15 +409,15 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 	}
 
 	private void joinTeam() {
-		String s = interfaces.get(199).getComponent(0).getText();
+		interfaces.get(199).getComponent(0).getText();
 		if (interfaces.get(211).getComponent(3).isValid()
 				&& interfaces.get(211).getComponent(3) != null) {
 			interfaces.get(211).getComponent(3).doClick();
-			sleep(1200, 2000);
+			sleep(500, 800);
 		} else if (interfaces.get(228).getComponent(2).isValid()
 				&& interfaces.get(228).getComponent(2) != null) {
 			interfaces.get(228).getComponent(2).doClick();
-			sleep(1200, 2000);
+			sleep(500, 800);
 		} else {
 			switch (chooseTeam()) {
 			case 0:
@@ -467,9 +429,9 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 						if (randomTeam.isOnScreen()) {
 							switch (random(0, 2)) {
 							case 0:
-								if (getLocation().equals(Location.OUTSIDE)) {
+								if (getMyLocation().equals(Location.OUTSIDE)) {
 									if (randomTeam.doAction("Join-team")) {
-										sleep(1000, 1300);
+										sleep(500, 800);
 									}
 								}
 								break;
@@ -480,10 +442,10 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 									Point p = mod.getPoint();
 									if (p != null) {
 										mouse.hop(p);
-										if (getLocation().equals(
+										if (getMyLocation().equals(
 												Location.OUTSIDE)) {
 											mouse.click(true);
-											sleep(1000, 1300);
+											sleep(500, 800);
 										}
 									}
 								}
@@ -517,19 +479,19 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 									Point p = mod.getPoint();
 									if (p != null) {
 										mouse.hop(p);
-										if (getLocation().equals(
+										if (getMyLocation().equals(
 												Location.OUTSIDE)) {
 											mouse.click(true);
-											sleep(800, 1000);
+											sleep(500, 800);
 										}
 									}
 								}
 								break;
 							case 1:
-								if (getLocation().equals(Location.OUTSIDE)) {
+								if (getMyLocation().equals(Location.OUTSIDE)) {
 									blueBarrier.doAction("Pass");
 								}
-								sleep(800, 1000);
+								sleep(500, 800);
 								break;
 							}
 						} else if (!blueBarrier.isOnScreen()
@@ -541,7 +503,7 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 									.getClosestTileOnMap(blueBarrierTile);
 							if (closestTileToBlueBarrier != null) {
 								walking.walkTileMM(closestTileToBlueBarrier);
-								sleep(400, 800);
+								sleep(500, 800);
 							}
 						}
 					}
@@ -561,18 +523,18 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 									Point p = mod.getPoint();
 									if (p != null) {
 										mouse.hop(p);
-										if (getLocation().equals(
+										if (getMyLocation().equals(
 												Location.OUTSIDE)) {
 											mouse.click(true);
 										}
-										sleep(800, 1000);
+										sleep(500, 800);
 									}
 								}
 								break;
 							case 1:
-								if (getLocation().equals(Location.OUTSIDE)) {
+								if (getMyLocation().equals(Location.OUTSIDE)) {
 									if (redBarrier.doAction("Pass")) {
-										sleep(800, 1000);
+										sleep(500, 800);
 									}
 								}
 								break;
@@ -586,7 +548,7 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 									.getClosestTileOnMap(redBarrierTile);
 							if (closestTileToRedBarrier != null) {
 								walking.walkTileMM(closestTileToRedBarrier);
-								sleep(400, 800);
+								sleep(500, 800);
 							}
 						}
 					}
@@ -616,13 +578,13 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 			sleep(800, 1000);
 			break;
 		case 5:
-			if (getLocation().equals(Location.RED_WAITING)) {
+			if (getMyLocation().equals(Location.RED_WAITING)) {
 				RSTile center = Location.RED_WAITING.getRSArea()
 						.getCentralTile();
 				if (center != null && calc.distanceTo(center) > 2) {
 					walking.walkTileMM(center, 2, 2);
 				}
-			} else if (getLocation().equals(Location.BLUE_WAITING)) {
+			} else if (getMyLocation().equals(Location.BLUE_WAITING)) {
 				RSTile center = Location.BLUE_WAITING.getRSArea()
 						.getCentralTile();
 				if (center != null && calc.distanceTo(center) > 2) {
@@ -639,10 +601,10 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 	private void leave() {
 		try {
 			RSObject Barrier = objects.getNearest(BarrierID);
-			if (getLocation().equals(Location.RED_SPAWN)
-					|| getLocation().equals(Location.BLUE_SPAWN)
-					|| getLocation().equals(Location.EAST_GRAVE)
-					|| getLocation().equals(Location.WEST_GRAVE)) {
+			if (getMyLocation().equals(Location.RED_SPAWN)
+					|| getMyLocation().equals(Location.BLUE_SPAWN)
+					|| getMyLocation().equals(Location.EAST_GRAVE)
+					|| getMyLocation().equals(Location.WEST_GRAVE)) {
 				if (getMyPlayer().getNPCID() == 8623) {
 					if (random(1, 100) < 25) {
 						if (Barrier != null) {
@@ -651,10 +613,10 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 						}
 					}
 					if (random(1, 100) < 10) {
-						if (getLocation().equals(Location.RED_SPAWN)
-								|| getLocation().equals(Location.BLUE_SPAWN)
-								|| getLocation().equals(Location.EAST_GRAVE)
-								|| getLocation().equals(Location.WEST_GRAVE)) {
+						if (getMyLocation().equals(Location.RED_SPAWN)
+								|| getMyLocation().equals(Location.BLUE_SPAWN)
+								|| getMyLocation().equals(Location.EAST_GRAVE)
+								|| getMyLocation().equals(Location.WEST_GRAVE)) {
 							Barrier.doAction("Pass");
 						}
 					}
@@ -677,13 +639,13 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 							if (mod != null) {
 								Point p = mod.getPoint();
 								if (p != null) {
-									if (getLocation()
-											.equals(Location.RED_SPAWN)
-											|| getLocation().equals(
+									if (getMyLocation().equals(
+											Location.RED_SPAWN)
+											|| getMyLocation().equals(
 													Location.BLUE_SPAWN)
-											|| getLocation().equals(
+											|| getMyLocation().equals(
 													Location.EAST_GRAVE)
-											|| getLocation().equals(
+											|| getMyLocation().equals(
 													Location.WEST_GRAVE)) {
 										mouse.hop(p);
 										mouse.click(true);
@@ -692,13 +654,13 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 							}
 							break;
 						default:
-							if (getLocation().equals(Location.RED_SPAWN)
-									|| getLocation()
-											.equals(Location.BLUE_SPAWN)
-									|| getLocation()
-											.equals(Location.EAST_GRAVE)
-									|| getLocation()
-											.equals(Location.WEST_GRAVE)) {
+							if (getMyLocation().equals(Location.RED_SPAWN)
+									|| getMyLocation().equals(
+											Location.BLUE_SPAWN)
+									|| getMyLocation().equals(
+											Location.EAST_GRAVE)
+									|| getMyLocation().equals(
+											Location.WEST_GRAVE)) {
 								Barrier.doAction("Pass");
 							}
 							break;
@@ -724,17 +686,19 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 			if (bandages.isOnScreen()) {
 				if (bandages.doAction("Take-x")) {
 					sleep(2500, 3000);
-					if (calc.distanceTo(bandages) <= 1
+					if (calc.distanceTo(bandages) <= 2
 							&& getMyPlayer().getInteracting() == null) {
 						if (interfaces.getComponent(752, 5) != null
 								&& !interfaces.getComponent(752, 5).getText()
-										.contains(String.valueOf(supplyNum))) {
+										.contains(String.valueOf(supplyNum))
+								&& !getMyPlayer().isInCombat()) {
 							keyboard.sendText(String.valueOf(supplyNum), false);
 							sleep(1000, 1400);
 						}
 						if (interfaces.getComponent(752, 5) != null
 								&& interfaces.getComponent(752, 5).getText()
-										.contains(String.valueOf(supplyNum))) {
+										.contains(String.valueOf(supplyNum))
+								&& !getMyPlayer().isInCombat()) {
 							keyboard.sendText("", true);
 							sleep(1800, 2000);
 						}
@@ -751,35 +715,29 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 		return false;
 	}
 
-	private RSPlayer teamMate() {
-		try {
-			RSPlayer[] validPlayers = players.getAll();
-			for (RSPlayer player : validPlayers) {
-				if (player != null && player.isOnScreen()) {
-					if (getMyPlayer().getTeam() == player.getTeam()) {
-						if (player.getHPPercent() < 90) {
-							return player;
-						}
-					}
-				}
+	public RSPlayer teamMate() {
+		return players.getNearest(new Filter<RSPlayer>() {
+
+			@Override
+			public boolean accept(RSPlayer player) {
+				return player != null
+						&& player.getTeam() == getMyPlayer().getTeam()
+						&& player.getHPPercent() < 100;
 			}
-			return null;
-		} catch (Exception e) {
-			return null;
-		}
+		});
 	}
 
 	private void healOthers() {
 		camera.setPitch(true);
 		try {
-			if (inventory.getSelectedItem() != null
+			if (inventory.getSelectedItem() == null
 					&& inventory.getSelectedItem().getID() == bandageID) {
 				RSItem bandage = inventory.getItem(bandageID);
 				if (bandage != null) {
-					bandage.doClick(true);
+					bandage.doAction("Use");
 				}
 			} else {
-				switch (random(1, 3)) {
+				switch (random(1, 5)) {
 				case 1:
 					if (teamMate() != null) {
 						RSModel model = teamMate().getModel();
@@ -793,7 +751,7 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 						}
 					}
 					break;
-				case 2:
+				default:
 					opponent().doAction("Heal " + teamMate().getName());
 					sleep(3000, 5000);
 					break;
@@ -803,22 +761,16 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 		}
 	}
 
-	private RSPlayer opponent() {
-		try {
-			RSPlayer[] validPlayers = players.getAll();
-			for (RSPlayer player : validPlayers) {
-				if (player != null && player.isOnScreen()) {
-					if (getMyPlayer().getTeam() != player.getTeam()) {
-						if (player.getHPPercent() > 30) {
-							return player;
-						}
-					}
-				}
+	public RSPlayer opponent() {
+		return players.getNearest(new Filter<RSPlayer>() {
+
+			@Override
+			public boolean accept(RSPlayer player) {
+				return player != null
+						&& player.getTeam() != getMyPlayer().getTeam()
+						&& player.getHPPercent() > 1;
 			}
-			return null;
-		} catch (Exception e) {
-			return null;
-		}
+		});
 	}
 
 	private void attack() {
@@ -849,7 +801,7 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 				}
 			} else {
 				if (pickUpBones) {
-					if (getActivityBarPercent() < 100 || buryAtGrave) {
+					if (getActivityBarPercent() < 1000 || buryAtGrave) {
 						RSGroundItem bones = groundItems.getNearest(bonesID);
 						bones.doAction("Take " + bones.getItem().getName());
 						return;
@@ -919,7 +871,7 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 	}
 
 	private void buryBones() {
-		if (getActivityBarPercent() < random(60, 80)) {
+		if (getActivityBarPercent() < random(600, 800)) {
 			if (inventory.containsOneOf(bonesID)) {
 				RSItem inventBones = inventory.getItem(bonesID);
 				if (inventBones != null) {
@@ -930,7 +882,7 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 		}
 	}
 
-	public void destroyBones() {
+	private void destroyBones() {
 		if (inventory.containsOneOf(bonesID)) {
 			RSItem inventBones = inventory.getItem(bonesID);
 			if (inventBones != null) {
@@ -952,7 +904,7 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 				RSTile barricadeLoc = barricade.getLocation();
 				if (barricadeLoc != null) {
 					if (calc.distanceTo(barricadeLoc) <= 2) {
-						if (getMyPlayer().getInteracting().equals(barricade)) {
+						if (getMyPlayer().getInteracting() != null) {
 							return true;
 						} else {
 							barricade.doAction("Attack " + barricade.getName());
@@ -961,10 +913,8 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 						}
 					}
 				}
-				return true;
-			} else {
-				return false;
 			}
+			return false;
 		} catch (Exception e) {
 			return false;
 		}
@@ -1019,6 +969,9 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 	private void heal() {
 		if (getMyPlayer().getHPPercent() < 60) {
 			RSItem bandage = inventory.getItem(bandageID);
+			if (game.getCurrentTab() != Game.TAB_INVENTORY) {
+				game.openTab(Game.TAB_INVENTORY);
+			}
 			if (bandage != null) {
 				bandage.doAction("Heal");
 				sleep(200, 400);
@@ -1029,7 +982,7 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 	private void qPrayer() {
 		if (quickPrayer) {
 			if (getMyPlayer().getHPPercent() < random(65, 90)) {
-				if (!combat.isQuickPrayerOn() && combat.getPrayerPoints() > 1) {
+				if (!prayer.isQuickPrayerOn() && combat.getPrayerPoints() > 1) {
 					interfaces.getComponent(749, 2).doClick();
 				}
 			}
@@ -1039,25 +992,33 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 	private void weaponSpec() {
 		if (weaponSpec) {
 			if (getMyPlayer().getInteracting() != null) {
-				if (settings.getSetting(301) != 1
-						&& settings.getSetting(300) == 1000) {
+				if (!combat.isSpecialEnabled()
+						&& settings.getSetting(300) >= specUsage * 10) {
 					if (game.getCurrentTab() != Game.TAB_ATTACK) {
-						game.openTab(Game.TAB_ATTACK);
+						switch (random(1, 3)) {
+						case 1:
+							game.openTab(Game.TAB_ATTACK);
+							break;
+						case 2:
+							game.openTab(zeal, true);
+							break;
+						}
 						sleep(random(300, 900));
 					}
 					mouse.click(645 + random(0, 4), 425 + random(0, 4), true);
+					sleep(3000, 5000);
 				}
 			}
 		}
 	}
 
-	public void pickUpArrows() {
+	private void pickUpArrows() {
 		if (pickUpArrows) {
 			RSGroundItem arrow = null;
 			for (int x = 0; arrow == null || x < arrowsID.length; x++) {
 				arrow = groundItems.getNearest(arrowsID[x]);
 				if (arrow != null) {
-					arrow.doAction("Take " + arrow.getItem().getName());
+					arrow.doAction("Take");
 					return;
 				}
 			}
@@ -1108,65 +1069,172 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 	}
 
 	private boolean listenTime() {
-		if (getLocation().equals(Location.OUTSIDE)) {
+		if (getMyLocation().equals(Location.OUTSIDE)) {
 			return true;
 		} else {
 			String time = interfaces.get(836).getComponent(27).getText();
-			if (time == null
-					|| (time != null && (time.equals("7 mins")
-							|| time.equals("6 mins") || time.equals("5 mins")
-							|| time.equals("4 mins") || time.equals("3 mins")
-							|| time.equals("2 mins") || time.equals("1 min")))) {
-				return true;
-			} else {
-				return false;
-			}
+			return (time == null || (time != null && (time.equals("7 mins")
+					|| time.equals("6 mins") || time.equals("5 mins")
+					|| time.equals("4 mins") || time.equals("3 mins")
+					|| time.equals("2 mins") || time.equals("1 min"))));
 		}
 	}
 
-	public Color getColor(int x, int y) {
-		try {
-			BufferedImage image = env.takeScreenshot(false);
-			int c = image.getRGB(x, y);
-			return new Color(c);
-		} catch (Exception e) {
-			return null;
+	private int specialUsage() {
+		int[] amountUsage = { 10, 25, 33, 35, 45, 50, 55, 60, 80, 85, 100 };
+		String[][] weapons = {
+				{ "Rune thrownaxe", "Rod of ivandis" },
+				{ "Dragon Dagger", "Dragon dagger (p)", "Dragon dagger (p+)",
+						"Dragon dagger (p++)", "Dragon Mace", "Dragon Spear",
+						"Dragon longsword", "Rune claws" },
+				{ "Dragon Halberd" },
+				{ "Magic Longbow" },
+				{ "Magic Composite Bow" },
+				{ "Dragon Claws", "Abyssal Whip", "Granite Maul", "Darklight",
+						"Barrelchest Anchor", "Armadyl Godsword" },
+				{ "Magic Shortbow" },
+				{ "Dragon Scimitar", "Dragon 2H Sword", "Zamorak Godsword",
+						"Korasi's sword" },
+				{ "Dorgeshuun Crossbow", "Bone Dagger" },
+				{ "Brine Sabre" },
+				{ "Bandos Godsword", "Dragon Battleaxe", "Dragon Hatchet",
+						"Seercull Bow", "Excalibur", "Enhanced excalibur",
+						"Ancient Mace", "Saradomin sword" } };
+		String str = equipment.getItem(Equipment.WEAPON).getName();
+		str = str.substring(str.indexOf(">") + 1);
+		for (int i = 0; i < weapons.length; i++) {
+			for (int j = 0; j < weapons[i].length; j++) {
+				if (weapons[i][j].equalsIgnoreCase(str)) {
+					log(Color.green, "Special percent set at: "
+							+ amountUsage[i] + " Using " + str);
+					return amountUsage[i];
+				}
+			}
 		}
+		log(Color.red,
+				"Your weapon ethier doesn't have special or i don't have it saved please post a comment so i can add it.");
+		return 0;
+	}
+
+	private boolean pickUpFrag() {
+		try {
+			RSGroundItem frag = groundItems.getNearest(fragmentID);
+			if (frag != null) {
+				if (getMyPlayer().isInCombat()) {
+					return false;
+				}
+				if (frag.isOnScreen() && !inventory.isFull()
+						&& calc.distanceTo(frag.getLocation()) < 4) {
+					frag.doAction("Take " + frag.getItem().getName());
+					return true;
+				}
+			}
+			return false;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	private boolean inClan() {
+		if (game.getCurrentTab() != Game.TAB_CLAN) {
+			game.openTab(Game.TAB_CLAN);
+		}
+		try {
+			String check = interfaces.getComponent(589, 15).getText()
+					.toLowerCase();
+			return (check.contains("leave"));
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	private boolean joinLastClan() {
+		if (!inClan()) {
+			RSComponent join = interfaces.getComponent(589, 15);
+			if (join != null) {
+				if (join.doAction("Join")) {
+					for (int i = 0; i < 10; i++) {
+						RSComponent last = interfaces.getComponent(752, 3)
+								.getComponent(0);
+						if (last != null && last.isValid()) {
+							String clan = last.getText();
+							if (last.doAction("Use")) {
+								clan = clan.substring(clan.indexOf(":") + 1);
+								if (inClan()) {
+									log(Color.green, "Joined: " + clan);
+									return true;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return false;
 	}
 
 	// </editor-fold>
 
 	// <editor-fold defaultstate="collapsed" desc="Strategies">
 	private void playersStrat() {
-		if (getLocation().equals(Location.OBELISK)) {
+		if (getMyLocation().equals(chosenLocation)) {
 			heal();
 			qPrayer();
 			attack();
 			weaponSpec();
 		} else {
+			if (attackEverywhere) {
+				try {
+					RSPlayer opp = opponent();
+					if (opp != null && opp.isOnScreen()) {
+						if (getMyPlayer().getInteracting() == null) {
+							sleep(200, 400);
+							if (getMyPlayer().getInteracting() == null) {
+								if (opp != null) {
+									RSModel model = opp.getModel();
+									if (model != null) {
+										Point p = model.getPoint();
+										if (p != null) {
+											mouse.hop(p);
+											mouse.click(true);
+											sleep(3000, 5000);
+										}
+									}
+								}
+							}
+						}
+						qPrayer();
+						weaponSpec();
+						return;
+					}
+				} catch (Exception e) {
+				}
+			}
 			if (!inventory.containsOneOf(bandageID)
 					&& (getSupplies || healOthers)) {
-				if (getLocation().equals(nearestSupplies())) {
+				if (getMyLocation().equals(nearestSupplies())) {
 					getSupplies();
 				} else {
 					walkTo(nearestSupplies());
 				}
 			} else {
-				walkTo(Location.OBELISK);
+				walkTo(chosenLocation);
 			}
 		}
 	}
 
 	private void pyresStrat() {
-		if (getLocation().equals(nearestPyres())) {
+		if (getMyLocation().equals(nearestPyres())) {
 			heal();
 			qPrayer();
-			attackPyres();
+			if (!pickUpFrag()) {
+				attackPyres();
+			}
 			weaponSpec();
 		} else {
 			if (!inventory.containsOneOf(bandageID)
 					&& (getSupplies || healOthers)) {
-				if (getLocation().equals(nearestSupplies())) {
+				if (getMyLocation().equals(nearestSupplies())) {
 					getSupplies();
 				} else {
 					walkTo(nearestSupplies());
@@ -1178,18 +1246,18 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 	}
 
 	private void jelliesStrat() {
-		if (getLocation().equals(nearestJellies())) {
+		if (getMyLocation().equals(nearestJellies())) {
 			heal();
 			qPrayer();
-			attackJellies();
+			if (!pickUpFrag()) {
+				attackJellies();
+			}
 			weaponSpec();
-
 		} else {
 			if (!inventory.containsOneOf(bandageID)
 					&& (getSupplies || healOthers)) {
-				if (getLocation().equals(nearestSupplies())) {
+				if (getMyLocation().equals(nearestSupplies())) {
 					getSupplies();
-
 				} else {
 					walkTo(nearestSupplies());
 				}
@@ -1202,20 +1270,20 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 	private void healPlayersStrat() {
 		try {
 			if (!inventory.containsOneOf(bandageID)) {
-				if (getLocation().equals(nearestSupplies())) {
+				if (getMyLocation().equals(nearestSupplies())) {
 					getSupplies();
 				} else {
 					walkTo(nearestSupplies());
 				}
 			} else {
-				if (getLocation().equals(Location.OBELISK)) {
-					if (getActivityBarPercent() < random(70, 80)) {
+				if (getMyLocation().equals(chosenLocation)) {
+					if (getActivityBarPercent() < 800) {
 						healOthers();
 					} else {
 						pickUpArrows();
 					}
 				} else {
-					walkTo(Location.OBELISK);
+					walkTo(chosenLocation);
 				}
 			}
 		} catch (Exception e) {
@@ -1225,16 +1293,16 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 	private void bonesStrat() {
 		try {
 			if (buryAtGrave
-					&& (getLocation().equals(Location.EAST_GRAVE_OUT) || getLocation()
+					&& (getMyLocation().equals(Location.EAST_GRAVE_OUT) || getMyLocation()
 							.equals(Location.WEST_GRAVE_OUT))
 					&& inventory.containsOneOf(bonesID)) {
-				if (getActivityBarPercent() < 70) {
+				if (getActivityBarPercent() < 800) {
 					buryBones();
 				} else {
 					RSGroundItem bones = groundItems.getNearest(bonesID);
 					if (bones != null) {
 						if (bones.isOnScreen() && !inventory.isFull()) {
-							bones.doAction("Take " + bones.getItem().getName());
+							bones.doAction("Take");
 							return;
 						}
 					}
@@ -1250,14 +1318,14 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 				if (bones != null) {
 					if (calc.distanceTo(bones.getLocation()) < 5
 							&& !inventory.isFull()) {
-						if (getActivityBarPercent() < random(50, 80)
+						if (getActivityBarPercent() < random(500, 800)
 								|| buryAtGrave) {
-							bones.doAction("Take " + bones.getItem().getName());
+							bones.doAction("Take");
 							return;
 						}
 					}
 				}
-				if (getLocation().equals(Location.OBELISK)) {
+				if (getMyLocation().equals(chosenLocation)) {
 					bones = groundItems.getNearest(bonesID);
 					if (bones != null) {
 						if (!bones.isOnScreen()) {
@@ -1268,9 +1336,8 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 							}
 						} else {
 							if (!inventory.isFull()) {
-								if (getActivityBarPercent() < 70) {
-									bones.doAction("Take "
-											+ bones.getItem().getName());
+								if (getActivityBarPercent() < 700) {
+									bones.doAction("Take");
 								} else {
 									pickUpArrows();
 								}
@@ -1282,7 +1349,7 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 						}
 					}
 				} else {
-					walkTo(Location.OBELISK);
+					walkTo(chosenLocation);
 				}
 			}
 		} catch (Exception e) {
@@ -1290,7 +1357,9 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 	}
 
 	private void avatarStrat() {
-		if (getLocation().equals(Location.OBELISK)) {
+		if (getMyLocation().equals(
+				(getMyPlayer().getTeam() == 1 ? Location.RED_AVATAR
+						: Location.BLUE_AVATAR))) {
 			heal();
 			qPrayer();
 			attackAvatar();
@@ -1298,7 +1367,7 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 		} else {
 			if (!inventory.containsOneOf(bandageID)
 					&& (getSupplies || healOthers)) {
-				if (getLocation().equals(nearestSupplies())) {
+				if (getMyLocation().equals(nearestSupplies())) {
 					getSupplies();
 				} else {
 					walkTo(nearestSupplies());
@@ -1357,7 +1426,7 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 				return Strategies.HEAL_PLAYERS;
 			}
 		}
-		if (getActivityBarPercent() < 70) {
+		if (getActivityBarPercent() < 700) {
 			if (pickUpBones && healOthers) {
 				switch (random(0, 2)) {
 				case 0:
@@ -1368,31 +1437,24 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 			}
 			if (pickUpBones) {
 				return Strategies.PICKUP_BONES;
-
 			}
 			if (healOthers) {
 				return Strategies.HEAL_PLAYERS;
-
 			}
 		} else {
 			if (getOpponentAvatarLevel() < skills.getRealLevel(Skills.SLAYER)
 					&& attackAvatar) {
 				return Strategies.ATTACK_AVATAR;
-
 			}
 			if (attackPyres) {
 				return Strategies.ATTACK_PYRES;
-
 			} else if (attackJellies) {
 				return Strategies.ATTACK_JELLIES;
-
 			} else if (attackPlayers) {
 				return Strategies.ATTACK_PLAYERS;
-
 			}
 		}
 		return null;
-
 	}
 
 	// </editor-fold>
@@ -1400,33 +1462,60 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 	// <editor-fold defaultstate="collapsed" desc="Location">
 	private enum Location {
 
-		RED_WAITING(new RSArea(new RSTile(1909, 3167), new RSTile(1899, 3156))), BLUE_WAITING(
-				new RSArea(new RSTile(1880, 3167), new RSTile(1869, 3157))), OUTSIDE(
-				new RSArea(new RSTile(1918, 3187), new RSTile(1862, 3149))), RED_SPAWN(
-				new RSArea(new RSTile(1951, 3234), new RSTile(1958, 3244))), BLUE_SPAWN(
-				new RSArea(new RSTile(1816, 3220), new RSTile(1823, 3230))), EAST_GRAVE(
-				new RSArea(new RSTile(1932, 3244), new RSTile(1934, 3246))), WEST_GRAVE(
-				new RSArea(new RSTile(1841, 3217), new RSTile(1843, 3219))), EAST_GRAVE_OUT(
-				new RSArea(new RSTile(1939, 3252), new RSTile(1926, 3239))), WEST_GRAVE_OUT(
-				new RSArea(new RSTile(1848, 3225), new RSTile(1836, 3212))), RED_SUPPLIES(
-				new RSArea(new RSTile(1977, 3213), new RSTile(1961, 3203))), BLUE_SUPPLIES(
-				new RSArea(new RSTile(1812, 3261), new RSTile(1795, 3250))), RED_AVATAR(
-				new RSArea(new RSTile(1976, 3261), new RSTile(1959, 3244))), BLUE_AVATAR(
-				new RSArea(new RSTile(1816, 3220), new RSTile(1798, 3202))), SOUTHEAST_PYRES(
-				new RSArea(new RSTile(1938, 3222), new RSTile(1917, 3204))), NORTHWEST_PRYES(
-				new RSArea(new RSTile(1856, 3258), new RSTile(1834, 3238))), NORTH_JELLIES(
-				new RSArea(new RSTile(1906, 3263), new RSTile(1869, 3248))), SOUTH_JELLIES(
-				new RSArea(new RSTile(1899, 3214), new RSTile(1873, 3199))), OBELISK(
-				new RSArea(new RSTile(1901, 3241), new RSTile(1872, 3221))), OTHER(
-				new RSArea(new RSTile(0, 0), new RSTile(0, 0)));
+		RED_WAITING(new RSArea(new RSTile(1909, 3167), new RSTile(1899, 3156)),
+				"Red waiting", false), BLUE_WAITING(new RSArea(new RSTile(1880,
+				3167), new RSTile(1869, 3157)), "Blue waiting", false), OUTSIDE(
+				new RSArea(new RSTile(1918, 3187), new RSTile(1862, 3149)),
+				"Lobby", false), RED_SPAWN(new RSArea(new RSTile(1951, 3234),
+				new RSTile(1958, 3244)), "Inside red spawn", false), BLUE_SPAWN(
+				new RSArea(new RSTile(1816, 3220), new RSTile(1823, 3230)),
+				"Inside blue spawn", false), BLUE_SPAWN_OUT(new RSArea(
+				new RSTile(1815, 3231), new RSTile(1808, 3219)),
+				"Outside blue spawn", true), RED_SPAWN_OUT(new RSArea(
+				new RSTile(1965, 3245), new RSTile(1959, 3232)),
+				"Outside red spawn", true), EAST_GRAVE(new RSArea(new RSTile(
+				1932, 3244), new RSTile(1934, 3246)), "Inside east grave",
+				false), WEST_GRAVE(new RSArea(new RSTile(1841, 3217),
+				new RSTile(1843, 3219)), "Inside west grave", false), EAST_GRAVE_OUT(
+				new RSArea(new RSTile(1937, 3250), new RSTile(1927, 3242)),
+				"Outside east grave", true), WEST_GRAVE_OUT(new RSArea(
+				new RSTile(1847, 3223), new RSTile(1837, 3214)),
+				"Outside west grave", true), RED_SUPPLIES(new RSArea(
+				new RSTile(1977, 3213), new RSTile(1961, 3203)),
+				"Red supplies", true), BLUE_SUPPLIES(new RSArea(new RSTile(
+				1812, 3261), new RSTile(1795, 3250)), "Blue Supplies", true), RED_AVATAR(
+				new RSArea(new RSTile(1976, 3261), new RSTile(1959, 3244)),
+				"Red avatar", true), BLUE_AVATAR(new RSArea(new RSTile(1816,
+				3220), new RSTile(1798, 3202)), "Blue avatar", true), SOUTHEAST_PYRES(
+				new RSArea(new RSTile(1938, 3222), new RSTile(1917, 3204)),
+				"Southeast pryes", true), NORTHWEST_PRYES(new RSArea(
+				new RSTile(1856, 3258), new RSTile(1834, 3238)),
+				"Northwest pryes", true), NORTH_JELLIES(new RSArea(new RSTile(
+				1906, 3263), new RSTile(1869, 3248)), "North jellies", true), SOUTH_JELLIES(
+				new RSArea(new RSTile(1899, 3214), new RSTile(1873, 3199)),
+				"South jellies", true), OBELISK(new RSArea(new RSTile(1901,
+				3241), new RSTile(1872, 3221)), "Obelisk", true), OTHER(
+				new RSArea(new RSTile(0, 0), new RSTile(0, 0)), "Other", false);
 		private final RSArea area;
+		private final String name;
+		private final boolean combatArea;
 
-		Location(RSArea area) {
+		Location(RSArea area, String name, boolean combatArea) {
 			this.area = area;
+			this.name = name;
+			this.combatArea = combatArea;
 		}
 
 		RSArea getRSArea() {
 			return area;
+		}
+
+		String getName() {
+			return name;
+		}
+
+		boolean isCombatArea() {
+			return combatArea;
 		}
 
 		boolean containsTile(RSTile tile) {
@@ -1434,7 +1523,7 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 		}
 	}
 
-	private Location getLocation() {
+	private Location getMyLocation() {
 		RSTile player = getMyPlayer().getLocation();
 		for (Location loc : Location.values()) {
 			if (loc.containsTile(player)) {
@@ -1444,30 +1533,28 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 		return Location.OTHER;
 	}
 
+	private RSTile divideTile(RSTile tile) {
+		RSTile loc = getMyPlayer().getLocation();
+		return new RSTile((loc.getX() + 4 * tile.getX()) / 5,
+				(loc.getY() + 4 * tile.getY()) / 5);
+	}
+
 	private void walkTo(Location loc) {
-		long startTime = System.currentTimeMillis();
 		try {
 			path = walking.getPath(loc.getRSArea().getCentralTile());
 			tempTile = loc.getRSArea().getCentralTile();
 			while (path.getNext() == null) {
 				if (game.getClientState() == Game.INDEX_LOBBY_SCREEN
 						|| !game.isLoggedIn()
-						|| getLocation().equals(Location.OUTSIDE)
-						|| getLocation().equals(Location.RED_SPAWN)
-						|| getLocation().equals(Location.BLUE_SPAWN)
-						|| getLocation().equals(Location.EAST_GRAVE)
-						|| getLocation().equals(Location.WEST_GRAVE)) {
+						|| getMyLocation().equals(Location.OUTSIDE)
+						|| getMyLocation().equals(Location.RED_SPAWN)
+						|| getMyLocation().equals(Location.BLUE_SPAWN)
+						|| getMyLocation().equals(Location.EAST_GRAVE)
+						|| getMyLocation().equals(Location.WEST_GRAVE)) {
 					return;
 				}
 				tempTile = divideTile(tempTile);
 				path = walking.getPath(tempTile);
-				if (path.getNext() == null) {
-					if (startTime + 2000 < System.currentTimeMillis()
-							&& getMyPlayer().isMoving()) {
-						walking.walkTileMM(walking.getClosestTileOnMap(loc
-								.getRSArea().getCentralTile()));
-					}
-				}
 			}
 			if (path.getNext() != null) {
 				path.traverse();
@@ -1476,15 +1563,184 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 		}
 	}
 
+	private String[] allCombatLocations() {
+		List<String> list = new ArrayList<String>();
+		list.add("Opponents spawn");
+		list.add("Opponents grave");
+		list.add("Opponents avatar");
+		list.add("Nearest pyres");
+		list.add("Nearest jellies");
+		for (Location s : Location.values()) {
+			if (s.isCombatArea()) {
+				list.add(s.getName());
+			}
+		}
+		String[] stringList = new String[list.size()];
+		Collections.reverse(list);
+		list.toArray(stringList);
+		return stringList;
+	}
+
+	private Location locationNameToObject(String name) {
+		if (name.equals("Opponents grave")) {
+			return opponentsGrave();
+		}
+		if (name.equals("Opponents spawn")) {
+			return opponentsSpawn();
+		}
+		if (name.equals("Opponents avatar")) {
+			return opponentsAvatar();
+		}
+		if (name.equals("Nearest pyres")) {
+			return nearestPyres();
+		}
+		if (name.equals("Nearest jellies")) {
+			return nearestJellies();
+		}
+		for (Location s : Location.values()) {
+			if (s.getName().equals(name)) {
+				return s;
+			}
+		}
+		return null;
+	}
+
+	private Location opponentsGrave() {
+		if (!controlsWesternGraveyard() && !controlsEasternGraveyard()) {
+			int distanceToEast = (calc.distanceTo(Location.EAST_GRAVE_OUT
+					.getRSArea().getNearestTile(getMyPlayer().getLocation())));
+			int distanceToWest = (calc.distanceTo(Location.WEST_GRAVE_OUT
+					.getRSArea().getNearestTile(getMyPlayer().getLocation())));
+			return (distanceToEast < distanceToWest ? Location.EAST_GRAVE_OUT
+					: Location.WEST_GRAVE_OUT);
+		} else if (!controlsWesternGraveyard()) {
+			return Location.WEST_GRAVE_OUT;
+		} else if (!controlsEasternGraveyard()) {
+			return Location.EAST_GRAVE_OUT;
+		}
+		return opponentsSpawn();
+	}
+
+	private Location opponentsSpawn() {
+		return (getMyPlayer().getTeam() == 1 ? Location.RED_SPAWN_OUT
+				: Location.BLUE_SPAWN_OUT);
+	}
+
+	private Location opponentsAvatar() {
+		return (getMyPlayer().getTeam() == 1 ? Location.RED_AVATAR
+				: Location.BLUE_AVATAR);
+	}
+
+	// </editor-fold>
+
+	// <editor-fold defaultstate="collapsed" desc="Summoning">
+	private enum Summoning {
+
+		SPIRITWOLF("Spirit wolf", 12047, 12425), DREADFOWL("Dreadfowl", 12043,
+				12445), MEERKAT("Meerkat", 19622, 19621), SPIRITSPIDER(
+				"Spirit spider", 12059, 12428), THORNYSNAIL("Thorny snail",
+				12019, 12459), GRANITECRAB("Granite crab", 12009, 12533), SPIRITMOSQUITO(
+				"Spirit mosquito", 12778, 12838), DESERTWYRM("Desert wyrm",
+				12049, 12460), SPIRITSCORPION("Spirit scorpion", 12055, 12432), SPIRITTZKIH(
+				"Spirit tz-kih", 12808, 12839), ALBINORAT("Albino rat", 12067,
+				12430), SPIRITKALPHITE("Spirit kalphite", 12063, 12446), COMPSTMOUND(
+				"Compost mound", 12091, 12440), GIANTCHINCHOMPA(
+				"Giant chinchompa", 12800, 12834), VAMPIREBAT("Vampire bat",
+				12053, 12447), HONEYBADGER("Honey badger", 12065, 12433), BEAVER(
+				"Beaver", 12021, 12429), VOIDRAVAGER("Void ravager", 12818,
+				12443), VOIDSPINNER("Void spinner", 12780, 12443), VOIDTOUCHER(
+				"Void torcher", 12798, 12443), VOIDSHIFTER("Void shifter",
+				12814, 12443), BULLANT("Bull ant", 12087, 12431), MACAW(
+				"Macaw", 12071, 12422), EVILTURNIP("Evil turnip", 12051, 12448), SPCOCKATRICE(
+				"Sp. cockatrice", 12095, 12458), SPGUTHATRICE("Sp. guthatrice",
+				12097, 12458), SPSARATRICE("Sp. saratrice", 12099, 12458), SPZAMATRICE(
+				"Sp. zamatrice", 12101, 12458), SPPENGATRICE("Sp. pengatrice",
+				12103, 12458), SPCORAXTRICE("Sp. coraxatrice", 12105, 12458), SPVULATRICE(
+				"Sp. vulatrice", 12107, 12458), PYRELORD("Pyrelord", 12816,
+				12829), MAGPIE("Magpie", 12041, 12426), BLOATEDLEECH(
+				"Bloated leech", 12061, 12444), SPIRITTERRORBIRD(
+				"Spirit terrorbird", 12007, 12441), ABYSSALPARASITE(
+				"Abyssal parasite", 12035, 12454), SPIRITJELLY("Spirit jelly",
+				12027, 12453), IBIS("Ibis", 12531, 12424), SPIRITKYATT(
+				"Spirit kyatt", 12812, 12836), SPIRITLARUPIA("Spirit larupia",
+				12784, 12840), SPIRITGRAAK("Spirit graahk", 12810, 12835), KARAMOVERLOAD(
+				"Karam. overlord", 12023, 12455), SMOKEDEVIL("Smoke devil",
+				12085, 12468), ABYSSALLURKER("Abyssal lurker", 12037, 12427), SPIRITCOBRA(
+				"Spirit cobra", 12015, 12436), STRANGERPLANT("Stranger plant",
+				12045, 12467), BARKERTOAD("Barker toad", 12123, 12452), WARTORTOISE(
+				"War tortoise", 12031, 12439), BUNYIP("Bunyip", 12029, 12438), FRUITBAT(
+				"Fruit bat", 12033, 12423), RAVENOUSLOCUST("Ravenous locust",
+				12820, 12830), ARCTICBEAR("Arctic bear", 12057, 12451), PHOENIX(
+				"Phoenix", 14623, 14622), OBSIDIANGOLEM("Obsidian golem",
+				12792, 12826), GRANITELOBSTER("Granite lobster", 12069, 12449), PRAYINGMANTIS(
+				"Praying mantis", 12011, 12450), FORGEREGENT("Forge regent",
+				12782, 12841), TALONBEAST("Talon beast", 12794, 12831), GIANTENT(
+				"Giant ent", 12013, 12457), FIRETITAN("Fire titan", 12802,
+				12824), MOSSTITAN("Moss titan", 12804, 12824), ICETITAN(
+				"Ice titan", 12806, 12824), HYDRA("Hydra", 12025, 12442), SPIRITDAGANNOTH(
+				"Spirit dagannoth", 12017, 12456), LAVATITAN("Lava titan",
+				12788, 12837), SWAMPTITAN("Swamp titan", 12776, 12832), BRONZEMINOTAUR(
+				"Bronze minotaur", 12073, 12461), IRONMINOTOUR("Iron minotaur",
+				12075, 12462), STEELMINOTOUR("Steel minotaur", 12077, 12463), MITHRILMINOTAUR(
+				"Mithril minotaur", 12079, 12464), ADAMANTMINOTAUR(
+				"Adamant minotaur", 12081, 12465), RUNEMINOTAUR(
+				"Rune minotaur", 12083, 12466), UNICORNSTALLION(
+				"Unicorn stallion", 12039, 12434), GEYSERTITAN("Geyser titan",
+				12786, 12833), WOLPERTINGER("Wolpertinger", 12089, 12437), ABYSSALTITAN(
+				"Abyssal titan", 12796, 12827), IRONTITAN("Iron titan", 12822,
+				12828), PACKYAK("Pack yak", 12093, 12435), STEELTITAN(
+				"Steel titan", 12790, 12825);
+		private final String name;
+		private final int pouchID;
+
+		Summoning(String name, int pouchID, int scrollID) {
+			this.name = name;
+			this.pouchID = pouchID;
+		}
+
+		String getName() {
+			return this.name;
+		}
+
+		int getPouchID() {
+			return this.pouchID;
+		}
+	}
+
+	private String[] allFamiliars() {
+		List<String> list = new ArrayList<String>();
+		for (Summoning s : Summoning.values()) {
+			list.add(s.getName());
+		}
+		String[] stringList = new String[list.size()];
+		list.toArray(stringList);
+		return stringList;
+	}
+
+	private Summoning farmiliarNameToObject(String name) {
+		for (Summoning s : Summoning.values()) {
+			if (s.getName().equals(name)) {
+				return s;
+			}
+		}
+		return null;
+	}
+
 	// </editor-fold>
 
 	// <editor-fold defaultstate="collapsed" desc="GUI">
 	public class SWGUI extends javax.swing.JFrame {
 
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -7750165076281848642L;
+
 		public SWGUI() {
 			initComponents();
 		}
 
+		// <editor-fold defaultstate="collapsed" desc="Init">
 		private void initComponents() {
 
 			jLabel1 = new javax.swing.JLabel();
@@ -1508,8 +1764,25 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 			PickUpArrows = new javax.swing.JCheckBox();
 			QuickPrayer = new javax.swing.JCheckBox();
 			WeponSpec = new javax.swing.JCheckBox();
+			AttackEverywhere = new javax.swing.JCheckBox();
+			jLabel18 = new javax.swing.JLabel();
+			ChooseLocation = new javax.swing.JComboBox();
+			jPanel4 = new javax.swing.JPanel();
+			WithdrawPouches = new javax.swing.JCheckBox();
+			ChooseFamiliar = new javax.swing.JComboBox();
+			jLabel17 = new javax.swing.JLabel();
+			EnableSummoning = new javax.swing.JCheckBox();
+			UseScrolls = new javax.swing.JCheckBox();
 			jPanel3 = new javax.swing.JPanel();
+			jScrollPane1 = new javax.swing.JScrollPane();
+			jList1 = new javax.swing.JList();
 			jLabel13 = new javax.swing.JLabel();
+			jComboBox1 = new javax.swing.JComboBox();
+			jLabel14 = new javax.swing.JLabel();
+			jComboBox2 = new javax.swing.JComboBox();
+			jButton1 = new javax.swing.JButton();
+			jLabel15 = new javax.swing.JLabel();
+			jLabel16 = new javax.swing.JLabel();
 			jPanel2 = new javax.swing.JPanel();
 			TakeBreak = new javax.swing.JCheckBox();
 			jLabel6 = new javax.swing.JLabel();
@@ -1525,7 +1798,7 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 			jLabel12 = new javax.swing.JLabel();
 
 			setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-			setTitle("SwiftSoulWars");
+			setTitle("DebaucherySoulWars");
 			setAlwaysOnTop(true);
 			setBackground(java.awt.SystemColor.activeCaption);
 			setCursor(new java.awt.Cursor(java.awt.Cursor.CROSSHAIR_CURSOR));
@@ -1546,58 +1819,21 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 			ChooseTeam.setModel(new javax.swing.DefaultComboBoxModel(
 					new String[] { "Random", "Red", "Blue", "Last Won",
 							"Last Lost", "Clan Chat" }));
-			ChooseTeam.addActionListener(new java.awt.event.ActionListener() {
 
-				@Override
-				public void actionPerformed(java.awt.event.ActionEvent evt) {
-					ChooseTeamActionPerformed(evt);
-				}
-			});
-
-			jLabel5.setFont(new java.awt.Font("Tahoma", 0, 14));
+			jLabel5.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
 			jLabel5.setText("Choose Activity: ");
 
 			ChooseActivity.setModel(new javax.swing.DefaultComboBoxModel(
 					new String[] { "Random", "Attack Players", "Attack Pyres",
 							"Attack Jellies", "Pure Mode" }));
-			ChooseActivity
-					.addActionListener(new java.awt.event.ActionListener() {
-
-						@Override
-						public void actionPerformed(
-								java.awt.event.ActionEvent evt) {
-							ChooseActivityActionPerformed(evt);
-						}
-					});
 
 			AttackAvatar.setText("Attack Avatar");
-			AttackAvatar.addActionListener(new java.awt.event.ActionListener() {
-
-				@Override
-				public void actionPerformed(java.awt.event.ActionEvent evt) {
-					AttackAvatarActionPerformed(evt);
-				}
-			});
 
 			PickUpBones.setText("Pick Up Bones");
-			PickUpBones.addActionListener(new java.awt.event.ActionListener() {
-
-				@Override
-				public void actionPerformed(java.awt.event.ActionEvent evt) {
-					PickUpBonesActionPerformed(evt);
-				}
-			});
 
 			HealOthers.setText("Heal Others");
-			HealOthers.addActionListener(new java.awt.event.ActionListener() {
 
-				@Override
-				public void actionPerformed(java.awt.event.ActionEvent evt) {
-					HealOthersActionPerformed(evt);
-				}
-			});
-
-			Start.setFont(new java.awt.Font("Tahoma", 0, 24));
+			Start.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
 			Start.setText("Start");
 			Start.addActionListener(new java.awt.event.ActionListener() {
 
@@ -1608,13 +1844,6 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 			});
 
 			GetSupplies.setText("Get Supplies");
-			GetSupplies.addActionListener(new java.awt.event.ActionListener() {
-
-				@Override
-				public void actionPerformed(java.awt.event.ActionEvent evt) {
-					GetSuppliesActionPerformed(evt);
-				}
-			});
 
 			info.setText("Infomation");
 			info.addActionListener(new java.awt.event.ActionListener() {
@@ -1635,40 +1864,20 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 			});
 
 			BuryAtGrave.setText("Bury At Grave");
-			BuryAtGrave.addActionListener(new java.awt.event.ActionListener() {
-
-				@Override
-				public void actionPerformed(java.awt.event.ActionEvent evt) {
-					BuryAtGraveActionPerformed(evt);
-				}
-			});
 
 			PickUpArrows.setText("Pick Up Arrows");
-			PickUpArrows.addActionListener(new java.awt.event.ActionListener() {
-
-				@Override
-				public void actionPerformed(java.awt.event.ActionEvent evt) {
-					PickUpArrowsActionPerformed(evt);
-				}
-			});
 
 			QuickPrayer.setText("Quick Prayer");
-			QuickPrayer.addActionListener(new java.awt.event.ActionListener() {
-
-				@Override
-				public void actionPerformed(java.awt.event.ActionEvent evt) {
-					QuickPrayerActionPerformed(evt);
-				}
-			});
 
 			WeponSpec.setText("Weapon Spec");
-			WeponSpec.addActionListener(new java.awt.event.ActionListener() {
 
-				@Override
-				public void actionPerformed(java.awt.event.ActionEvent evt) {
-					WeponSpecActionPerformed(evt);
-				}
-			});
+			AttackEverywhere.setText("Atk Everywhere");
+
+			jLabel18.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+			jLabel18.setText("Choose Location:");
+
+			ChooseLocation.setModel(new javax.swing.DefaultComboBoxModel(
+					allCombatLocations()));
 
 			javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(
 					jPanel1);
@@ -1681,10 +1890,10 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 									jPanel1Layout
 											.createSequentialGroup()
 											.addComponent(jLabel3)
-											.addContainerGap(107,
+											.addContainerGap(108,
 													Short.MAX_VALUE))
 							.addComponent(jSeparator1,
-									javax.swing.GroupLayout.DEFAULT_SIZE, 303,
+									javax.swing.GroupLayout.DEFAULT_SIZE, 392,
 									Short.MAX_VALUE)
 							.addGroup(
 									jPanel1Layout
@@ -1701,100 +1910,153 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 																					jPanel1Layout
 																							.createParallelGroup(
 																									javax.swing.GroupLayout.Alignment.LEADING)
-																							.addComponent(
-																									info,
-																									javax.swing.GroupLayout.DEFAULT_SIZE,
-																									101,
-																									Short.MAX_VALUE)
-																							.addComponent(
-																									donate,
-																									javax.swing.GroupLayout.Alignment.TRAILING,
-																									javax.swing.GroupLayout.DEFAULT_SIZE,
-																									101,
-																									Short.MAX_VALUE))
-																			.addGap(8,
-																					8,
-																					8)
-																			.addComponent(
-																					Start,
-																					javax.swing.GroupLayout.PREFERRED_SIZE,
-																					174,
-																					javax.swing.GroupLayout.PREFERRED_SIZE))
-															.addGroup(
-																	jPanel1Layout
-																			.createSequentialGroup()
-																			.addGroup(
-																					jPanel1Layout
-																							.createParallelGroup(
-																									javax.swing.GroupLayout.Alignment.LEADING)
-																							.addComponent(
-																									jLabel4)
-																							.addComponent(
-																									jLabel5))
-																			.addPreferredGap(
-																					javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-																			.addGroup(
-																					jPanel1Layout
-																							.createParallelGroup(
-																									javax.swing.GroupLayout.Alignment.LEADING)
-																							.addComponent(
-																									ChooseTeam,
-																									0,
-																									175,
-																									Short.MAX_VALUE)
-																							.addComponent(
-																									ChooseActivity,
-																									0,
-																									175,
-																									Short.MAX_VALUE)))
-															.addGroup(
-																	jPanel1Layout
-																			.createSequentialGroup()
-																			.addGroup(
-																					jPanel1Layout
-																							.createParallelGroup(
-																									javax.swing.GroupLayout.Alignment.LEADING)
 																							.addGroup(
 																									jPanel1Layout
 																											.createSequentialGroup()
+																											.addGroup(
+																													jPanel1Layout
+																															.createParallelGroup(
+																																	javax.swing.GroupLayout.Alignment.TRAILING)
+																															.addGroup(
+																																	jPanel1Layout
+																																			.createSequentialGroup()
+																																			.addComponent(
+																																					donate,
+																																					javax.swing.GroupLayout.DEFAULT_SIZE,
+																																					101,
+																																					Short.MAX_VALUE)
+																																			.addGap(8,
+																																					8,
+																																					8))
+																															.addGroup(
+																																	jPanel1Layout
+																																			.createSequentialGroup()
+																																			.addComponent(
+																																					info,
+																																					javax.swing.GroupLayout.DEFAULT_SIZE,
+																																					103,
+																																					Short.MAX_VALUE)
+																																			.addPreferredGap(
+																																					javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
+																											.addComponent(
+																													Start,
+																													javax.swing.GroupLayout.PREFERRED_SIZE,
+																													153,
+																													javax.swing.GroupLayout.PREFERRED_SIZE)
+																											.addGap(19,
+																													19,
+																													19))
+																							.addGroup(
+																									javax.swing.GroupLayout.Alignment.TRAILING,
+																									jPanel1Layout
+																											.createSequentialGroup()
+																											.addGroup(
+																													jPanel1Layout
+																															.createParallelGroup(
+																																	javax.swing.GroupLayout.Alignment.LEADING)
+																															.addComponent(
+																																	jLabel4)
+																															.addComponent(
+																																	jLabel5))
+																											.addGap(32,
+																													32,
+																													32)
+																											.addGroup(
+																													jPanel1Layout
+																															.createParallelGroup(
+																																	javax.swing.GroupLayout.Alignment.TRAILING,
+																																	false)
+																															.addComponent(
+																																	ChooseTeam,
+																																	0,
+																																	javax.swing.GroupLayout.DEFAULT_SIZE,
+																																	Short.MAX_VALUE)
+																															.addComponent(
+																																	ChooseActivity,
+																																	0,
+																																	145,
+																																	Short.MAX_VALUE)
+																															.addComponent(
+																																	ChooseLocation,
+																																	javax.swing.GroupLayout.Alignment.LEADING,
+																																	0,
+																																	javax.swing.GroupLayout.DEFAULT_SIZE,
+																																	Short.MAX_VALUE))))
+																			.addGap(101,
+																					101,
+																					101))
+															.addGroup(
+																	jPanel1Layout
+																			.createSequentialGroup()
+																			.addGroup(
+																					jPanel1Layout
+																							.createParallelGroup(
+																									javax.swing.GroupLayout.Alignment.TRAILING)
+																							.addGroup(
+																									jPanel1Layout
+																											.createParallelGroup(
+																													javax.swing.GroupLayout.Alignment.LEADING)
 																											.addComponent(
 																													PickUpBones)
-																											.addPreferredGap(
-																													javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
 																											.addComponent(
-																													PickUpArrows))
-																							.addGroup(
-																									jPanel1Layout
-																											.createSequentialGroup()
-																											.addGroup(
-																													jPanel1Layout
-																															.createParallelGroup(
-																																	javax.swing.GroupLayout.Alignment.LEADING)
-																															.addComponent(
-																																	GetSupplies)
-																															.addComponent(
-																																	AttackAvatar))
-																											.addPreferredGap(
-																													javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-																											.addGroup(
-																													jPanel1Layout
-																															.createParallelGroup(
-																																	javax.swing.GroupLayout.Alignment.LEADING)
-																															.addComponent(
-																																	QuickPrayer)
-																															.addComponent(
-																																	HealOthers))))
+																													GetSupplies))
+																							.addComponent(
+																									WeponSpec))
+																			.addPreferredGap(
+																					javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+																			.addGroup(
+																					jPanel1Layout
+																							.createParallelGroup(
+																									javax.swing.GroupLayout.Alignment.LEADING)
+																							.addComponent(
+																									PickUpArrows)
+																							.addComponent(
+																									HealOthers)
+																							.addComponent(
+																									QuickPrayer))
 																			.addPreferredGap(
 																					javax.swing.LayoutStyle.ComponentPlacement.RELATED)
 																			.addGroup(
 																					jPanel1Layout
 																							.createParallelGroup(
 																									javax.swing.GroupLayout.Alignment.LEADING)
-																							.addComponent(
-																									WeponSpec)
-																							.addComponent(
-																									BuryAtGrave))))
-											.addContainerGap()));
+																							.addGroup(
+																									jPanel1Layout
+																											.createSequentialGroup()
+																											.addComponent(
+																													BuryAtGrave,
+																													javax.swing.GroupLayout.DEFAULT_SIZE,
+																													111,
+																													Short.MAX_VALUE)
+																											.addContainerGap(
+																													81,
+																													javax.swing.GroupLayout.PREFERRED_SIZE))
+																							.addGroup(
+																									jPanel1Layout
+																											.createSequentialGroup()
+																											.addComponent(
+																													AttackAvatar,
+																													javax.swing.GroupLayout.DEFAULT_SIZE,
+																													186,
+																													Short.MAX_VALUE)
+																											.addContainerGap())))))
+							.addGroup(
+									javax.swing.GroupLayout.Alignment.TRAILING,
+									jPanel1Layout
+											.createSequentialGroup()
+											.addGap(200, 200, 200)
+											.addComponent(
+													AttackEverywhere,
+													javax.swing.GroupLayout.DEFAULT_SIZE,
+													186, Short.MAX_VALUE)
+											.addContainerGap())
+							.addGroup(
+									jPanel1Layout
+											.createSequentialGroup()
+											.addContainerGap()
+											.addComponent(jLabel18)
+											.addContainerGap(275,
+													Short.MAX_VALUE)));
 			jPanel1Layout
 					.setVerticalGroup(jPanel1Layout
 							.createParallelGroup(
@@ -1803,8 +2065,7 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 									jPanel1Layout
 											.createSequentialGroup()
 											.addComponent(jLabel3)
-											.addPreferredGap(
-													javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+											.addGap(8, 8, 8)
 											.addComponent(
 													jSeparator1,
 													javax.swing.GroupLayout.PREFERRED_SIZE,
@@ -1843,13 +2104,27 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 															.createParallelGroup(
 																	javax.swing.GroupLayout.Alignment.BASELINE)
 															.addComponent(
-																	AttackAvatar)
+																	jLabel18)
+															.addComponent(
+																	ChooseLocation,
+																	javax.swing.GroupLayout.PREFERRED_SIZE,
+																	javax.swing.GroupLayout.DEFAULT_SIZE,
+																	javax.swing.GroupLayout.PREFERRED_SIZE))
+											.addPreferredGap(
+													javax.swing.LayoutStyle.ComponentPlacement.RELATED,
+													8, Short.MAX_VALUE)
+											.addGroup(
+													jPanel1Layout
+															.createParallelGroup(
+																	javax.swing.GroupLayout.Alignment.BASELINE)
+															.addComponent(
+																	AttackEverywhere)
 															.addComponent(
 																	QuickPrayer)
 															.addComponent(
 																	WeponSpec))
 											.addPreferredGap(
-													javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+													javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
 											.addGroup(
 													jPanel1Layout
 															.createParallelGroup(
@@ -1857,9 +2132,14 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 															.addComponent(
 																	GetSupplies)
 															.addComponent(
-																	HealOthers))
+																	HealOthers)
+															.addComponent(
+																	AttackAvatar,
+																	javax.swing.GroupLayout.PREFERRED_SIZE,
+																	23,
+																	javax.swing.GroupLayout.PREFERRED_SIZE))
 											.addPreferredGap(
-													javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+													javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
 											.addGroup(
 													jPanel1Layout
 															.createParallelGroup(
@@ -1870,67 +2150,255 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 																	PickUpArrows)
 															.addComponent(
 																	BuryAtGrave))
+											.addPreferredGap(
+													javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
 											.addGroup(
 													jPanel1Layout
 															.createParallelGroup(
-																	javax.swing.GroupLayout.Alignment.TRAILING)
+																	javax.swing.GroupLayout.Alignment.TRAILING,
+																	false)
 															.addGroup(
 																	jPanel1Layout
 																			.createSequentialGroup()
-																			.addPreferredGap(
-																					javax.swing.LayoutStyle.ComponentPlacement.RELATED,
-																					14,
-																					Short.MAX_VALUE)
 																			.addComponent(
 																					info)
 																			.addPreferredGap(
 																					javax.swing.LayoutStyle.ComponentPlacement.RELATED,
-																					8,
+																					javax.swing.GroupLayout.DEFAULT_SIZE,
 																					Short.MAX_VALUE)
 																			.addComponent(
 																					donate))
-															.addGroup(
-																	jPanel1Layout
-																			.createSequentialGroup()
-																			.addPreferredGap(
-																					javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-																			.addComponent(
-																					Start,
-																					javax.swing.GroupLayout.PREFERRED_SIZE,
-																					55,
-																					javax.swing.GroupLayout.PREFERRED_SIZE)))
+															.addComponent(
+																	Start,
+																	javax.swing.GroupLayout.PREFERRED_SIZE,
+																	55,
+																	javax.swing.GroupLayout.PREFERRED_SIZE))
 											.addContainerGap()));
 
 			jTabbedPane1.addTab("General", jPanel1);
 
-			jLabel13.setFont(new java.awt.Font("Tahoma", 0, 14));
-			jLabel13.setText("This features has not been completed");
+			WithdrawPouches.setText("Withdraw more pouches");
+
+			ChooseFamiliar.setModel(new javax.swing.DefaultComboBoxModel(
+					allFamiliars()));
+
+			jLabel17.setText("Select your summoning monster");
+
+			EnableSummoning.setText("Enable summoning");
+
+			UseScrolls.setText("Use scrolls");
+
+			javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(
+					jPanel4);
+			jPanel4.setLayout(jPanel4Layout);
+			jPanel4Layout
+					.setHorizontalGroup(jPanel4Layout
+							.createParallelGroup(
+									javax.swing.GroupLayout.Alignment.LEADING)
+							.addGroup(
+									jPanel4Layout
+											.createSequentialGroup()
+											.addGroup(
+													jPanel4Layout
+															.createParallelGroup(
+																	javax.swing.GroupLayout.Alignment.LEADING)
+															.addGroup(
+																	jPanel4Layout
+																			.createSequentialGroup()
+																			.addGap(92,
+																					92,
+																					92)
+																			.addComponent(
+																					EnableSummoning))
+															.addGroup(
+																	jPanel4Layout
+																			.createSequentialGroup()
+																			.addContainerGap()
+																			.addComponent(
+																					jLabel17))
+															.addGroup(
+																	jPanel4Layout
+																			.createSequentialGroup()
+																			.addContainerGap()
+																			.addComponent(
+																					ChooseFamiliar,
+																					0,
+																					284,
+																					Short.MAX_VALUE))
+															.addGroup(
+																	jPanel4Layout
+																			.createSequentialGroup()
+																			.addContainerGap()
+																			.addComponent(
+																					WithdrawPouches))
+															.addGroup(
+																	jPanel4Layout
+																			.createSequentialGroup()
+																			.addContainerGap()
+																			.addComponent(
+																					UseScrolls)))
+											.addContainerGap()));
+			jPanel4Layout
+					.setVerticalGroup(jPanel4Layout
+							.createParallelGroup(
+									javax.swing.GroupLayout.Alignment.LEADING)
+							.addGroup(
+									jPanel4Layout
+											.createSequentialGroup()
+											.addContainerGap()
+											.addComponent(EnableSummoning)
+											.addPreferredGap(
+													javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+											.addComponent(jLabel17)
+											.addPreferredGap(
+													javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+											.addComponent(
+													ChooseFamiliar,
+													javax.swing.GroupLayout.PREFERRED_SIZE,
+													javax.swing.GroupLayout.DEFAULT_SIZE,
+													javax.swing.GroupLayout.PREFERRED_SIZE)
+											.addPreferredGap(
+													javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+											.addComponent(WithdrawPouches)
+											.addPreferredGap(
+													javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+											.addComponent(UseScrolls)
+											.addContainerGap(141,
+													Short.MAX_VALUE)));
+
+			jTabbedPane1.addTab("Summoning", jPanel4);
+
+			jScrollPane1.setViewportView(jList1);
+
+			jLabel13.setText("Reward");
+
+			jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(
+					new String[] { "Attack", "Defence", "Strenght", "Magic",
+							"Range", "Health", "Prayer", "Slayer" }));
+
+			jLabel14.setText("Amount");
+
+			jComboBox2
+					.setModel(new javax.swing.DefaultComboBoxModel(
+							new String[] { "Every Game", "10", "20", "50",
+									"100", "150" }));
+
+			jButton1.setText("Add >");
+
+			jLabel15.setText("Note. This is still not ");
+
+			jLabel16.setText("complete, just a preview");
 
 			javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(
 					jPanel3);
 			jPanel3.setLayout(jPanel3Layout);
-			jPanel3Layout.setHorizontalGroup(jPanel3Layout.createParallelGroup(
-					javax.swing.GroupLayout.Alignment.LEADING).addGroup(
-					jPanel3Layout.createSequentialGroup().addGap(30, 30, 30)
-							.addComponent(jLabel13)
-							.addContainerGap(44, Short.MAX_VALUE)));
-			jPanel3Layout.setVerticalGroup(jPanel3Layout.createParallelGroup(
-					javax.swing.GroupLayout.Alignment.LEADING).addGroup(
-					jPanel3Layout.createSequentialGroup().addContainerGap()
-							.addComponent(jLabel13)
-							.addContainerGap(204, Short.MAX_VALUE)));
+			jPanel3Layout
+					.setHorizontalGroup(jPanel3Layout
+							.createParallelGroup(
+									javax.swing.GroupLayout.Alignment.LEADING)
+							.addGroup(
+									jPanel3Layout
+											.createSequentialGroup()
+											.addContainerGap()
+											.addGroup(
+													jPanel3Layout
+															.createParallelGroup(
+																	javax.swing.GroupLayout.Alignment.LEADING)
+															.addGroup(
+																	jPanel3Layout
+																			.createParallelGroup(
+																					javax.swing.GroupLayout.Alignment.TRAILING)
+																			.addGroup(
+																					jPanel3Layout
+																							.createParallelGroup(
+																									javax.swing.GroupLayout.Alignment.LEADING,
+																									false)
+																							.addComponent(
+																									jComboBox2,
+																									0,
+																									javax.swing.GroupLayout.DEFAULT_SIZE,
+																									Short.MAX_VALUE)
+																							.addComponent(
+																									jLabel13)
+																							.addComponent(
+																									jComboBox1,
+																									0,
+																									114,
+																									Short.MAX_VALUE)
+																							.addComponent(
+																									jLabel14))
+																			.addComponent(
+																					jButton1))
+															.addComponent(
+																	jLabel15)
+															.addComponent(
+																	jLabel16))
+											.addPreferredGap(
+													javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+											.addComponent(
+													jScrollPane1,
+													javax.swing.GroupLayout.DEFAULT_SIZE,
+													162, Short.MAX_VALUE)
+											.addContainerGap()));
+			jPanel3Layout
+					.setVerticalGroup(jPanel3Layout
+							.createParallelGroup(
+									javax.swing.GroupLayout.Alignment.LEADING)
+							.addGroup(
+									jPanel3Layout
+											.createSequentialGroup()
+											.addContainerGap()
+											.addGroup(
+													jPanel3Layout
+															.createParallelGroup(
+																	javax.swing.GroupLayout.Alignment.LEADING)
+															.addGroup(
+																	jPanel3Layout
+																			.createSequentialGroup()
+																			.addComponent(
+																					jLabel13)
+																			.addPreferredGap(
+																					javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+																			.addComponent(
+																					jComboBox1,
+																					javax.swing.GroupLayout.PREFERRED_SIZE,
+																					javax.swing.GroupLayout.DEFAULT_SIZE,
+																					javax.swing.GroupLayout.PREFERRED_SIZE)
+																			.addPreferredGap(
+																					javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+																			.addComponent(
+																					jLabel14)
+																			.addPreferredGap(
+																					javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+																			.addComponent(
+																					jComboBox2,
+																					javax.swing.GroupLayout.PREFERRED_SIZE,
+																					javax.swing.GroupLayout.DEFAULT_SIZE,
+																					javax.swing.GroupLayout.PREFERRED_SIZE)
+																			.addPreferredGap(
+																					javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+																			.addComponent(
+																					jButton1)
+																			.addGap(6,
+																					6,
+																					6)
+																			.addComponent(
+																					jLabel15)
+																			.addPreferredGap(
+																					javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+																			.addComponent(
+																					jLabel16))
+															.addComponent(
+																	jScrollPane1,
+																	javax.swing.GroupLayout.DEFAULT_SIZE,
+																	244,
+																	Short.MAX_VALUE))
+											.addContainerGap()));
 
 			jTabbedPane1.addTab("Trade in Zeals", jPanel3);
 
 			TakeBreak.setFont(new java.awt.Font("Tahoma", 0, 14));
 			TakeBreak.setText("Take Breaks");
-			TakeBreak.addActionListener(new java.awt.event.ActionListener() {
-
-				@Override
-				public void actionPerformed(java.awt.event.ActionEvent evt) {
-					TakeBreakActionPerformed(evt);
-				}
-			});
 
 			jLabel6.setFont(new java.awt.Font("Tahoma", 0, 14));
 			jLabel6.setText("Minimium Time Untill Break: ");
@@ -1939,54 +2407,18 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 			jLabel7.setText("Maxium Time Untill Break:");
 
 			MaxiumTimeUntillBreak.setText("70");
-			MaxiumTimeUntillBreak
-					.addActionListener(new java.awt.event.ActionListener() {
-
-						@Override
-						public void actionPerformed(
-								java.awt.event.ActionEvent evt) {
-							MaxiumTimeUntillBreakActionPerformed(evt);
-						}
-					});
 
 			MinimiumTimeUntillBreak.setText("40");
-			MinimiumTimeUntillBreak
-					.addActionListener(new java.awt.event.ActionListener() {
-
-						@Override
-						public void actionPerformed(
-								java.awt.event.ActionEvent evt) {
-							MinimiumTimeUntillBreakActionPerformed(evt);
-						}
-					});
 
 			jLabel8.setFont(new java.awt.Font("Tahoma", 0, 14));
 			jLabel8.setText("Minimium Time For Break:");
 
 			MinimiumTimeForBreak.setText("15");
-			MinimiumTimeForBreak
-					.addActionListener(new java.awt.event.ActionListener() {
-
-						@Override
-						public void actionPerformed(
-								java.awt.event.ActionEvent evt) {
-							MinimiumTimeForBreakActionPerformed(evt);
-						}
-					});
 
 			jLabel9.setFont(new java.awt.Font("Tahoma", 0, 14));
 			jLabel9.setText("Maxium Time For Break:");
 
 			MaxiumTimeForBreak.setText("60");
-			MaxiumTimeForBreak
-					.addActionListener(new java.awt.event.ActionListener() {
-
-						@Override
-						public void actionPerformed(
-								java.awt.event.ActionEvent evt) {
-							MaxiumTimeForBreakActionPerformed(evt);
-						}
-					});
 
 			jLabel10.setFont(new java.awt.Font("Tahoma", 0, 10));
 			jLabel10.setText("Please don't use the times supplied if using them");
@@ -2024,11 +2456,11 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 																							.addComponent(
 																									jLabel7)
 																							.addComponent(
-																									TakeBreak)
-																							.addComponent(
 																									jLabel8)
 																							.addComponent(
-																									jLabel9))
+																									jLabel9)
+																							.addComponent(
+																									TakeBreak))
 																			.addGap(18,
 																					18,
 																					18)
@@ -2070,7 +2502,7 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 																					36)
 																			.addComponent(
 																					jLabel10)))
-											.addContainerGap(21,
+											.addContainerGap(22,
 													Short.MAX_VALUE)));
 			jPanel2Layout
 					.setVerticalGroup(jPanel2Layout
@@ -2135,7 +2567,7 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 																	javax.swing.GroupLayout.PREFERRED_SIZE))
 											.addPreferredGap(
 													javax.swing.LayoutStyle.ComponentPlacement.RELATED,
-													38, Short.MAX_VALUE)
+													72, Short.MAX_VALUE)
 											.addComponent(
 													jLabel10,
 													javax.swing.GroupLayout.PREFERRED_SIZE,
@@ -2176,19 +2608,22 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 													.addGroup(
 															layout.createSequentialGroup()
 																	.addContainerGap()
-																	.addGroup(
-																			layout.createParallelGroup(
-																					javax.swing.GroupLayout.Alignment.LEADING)
-																					.addComponent(
-																							jTabbedPane1,
-																							javax.swing.GroupLayout.DEFAULT_SIZE,
-																							308,
-																							Short.MAX_VALUE)
-																					.addComponent(
-																							jLabel1,
-																							javax.swing.GroupLayout.DEFAULT_SIZE,
-																							308,
-																							Short.MAX_VALUE))))
+																	.addComponent(
+																			jLabel1,
+																			javax.swing.GroupLayout.DEFAULT_SIZE,
+																			309,
+																			Short.MAX_VALUE))
+													.addGroup(
+															javax.swing.GroupLayout.Alignment.TRAILING,
+															layout.createSequentialGroup()
+																	.addContainerGap(
+																			javax.swing.GroupLayout.DEFAULT_SIZE,
+																			Short.MAX_VALUE)
+																	.addComponent(
+																			jTabbedPane1,
+																			javax.swing.GroupLayout.PREFERRED_SIZE,
+																			309,
+																			javax.swing.GroupLayout.PREFERRED_SIZE)))
 									.addContainerGap()));
 			layout.setVerticalGroup(layout
 					.createParallelGroup(
@@ -2205,68 +2640,16 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 									.addComponent(
 											jTabbedPane1,
 											javax.swing.GroupLayout.DEFAULT_SIZE,
-											260, Short.MAX_VALUE)
+											294, Short.MAX_VALUE)
 									.addPreferredGap(
 											javax.swing.LayoutStyle.ComponentPlacement.RELATED)
 									.addComponent(jLabel2)));
 
 			pack();
 		}// </editor-fold>
+			// </editor-fold>
 
 		// <editor-fold defaultstate="collapsed" desc="GUI Actions">
-		private void ChooseTeamActionPerformed(java.awt.event.ActionEvent evt) {
-			switch (ChooseTeam.getSelectedIndex()) {
-			case 0:
-				randomTeam = true;
-				redTeam = false;
-				blueTeam = false;
-				lastWonTeam = false;
-				lastLostTeam = false;
-				clanChatTeam = false;
-				break;
-			case 1:
-				randomTeam = false;
-				redTeam = true;
-				blueTeam = false;
-				lastWonTeam = false;
-				lastLostTeam = false;
-				clanChatTeam = false;
-				break;
-			case 2:
-				randomTeam = false;
-				redTeam = false;
-				blueTeam = true;
-				lastWonTeam = false;
-				lastLostTeam = false;
-				clanChatTeam = false;
-				break;
-			case 3:
-				randomTeam = false;
-				redTeam = false;
-				blueTeam = false;
-				lastWonTeam = true;
-				lastLostTeam = false;
-				clanChatTeam = false;
-				break;
-			case 4:
-				randomTeam = false;
-				redTeam = false;
-				blueTeam = false;
-				lastWonTeam = false;
-				lastLostTeam = true;
-				clanChatTeam = false;
-				break;
-			case 5:
-				randomTeam = false;
-				redTeam = false;
-				blueTeam = false;
-				lastWonTeam = false;
-				lastLostTeam = false;
-				clanChatTeam = true;
-				break;
-			}
-		}
-
 		private void StartActionPerformed(java.awt.event.ActionEvent evt) {
 			startScript = true;
 			switch (ChooseTeam.getSelectedIndex()) {
@@ -2319,49 +2702,44 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 				clanChatTeam = true;
 				break;
 			}
+			switch (ChooseActivity.getSelectedIndex()) {
+			case 0:
+				randomStrat = true;
+				attackPlayers = false;
+				attackPyres = false;
+				attackJellies = false;
+				pureMode = false;
+				break;
+			case 1:
+				randomStrat = false;
+				attackPlayers = true;
+				attackPyres = false;
+				attackJellies = false;
+				pureMode = false;
+				break;
+			case 2:
+				randomStrat = false;
+				attackPlayers = false;
+				attackPyres = true;
+				attackJellies = false;
+				pureMode = false;
+				break;
+			case 3:
+				randomStrat = false;
+				attackPlayers = false;
+				attackPyres = false;
+				attackJellies = true;
+				pureMode = false;
+				break;
+			case 4:
+				randomStrat = false;
+				attackPlayers = false;
+				attackPyres = false;
+				attackJellies = false;
+				pureMode = true;
+				break;
+			}
 			startScript = true;
-			healOthers = (HealOthers.isSelected() ? true : false);
-			pickUpBones = (PickUpBones.isSelected() ? true : false);
-			attackAvatar = (AttackAvatar.isSelected() ? true : false);
-			switch (ChooseActivity.getSelectedIndex()) {
-			case 0:
-				randomStrat = true;
-				attackPlayers = false;
-				attackPyres = false;
-				attackJellies = false;
-				pureMode = false;
-				break;
-			case 1:
-				randomStrat = false;
-				attackPlayers = true;
-				attackPyres = false;
-				attackJellies = false;
-				pureMode = false;
-				break;
-			case 2:
-				randomStrat = false;
-				attackPlayers = false;
-				attackPyres = true;
-				attackJellies = false;
-				pureMode = false;
-				break;
-			case 3:
-				randomStrat = false;
-				attackPlayers = false;
-				attackPyres = false;
-				attackJellies = true;
-				pureMode = false;
-				break;
-			case 4:
-				randomStrat = false;
-				attackPlayers = false;
-				attackPyres = false;
-				attackJellies = false;
-				pureMode = true;
-				break;
-			}
-			getSupplies = (GetSupplies.isSelected() ? true : false);
-			takeBreak = (TakeBreak.isSelected() ? true : false);
 			maxiumTimeForBreak = Integer.parseInt(MaxiumTimeForBreak.getText());
 			minimiumTimeForBreak = Integer.parseInt(MinimiumTimeForBreak
 					.getText());
@@ -2369,94 +2747,23 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 					.getText());
 			minimiumTimeUntillBreak = Integer.parseInt(MinimiumTimeUntillBreak
 					.getText());
-			pickUpArrows = (PickUpArrows.isSelected() ? true : false);
-			buryAtGrave = (BuryAtGrave.isSelected() ? true : false);
-			weaponSpec = (WeponSpec.isSelected() ? true : false);
-			quickPrayer = (QuickPrayer.isSelected() ? true : false);
-		}
-
-		private void HealOthersActionPerformed(java.awt.event.ActionEvent evt) {
-			healOthers = (HealOthers.isSelected() ? true : false);
-		}
-
-		private void PickUpBonesActionPerformed(java.awt.event.ActionEvent evt) {
-			pickUpBones = (PickUpBones.isSelected() ? true : false);
-		}
-
-		private void AttackAvatarActionPerformed(java.awt.event.ActionEvent evt) {
-			attackAvatar = (AttackAvatar.isSelected() ? true : false);
-		}
-
-		private void ChooseActivityActionPerformed(
-				java.awt.event.ActionEvent evt) {
-			switch (ChooseActivity.getSelectedIndex()) {
-			case 0:
-				randomStrat = true;
-				attackPlayers = false;
-				attackPyres = false;
-				attackJellies = false;
-				pureMode = false;
-				break;
-			case 1:
-				randomStrat = false;
-				attackPlayers = true;
-				attackPyres = false;
-				attackJellies = false;
-				pureMode = false;
-				break;
-			case 2:
-				randomStrat = false;
-				attackPlayers = false;
-				attackPyres = true;
-				attackJellies = false;
-				pureMode = false;
-				break;
-			case 3:
-				randomStrat = false;
-				attackPlayers = false;
-				attackPyres = false;
-				attackJellies = true;
-				pureMode = false;
-				break;
-			case 4:
-				randomStrat = false;
-				attackPlayers = false;
-				attackPyres = false;
-				attackJellies = false;
-				pureMode = true;
-				break;
-			}
-		}
-
-		private void GetSuppliesActionPerformed(java.awt.event.ActionEvent evt) {
-			getSupplies = (GetSupplies.isSelected() ? true : false);
-		}
-
-		private void TakeBreakActionPerformed(java.awt.event.ActionEvent evt) {
-			takeBreak = (TakeBreak.isSelected() ? true : false);
-		}
-
-		private void MaxiumTimeForBreakActionPerformed(
-				java.awt.event.ActionEvent evt) {
-			maxiumTimeForBreak = Integer.parseInt(MaxiumTimeForBreak.getText());
-		}
-
-		private void MinimiumTimeForBreakActionPerformed(
-				java.awt.event.ActionEvent evt) {
-			minimiumTimeForBreak = Integer.parseInt(MinimiumTimeForBreak
-					.getText());
-		}
-
-		private void MaxiumTimeUntillBreakActionPerformed(
-				java.awt.event.ActionEvent evt) {
-			maxiumTimeUntillBreak = Integer.parseInt(MaxiumTimeUntillBreak
-					.getText());
-		}
-
-		private void MinimiumTimeUntillBreakActionPerformed(
-				java.awt.event.ActionEvent evt) {
-			minimiumTimeUntillBreak = Integer.parseInt(MinimiumTimeUntillBreak
-					.getText());
+			healOthers = HealOthers.isSelected();
+			pickUpBones = PickUpBones.isSelected();
+			attackAvatar = AttackAvatar.isSelected();
+			getSupplies = GetSupplies.isSelected();
+			takeBreak = TakeBreak.isSelected();
+			pickUpArrows = PickUpArrows.isSelected();
+			buryAtGrave = BuryAtGrave.isSelected();
+			weaponSpec = WeponSpec.isSelected();
+			quickPrayer = QuickPrayer.isSelected();
+			attackEverywhere = AttackEverywhere.isSelected();
+			enableSummoning = EnableSummoning.isSelected();
+			withdrawPouches = WithdrawPouches.isSelected();
+			useScrolls = UseScrolls.isSelected();
+			chosenFamiliar = farmiliarNameToObject(allFamiliars()[ChooseFamiliar
+					.getSelectedIndex()]);
+			chosenLocationString = allCombatLocations()[ChooseLocation
+					.getSelectedIndex()];
 		}
 
 		private void infoActionPerformed(java.awt.event.ActionEvent evt) {
@@ -2476,27 +2783,14 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 			}
 		}
 
-		private void PickUpArrowsActionPerformed(java.awt.event.ActionEvent evt) {
-			pickUpArrows = (PickUpArrows.isSelected() ? true : false);
-		}
-
-		private void BuryAtGraveActionPerformed(java.awt.event.ActionEvent evt) {
-			buryAtGrave = (BuryAtGrave.isSelected() ? true : false);
-		}
-
-		private void WeponSpecActionPerformed(java.awt.event.ActionEvent evt) {
-			weaponSpec = (WeponSpec.isSelected() ? true : false);
-		}
-
-		private void QuickPrayerActionPerformed(java.awt.event.ActionEvent evt) {
-			quickPrayer = (QuickPrayer.isSelected() ? true : false);
-		}
-
 		// </editor-fold>
-		// Variables declaration - do not modify
+		// <editor-fold defaultstate="collapsed" desc="Variables declaration">
 		private javax.swing.JCheckBox AttackAvatar;
+		private javax.swing.JCheckBox AttackEverywhere;
 		private javax.swing.JCheckBox BuryAtGrave;
 		private javax.swing.JComboBox ChooseActivity;
+		private javax.swing.JComboBox ChooseFamiliar;
+		private javax.swing.JComboBox ChooseLocation;
 		private javax.swing.JComboBox ChooseTeam;
 		private javax.swing.JCheckBox GetSupplies;
 		private javax.swing.JCheckBox HealOthers;
@@ -2508,15 +2802,26 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 		private javax.swing.JCheckBox PickUpBones;
 		private javax.swing.JCheckBox QuickPrayer;
 		private javax.swing.JButton Start;
+		private javax.swing.JCheckBox EnableSummoning;
 		private javax.swing.JCheckBox TakeBreak;
+		private javax.swing.JCheckBox UseScrolls;
 		private javax.swing.JCheckBox WeponSpec;
+		private javax.swing.JCheckBox WithdrawPouches;
 		private javax.swing.JButton donate;
 		private javax.swing.JButton info;
+		private javax.swing.JButton jButton1;
+		private javax.swing.JComboBox jComboBox1;
+		private javax.swing.JComboBox jComboBox2;
 		private javax.swing.JLabel jLabel1;
 		private javax.swing.JLabel jLabel10;
 		private javax.swing.JLabel jLabel11;
 		private javax.swing.JLabel jLabel12;
 		private javax.swing.JLabel jLabel13;
+		private javax.swing.JLabel jLabel14;
+		private javax.swing.JLabel jLabel15;
+		private javax.swing.JLabel jLabel16;
+		private javax.swing.JLabel jLabel17;
+		private javax.swing.JLabel jLabel18;
 		private javax.swing.JLabel jLabel2;
 		private javax.swing.JLabel jLabel3;
 		private javax.swing.JLabel jLabel4;
@@ -2525,12 +2830,16 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 		private javax.swing.JLabel jLabel7;
 		private javax.swing.JLabel jLabel8;
 		private javax.swing.JLabel jLabel9;
+		private javax.swing.JList jList1;
 		private javax.swing.JPanel jPanel1;
 		private javax.swing.JPanel jPanel2;
 		private javax.swing.JPanel jPanel3;
+		private javax.swing.JPanel jPanel4;
+		private javax.swing.JScrollPane jScrollPane1;
 		private javax.swing.JSeparator jSeparator1;
 		private javax.swing.JTabbedPane jTabbedPane1;
 		// End of variables declaration
+		// </editor-fold>
 	}
 
 	// </editor-fold>
@@ -2570,7 +2879,30 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 				game.logout(true);
 				stopScript();
 			}
+			// Grave stuff.
+			if (message.contains("eastern")) {
+				if (message.contains("taken")) {
+					if (message.contains("red")) {
+						EasternGraveyard = 2;
+					} else if (message.contains("blue")) {
+						EasternGraveyard = 1;
+					}
+				} else if (message.contains("lost")) {
+					EasternGraveyard = 0;
+				}
+			} else if (message.contains("western")) {
+				if (message.contains("taken")) {
+					if (message.contains("red")) {
+						WesternGraveyard = 2;
+					} else if (message.contains("blue")) {
+						WesternGraveyard = 1;
+					}
+				} else if (message.contains("lost")) {
+					WesternGraveyard = 0;
+				}
+			}
 		}
+
 		if (clanChatTeam && listenTime()) {
 			if (e.getID() == MessageEvent.MESSAGE_CLAN_CHAT) {
 				message.replace("-", "");
@@ -2581,14 +2913,15 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 				message.replace("$", "");
 				message.replace("£", "");
 				message.replace("_", "");
+				message.replace(" ", "");
 				if (!message.contains("bot") && !message.contains("winnin")
 						&& !message.contains("losin")) {
-					if (message.contains("blue") || message.contains("b l u e")
-							|| message.contains("b  l  u  e")) {
+					if (message.contains("blu") || message.contains("b1u")) {
 						blueShouts += 1;
 					} else if (message.contains("red")
-							|| message.contains("r e d")
-							|| message.contains("r  e  d")) {
+							|| message.contains("4ed")
+							|| message.contains("r3d")
+							|| message.contains("43d")) {
 						redShouts += 1;
 					}
 				}
@@ -2602,15 +2935,25 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 	private Image getImage(String url) {
 		try {
 			return ImageIO.read(new URL(url));
-
 		} catch (IOException e) {
 			return null;
-
 		}
 	}
 
-	private final Image img1 = getImage("http://img43.imageshack.us/img43/5479/logoym.png");
+	private final Image logo = getImage("http://img43.imageshack.us/img43/5479/logoym.png");
 	private final Image hideImg = getImage("http://www.authorstream.com/images/close_icon.gif");
+
+	private String intToStringTeam(int team) {
+		switch (team) {
+		case 0:
+			return "Unowned";
+		case 1:
+			return "Blue";
+		case 2:
+			return "Red";
+		}
+		return "";
+	}
 
 	@Override
 	public void onRepaint(Graphics g1) {
@@ -2618,13 +2961,14 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 		g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
 				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		if (!hide) {
+
 			hideRect = new Rectangle(503, 210, 14, 14);
 			g.setColor(new Color(0, 0, 0, 100));
 			g.fillRect(0, 208, 519, 130);
 			g.setColor(new Color(0, 0, 0));
 			g.setStroke(new BasicStroke(1));
 			g.drawRect(0, 208, 519, 130);
-			g.drawImage(img1, 2, 209, null);
+			g.drawImage(logo, 2, 209, null);
 			g.setFont(new Font("SansSerif", 0, 15));
 			g.setColor(new Color(255, 255, 255, 200));
 			g.drawString(
@@ -2647,6 +2991,11 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 			if (takeBreak) {
 				g.drawString("" + breakHandlerStatus, 300, 336);
 			}
+			g.drawString("Eastern Graveyard : "
+					+ intToStringTeam(EasternGraveyard), 119, 302);
+			g.drawString("Western Graveyard : "
+					+ intToStringTeam(WesternGraveyard), 119, 312);
+
 			g.drawImage(hideImg, 504, 210, null);
 		} else {
 			hideRect = new Rectangle(503, 324, 14, 14);
@@ -2797,68 +3146,12 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 		}
 	}
 
-	class ExtraAntiban extends Thread {
-
-		private volatile boolean stop = false;
-		private volatile boolean pause = false;
-
-		@Override
-		public void run() {
-			try {
-				while (!stop) {
-					if (takingBreak) {
-						while (takingBreak) {
-							Thread.sleep(random(25, 150));
-						}
-					}
-					switch (random(0, 200)) {
-					case 3:
-						camera.moveRandomly(random(100, 900));
-						break;
-					case 70:
-						mouse.moveOffScreen();
-						Thread.sleep(random(600, 900));
-					case 100:
-						mouse.moveSlightly();
-						break;
-					case 130:
-						skills.doHover(Skills.CONSTRUCTION);
-						Thread.sleep(200, 500);
-						break;
-					case 180:
-						camera.setNorth();
-						break;
-					case 200:
-						RSPlayer player = players.getNearest(random(40, 132));
-						if (player != null && player.isOnScreen()) {
-							RSModel mod = player.getModel();
-							if (mod != null) {
-								Point p = mod.getPoint();
-								if (p != null) {
-									mouse.move(p, 10);
-									mouse.click(false);
-								}
-							}
-						}
-						break;
-					default:
-						Thread.sleep(random(random(6000, 8000),
-								random(19000, 20000)));
-						break;
-					}
-				}
-			} catch (Exception e) {
-			}
-		}
-	}
-
 	// </editor-fold>
 
 	// <editor-fold defaultstate="collapsed" desc="Break Handler">
 	class BreakHandler extends Thread {
 
 		private volatile boolean stop = false;
-		private volatile boolean pause = false;
 
 		@Override
 		public void run() {
@@ -2911,15 +3204,10 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 	public void onFinish() {
 		angle.stop = true;
 		pitch.stop = true;
-		extraAntiban.stop = true;
 		if (breakHandler != null) {
 			breakHandler.stop = true;
 		}
 		log("Thanks for using DebaucherySoulWars");
 	}
 	// </editor-fold>
-
-	/*
-	 * TODO; - Optional trade in zeals.
-	 */
 }

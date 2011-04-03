@@ -456,7 +456,7 @@ public class Bank extends MethodProvider {
 								}
 							}
 						} else {
-							methods.camera.turnToObject(bankBooth);
+							methods.camera.turnTo(bankBooth);
 						}
 					} else if (banker != null) {
 						if (banker.doAction("Bank ")) {
@@ -468,7 +468,7 @@ public class Bank extends MethodProvider {
 								}
 							}
 						} else {
-							methods.camera.turnToCharacter(banker, 20);
+							methods.camera.turnTo(banker, 20);
 						}
 					} else if (bankChest != null) {
 						if (bankChest.doAction("Bank")
@@ -481,7 +481,7 @@ public class Bank extends MethodProvider {
 								}
 							}
 						} else {
-							methods.camera.turnToObject(bankChest);
+							methods.camera.turnTo(bankChest);
 						}
 					}
 				} else {
@@ -531,7 +531,7 @@ public class Bank extends MethodProvider {
 							}
 						}
 					} else {
-						methods.camera.turnToObject(depositBox, 20);
+						methods.camera.turnTo(depositBox, 20);
 					}
 				} else {
 					if (depositBox != null) {

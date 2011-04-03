@@ -50,7 +50,7 @@ import org.rsbot.script.wrappers.RSModel;
 import org.rsbot.script.wrappers.RSNPC;
 import org.rsbot.script.wrappers.RSTile;
 
-@ScriptManifest(authors = { "Pervy Shuya" }, keywords = "Combat", name = "YakAttack PRo", version = 1.4, description = "Settings in GUI")
+@ScriptManifest(authors = { "Pervy Shuya" }, keywords = "Combat", name = "YakAttack PRo", version = 1.5, description = "Settings in GUI")
 public class YakAttack extends Script implements PaintListener, MessageListener {
 	private final int KILLYAKS = 0, KILLSCRIPT = 1, SPECIAL = 2;
 
@@ -74,6 +74,7 @@ public class YakAttack extends Script implements PaintListener, MessageListener 
 	private final String[] potionsToDrink = { "Super Attack", "Super Strength",
 			"Super Defense", "Combat potion", "Normal Range", "Normal Attack",
 			"Normal Strength", "Normal Defense" };
+	private static String currLocation = "Unknown";
 	private int speed, hp2EatAt;
 
 	YakAttackProGUI gui;
@@ -103,7 +104,8 @@ public class YakAttack extends Script implements PaintListener, MessageListener 
 	private final Timer timeRan = new Timer(0L);
 
 	private String Status = "Starting", arrowName;
-	private final RSTile yakTile = new RSTile(2324, 3792);
+	private final Object[][] validTiles = new Object[][] { { "Yak's Pen",
+			new RSTile(2324, 3792) } };
 	private boolean wants2Eat, doSpec, guiWait = true, guiExit, Wait;
 	private final int[] foodID = { 1895, 1893, 1891, 4293, 2142, 291, 2140,
 			3228, 9980, 7223, 6297, 6293, 6295, 6299, 7521, 9988, 7228, 2878,
@@ -538,16 +540,17 @@ public class YakAttack extends Script implements PaintListener, MessageListener 
 					}
 				}
 			} else {
-				if (npc != null && !npc.isOnScreen()) {
+				if (!calc.pointOnScreen(npc.getScreenLocation())) {
+					Status = "Walking to next free NPC";
+					walking.walkTileMM(closerTile(npc.getLocation(), 1), 2, 2);
+					return false;
+				} else {
 					Status = "Setting view to yaks";
 					int angle = camera.getCharacterAngle(npc);
 					if (calc.distanceTo(npc) < 10
 							&& Math.abs(angle - camera.getAngle()) > 20) {
 						camera.turnTo(npc);
 					}
-				} else {
-					walking.walkTileMM(closerTile(npc.getLocation(), 1), 2, 2);
-					return false;
 				}
 			}
 		}
@@ -593,20 +596,23 @@ public class YakAttack extends Script implements PaintListener, MessageListener 
 	}
 
 	private int getAction() {
-		if (game.isLoggedIn()) {
-			if (getMyPlayer().getInteracting() != null
-					|| getMyPlayer().isInCombat()) {
-				if (doSpec && settings.getSetting(300) >= rndSpec) {
-					rndSpecCtr = 0;
-					return SPECIAL;
-				}
+		if (getMyPlayer().getInteracting() != null
+				|| getMyPlayer().isInCombat()) {
+			if (doSpec && settings.getSetting(300) >= rndSpec) {
+				rndSpecCtr = 0;
+				return SPECIAL;
 			}
-			if (calc.distanceTo(yakTile) < 50)
-				return KILLYAKS;
-			else
-				return KILLSCRIPT;
 		}
-		return random(100, 300);
+		for (Object[] tileinfo : validTiles) {
+			RSTile tile = (RSTile) tileinfo[1];
+			if (calc.distanceTo(tile) < 50) {
+				if (!currLocation.equals(tileinfo[0])) {
+					currLocation = (String) tileinfo[0];
+				}
+				return KILLYAKS;
+			}
+		}
+		return KILLSCRIPT;
 	}
 
 	@Override
@@ -846,8 +852,7 @@ public class YakAttack extends Script implements PaintListener, MessageListener 
 	}
 
 	private String locToString() {
-		return "(X: " + getMyPlayer().getLocation().getX() + ", Y:"
-				+ getMyPlayer().getLocation().getY() + ")";
+		return currLocation;
 	}
 
 	@Override
