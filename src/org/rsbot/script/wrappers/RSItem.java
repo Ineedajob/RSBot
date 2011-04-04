@@ -2,6 +2,7 @@ package org.rsbot.script.wrappers;
 
 import org.rsbot.client.HardReference;
 import org.rsbot.client.SoftReference;
+import org.rsbot.script.wrappers.RSItemDef;
 import org.rsbot.script.methods.MethodContext;
 import org.rsbot.script.methods.MethodProvider;
 
@@ -149,5 +150,5 @@ public class RSItem extends MethodProvider{
 	public boolean doClick(boolean left) {
 		return component != null && component.doClick(left);
 	}
-
+	
 }

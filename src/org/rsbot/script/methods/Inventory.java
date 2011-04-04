@@ -79,30 +79,6 @@ public class Inventory extends MethodProvider {
 	}
 
 	/**
-	 * Determines if the item contains the desired action.
-	 * 
-	 * @param item
-	 *            The item to check.
-	 * @param action
-	 *            The item menu action to check.
-	 * @return <tt>true</tt> if the item has the action; otherwise
-	 *         <tt>false</tt>.
-	 */
-	public boolean itemHasAction(final RSItem item, final String action) {
-		// Used to determine if an item is droppable/destroyable
-		if (item == null)
-			return false;
-		RSItemDef itemDef = item.getDefinition();
-		if (itemDef != null) {
-			for (String a : itemDef.getActions()) {
-				if (a.equalsIgnoreCase(action))
-					return true;
-			}
-		}
-		return false;
-	}
-
-	/**
 	 * Drops all items with the same specified id.
 	 * 
 	 * @param leftToRight
@@ -146,6 +122,31 @@ public class Inventory extends MethodProvider {
 		}
 	}
 
+	/**
+	 * Determines if the item contains the desired action.
+	 * 
+	 * @param item
+	 *            The item to check.
+	 * @param action
+	 *            The item menu action to check.
+	 * @return <tt>true</tt> if the item has the action; otherwise
+	 *         <tt>false</tt>.
+	 * @author Aut0r
+	 */
+	public boolean itemHasAction(final RSItem item, final String action) {
+		// Used to determine if an item is droppable/destroyable
+		if (item == null)
+			return false;
+		RSItemDef itemDef = item.getDefinition();
+		if (itemDef != null) {
+			for (String a : itemDef.getActions()) {
+				if (a.equalsIgnoreCase(action))
+					return true;
+			}
+		}
+		return false;
+	}
+	
 	/**
 	 * Drops all items with the same specified id. This method drops items
 	 * vertically going down the inventory.
@@ -361,7 +362,7 @@ public class Inventory extends MethodProvider {
 		if (item == null)
 			return false;
 		RSTile objTile = object.getLocation();
-		String iName = item.getName(), oName = methods.objects.getName(object);
+		String iName = item.getName(), oName = object.getName(object);
 		if (!selectItem(itemID))
 			return false;
 		if (oName.isEmpty())

@@ -11,6 +11,10 @@ import java.awt.*;
  */
 public class LoginDialog extends JDialog {
 
+	/**
+	 * Gui Dialog
+	 */
+	private static final long serialVersionUID = -7421702904004119500L;
 	static final ScriptBoxSource.Credentials CREDENTIALS = new ScriptBoxSource.Credentials();
 
 	public LoginDialog(Frame parent) {

@@ -40,18 +40,6 @@ public class Objects extends MethodProvider {
 	public RSObject[] getAll() {
 		return getAll(Objects.ALL_FILTER);
 	}
-
-	/**
-	 * Returns the name of the object.
-	 * 
-	 * @param object
-	 *            The object to look up.
-	 * @return The object name if the definition is available; otherwise "".
-	 */
-	public String getName(final RSObject object) {
-		RSObjectDef objectDef = object.getDef();
-		return objectDef != null ? objectDef.getName() : "";
-	}
 	
 	/**
 	 * Returns all the <tt>RSObject</tt>s in the local region

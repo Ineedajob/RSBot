@@ -2,6 +2,7 @@ package org.rsbot.script.wrappers;
 
 import org.rsbot.client.Model;
 import org.rsbot.client.RSAnimable;
+import org.rsbot.script.wrappers.RSObjectDef;
 import org.rsbot.script.methods.MethodContext;
 import org.rsbot.script.methods.MethodProvider;
 
@@ -89,6 +90,19 @@ public class RSObject extends MethodProvider {
 	 */
 	public int getID() {
 		return obj.getID();
+	}
+	
+	/**
+	 * Returns the name of the object.
+	 * 
+	 * @param object
+	 *            The object to look up.
+	 * @return The object name if the definition is available; otherwise "".
+	 * @author Aut0r
+	 */
+	public String getName(final RSObject object) {
+		RSObjectDef objectDef = object.getDef();
+		return objectDef != null ? objectDef.getName() : "";
 	}
 
 	/**
