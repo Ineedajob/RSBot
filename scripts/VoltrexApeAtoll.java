@@ -191,10 +191,9 @@ public class VoltrexApeAtoll extends Script implements PaintListener {
 				// latest
 				// version. Tell
 				// them!
-				if (in != null)
+				if (in != null) {
 					in.close();
-				if (out != null)
-					out.close();
+				}				
 			} catch (IOException e) {
 				log("Problem getting version. Please report this bug!");
 			}
@@ -875,6 +874,10 @@ public class VoltrexApeAtoll extends Script implements PaintListener {
 	// GUI
 	//*******************************************************//
 	public class ApeAtollGUI extends JFrame {
+		/**
+		 * GUI
+		 */
+		private static final long serialVersionUID = 1L;
 		public ApeAtollGUI() {
 			initComponents();
 		}

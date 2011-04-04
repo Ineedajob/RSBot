@@ -1027,7 +1027,7 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 
 						if (!door.isOnScreen()) {
 							if (!isCameraSet) {
-								camera.turnToObject(door);
+								camera.turnTo(door);
 								isCameraSet = true;
 							} else return State.FAILED;
 						}
@@ -1095,7 +1095,7 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 
 						if (!bankBooth.isOnScreen()) {
 							if (!isCameraSet) {
-								camera.turnToObject(bankBooth);
+								camera.turnTo(bankBooth);
 								isCameraSet = true;
 							} else return State.FAILED;
 						}
@@ -1565,6 +1565,10 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 	 */
 	private final class GraphicalInterface extends javax.swing.JFrame {
 
+		/**
+		 * GUI
+		 */
+		private static final long serialVersionUID = 1L;
 		/**
 		 * <tt>true</tt> means the script should start; otherwise <tt>false</tt>.
 		 */

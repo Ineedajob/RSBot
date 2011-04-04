@@ -101,7 +101,7 @@ public class AutoIvy extends Script implements MessageListener, PaintListener {
 				RSObject ivy = objects.getNearest(IVY_ID);
 				if (ivy != null) {
 					if (!ivy.isOnScreen()) {
-						camera.turnToObject(ivy);
+						camera.turnTo(ivy);
 						for (int i = 0; i < 100 && !ivy.isOnScreen(); i++)
 							sleep(20);
 					} else if (getMyPlayer().getAnimation() != -1) {
@@ -129,7 +129,6 @@ public class AutoIvy extends Script implements MessageListener, PaintListener {
 
 
 	public void messageReceived(MessageEvent e) {
-		// TODO Auto-generated method stub
 		String msg = e.getMessage();
 		if (msg.contains("you")) {
 			activityTime = System.currentTimeMillis();

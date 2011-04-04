@@ -45,7 +45,8 @@ public class UpdateUtil {
         }
     }
 
-    public static boolean download(final String address, final String localFileName) {
+    @SuppressWarnings("finally")
+	public static boolean download(final String address, final String localFileName) {
 
         OutputStream out = null;
         URLConnection conn;

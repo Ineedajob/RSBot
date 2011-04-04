@@ -8,6 +8,7 @@ import org.rsbot.event.events.MessageEvent;
 import org.rsbot.event.events.ServerMessageEvent;
 import org.rsbot.script.methods.MethodContext;
 
+@SuppressWarnings("deprecation")
 public class CallbackImpl implements Callback {
 
 	private final Bot bot;
@@ -20,7 +21,6 @@ public class CallbackImpl implements Callback {
 		return bot;
 	}
 
-	@SuppressWarnings("deprecation")
 	public void notifyMessage(final int id, final String sender, final String msg) {
 		MessageEvent m = new MessageEvent(sender, id, msg);
 		bot.getEventManager().dispatchEvent(m);

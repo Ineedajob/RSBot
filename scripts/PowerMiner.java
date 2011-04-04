@@ -48,7 +48,7 @@ public class PowerMiner extends Script implements PaintListener {
 				RSObject rock = objects.getNearest(ROCKS);
 				if (rock != null) {
 					if (!rock.isOnScreen()) {
-						camera.turnToObject(rock);
+						camera.turnTo(rock);
 						for (int i = 0; i < 100 && !rock.isOnScreen(); i++)
 							sleep(20);
 					} else {
