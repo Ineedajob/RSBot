@@ -12,7 +12,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 /**
- * @author Pervy
+ * @author Nader Sleiman
  */
 public class Minimizer {
 
@@ -29,7 +29,6 @@ public class Minimizer {
 
 		release.addActionListener(new ActionListener() {
 
-			@Override
 			public void actionPerformed(ActionEvent e) {
 
 				comp.setVisible(true);
@@ -43,7 +42,6 @@ public class Minimizer {
 
 		exit.addActionListener(new ActionListener() {
 
-			@Override
 			public void actionPerformed(ActionEvent e) {
 
 				System.exit(0);
@@ -63,14 +61,10 @@ public class Minimizer {
 		comp = c;
 		tray = SystemTray.getSystemTray();
 
-		icon = new TrayIcon(getImage().getScaledInstance(
-				SystemTray.getSystemTray().getTrayIconSize().width,
-				SystemTray.getSystemTray().getTrayIconSize().height, 0),
-				"Rsbot", createPopupMenu());
+		icon = new TrayIcon(getImage(), "Rsbot", createPopupMenu());
 
 		icon.addActionListener(new ActionListener() {
 
-			@Override
 			public void actionPerformed(ActionEvent e) {
 				c.setVisible(true);
 				tray.remove(icon);
@@ -84,15 +78,15 @@ public class Minimizer {
 	public static void displayMessage(Object o, MessageType t) {
 		String option = null;
 		switch (t) {
-		case INFO:
-			option = "Information";
-			break;
-		case ERROR:
-			option = "Error !";
-			break;
-		case WARNING:
-			option = "Warning !";
-			break;
+			case INFO:
+				option = "Information";
+				break;
+			case ERROR:
+				option = "Error !";
+				break;
+			case WARNING:
+				option = "Warning !";
+				break;
 		}
 		icon.displayMessage(option, o.toString(), t);
 	}

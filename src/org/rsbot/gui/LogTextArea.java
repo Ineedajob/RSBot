@@ -1,274 +1,243 @@
 package org.rsbot.gui;
 
-import java.awt.Color;
-import java.awt.Cursor;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.HashMap;
-import java.util.Random;
-import java.util.logging.Level;
-import java.util.logging.LogRecord;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.swing.JTextPane;
-import javax.swing.text.AttributeSet;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.Style;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyleContext;
-import javax.swing.text.StyledDocument;
 
 import org.rsbot.log.LogFormatter;
+import org.rsbot.util.GlobalConfiguration;
+import org.rsbot.util.StringUtil;
+
+import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Formatter;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
+
 
 /**
  * Non swing methods are thread safe.
  */
-public class LogTextArea extends JTextPane {
-	private static final long serialVersionUID = 1L;
-	private final LogFormatter formatter = new LogFormatter(false);
-	HashMap<String, Color> colorMap = new HashMap<String, Color>();
+public class LogTextArea extends JList {
+
+	public static final int MAX_ENTRIES = 100;
+
+	public static final Rectangle BOTTOM_OF_WINDOW = new Rectangle(0, Integer.MAX_VALUE, 0, 0);
+
+	private static final long serialVersionUID = 0;
+
+	private final LogQueue logQueue = new LogQueue();
+
+	private final LogAreaListModel model = new LogAreaListModel();
+
+	private final Runnable scrollToBottom = new Runnable() {
+		public void run() {
+			scrollRectToVisible(LogTextArea.BOTTOM_OF_WINDOW);
+		}
+	};
+
+	private static final Formatter formatter = new Formatter() {
+		private final SimpleDateFormat dateFormat = new SimpleDateFormat(
+				"hh:mm:ss");
+
+		@Override
+		public String format(final LogRecord record) {
+			final String[] className = record.getLoggerName().split("\\.");
+			final String name = className[className.length - 1];
+			final int maxLen = 16;
+			final String append = "...";
+
+			return String.format("[%s] %-" + maxLen + "s %s %s", dateFormat
+					.format(record.getMillis()), name.length() > maxLen ? name
+					.substring(0, maxLen - append.length())
+					+ append : name, record.getMessage(), StringUtil
+					.throwableToString(record.getThrown()));
+		}
+	};
+
+	private static final Formatter copyPasteFormatter = new LogFormatter(false);
+
+
+	public LogTextArea() {
+		setModel(model);
+		setCellRenderer(new Renderer());
+		setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		if (GlobalConfiguration.getCurrentOperatingSystem() == GlobalConfiguration.OperatingSystem.MAC) {
+			setFont(new Font("Monaco", Font.PLAIN, 10));
+		} else {
+			setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
+		}
+
+		new Thread(logQueue, "LogGuiQueue").start();
+	}
+
+
+	/**
+	 * Logs a new entry to be shown in the list. Thread safe.
+	 *
+	 * @param logRecord The entry.
+	 */
+	public void log(LogRecord logRecord) {
+		logQueue.queue(new WrappedLogRecord(logRecord));
+	}
+
+	private class LogAreaListModel extends AbstractListModel {
+		private static final long serialVersionUID = 0;
+
+		private List<WrappedLogRecord> records = new ArrayList<WrappedLogRecord>(LogTextArea.MAX_ENTRIES);
+
+
+		public void addAllElements(List<WrappedLogRecord> obj) {
+			records.addAll(obj);
+			if (getSize() > LogTextArea.MAX_ENTRIES) {
+				records = records.subList(
+						(getSize() - LogTextArea.MAX_ENTRIES),
+						getSize());
+
+				fireContentsChanged(this, 0, (getSize() - 1));
+			} else {
+				fireIntervalAdded(this, (getSize() - 1), (getSize() - 1));
+			}
+		}
+
+		public Object getElementAt(final int index) {
+			return records.get(index);
+		}
+
+		public int getSize() {
+			return records.size();
+		}
+
+	}
+
+
+	/**
+	 * Flushes every #FLUSH_RATE (miliseconds)
+	 */
+	private class LogQueue implements Runnable {
+
+		public static final int FLUSH_RATE = 1000;
+
+		private final Object lock = new Object();
+
+		private List<WrappedLogRecord> queue = new ArrayList<WrappedLogRecord>(100);
+
+		public void queue(final WrappedLogRecord record) {
+			synchronized (lock) {
+				queue.add(record);
+			}
+		}
+
+		public void run() {
+			while (true) {
+				List<WrappedLogRecord> toFlush = null;
+
+				synchronized (lock) {
+					if (queue.size() != 0) {
+						toFlush = new ArrayList<WrappedLogRecord>(queue);
+						queue = queue.subList(0, 0);
+					}
+				}
+				if (toFlush != null) { // Hold the lock for as little time as
+					// possible
+					model.addAllElements(toFlush);
+					SwingUtilities.invokeLater(scrollToBottom);
+				}
+				try {
+					Thread.sleep(LogQueue.FLUSH_RATE);
+				} catch (final InterruptedException e) {
+					throw new RuntimeException(e);
+				}
+			}
+		}
+
+	}
+
+
+	private static class Renderer implements ListCellRenderer {
+
+		private final Border EMPTY_BORDER = new EmptyBorder(1, 1, 1, 1);
+		private final Border SELECTED_BORDER = UIManager
+				.getBorder("List.focusCellHighlightBorder");
+		private final Color DARK_GREEN = new Color(0, 90, 0);
+
+		public Component getListCellRendererComponent(final JList list,
+													  final Object value, final int index, final boolean isSelected,
+													  final boolean cellHasFocus) {
+			if (!(value instanceof WrappedLogRecord))
+				return new JLabel();
+			final WrappedLogRecord wlr = (WrappedLogRecord) value;
+
+			final JTextPane result = new JTextPane();
+			result.setDragEnabled(true);
+			result.setText(wlr.formatted);
+			result.setComponentOrientation(list.getComponentOrientation());
+			result.setFont(list.getFont());
+			result.setBorder(cellHasFocus || isSelected ? SELECTED_BORDER
+					: EMPTY_BORDER);
+
+			result.setForeground(Color.DARK_GRAY);
+			result.setBackground(Color.WHITE);
+
+			if (wlr.record.getLevel() == Level.SEVERE) {
+				result.setBackground(Color.RED);
+				result.setForeground(Color.WHITE);
+			}
+
+			if (wlr.record.getLevel() == Level.WARNING) {
+				result.setForeground(Color.RED);
+			}
+
+			if ((wlr.record.getLevel() == Level.FINE)
+					|| (wlr.record.getLevel() == Level.FINER)
+					|| (wlr.record.getLevel() == Level.FINEST)) {
+				result.setForeground(DARK_GREEN);
+			}
+
+			Object[] parameters = wlr.record.getParameters();
+			if (parameters != null) {
+				for (Object parameter : parameters) {
+					if (parameter == null) {
+						continue;
+					}
+
+					if (parameter instanceof Color) {
+						result.setForeground((Color) parameter);
+					} else if (parameter instanceof Font) {
+						result.setFont((Font) parameter);
+					}
+				}
+			}
+
+			return result;
+		}
+
+	}
+
 
 	/**
 	 * Wrap the log records so we can control the copy paste text (via
 	 * #toString)
 	 */
-
 	private class WrappedLogRecord {
+
 		public final LogRecord record;
-		@SuppressWarnings("unused")
 		public final String formatted;
-		public final Level level;
+
 
 		public WrappedLogRecord(final LogRecord record) {
 			this.record = record;
-			formatted = formatter.format(record);
-			level = record.getLevel();
+			formatted = LogTextArea.formatter.format(record);
 		}
 
-		/**
-		 * Returns log level
-		 */
-		public Level getLevel() {
-			return level;
-		}
-
-		/**
-		 * Returns time of the log
-		 */
-		public String getTimeStamp() {
-			return formatter.formatTimestamp(record);
-		}
-
-		/**
-		 * Returns class that sent the log
-		 */
-		public String getLogClass() {
-			return formatter.formatClass(record);
-		}
-
-		/**
-		 * Returns log message
-		 */
-		public String getMessage() {
-			return formatter.formatMessage(record);
-		}
-
-		/**
-		 * Returns error
-		 */
-		public String getError() {
-			return formatter.formatError(record);
-		}
 
 		@Override
 		public String toString() {
-			return formatter.formatTimestamp(record) + "  "
-					+ formatter.formatClass(record) + "  "
-					+ formatter.formatMessage(record);
-		}
-	}
-
-	public LogTextArea() {
-		super();
-		setCursor(Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR));
-		setEditable(false);
-	}
-
-	public void appendTime(String timestamp) {
-		StyleContext sc = new StyleContext();
-		AttributeSet fg = sc.addAttribute(SimpleAttributeSet.EMPTY,
-				StyleConstants.Foreground, Color.WHITE);
-		AttributeSet bg = sc.addAttribute(SimpleAttributeSet.EMPTY,
-				StyleConstants.Background, Color.BLACK);
-		AttributeSet bold = sc.addAttribute(SimpleAttributeSet.EMPTY,
-				StyleConstants.Bold, false);
-		Document doc = getDocument();
-
-		setCaretPosition(doc.getLength());
-
-		setCharacterAttributes(fg, false);
-		setCharacterAttributes(bg, false);
-		setCharacterAttributes(bold, false);
-
-		replaceSelection(timestamp);
-	}
-
-	public void appendName(String name) {
-		StyleContext sc = new StyleContext();
-		AttributeSet fg = sc.addAttribute(SimpleAttributeSet.EMPTY,
-				StyleConstants.Foreground, scriptColor(name));
-		AttributeSet bg = sc.addAttribute(SimpleAttributeSet.EMPTY,
-				StyleConstants.Background, Color.WHITE);
-		AttributeSet bold = sc.addAttribute(SimpleAttributeSet.EMPTY,
-				StyleConstants.Bold, true);
-		Document doc = getDocument();
-
-		setCaretPosition(doc.getLength());
-
-		setCharacterAttributes(fg, false);
-		setCharacterAttributes(bg, false);
-		setCharacterAttributes(bold, false);
-
-		replaceSelection("  " + name + "\t");
-	}
-
-	public void appendMessage(WrappedLogRecord record) {
-		String msg = "  " + record.getMessage() + record.getError();
-		Document doc = getDocument();
-		setCaretPosition(doc.getLength());
-		boolean boldtext = false;
-
-		Color foreground = null;
-		Color background = Color.WHITE;
-
-		if (record.getLevel() == Level.SEVERE) {
-			foreground = Color.WHITE;
-			background = Color.RED;
-			boldtext = true;
-		} else if (record.getLevel() == Level.WARNING) {
-			foreground = Color.RED;
-		} else if (record.getLevel() == Level.INFO) {
-			foreground = Color.DARK_GRAY;
-		} else if (record.getLevel() == Level.CONFIG) {
-			foreground = Color.BLUE;
-		} else if (record.getLevel() == Level.FINE
-				|| record.getLevel() == Level.FINER
-				|| record.getLevel() == Level.FINEST) {
-			foreground = Color.DARK_GRAY;
+			return LogTextArea.copyPasteFormatter.format(record);
 		}
 
-		if (msg.contains("Script started") || msg.contains("Script stopped")) {
-			foreground = scriptColor(record.getLogClass());
-			boldtext = true;
-		} else if (record.getLogClass().contains("BotGUI")
-				&& !(msg.contains("paused") || msg.contains("started"))) {
-			foreground = new Color(0, 150, 0);
-			boldtext = true;
-		} else if (record.getLogClass().contains("BotGUI")
-				&& (msg.contains("paused") || msg.contains("started"))) {
-			foreground = new Color(255, 64, 0);
-			boldtext = true;
-		} else if (record.getLogClass().contains("LoginBot")
-				|| msg.contains("Random event started")) {
-			foreground = Color.BLUE;
-			boldtext = true;
-		}
-
-		StyleContext sc = new StyleContext();
-		AttributeSet fg = sc.addAttribute(SimpleAttributeSet.EMPTY,
-				StyleConstants.Foreground, foreground);
-		AttributeSet bg = sc.addAttribute(SimpleAttributeSet.EMPTY,
-				StyleConstants.Background, background);
-		AttributeSet bold = sc.addAttribute(SimpleAttributeSet.EMPTY,
-				StyleConstants.Bold, boldtext);
-
-		setCharacterAttributes(fg, false);
-		setCharacterAttributes(bg, false);
-		setCharacterAttributes(bold, false);
-
-		final Style boldStyle = sc.addStyle("ConstantWidth", null);
-		StyleConstants.setBold(boldStyle, true);
-
-		final Style underlineStyle = sc.addStyle("ConstantWidth", null);
-		StyleConstants.setBold(underlineStyle, true);
-		StyleConstants.setUnderline(underlineStyle, true);
-
-		replaceSelection(msg + "\n");
-
-		Pattern p = Pattern.compile("\\(((\\w+?)\\.java):(\\d+)\\)");
-
-		Matcher matcher = null;
-		try {
-			matcher = p.matcher(doc.getText(0, doc.getLength()));
-		} catch (BadLocationException e) {
-		}
-
-		while (matcher.find()) {
-			((StyledDocument) getDocument()).setCharacterAttributes(
-					matcher.start(2), matcher.end(2) - matcher.start(2),
-					boldStyle, false);
-			((StyledDocument) getDocument()).setCharacterAttributes(
-					matcher.start(3), matcher.end(3) - matcher.start(3),
-					underlineStyle, false);
-		}
 	}
 
-	/**
-	 * Returns a random color based off of script name. Same name will always
-	 * return same color.
-	 * 
-	 * @param String
-	 * @return Color
-	 */
-	public Color scriptColor(String name) {
-		if (colorMap.containsKey(name))
-			return colorMap.get(name);
-		MessageDigest coder;
-		try {
-			coder = MessageDigest.getInstance("MD5");
-			coder.update(name.getBytes());
-			byte[] bytes = coder.digest();
-			long result1 = 0, result2 = 0;
-			for (int i = 0; i < 8; i++)
-				result1 = (result1 << 8) | bytes[i];
-			for (int i = 8; i < 16; i++)
-				result2 = (result2 << 8) | bytes[i];
-			long seed = result1 - result2;
-			Random r = new Random(seed);
-
-			Color c = new Color(Math.abs(r.nextInt() % 128), Math.abs(r
-					.nextInt() % 128), Math.abs(r.nextInt() % 128));
-			colorMap.put(name, c);
-			return c;
-		} catch (NoSuchAlgorithmException ex) {
-			return Color.BLACK;
-		}
-	}
-
-	public synchronized void addRecord(LogRecord LogRecord) {
-		if (getDocument().getLength() > 100000) {
-			try {
-				getDocument().remove(0, 50000);
-			} catch (BadLocationException e) {
-				e.printStackTrace();
-			}
-		}
-
-		WrappedLogRecord record = new WrappedLogRecord(LogRecord);
-		appendTime(record.getTimeStamp());
-		appendName(record.getLogClass());
-		appendMessage(record);
-	}
-
-	/**
-	 * Logs a new entry to be shown in the list. Thread safe
-	 */
-	public void log(final LogRecord logRecord) {
-		setEditable(true);
-		addRecord(logRecord);
-		setEditable(false);
-	}
 }
