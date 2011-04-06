@@ -136,10 +136,7 @@ public abstract class Random extends Methods implements PaintListener {
 			i--;
 		} else {
 			i++;
-			up = true;
-			if (i >= 130) {
-				up = false;
-			}
+			up = i < 130;
 		}
 		g.setColor(new Color(255, 0, 0, i));
 		g.fillRect(0, 0, p.x - 1, p.y - 1);

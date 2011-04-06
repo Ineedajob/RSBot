@@ -31,10 +31,7 @@ public abstract class RSCharacter extends MethodProvider {
 	 */
 	public boolean doAction(final String action) {
 		RSModel model = this.getModel();
-		if (model != null && this.isValid())
-			return this.getModel().doAction(action);
-		else
-			return false;
+		return model != null && this.isValid() && this.getModel().doAction(action);
 	}
 
 	public RSModel getModel() {

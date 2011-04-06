@@ -132,10 +132,7 @@ public class RSItem extends MethodProvider {
 	 *         successfully; otherwise <tt>false</tt>.
 	 */
 	public boolean doAction(String action) {
-		if (component != null) {
-			return component.doAction(action);
-		}
-		return false;
+		return component != null && component.doAction(action);
 	}
 
 	/**

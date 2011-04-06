@@ -241,10 +241,7 @@ public class Bank extends MethodProvider {
 		if (isOpen())
 			return methods.interfaces.getComponent(INTERFACE_BANK,
 					INTERFACE_BANK_BUTTON_DEPOSIT_BEAST_INVENTORY).doClick();
-		if (isDepositOpen())
-			return methods.interfaces.getComponent(INTERFACE_DEPOSIT_BOX,
-					INTERFACE_DEPOSIT_BUTTON_DEPOSIT_BEAST_INVENTORY).doClick();
-		return false;
+		return isDepositOpen() && methods.interfaces.getComponent(INTERFACE_DEPOSIT_BOX, INTERFACE_DEPOSIT_BUTTON_DEPOSIT_BEAST_INVENTORY).doClick();
 	}
 
 	/**
@@ -820,11 +817,7 @@ public class Bank extends MethodProvider {
 	 * @author LastCoder
 	 */
 	public boolean openEquipment() {
-		if (!getInterface().getComponent(INTERFACE_BANK_BUTTON_OPEN_EQUIP)
-				.isValid())
-			return false;
-		return getInterface().getComponent(INTERFACE_BANK_BUTTON_OPEN_EQUIP)
-				.doClick();
+		return getInterface().getComponent(INTERFACE_BANK_BUTTON_OPEN_EQUIP).isValid() && getInterface().getComponent(INTERFACE_BANK_BUTTON_OPEN_EQUIP).doClick();
 	}
 
 	/**

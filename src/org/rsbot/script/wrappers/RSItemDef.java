@@ -4,7 +4,7 @@ package org.rsbot.script.wrappers;
  * An item definition.
  */
 public class RSItemDef {
-	org.rsbot.client.RSItemDef id;
+	private final org.rsbot.client.RSItemDef id;
 
 	public RSItemDef(final org.rsbot.client.RSItemDef id) {
 		this.id = id;

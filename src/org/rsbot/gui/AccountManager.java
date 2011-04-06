@@ -94,7 +94,6 @@ public class AccountManager extends JDialog implements ActionListener {
 	}
 
 	private class TableSelectionListener implements ListSelectionListener {
-		@Override
 		public void valueChanged(ListSelectionEvent evt) {
 			int row = table.getSelectedRow();
 			if (!evt.getValueIsAdjusting()) {
@@ -105,17 +104,14 @@ public class AccountManager extends JDialog implements ActionListener {
 
 	private class AccountTableModel extends AbstractTableModel {
 
-		@Override
 		public int getRowCount() {
 			return accounts.size();
 		}
 
-		@Override
 		public int getColumnCount() {
 			return VALID_KEYS.length + 1;
 		}
 
-		@Override
 		public Object getValueAt(int row, int column) {
 			if (column == 0) {
 				return userForRow(row);
@@ -198,7 +194,6 @@ public class AccountManager extends JDialog implements ActionListener {
 		super(Frame.getFrames()[0], "Account Manager", true);
 	}
 
-	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() instanceof JButton) {
 			String label = ((JButton) e.getSource()).getText();
@@ -630,15 +625,15 @@ public class AccountManager extends JDialog implements ActionListener {
 
 	private static String convertToHex(byte[] data) {
 		StringBuffer buf = new StringBuffer();
-		for (int i = 0; i < data.length; i++) {
-			int halfbyte = (data[i] >>> 4) & 0x0F;
+		for (byte aData : data) {
+			int halfbyte = (aData >>> 4) & 0x0F;
 			int two_halfs = 0;
 			do {
 				if ((0 <= halfbyte) && (halfbyte <= 9))
 					buf.append((char) ('0' + halfbyte));
 				else
 					buf.append((char) ('a' + (halfbyte - 10)));
-				halfbyte = data[i] & 0x0F;
+				halfbyte = aData & 0x0F;
 			} while (two_halfs++ < 1);
 		}
 		return buf.toString();
@@ -648,7 +643,7 @@ public class AccountManager extends JDialog implements ActionListener {
 			UnsupportedEncodingException {
 		MessageDigest md;
 		md = MessageDigest.getInstance("MD5");
-		byte[] md5hash = new byte[32];
+		byte[] md5hash;
 		md.update(text.getBytes("iso-8859-1"), 0, text.length());
 		md5hash = md.digest();
 		return convertToHex(md5hash);

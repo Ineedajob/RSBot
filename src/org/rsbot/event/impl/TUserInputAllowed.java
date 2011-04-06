@@ -8,7 +8,7 @@ import java.awt.*;
 
 public class TUserInputAllowed implements TextPaintListener {
 
-	private Bot bot;
+	private final Bot bot;
 
 	public TUserInputAllowed(Bot bot) {
 		this.bot = bot;

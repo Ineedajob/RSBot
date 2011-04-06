@@ -13,7 +13,6 @@ import org.rsbot.script.util.Timer;
 @ScriptManifest(authors = {"Gnarly", "Pervy Shuya"}, name = "SystemUpdate", version = 1.5)
 public class SystemUpdate extends Random {
 
-	private int logoutMinutes;
 	@SuppressWarnings("unused")
 	private int logoutSeconds;
 	private final Timer systemTime = new Timer(0L);
@@ -35,7 +34,7 @@ public class SystemUpdate extends Random {
 	}
 
 	private void check() {
-		logoutMinutes = random(1, getMinutes());
+		int logoutMinutes = random(1, getMinutes());
 		// logoutSeconds = random(10, getSeconds());
 		systemTime.setEndIn(logoutMinutes);
 		while (!checkForLogout()) {

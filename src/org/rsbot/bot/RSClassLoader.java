@@ -38,7 +38,7 @@ public final class RSClassLoader extends ClassLoader {
 				is = new BufferedInputStream(url.openStream());
 
 				byte[] buff = new byte[1024];
-				int len = -1;
+				int len;
 				while ((len = is.read(buff)) != -1)
 					bos.write(buff, 0, len);
 

@@ -11,7 +11,7 @@ import java.awt.*;
 
 public class DrawGround implements PaintListener {
 
-	private MethodContext ctx;
+	private final MethodContext ctx;
 
 	public DrawGround(Bot bot) {
 		this.ctx = bot.getMethodContext();

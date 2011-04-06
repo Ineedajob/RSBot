@@ -8,7 +8,7 @@ import org.rsbot.loader.asm.*;
 public class SetSuperAdapter extends ClassAdapter {
 
 	private String superName;
-	private String newSuperName;
+	private final String newSuperName;
 
 	public SetSuperAdapter(ClassVisitor delegate, String superName) {
 		super(delegate);

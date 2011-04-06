@@ -26,7 +26,6 @@ public abstract class RSModel extends MethodProvider {
 	 */
 	public static Filter<RSModel> newVertexFilter(final short[] vertex_a) {
 		return new Filter<RSModel>() {
-			@Override
 			public boolean accept(RSModel m) {
 				return Arrays.equals(m.indices1, vertex_a);
 			}
@@ -88,7 +87,7 @@ public abstract class RSModel extends MethodProvider {
 					return true;
 				}
 			}
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 		}
 		return false;
 	}
@@ -107,13 +106,11 @@ public abstract class RSModel extends MethodProvider {
 					if (methods.menu.contains(action)) {
 						if (methods.menu.doAction(action)) {
 							return true;
-						} else {
-							continue;
 						}
 					}
 				}
 			}
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 		}
 		return false;
 	}
@@ -169,8 +166,7 @@ public abstract class RSModel extends MethodProvider {
 		ArrayList<Point> list = new ArrayList<Point>();
 		try {
 			Polygon[] tris = getTriangles();
-			for (int i = 0; i < tris.length; i++) {
-				Polygon p = tris[i];
+			for (Polygon p : tris) {
 				for (int j = 0; j < p.xpoints.length; j++) {
 					Point firstPoint = new Point(p.xpoints[j], p.ypoints[j]);
 					if (methods.calc.pointOnScreen(firstPoint)) {

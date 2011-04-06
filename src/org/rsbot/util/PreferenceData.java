@@ -47,7 +47,7 @@ public class PreferenceData {
 						break;
 				}
 			}
-		} catch (IOException e) {
+		} catch (IOException ignored) {
 		}
 	}
 
@@ -69,7 +69,7 @@ public class PreferenceData {
 		try {
 			RandomAccessFile raf = new RandomAccessFile(file, "rw");
 			raf.write(data);
-		} catch (IOException ioe) {
+		} catch (IOException ignored) {
 		}
 	}
 

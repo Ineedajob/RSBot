@@ -9,7 +9,7 @@ import java.awt.*;
 
 public class TFloorHeight implements TextPaintListener {
 
-	private Game game;
+	private final Game game;
 
 	public TFloorHeight(Bot bot) {
 		game = bot.getMethodContext().game;

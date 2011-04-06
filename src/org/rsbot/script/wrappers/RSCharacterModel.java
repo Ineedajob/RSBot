@@ -9,10 +9,9 @@ import org.rsbot.script.methods.MethodContext;
  */
 class RSCharacterModel extends RSModel {
 
-	protected org.rsbot.client.RSCharacter c;
+	private final org.rsbot.client.RSCharacter c;
 
-	protected int[] x_base;
-	protected int[] z_base;
+	private final int[] x_base, z_base;
 
 	RSCharacterModel(MethodContext ctx, Model model, org.rsbot.client.RSCharacter c) {
 		super(ctx, model);

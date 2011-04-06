@@ -9,7 +9,7 @@ import java.awt.*;
 
 public class DrawPlayers implements PaintListener {
 
-	private MethodContext ctx;
+	private final MethodContext ctx;
 
 	public DrawPlayers(Bot bot) {
 		ctx = bot.getMethodContext();

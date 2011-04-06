@@ -4,7 +4,7 @@ import java.util.Random;
 
 public class BreakHandler {
 
-	protected final Random random = new Random();
+	private final Random random = new Random();
 
 	private long nextBreak;
 	private long breakEnd;

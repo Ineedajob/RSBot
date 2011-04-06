@@ -12,7 +12,7 @@ public class BankPins extends Random {
 		return interfaces.get(13).isValid() || interfaces.get(14).isValid();
 	}
 
-	public void enterCode(final String pin) {
+	void enterCode(final String pin) {
 		if (!interfaces.get(13).isValid())
 			return;
 		final RSComponent[] children = interfaces.get(13).getComponents();
@@ -26,9 +26,9 @@ public class BankPins extends Random {
 		if (!interfaces.get(759).isValid())
 			return;
 		final RSComponent[] bankPin = interfaces.get(759).getComponents();
-		for (int i = 0; i < bankPin.length; i++) {
-			if (bankPin[i].containsText(pin.substring(state, state + 1))) {
-				bankPin[i].doClick(true);
+		for (RSComponent aBankPin : bankPin) {
+			if (aBankPin.containsText(pin.substring(state, state + 1))) {
+				aBankPin.doClick(true);
 				sleep(random(500, 1000));
 				break;
 			}

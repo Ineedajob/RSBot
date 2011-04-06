@@ -261,8 +261,7 @@ public class Menu extends MethodProvider {
 		String[] items = itemsList.toArray(new String[itemsList.size()]);
 		LinkedList<String> output = new LinkedList<String>();
 		if (isCollapsed()) {
-			for (int i = 0; i < items.length; i++) {
-				String item = items[i];
+			for (String item : items) {
 				output.add(item == null ? "" : stripFormatting(item));
 			}
 		} else {

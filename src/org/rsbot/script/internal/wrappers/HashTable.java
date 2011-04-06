@@ -2,7 +2,7 @@ package org.rsbot.script.internal.wrappers;
 
 public class HashTable {
 
-	private org.rsbot.client.HashTable nc;
+	private final org.rsbot.client.HashTable nc;
 	private org.rsbot.client.Node current;
 	private int c_index = 0;
 

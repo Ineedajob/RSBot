@@ -9,7 +9,7 @@ import java.awt.*;
 
 public class TMenuActions implements TextPaintListener {
 
-	private Menu menu;
+	private final Menu menu;
 
 	public TMenuActions(Bot bot) {
 		menu = bot.getMethodContext().menu;

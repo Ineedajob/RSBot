@@ -11,7 +11,7 @@ public class LogFormatter extends Formatter {
 
 	private static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
-	public boolean appendNewLine;
+	private final boolean appendNewLine;
 
 	public LogFormatter() {
 		this(true);

@@ -195,7 +195,7 @@ public class RSComponent extends MethodProvider {
 			return -1;
 
 		// Define x
-		int x = 0;
+		int x;
 
 		// Find parentX
 		final int parentID = getParentID();
@@ -243,7 +243,7 @@ public class RSComponent extends MethodProvider {
 			return -1;
 
 		// Define y
-		int y = 0;
+		int y;
 
 		// Find parentY
 		final int parentID = getParentID();

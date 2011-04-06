@@ -380,10 +380,7 @@ public class Label {
 	 * @return true is this basic block belongs to the given subroutine.
 	 */
 	boolean inSubroutine(final long id) {
-		if ((status & Label.VISITED) != 0) {
-			return (srcAndRefPositions[(int) (id >>> 32)] & (int) id) != 0;
-		}
-		return false;
+		return (status & Label.VISITED) != 0 && (srcAndRefPositions[(int) (id >>> 32)] & (int) id) != 0;
 	}
 
 	/**

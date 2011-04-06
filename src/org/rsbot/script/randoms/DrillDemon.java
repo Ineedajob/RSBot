@@ -318,8 +318,6 @@ public class DrillDemon extends Random {
 	                            final int minY) {
 		final int x = getMyPlayer().getLocation().getX();
 		final int y = getMyPlayer().getLocation().getY();
-		if ((x >= minX) && (x <= maxX) && (y >= minY) && (y <= maxY))
-			return true;
-		return false;
+		return (x >= minX) && (x <= maxX) && (y >= minY) && (y <= maxY);
 	}
 }

@@ -330,10 +330,7 @@ public class Game extends MethodProvider {
 	public boolean mouseChatButton(int button, boolean left) {
 		RSComponent chatButton = methods.interfaces.get(CHAT_OPTION)
 				.getComponent(button);
-		if (!chatButton.isValid()) {
-			return false;
-		}
-		return chatButton.doClick(left);
+		return chatButton.isValid() && chatButton.doClick(left);
 	}
 
 	/**

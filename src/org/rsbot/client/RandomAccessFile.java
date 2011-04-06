@@ -157,8 +157,7 @@ public class RandomAccessFile {
 			if (data.length < offset + len) {
 				byte[] tmp = data;
 				data = new byte[offset + len];
-				for (int i = 0; i < (offset <= tmp.length ? offset : tmp.length); i++)
-					data[i] = tmp[i];
+				System.arraycopy(tmp, 0, data, 0, (offset <= tmp.length ? offset : tmp.length));
 			}
 
 			//Write bytes
@@ -178,8 +177,7 @@ public class RandomAccessFile {
 			if (data.length < offset + 1) {
 				byte[] tmp = data;
 				data = new byte[offset + 1];
-				for (int i = 0; i < (offset <= tmp.length ? offset : tmp.length); i++)
-					data[i] = tmp[i];
+				System.arraycopy(tmp, 0, data, 0, (offset <= tmp.length ? offset : tmp.length));
 			}
 
 			//Write byte

@@ -10,7 +10,7 @@ import java.awt.*;
 
 public class DrawInventory implements PaintListener {
 
-	private MethodContext ctx;
+	private final MethodContext ctx;
 
 	public DrawInventory(Bot bot) {
 		ctx = bot.getMethodContext();
@@ -26,10 +26,10 @@ public class DrawInventory implements PaintListener {
 		render.setColor(Color.WHITE);
 		final RSItem[] inventoryItems = ctx.inventory.getItems();
 
-		for (int off = 0; off < inventoryItems.length; off++) {
-			if (inventoryItems[off].getID() != -1) {
-				final Point location = inventoryItems[off].getComponent().getCenter();
-				render.drawString("" + inventoryItems[off].getID(), location.x, location.y);
+		for (RSItem inventoryItem : inventoryItems) {
+			if (inventoryItem.getID() != -1) {
+				final Point location = inventoryItem.getComponent().getCenter();
+				render.drawString("" + inventoryItem.getID(), location.x, location.y);
 			}
 		}
 	}

@@ -9,7 +9,7 @@ import java.awt.*;
 
 public class TMenu implements TextPaintListener {
 
-	private Client client;
+	private final Client client;
 
 	public TMenu(Bot bot) {
 		client = bot.getClient();

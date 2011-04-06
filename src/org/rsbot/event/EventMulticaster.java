@@ -132,7 +132,7 @@ public class EventMulticaster implements EventListener {
 	 * Adds the listener to the tree with a default mask.
 	 */
 	public void addListener(EventListener el) {
-		long mask = 0;
+		long mask;
 		if (el instanceof EventMulticaster) {
 			final EventMulticaster em = (EventMulticaster) el;
 			mask = em.enabledMask;

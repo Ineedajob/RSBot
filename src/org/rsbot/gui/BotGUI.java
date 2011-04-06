@@ -119,7 +119,7 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 						}
 						this.setVisible(false);
 						Minimizer.snapToTray(this);
-					} catch (Exception e) {
+					} catch (Exception ignored) {
 					}
 
 				}

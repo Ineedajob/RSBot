@@ -9,7 +9,7 @@ import java.awt.*;
 
 public class TAnimation implements TextPaintListener {
 
-	private MethodContext ctx;
+	private final MethodContext ctx;
 
 	public TAnimation(Bot bot) {
 		ctx = bot.getMethodContext();

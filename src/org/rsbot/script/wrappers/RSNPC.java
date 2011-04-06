@@ -58,8 +58,8 @@ public class RSNPC extends RSCharacter {
 	@Override
 	public boolean isInteractingWithLocalPlayer() {
 		RSNPC npc = methods.npcs.getNearest(getID());
-		return npc.getInteracting() != null ? npc.getInteracting().equals(
-				methods.players.getMyPlayer()) : false;
+		return npc.getInteracting() != null && npc.getInteracting().equals(
+				methods.players.getMyPlayer());
 	}
 
 	@Override
