@@ -139,7 +139,6 @@ public class BotMenuBar extends JMenuBar {
 				}
 			}
 			enable("All Debugging", selections == eventCheckMap.size());
-			enable("Mouse", true);
 			enable("Force Input", bot.overrideInput);
 			enable("Less CPU", bot.disableRendering);
 			enable("Disable Anti-Randoms", bot.disableRandoms);
@@ -158,7 +157,7 @@ public class BotMenuBar extends JMenuBar {
 		}
 	}
 
-	private void enable(String item, boolean selected) {
+	public void enable(String item, boolean selected) {
 		commandCheckMap.get(item).setSelected(selected);
 		commandCheckMap.get(item).setEnabled(true);
 	}
