@@ -139,7 +139,6 @@ public class BotMenuBar extends JMenuBar {
 				}
 			}
 			enable("All Debugging", selections == eventCheckMap.size());
-			enable("Mouse", true);
 			enable("Force Input", bot.overrideInput);
 			enable("Less CPU", bot.disableRendering);
 			enable("Disable Anti-Randoms", bot.disableRandoms);
