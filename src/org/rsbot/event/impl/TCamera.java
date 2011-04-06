@@ -9,7 +9,7 @@ import java.awt.*;
 
 public class TCamera implements TextPaintListener {
 
-	private Client client;
+	private final Client client;
 
 	public TCamera(Bot bot) {
 		client = bot.getClient();

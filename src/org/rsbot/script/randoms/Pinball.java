@@ -51,11 +51,11 @@ public class Pinball extends Random {
 //			return random(1000, 1200);
 //		}	
 //		continueCounter = 0;
-		
+
 		if (getMyPlayer().isMoving() || getMyPlayer().getAnimation() != -1) {
 			return random(1000, 1600);
 		}
-		
+
 		if (getScore() >= 10) {
 			//log.info("Score >= 10" + getScore());
 			int OBJ_EXIT = 15010;
@@ -70,27 +70,27 @@ public class Pinball extends Random {
 					walking.walkTileOnScreen(exit.getLocation());
 					return random(1400, 1500);
 				}
-		
+
 			}
 		}
-		
+
 		RSObject pillar = objects.getNearest(OBJ_PILLARS);
-		
+
 		if (pillar != null) {
 			//log.info("Found pillar: " + pillar.getID() + " - " + pillar.getLocation());
-			
-			if(calc.distanceTo(pillar) > 2) {
+
+			if (calc.distanceTo(pillar) > 2) {
 				walking.walkTileOnScreen(pillar.getLocation());
 				return random(500, 600);
 			}
-			
+
 			sleep(random(400, 500));
-			
+
 			if (!tiles.doAction(pillar.getLocation(), "Tag"))
 				return random(50, 100);
 			else
 				sleep(500, 1000);
-			
+
 			int before = getScore();
 			for (int i = 0; i < 100; i++) {
 				if (getScore() > before)

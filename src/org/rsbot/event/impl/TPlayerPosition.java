@@ -10,7 +10,7 @@ import java.awt.*;
 
 public class TPlayerPosition implements TextPaintListener {
 
-	private Players players;
+	private final Players players;
 
 	public TPlayerPosition(Bot bot) {
 		players = bot.getMethodContext().players;

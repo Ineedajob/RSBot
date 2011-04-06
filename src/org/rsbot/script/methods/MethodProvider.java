@@ -83,7 +83,7 @@ public abstract class MethodProvider {
 		try {
 			long start = System.currentTimeMillis();
 			Thread.sleep(toSleep);
-			long now;	// Guarantee minimum sleep
+			long now;    // Guarantee minimum sleep
 			while (start + toSleep > (now = System.currentTimeMillis())) {
 				Thread.sleep(start + toSleep - now);
 			}

@@ -1,12 +1,7 @@
 package org.rsbot.bot;
 
-import java.awt.AWTPermission;
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FilePermission;
-import java.io.IOException;
-import java.io.InputStream;
+import java.awt.*;
+import java.io.*;
 import java.net.SocketPermission;
 import java.net.URL;
 import java.security.CodeSigner;
@@ -43,21 +38,22 @@ public final class RSClassLoader extends ClassLoader {
 				is = new BufferedInputStream(url.openStream());
 
 				byte[] buff = new byte[1024];
-				int len = -1;
-				while((len = is.read(buff)) != -1)
+				int len;
+				while ((len = is.read(buff)) != -1)
 					bos.write(buff, 0, len);
-				
+
 				byte[] data = bos.toByteArray();
 
 				//Store it so we can load it
 				this.classes.put("org.rsbot.client.RandomAccessFile", data);
-			}catch(IOException e) {
+			} catch (IOException e) {
 				e.printStackTrace();
 			} finally {
-				if(is != null)
+				if (is != null)
 					is.close();
 			}
-		} catch (final Exception ignored) { }
+		} catch (final Exception ignored) {
+		}
 	}
 
 	private Permissions getPermissions() {

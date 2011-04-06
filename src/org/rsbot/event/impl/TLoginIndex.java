@@ -9,7 +9,7 @@ import java.awt.*;
 
 public class TLoginIndex implements TextPaintListener {
 
-	private Game game;
+	private final Game game;
 
 	public TLoginIndex(Bot bot) {
 		game = bot.getMethodContext().game;

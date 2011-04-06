@@ -3,10 +3,10 @@ package org.rsbot.loader.script;
 /**
  * @author Jacmob
  */
-public class Buffer {
+class Buffer {
 
 	private int pos;
-	private byte[] data;
+	private final byte[] data;
 
 	public Buffer(byte[] buffer) {
 		data = buffer;

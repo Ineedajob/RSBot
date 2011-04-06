@@ -5,27 +5,12 @@ import org.rsbot.loader.script.ModScript;
 import org.rsbot.loader.script.ParseException;
 import org.rsbot.util.GlobalConfiguration;
 
-import javax.swing.JOptionPane;
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
+import javax.swing.*;
+import java.io.*;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
@@ -192,11 +177,11 @@ public class ClientLoader {
 			JOptionPane.showMessageDialog(
 					null,
 					GlobalConfiguration.NAME + " does not yet support the latest version of this game client.\n" +
-					"Our developers are currently ensuring that the bot can understand any new game content.\n" +
-					"This process also ensures that the bot client remains undetectable.\n" +
-					"This application will update itself when opened after the update is complete.\n" +
-					"Try again in a few minutes or check the powerbot.org announcements for more information.\n" +
-					"If this does not give you an exact time, refrain from asking as no one else will be able to.",
+							"Our developers are currently ensuring that the bot can understand any new game content.\n" +
+							"This process also ensures that the bot client remains undetectable.\n" +
+							"This application will update itself when opened after the update is complete.\n" +
+							"Try again in a few minutes or check the powerbot.org announcements for more information.\n" +
+							"If this does not give you an exact time, refrain from asking as no one else will be able to.",
 					"Outdated (" + script.getName() + ")",
 					JOptionPane.INFORMATION_MESSAGE);
 			throw new IOException("ModScript #" + script.getVersion() + " != #" + vv.getVersion());

@@ -15,7 +15,7 @@ public class DrawSettings implements PaintListener {
 	private int[] lastSettings = new int[0];
 	private long[] settingsAge = new long[0];
 
-	private Settings settings;
+	private final Settings settings;
 
 	public DrawSettings(Bot bot) {
 		settings = bot.getMethodContext().settings;

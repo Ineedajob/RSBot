@@ -1,18 +1,18 @@
 package org.rsbot.script.randoms;
 
-import java.awt.Rectangle;
-import java.awt.event.KeyEvent;
-
 import org.rsbot.gui.AccountManager;
 import org.rsbot.script.Random;
 import org.rsbot.script.ScriptManifest;
 import org.rsbot.script.wrappers.RSComponent;
 import org.rsbot.script.wrappers.RSInterface;
 
+import java.awt.*;
+import java.awt.event.KeyEvent;
+
 /**
  * @author Iscream, Aut0r, Doout, Pervy
  */
-@ScriptManifest(authors = { "Iscream", "Pervy Shuya", "Aut0r" }, name = "Login", version = 2.0)
+@ScriptManifest(authors = {"Iscream", "Pervy Shuya", "Aut0r"}, name = "Login", version = 2.0)
 public class LoginBot extends Random {
 
 	private static final int INTERFACE_MAIN = 905;
@@ -43,7 +43,7 @@ public class LoginBot extends Random {
 	private int invalidCount, worldFullCount;
 
 	public Random Rand;
-	
+
 	@Override
 	public boolean activateCondition() {
 		int idx = game.getClientState();
@@ -98,8 +98,8 @@ public class LoginBot extends Random {
 				}
 
 				if (returnText.contains("login limit exceeded")) {
-						if(interfaces.getComponent(INTERFACE_WELCOME_SCREEN_BUTTON_BACK).isValid())
-							interfaces.getComponent(INTERFACE_WELCOME_SCREEN_BUTTON_BACK).doClick();
+					if (interfaces.getComponent(INTERFACE_WELCOME_SCREEN_BUTTON_BACK).isValid())
+						interfaces.getComponent(INTERFACE_WELCOME_SCREEN_BUTTON_BACK).doClick();
 				}
 
 				if (returnText.contains("your account has not logged out")) {
@@ -110,7 +110,7 @@ public class LoginBot extends Random {
 					}
 					invalidCount++;
 					log.severe("Waiting for logout..");
-					sleep(5000,15000);
+					sleep(5000, 15000);
 				}
 
 				if (returnText.contains("member")) {
@@ -147,7 +147,7 @@ public class LoginBot extends Random {
 			return -1;
 		}
 		if (!game.isLoggedIn()) {
-			if(interfaces.get(INTERFACE_LOGIN_SCREEN).getComponent(INTERFACE_BUTTON_BACK).isValid())
+			if (interfaces.get(INTERFACE_LOGIN_SCREEN).getComponent(INTERFACE_BUTTON_BACK).isValid())
 				interfaces.get(INTERFACE_LOGIN_SCREEN).getComponent(INTERFACE_BUTTON_BACK).doClick();
 			if (returnText.contains("no reply from login server")) {
 				if (invalidCount > 10) {
@@ -174,7 +174,7 @@ public class LoginBot extends Random {
 				}
 				invalidCount++;
 				log.severe("Waiting for logout..");
-				sleep(5000,15000);
+				sleep(5000, 15000);
 			}
 			if (returnText.contains("incorrect")) {
 				log.warning("Failed to login five times in a row. Stopping script.");
@@ -211,7 +211,7 @@ public class LoginBot extends Random {
 					stopScript(false);
 				}
 				invalidCount++;
-				sleep(5000,15000);
+				sleep(5000, 15000);
 			}
 			if (returnText.contains("world")) {
 				return random(1500, 2000);
@@ -225,7 +225,7 @@ public class LoginBot extends Random {
 					INTERFACE_GRAPHICS_LEAVE_ALONE).isValid()) {
 				interfaces.getComponent(INTERFACE_GRAPHICS_NOTICE,
 						INTERFACE_GRAPHICS_LEAVE_ALONE).doClick();
-			if(interfaces.getComponent(INTERFACE_BUTTON_BACK).isValid())
+				if (interfaces.getComponent(INTERFACE_BUTTON_BACK).isValid())
 					interfaces.getComponent(INTERFACE_BUTTON_BACK).doClick();
 				return random(500, 600);
 			}
@@ -283,8 +283,8 @@ public class LoginBot extends Random {
 		return interfaces.get(INTERFACE_WELCOME_SCREEN)
 				.getComponent(INTERFACE_WELCOME_SCREEN_TEXT_RETURN).isValid()
 				&& interfaces.get(INTERFACE_WELCOME_SCREEN)
-						.getComponent(INTERFACE_WELCOME_SCREEN_TEXT_RETURN)
-						.containsText("just left another world");
+				.getComponent(INTERFACE_WELCOME_SCREEN_TEXT_RETURN)
+				.containsText("just left another world");
 	}
 
 	// Clicks past all of the letters
@@ -308,9 +308,9 @@ public class LoginBot extends Random {
 	}
 
 	/*
-	 * Returns x int based on the letters in a Child Only the password text is
-	 * needed as the username text cannot reach past the middle of the interface
-	 */
+		  * Returns x int based on the letters in a Child Only the password text is
+		  * needed as the username text cannot reach past the middle of the interface
+		  */
 	private int minX(RSComponent a) {
 		int x = 0;
 		Rectangle pos = a.getArea();

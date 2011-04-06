@@ -112,7 +112,7 @@ public class WindowUtil {
 	 * This dialog will keep focus until the user closes it.
 	 *
 	 * @param message The message to be displayed in the dialog.
-	 * @param type	The type of window. This can be any of the following:
+	 * @param type    The type of window. This can be any of the following:
 	 *                YES_NO_CANCEL - for a dialog that has "Yes", "No", and "Cancel" options.
 	 *                YES_NO - for a dialog that has "Yes" and "No" options.
 	 *                OK_CANCEL - for a dialog that has "Ok" and "Cancel" options.

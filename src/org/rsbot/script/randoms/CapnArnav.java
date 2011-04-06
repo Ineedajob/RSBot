@@ -1,7 +1,5 @@
 package org.rsbot.script.randoms;
 
-import java.awt.Point;
-
 import org.rsbot.script.Random;
 import org.rsbot.script.ScriptManifest;
 import org.rsbot.script.util.Timer;
@@ -10,18 +8,20 @@ import org.rsbot.script.wrappers.RSInterface;
 import org.rsbot.script.wrappers.RSNPC;
 import org.rsbot.script.wrappers.RSObject;
 
+import java.awt.*;
+
 @ScriptManifest(authors = "endoskeleton", name = "CapnArnav", version = 1)
 public class CapnArnav extends Random {
 
-	private static final int[] ARNAV_CHEST = { 42337, 42338 };
+	private static final int[] ARNAV_CHEST = {42337, 42338};
 	private static final int ARNAV_ID = 2308;
 	private static final int EXIT_PORTAL = 11369;
-	private static final int[][] INTERFACE_SOLVE_IDS = { { 7, 14, 21 }, // BOWL
-			{ 5, 12, 19 }, // RING
-			{ 6, 13, 20 }, // COIN
-			{ 8, 15, 22 } // BAR
+	private static final int[][] INTERFACE_SOLVE_IDS = {{7, 14, 21}, // BOWL
+			{5, 12, 19}, // RING
+			{6, 13, 20}, // COIN
+			{8, 15, 22} // BAR
 	};
-	private static final int[][] ARROWS = { { 2, 3 }, { 9, 10 }, { 16, 17 } };
+	private static final int[][] ARROWS = {{2, 3}, {9, 10}, {16, 17}};
 	private static final int TALK_INTERFACE = 228;
 	private static final int CHEST_INTERFACE_PARENT = 185;
 	private static final int CHEST_INTERFACE_UNLOCK = 28;
@@ -82,82 +82,82 @@ public class CapnArnav extends Random {
 		}
 
 		switch (getState()) {
-		case EXIT:
-			RSObject portal = objects.getNearest(EXIT_PORTAL);
-			if (portal != null) {
-				if (!portal.isOnScreen()) {
-					camera.turnTo(portal);
+			case EXIT:
+				RSObject portal = objects.getNearest(EXIT_PORTAL);
+				if (portal != null) {
+					if (!portal.isOnScreen()) {
+						camera.turnTo(portal);
+					}
+					if (portal.doAction("Enter")) {
+						return random(1000, 1300);
+					}
 				}
-				if (portal.doAction("Enter")) {
-					return random(1000, 1300);
-				}
-			}
-			break;
+				break;
 
-		case OPEN_CHEST:
-			RSObject chest = objects.getNearest(ARNAV_CHEST);
-			if (chest != null) {
-				if (chest.doClick()) {
-					return random(1000, 1300);
+			case OPEN_CHEST:
+				RSObject chest = objects.getNearest(ARNAV_CHEST);
+				if (chest != null) {
+					if (chest.doClick()) {
+						return random(1000, 1300);
+					}
 				}
-			}
-			break;
+				break;
 
-		case TALK:
-			if (interfaces.canContinue()) {
-				interfaces.clickContinue();
+			case TALK:
+				if (interfaces.canContinue()) {
+					interfaces.clickContinue();
+					return random(1500, 2000);
+				}
+				RSComponent okay = interfaces.getComponent(TALK_INTERFACE, 3);
+				if (okay != null && okay.isValid()) {
+					okay.doClick();
+				}
 				return random(1500, 2000);
-			}
-			RSComponent okay = interfaces.getComponent(TALK_INTERFACE, 3);
-			if (okay != null && okay.isValid()) {
-				okay.doClick();
-			}
-			return random(1500, 2000);
 
-		case SOLVE:
-			RSInterface solver = interfaces.get(CHEST_INTERFACE_PARENT);
-			if (solver != null && solver.isValid()) {
+			case SOLVE:
+				RSInterface solver = interfaces.get(CHEST_INTERFACE_PARENT);
+				if (solver != null && solver.isValid()) {
 
-				String s = solver.getComponent(32).getText();
-				if (s.contains("Bowl")) {
-					index = 0;
-				} else if (s.contains("Ring")) {
-					index = 1;
-				} else if (s.contains("Coin")) {
-					index = 2;
-				} else if (s.contains("Bar")) {
-					index = 3;
-				}
-
-				if (solved()) {
-					solver.getComponent(CHEST_INTERFACE_UNLOCK).doClick();
-					return random(600, 900);
-				}
-
-				RSComponent container = solver
-						.getComponent(CHEST_INTERFACE_CENTER);
-				for (int i = 0; i < 3; i++) {
-					int rand = random(0, 100);
-					if (rand < 50) {
-						rand = 0;
-					} else if (rand >= 50) {
-						rand = 1;
+					String s = solver.getComponent(32).getText();
+					if (s.contains("Bowl")) {
+						index = 0;
+					} else if (s.contains("Ring")) {
+						index = 1;
+					} else if (s.contains("Coin")) {
+						index = 2;
+					} else if (s.contains("Bar")) {
+						index = 3;
 					}
-					RSComponent target = solver
-							.getComponent(INTERFACE_SOLVE_IDS[index][i]);
-					RSComponent arrow = solver.getComponent(ARROWS[i][rand]);
-					while (container.isValid()
-							&& target.isValid()
-							&& !container.getArea().contains(
-									new Point(target.getCenter().x + 15, target
-											.getCenter().y)) && arrow.isValid()
-							&& new Timer(10000).isRunning()) {
-						arrow.doClick();
-						sleep(random(1000, 1200));
-					}
-				}
 
-			}
+					if (solved()) {
+						solver.getComponent(CHEST_INTERFACE_UNLOCK).doClick();
+						return random(600, 900);
+					}
+
+					RSComponent container = solver
+							.getComponent(CHEST_INTERFACE_CENTER);
+					for (int i = 0; i < 3; i++) {
+						int rand = random(0, 100);
+						if (rand < 50) {
+							rand = 0;
+						} else if (rand >= 50) {
+							rand = 1;
+						}
+						RSComponent target = solver
+								.getComponent(INTERFACE_SOLVE_IDS[index][i]);
+						RSComponent arrow = solver.getComponent(ARROWS[i][rand]);
+						while (container.isValid()
+								&& target.isValid()
+								&& !container.getArea().contains(
+								new Point(target.getCenter().x + 15, target
+										.getCenter().y)) && arrow.isValid()
+								&& new Timer(10000).isRunning()) {
+							arrow.doClick();
+							sleep(random(1000, 1200));
+						}
+					}
+
+				}
 		}
 		return random(500, 800);
 	}

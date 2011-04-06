@@ -9,7 +9,7 @@ import java.awt.*;
 
 public class TTab implements TextPaintListener {
 
-	private Game game;
+	private final Game game;
 
 	public TTab(Bot bot) {
 		game = bot.getMethodContext().game;

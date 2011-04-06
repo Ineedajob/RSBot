@@ -1,17 +1,12 @@
 package org.rsbot.util;
 
-import java.awt.Image;
-import java.awt.Toolkit;
-import java.io.BufferedWriter;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.io.Writer;
+import org.rsbot.log.LogFormatter;
+import org.rsbot.log.SystemConsoleHandler;
+import org.rsbot.log.TextAreaLogHandler;
+
+import javax.swing.filechooser.FileSystemView;
+import java.awt.*;
+import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLDecoder;
@@ -19,12 +14,6 @@ import java.util.ArrayList;
 import java.util.Properties;
 import java.util.logging.FileHandler;
 import java.util.logging.LogManager;
-
-import javax.swing.filechooser.FileSystemView;
-
-import org.rsbot.log.LogFormatter;
-import org.rsbot.log.SystemConsoleHandler;
-import org.rsbot.log.TextAreaLogHandler;
 
 public class GlobalConfiguration {
 
@@ -377,7 +366,7 @@ public class GlobalConfiguration {
 	}
 
 	public static URLConnection getURLConnection(final URL url,
-			final String referer) throws IOException {
+	                                             final String referer) throws IOException {
 		final URLConnection con = url.openConnection();
 		con.addRequestProperty("Accept",
 				"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");

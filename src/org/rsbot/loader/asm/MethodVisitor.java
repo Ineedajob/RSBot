@@ -43,7 +43,7 @@ public interface MethodVisitor {
 	/**
 	 * Visits an annotation of this method.
 	 *
-	 * @param desc	the class descriptor of the annotation class.
+	 * @param desc    the class descriptor of the annotation class.
 	 * @param visible <tt>true</tt> if the annotation is visible at runtime.
 	 * @return a visitor to visit the annotation values, or <tt>null</tt> if
 	 *         this visitor is not interested in visiting this annotation.
@@ -54,7 +54,7 @@ public interface MethodVisitor {
 	 * Visits an annotation of a parameter this method.
 	 *
 	 * @param parameter the parameter index.
-	 * @param desc	  the class descriptor of the annotation class.
+	 * @param desc      the class descriptor of the annotation class.
 	 * @param visible   <tt>true</tt> if the annotation is visible at runtime.
 	 * @return a visitor to visit the annotation values, or <tt>null</tt> if
 	 *         this visitor is not interested in visiting this annotation.
@@ -182,7 +182,7 @@ public interface MethodVisitor {
 	 * @param opcode the opcode of the local variable instruction to be visited.
 	 *               This opcode is either ILOAD, LLOAD, FLOAD, DLOAD, ALOAD, ISTORE,
 	 *               LSTORE, FSTORE, DSTORE, ASTORE or RET.
-	 * @param var	the operand of the instruction to be visited. This operand is
+	 * @param var    the operand of the instruction to be visited. This operand is
 	 *               the index of a local variable.
 	 */
 	void visitVarInsn(int opcode, int var);
@@ -267,7 +267,7 @@ public interface MethodVisitor {
 	/**
 	 * Visits an IINC instruction.
 	 *
-	 * @param var	   index of the local variable to be incremented.
+	 * @param var       index of the local variable to be incremented.
 	 * @param increment amount to increment the local variable by.
 	 */
 	void visitIincInsn(int var, int increment);
@@ -275,8 +275,8 @@ public interface MethodVisitor {
 	/**
 	 * Visits a TABLESWITCH instruction.
 	 *
-	 * @param min	the minimum key value.
-	 * @param max	the maximum key value.
+	 * @param min    the minimum key value.
+	 * @param max    the maximum key value.
 	 * @param dflt   beginning of the default handler block.
 	 * @param labels beginnings of the handler blocks. <tt>labels[i]</tt> is
 	 *               the beginning of the handler block for the <tt>min + i</tt> key.
@@ -309,9 +309,9 @@ public interface MethodVisitor {
 	 * Visits a try catch block.
 	 *
 	 * @param start   beginning of the exception handler's scope (inclusive).
-	 * @param end	 end of the exception handler's scope (exclusive).
+	 * @param end     end of the exception handler's scope (exclusive).
 	 * @param handler beginning of the exception handler's code.
-	 * @param type	internal name of the type of exceptions handled by the
+	 * @param type    internal name of the type of exceptions handled by the
 	 *                handler, or <tt>null</tt> to catch any exceptions (for "finally"
 	 *                blocks).
 	 * @throws IllegalArgumentException if one of the labels has already been
@@ -323,16 +323,16 @@ public interface MethodVisitor {
 	/**
 	 * Visits a local variable declaration.
 	 *
-	 * @param name	  the name of a local variable.
-	 * @param desc	  the type descriptor of this local variable.
+	 * @param name      the name of a local variable.
+	 * @param desc      the type descriptor of this local variable.
 	 * @param signature the type signature of this local variable. May be
 	 *                  <tt>null</tt> if the local variable type does not use generic
 	 *                  types.
-	 * @param start	 the first instruction corresponding to the scope of this
+	 * @param start     the first instruction corresponding to the scope of this
 	 *                  local variable (inclusive).
-	 * @param end	   the last instruction corresponding to the scope of this local
+	 * @param end       the last instruction corresponding to the scope of this local
 	 *                  variable (exclusive).
-	 * @param index	 the local variable's index.
+	 * @param index     the local variable's index.
 	 * @throws IllegalArgumentException if one of the labels has not already
 	 *                                  been visited by this visitor (by the
 	 *                                  {@link #visitLabel visitLabel} method).

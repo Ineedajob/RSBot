@@ -116,7 +116,7 @@ public class Summoning extends MethodProvider {
 		private RSNPC npcObject;
 
 		Familiar(String name, int requiredLevel, int time, int sp,
-				 String scrollName, int space) {
+		         String scrollName, int space) {
 			this.name = name;
 			this.requiredLevel = requiredLevel;
 			this.time = time;

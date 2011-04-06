@@ -45,15 +45,15 @@ public class BeehiveSolver extends Random {
 		}
 
 		/*BeehiveKeeper = npcs.getNearest(BEEHIVE_KEEPER_ID);
-				if ((BeehiveKeeper != null) || getBeehiveInterface().isValid()) {
-					sleep(random(1000, 1500));
-					BeehiveKeeper = npcs.getNearest(BEEHIVE_KEEPER_ID);
-					if ((BeehiveKeeper != null) || getBeehiveInterface().isValid()) {
-						solved = false;
-						sleep(random(1000, 1500));
-						return true;
-					}
-				}*/
+						  if ((BeehiveKeeper != null) || getBeehiveInterface().isValid()) {
+							  sleep(random(1000, 1500));
+							  BeehiveKeeper = npcs.getNearest(BEEHIVE_KEEPER_ID);
+							  if ((BeehiveKeeper != null) || getBeehiveInterface().isValid()) {
+								  solved = false;
+								  sleep(random(1000, 1500));
+								  return true;
+							  }
+						  }*/
 		return false;
 	}
 

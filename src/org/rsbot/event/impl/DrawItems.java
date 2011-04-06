@@ -12,7 +12,7 @@ import java.awt.*;
 
 public class DrawItems implements PaintListener {
 
-	private MethodContext ctx;
+	private final MethodContext ctx;
 
 	public DrawItems(Bot bot) {
 		ctx = bot.getMethodContext();

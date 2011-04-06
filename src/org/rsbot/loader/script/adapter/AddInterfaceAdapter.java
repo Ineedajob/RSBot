@@ -8,7 +8,7 @@ import org.rsbot.loader.asm.ClassVisitor;
  */
 public class AddInterfaceAdapter extends ClassAdapter {
 
-	private String inter;
+	private final String inter;
 
 	public AddInterfaceAdapter(ClassVisitor delegate, String inter) {
 		super(delegate);

@@ -164,8 +164,8 @@ public class LogTextArea extends JList {
 		private final Color DARK_GREEN = new Color(0, 90, 0);
 
 		public Component getListCellRendererComponent(final JList list,
-													  final Object value, final int index, final boolean isSelected,
-													  final boolean cellHasFocus) {
+		                                              final Object value, final int index, final boolean isSelected,
+		                                              final boolean cellHasFocus) {
 			if (!(value instanceof WrappedLogRecord))
 				return new JLabel();
 			final WrappedLogRecord wlr = (WrappedLogRecord) value;

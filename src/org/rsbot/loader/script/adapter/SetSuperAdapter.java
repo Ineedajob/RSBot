@@ -1,10 +1,6 @@
 package org.rsbot.loader.script.adapter;
 
-import org.rsbot.loader.asm.ClassAdapter;
-import org.rsbot.loader.asm.ClassVisitor;
-import org.rsbot.loader.asm.MethodAdapter;
-import org.rsbot.loader.asm.MethodVisitor;
-import org.rsbot.loader.asm.Opcodes;
+import org.rsbot.loader.asm.*;
 
 /**
  * @author Jacmob
@@ -12,7 +8,7 @@ import org.rsbot.loader.asm.Opcodes;
 public class SetSuperAdapter extends ClassAdapter {
 
 	private String superName;
-	private String newSuperName;
+	private final String newSuperName;
 
 	public SetSuperAdapter(ClassVisitor delegate, String superName) {
 		super(delegate);

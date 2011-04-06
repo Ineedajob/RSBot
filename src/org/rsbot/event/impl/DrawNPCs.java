@@ -11,7 +11,7 @@ import java.awt.*;
 
 public class DrawNPCs implements PaintListener {
 
-	private MethodContext ctx;
+	private final MethodContext ctx;
 
 	public DrawNPCs(Bot bot) {
 		ctx = bot.getMethodContext();

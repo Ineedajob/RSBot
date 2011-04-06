@@ -413,7 +413,7 @@ public class ClassReader {
 	 * {@link #ClassReader(byte[]) ClassReader}).
 	 *
 	 * @param classVisitor the visitor that must visit this class.
-	 * @param flags		option flags that can be used to modify the default behavior
+	 * @param flags        option flags that can be used to modify the default behavior
 	 *                     of this class. See {@link #SKIP_DEBUG}, {@link #EXPAND_FRAMES},
 	 *                     {@link #SKIP_FRAMES}, {@link #SKIP_CODE}.
 	 */
@@ -427,7 +427,7 @@ public class ClassReader {
 	 * {@link #ClassReader(byte[]) ClassReader}).
 	 *
 	 * @param classVisitor the visitor that must visit this class.
-	 * @param attrs		prototypes of the attributes that must be parsed during the
+	 * @param attrs        prototypes of the attributes that must be parsed during the
 	 *                     visit of the class. Any attribute whose type is not equal to the
 	 *                     type of one the prototypes will not be parsed: its byte array
 	 *                     value will be passed unchanged to the ClassWriter. <i>This may
@@ -435,7 +435,7 @@ public class ClassReader {
 	 *                     or has syntactic or semantic links with a class element that has
 	 *                     been transformed by a class adapter between the reader and the
 	 *                     writer</i>.
-	 * @param flags		option flags that can be used to modify the default behavior
+	 * @param flags        option flags that can be used to modify the default behavior
 	 *                     of this class. See {@link #SKIP_DEBUG}, {@link #EXPAND_FRAMES},
 	 *                     {@link #SKIP_FRAMES}, {@link #SKIP_CODE}.
 	 */
@@ -777,16 +777,16 @@ public class ClassReader {
 
 			if (mv != null) {
 				/*
-								 * if the returned MethodVisitor is in fact a MethodWriter, it
-								 * means there is no method adapter between the reader and the
-								 * writer. If, in addition, the writer's constant pool was
-								 * copied from this reader (mw.cw.cr == this), and the signature
-								 * and exceptions of the method have not been changed, then it
-								 * is possible to skip all visit events and just copy the
-								 * original code of the method to the writer (the access, name
-								 * and descriptor can have been changed, this is not important
-								 * since they are not copied as is from the reader).
-								 */
+													 * if the returned MethodVisitor is in fact a MethodWriter, it
+													 * means there is no method adapter between the reader and the
+													 * writer. If, in addition, the writer's constant pool was
+													 * copied from this reader (mw.cw.cr == this), and the signature
+													 * and exceptions of the method have not been changed, then it
+													 * is possible to skip all visit events and just copy the
+													 * original code of the method to the writer (the access, name
+													 * and descriptor can have been changed, this is not important
+													 * since they are not copied as is from the reader).
+													 */
 				if (WRITER && mv instanceof MethodWriter) {
 					MethodWriter mw = (MethodWriter) mv;
 					if (mw.cw.cr == this) {
@@ -808,11 +808,11 @@ public class ClassReader {
 							}
 							if (sameExceptions) {
 								/*
-																 * we do not copy directly the code into
-																 * MethodWriter to save a byte array copy
-																 * operation. The real copy will be done in
-																 * ClassWriter.toByteArray().
-																 */
+																										 * we do not copy directly the code into
+																										 * MethodWriter to save a byte array copy
+																										 * operation. The real copy will be done in
+																										 * ClassWriter.toByteArray().
+																										 */
 								mw.classReaderOffset = u0;
 								mw.classReaderLength = u - u0;
 								continue;
@@ -1018,24 +1018,24 @@ public class ClassReader {
 							frameCount = readUnsignedShort(v + 6);
 						}
 						/*
-												 * here we do not extract the labels corresponding to
-												 * the attribute content. This would require a full
-												 * parsing of the attribute, which would need to be
-												 * repeated in the second phase (see below). Instead the
-												 * content of the attribute is read one frame at a time
-												 * (i.e. after a frame has been visited, the next frame
-												 * is read), and the labels it contains are also
-												 * extracted one frame at a time. Thanks to the ordering
-												 * of frames, having only a "one frame lookahead" is not
-												 * a problem, i.e. it is not possible to see an offset
-												 * smaller than the offset of the current insn and for
-												 * which no Label exist.
-												 */
+																			   * here we do not extract the labels corresponding to
+																			   * the attribute content. This would require a full
+																			   * parsing of the attribute, which would need to be
+																			   * repeated in the second phase (see below). Instead the
+																			   * content of the attribute is read one frame at a time
+																			   * (i.e. after a frame has been visited, the next frame
+																			   * is read), and the labels it contains are also
+																			   * extracted one frame at a time. Thanks to the ordering
+																			   * of frames, having only a "one frame lookahead" is not
+																			   * a problem, i.e. it is not possible to see an offset
+																			   * smaller than the offset of the current insn and for
+																			   * which no Label exist.
+																			   */
 						/*
-												 * This is not true for UNINITIALIZED type offsets. We
-												 * solve this by parsing the stack map table without a
-												 * full decoding (see below).
-												 */
+																			   * This is not true for UNINITIALIZED type offsets. We
+																			   * solve this by parsing the stack map table without a
+																			   * full decoding (see below).
+																			   */
 					} else if (FRAMES && "StackMap".equals(attrName)) {
 						if ((flags & SKIP_FRAMES) == 0) {
 							stackMap = v + 8;
@@ -1044,10 +1044,10 @@ public class ClassReader {
 							zip = false;
 						}
 						/*
-												 * IMPORTANT! here we assume that the frames are
-												 * ordered, as in the StackMapTable attribute, although
-												 * this is not guaranteed by the attribute format.
-												 */
+																			   * IMPORTANT! here we assume that the frames are
+																			   * ordered, as in the StackMapTable attribute, although
+																			   * this is not guaranteed by the attribute format.
+																			   */
 					} else {
 						for (k = 0; k < attrs.length; ++k) {
 							if (attrs[k].type.equals(attrName)) {
@@ -1129,24 +1129,24 @@ public class ClassReader {
 						frameLocalCount = local;
 					}
 					/*
-										 * for the first explicit frame the offset is not
-										 * offset_delta + 1 but only offset_delta; setting the
-										 * implicit frame offset to -1 allow the use of the
-										 * "offset_delta + 1" rule in all cases
-										 */
+																  * for the first explicit frame the offset is not
+																  * offset_delta + 1 but only offset_delta; setting the
+																  * implicit frame offset to -1 allow the use of the
+																  * "offset_delta + 1" rule in all cases
+																  */
 					frameOffset = -1;
 					/*
-										 * Finds labels for UNINITIALIZED frame types. Instead of
-										 * decoding each element of the stack map table, we look
-										 * for 3 consecutive bytes that "look like" an UNINITIALIZED
-										 * type (tag 8, offset within code bounds, NEW instruction
-										 * at this offset). We may find false positives (i.e. not
-										 * real UNINITIALIZED types), but this should be rare, and
-										 * the only consequence will be the creation of an unneeded
-										 * label. This is better than creating a label for each NEW
-										 * instruction, and faster than fully decoding the whole
-										 * stack map table.
-										 */
+																  * Finds labels for UNINITIALIZED frame types. Instead of
+																  * decoding each element of the stack map table, we look
+																  * for 3 consecutive bytes that "look like" an UNINITIALIZED
+																  * type (tag 8, offset within code bounds, NEW instruction
+																  * at this offset). We may find false positives (i.e. not
+																  * real UNINITIALIZED types), but this should be rare, and
+																  * the only consequence will be the creation of an unneeded
+																  * label. This is better than creating a label for each NEW
+																  * instruction, and faster than fully decoding the whole
+																  * stack map table.
+																  */
 					for (j = stackMap; j < stackMap + stackMapSize - 2; ++j) {
 						if (b[j] == 8) { // UNINITIALIZED FRAME TYPE
 							k = readUnsignedShort(j + 1);
@@ -1483,14 +1483,14 @@ public class ClassReader {
 	/**
 	 * Reads parameter annotations and makes the given visitor visit them.
 	 *
-	 * @param v	   start offset in {@link #b b} of the annotations to be read.
-	 * @param desc	the method descriptor.
-	 * @param buf	 buffer to be used to call {@link #readUTF8 readUTF8},
+	 * @param v       start offset in {@link #b b} of the annotations to be read.
+	 * @param desc    the method descriptor.
+	 * @param buf     buffer to be used to call {@link #readUTF8 readUTF8},
 	 *                {@link #readClass(int, char[]) readClass} or
 	 *                {@link #readConst readConst}.
 	 * @param visible <tt>true</tt> if the annotations to be read are visible
 	 *                at runtime.
-	 * @param mv	  the visitor that must visit the annotations.
+	 * @param mv      the visitor that must visit the annotations.
 	 */
 	private void readParameterAnnotations(
 			int v,
@@ -1528,13 +1528,13 @@ public class ClassReader {
 	/**
 	 * Reads the values of an annotation and makes the given visitor visit them.
 	 *
-	 * @param v	 the start offset in {@link #b b} of the values to be read
+	 * @param v     the start offset in {@link #b b} of the values to be read
 	 *              (including the unsigned short that gives the number of values).
 	 * @param buf   buffer to be used to call {@link #readUTF8 readUTF8},
 	 *              {@link #readClass(int, char[]) readClass} or
 	 *              {@link #readConst readConst}.
 	 * @param named if the annotation values are named or not.
-	 * @param av	the visitor that must visit the values.
+	 * @param av    the visitor that must visit the values.
 	 * @return the end offset of the annotation values.
 	 */
 	private int readAnnotationValues(
@@ -1562,7 +1562,7 @@ public class ClassReader {
 	/**
 	 * Reads a value of an annotation and makes the given visitor visit it.
 	 *
-	 * @param v	the start offset in {@link #b b} of the value to be read (<i>not
+	 * @param v    the start offset in {@link #b b} of the value to be read (<i>not
 	 *             including the value name constant pool index</i>).
 	 * @param buf  buffer to be used to call {@link #readUTF8 readUTF8},
 	 *             {@link #readClass(int, char[]) readClass} or
@@ -1793,13 +1793,13 @@ public class ClassReader {
 	 *                visit of the class. Any attribute whose type is not equal to the
 	 *                type of one the prototypes is ignored (i.e. an empty
 	 *                {@link Attribute} instance is returned).
-	 * @param type	the type of the attribute.
-	 * @param off	 index of the first byte of the attribute's content in
+	 * @param type    the type of the attribute.
+	 * @param off     index of the first byte of the attribute's content in
 	 *                {@link #b b}. The 6 attribute header bytes, containing the type
 	 *                and the length of the attribute, are not taken into account here
 	 *                (they have already been read).
-	 * @param len	 the length of the attribute's content.
-	 * @param buf	 buffer to be used to call {@link #readUTF8 readUTF8},
+	 * @param len     the length of the attribute's content.
+	 * @param buf     buffer to be used to call {@link #readUTF8 readUTF8},
 	 *                {@link #readClass(int, char[]) readClass} or
 	 *                {@link #readConst readConst}.
 	 * @param codeOff index of the first byte of code's attribute content in
@@ -1936,7 +1936,7 @@ public class ClassReader {
 	 *
 	 * @param index  start offset of the UTF8 string to be read.
 	 * @param utfLen length of the UTF8 string to be read.
-	 * @param buf	buffer to be used to read the string. This buffer must be
+	 * @param buf    buffer to be used to read the string. This buffer must be
 	 *               sufficiently large. It is not automatically resized.
 	 * @return the String corresponding to the specified UTF8 string.
 	 */

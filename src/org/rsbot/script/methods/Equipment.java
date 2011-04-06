@@ -9,7 +9,7 @@ import org.rsbot.script.wrappers.RSItem;
  */
 public class Equipment extends MethodProvider {
 
-    public static final int ITEM_SLOTS = 11;
+	public static final int ITEM_SLOTS = 11;
 	public static final int INTERFACE_EQUIPMENT = 387;
 	public static final int HELMET = 8;
 	public static final int CAPE = 11;
@@ -58,19 +58,20 @@ public class Equipment extends MethodProvider {
 		return items;
 	}
 
-    /**
-     * Gets the cached equipment array (i.e. does not open the interface).
-     * @return The items equipped as seen when the equipment tab was last opened.
-     */
-    public RSItem[] getCachedItems() {
-        RSInterface equipment = methods.interfaces.get(INTERFACE_EQUIPMENT);
-        RSComponent[] components = equipment.getComponents();
-        RSItem[] items = new RSItem[ITEM_SLOTS];
-        for (int i = 0; i < items.length; i++) {
-            items[i] = new RSItem(methods, components[i * 3 + 8]);
-        }
-        return items;
-    }
+	/**
+	 * Gets the cached equipment array (i.e. does not open the interface).
+	 *
+	 * @return The items equipped as seen when the equipment tab was last opened.
+	 */
+	public RSItem[] getCachedItems() {
+		RSInterface equipment = methods.interfaces.get(INTERFACE_EQUIPMENT);
+		RSComponent[] components = equipment.getComponents();
+		RSItem[] items = new RSItem[ITEM_SLOTS];
+		for (int i = 0; i < items.length; i++) {
+			items[i] = new RSItem(methods, components[i * 3 + 8]);
+		}
+		return items;
+	}
 
 	/**
 	 * Gets the equipment item at a given index.

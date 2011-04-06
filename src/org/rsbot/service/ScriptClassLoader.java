@@ -9,7 +9,7 @@ import java.net.URL;
 /**
  * @author Jacmob
  */
-public class ScriptClassLoader extends ClassLoader {
+class ScriptClassLoader extends ClassLoader {
 
 	private final URL base;
 

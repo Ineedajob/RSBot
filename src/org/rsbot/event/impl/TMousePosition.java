@@ -10,7 +10,7 @@ import java.awt.*;
 
 public class TMousePosition implements TextPaintListener {
 
-	private Client client;
+	private final Client client;
 
 	public TMousePosition(Bot bot) {
 		client = bot.getClient();

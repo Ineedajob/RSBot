@@ -1,25 +1,22 @@
 package org.rsbot.util;
 
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
+import javax.swing.*;
 
 /**
- *
  * @author Aut0r
  */
-public class FrameUtil {
+class FrameUtil {
 
-    @SuppressWarnings("static-access")
+	@SuppressWarnings("static-access")
 	public static boolean setTheme(JFrame f, String name) {
-        try {
+		try {
 
-            f.setDefaultLookAndFeelDecorated(true);
-            UIManager.setLookAndFeel("org.pushingpixels.substance.api.skin." + name);
-            SwingUtilities.updateComponentTreeUI(f);
-        } catch (Exception e) {
-            return false;
-        }
-        return true;
-    }
+			JFrame.setDefaultLookAndFeelDecorated(true);
+			UIManager.setLookAndFeel("org.pushingpixels.substance.api.skin." + name);
+			SwingUtilities.updateComponentTreeUI(f);
+		} catch (Exception e) {
+			return false;
+		}
+		return true;
+	}
 }

@@ -17,7 +17,7 @@ public interface FieldVisitor {
 	/**
 	 * Visits an annotation of the field.
 	 *
-	 * @param desc	the class descriptor of the annotation class.
+	 * @param desc    the class descriptor of the annotation class.
 	 * @param visible <tt>true</tt> if the annotation is visible at runtime.
 	 * @return a visitor to visit the annotation values, or <tt>null</tt> if
 	 *         this visitor is not interested in visiting this annotation.

@@ -1,6 +1,6 @@
 package org.rsbot.script.internal.wrappers;
 
-public class StatusQueue {
+class StatusQueue {
 
 	private final org.rsbot.client.StatusNodeList nl;
 	private org.rsbot.client.StatusNode c_node;

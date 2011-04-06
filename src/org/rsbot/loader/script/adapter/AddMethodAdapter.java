@@ -19,7 +19,7 @@ public class AddMethodAdapter extends ClassAdapter {
 		public int max_locals;
 	}
 
-	private Method[] methods;
+	private final Method[] methods;
 
 	public AddMethodAdapter(ClassVisitor delegate, Method[] methods) {
 		super(delegate);

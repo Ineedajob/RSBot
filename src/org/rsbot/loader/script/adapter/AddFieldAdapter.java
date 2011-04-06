@@ -14,7 +14,7 @@ public class AddFieldAdapter extends ClassAdapter {
 		public String desc;
 	}
 
-	private Field[] fields;
+	private final Field[] fields;
 
 	public AddFieldAdapter(ClassVisitor delegate, Field[] fields) {
 		super(delegate);

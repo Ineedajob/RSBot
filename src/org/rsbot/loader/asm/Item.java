@@ -96,7 +96,7 @@ final class Item {
 	 * Constructs a copy of the given item.
 	 *
 	 * @param index index of the item to be constructed.
-	 * @param i	 the item that must be copied into the item to be constructed.
+	 * @param i     the item that must be copied into the item to be constructed.
 	 */
 	Item(final int index, final Item i) {
 		this.index = index;
@@ -156,7 +156,7 @@ final class Item {
 	/**
 	 * Sets this item to an item that do not hold a primitive value.
 	 *
-	 * @param type	the type of this item.
+	 * @param type    the type of this item.
 	 * @param strVal1 first part of the value of this item.
 	 * @param strVal2 second part of the value of this item.
 	 * @param strVal3 third part of the value of this item.

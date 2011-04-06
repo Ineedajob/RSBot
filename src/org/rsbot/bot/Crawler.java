@@ -1,5 +1,7 @@
 package org.rsbot.bot;
 
+import org.rsbot.util.GlobalConfiguration;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -7,8 +9,6 @@ import java.util.HashMap;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.rsbot.util.GlobalConfiguration;
 
 public class Crawler {
 	private static final Logger log = Logger.getLogger(Crawler.class.getName());

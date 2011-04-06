@@ -20,7 +20,6 @@ public class Pillory extends Random implements MessageListener {
 
 	public int fail = 0;
 	private final int GameInterface = 189;
-	private String pilloryMessage = "Solve the Pillory";
 	public boolean inCage = false;
 	public RSTile myLoc;
 
@@ -172,6 +171,7 @@ public class Pillory extends Random implements MessageListener {
 
 	public void messageReceived(final MessageEvent e) {
 		final String str = e.getMessage();
+		String pilloryMessage = "Solve the Pillory";
 		if (str != null && str.contains(pilloryMessage)) {
 			inCage = true;
 		}

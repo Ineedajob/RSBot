@@ -9,7 +9,7 @@ import org.rsbot.script.methods.MethodContext;
  */
 class RSAnimableModel extends RSModel {
 
-	protected RSAnimable animable;
+	private final RSAnimable animable;
 
 	RSAnimableModel(MethodContext ctx, Model model, RSAnimable animable) {
 		super(ctx, model);

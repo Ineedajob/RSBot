@@ -3,13 +3,9 @@ package org.rsbot.script.methods;
 import org.rsbot.script.wrappers.RSComponent;
 import org.rsbot.script.wrappers.RSInterface;
 
-import java.awt.Rectangle;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedList;
+import java.awt.*;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Provides access to interfaces.
@@ -78,7 +74,7 @@ public class Interfaces extends MethodProvider {
 	}
 
 	/**
-	 * @param index	  The parent interface index
+	 * @param index      The parent interface index
 	 * @param childIndex The component index
 	 * @return <tt>RSComponent</tt> for the given index and child index.
 	 */
@@ -143,9 +139,8 @@ public class Interfaces extends MethodProvider {
 	/**
 	 * Performs the given action on this RSInterfaceChild if it is showing
 	 * (valid).
-	 * 
-	 * @param action
-	 *            The menu action to click.
+	 *
+	 * @param action The menu action to click.
 	 * @return <tt>true</tt> if the action was clicked; otherwise <tt>false</tt>.
 	 */
 	public boolean clickComponent(final RSComponent c, final String action) {
@@ -168,11 +163,9 @@ public class Interfaces extends MethodProvider {
 
 	/**
 	 * Clicks the dialogue option that contains the desired string.
-	 * 
-	 * @param inter
-	 *            The interface of the dialogue menu.
-	 * @param option
-	 *            The text we want to click.
+	 *
+	 * @param inter  The interface of the dialogue menu.
+	 * @param option The text we want to click.
 	 * @return <tt>true</tt> if the option was clicked; otherwise <tt>false</tt>.
 	 */
 	public boolean clickDialogueOption(final RSInterface inter, String option) {
@@ -188,7 +181,7 @@ public class Interfaces extends MethodProvider {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * @param text The text to search each interface for.
 	 * @return <tt>RSInterface</tt> array of the interfaces containing specified text.
@@ -202,77 +195,77 @@ public class Interfaces extends MethodProvider {
 		}
 		return results.toArray(new RSInterface[results.size()]);
 	}
-	
+
 	/**
 	 * Scrolls to the component
-	 * @param component component to scroll to
+	 *
+	 * @param component   component to scroll to
 	 * @param scrollBarID scrollbar to scroll with
-	 * 
 	 * @return true when scrolled successfully
 	 */
 	public boolean scrollTo(RSComponent component, int scrollBarID) {
 		RSComponent scrollBar = getComponent(scrollBarID);
-		
+
 		return scrollTo(component, scrollBar);
 	}
-	
+
 	/**
 	 * Scrolls to the component
+	 *
 	 * @param component component to scroll to
 	 * @param scrollBar scrollbar to scroll with
-	 * 
 	 * @return true when scrolled successfully
 	 */
 	public boolean scrollTo(RSComponent component, RSComponent scrollBar) {
 		//Check arguments
-		if(component == null || scrollBar == null || !component.isValid())
-			return false;	
-		
-		if(scrollBar.getComponents().length != 6)
+		if (component == null || scrollBar == null || !component.isValid())
+			return false;
+
+		if (scrollBar.getComponents().length != 6)
 			return true; //no scrollbar, so probably not scrollable
-		
+
 		//Find scrollable area
 		RSComponent scrollableArea = component;
-		while( (scrollableArea.getScrollableContentHeight() == 0) && (scrollableArea.getParentID() != -1) )
-			scrollableArea = getComponent( scrollableArea.getParentID() );
-		
+		while ((scrollableArea.getScrollableContentHeight() == 0) && (scrollableArea.getParentID() != -1))
+			scrollableArea = getComponent(scrollableArea.getParentID());
+
 		//Check scrollable area
-		if(scrollableArea.getScrollableContentHeight() == 0)
+		if (scrollableArea.getScrollableContentHeight() == 0)
 			return false;
-		
+
 		//Get scrollable area height
 		int areaY = scrollableArea.getAbsoluteY();
 		int areaHeight = scrollableArea.getRealHeight();
-		
+
 		//Check if the component is already visible
-		if( (component.getAbsoluteY() >= areaY) && (component.getAbsoluteY() <= areaY + areaHeight - component.getRealHeight()) )
+		if ((component.getAbsoluteY() >= areaY) && (component.getAbsoluteY() <= areaY + areaHeight - component.getRealHeight()))
 			return true;
-		
+
 		//Calculate scroll bar position to click
 		RSComponent scrollBarArea = scrollBar.getComponent(0);
 		int contentHeight = scrollableArea.getScrollableContentHeight();
-		
-		int pos = (int) ((float) scrollBarArea.getRealHeight() / contentHeight * ( component.getRelativeY() + random(-areaHeight / 2, areaHeight / 2 - component.getRealHeight()) ));
-		if(pos < 0) //inner
+
+		int pos = (int) ((float) scrollBarArea.getRealHeight() / contentHeight * (component.getRelativeY() + random(-areaHeight / 2, areaHeight / 2 - component.getRealHeight())));
+		if (pos < 0) //inner
 			pos = 0;
-		else if(pos >= scrollBarArea.getRealHeight())
+		else if (pos >= scrollBarArea.getRealHeight())
 			pos = scrollBarArea.getRealHeight() - 1; //outer
-		
+
 		//Click on the scrollbar
-		methods.mouse.click(scrollBarArea.getAbsoluteX() + random(0, scrollBarArea.getRealWidth()), 
+		methods.mouse.click(scrollBarArea.getAbsoluteX() + random(0, scrollBarArea.getRealWidth()),
 				scrollBarArea.getAbsoluteY() + pos, true);
-		
+
 		//Wait a bit
-		sleep( random(200, 400) );
-		
+		sleep(random(200, 400));
+
 		//Scroll to it if we missed it
-		while( component.getAbsoluteY() < areaY || component.getAbsoluteY() > (areaY + areaHeight - component.getRealHeight()) ) {
+		while (component.getAbsoluteY() < areaY || component.getAbsoluteY() > (areaY + areaHeight - component.getRealHeight())) {
 			boolean scrollUp = component.getAbsoluteY() < areaY;
 			scrollBar.getComponent(scrollUp ? 4 : 5).doAction("");
-			
-			sleep( random(100, 200) );
+
+			sleep(random(100, 200));
 		}
-		
+
 		//Return whether or not the component is visible now.
 		return (component.getAbsoluteY() >= areaY) && (component.getAbsoluteY() <= areaY + areaHeight - component.getRealHeight());
 	}

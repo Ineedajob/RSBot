@@ -60,7 +60,7 @@ public interface Client {
 	int getMenuX();
 
 	int getMenuY();
-	
+
 	MenuGroupNode getCurrentMenuGroupNode();
 
 	int getSubMenuX();
@@ -144,11 +144,11 @@ public interface Client {
 	RSItemDefLoader getRSItemDefLoader();
 
 	RSObjectDefLoader getRSObjectDefLoader();
-	
+
 	StatusNodeListLoader getRSInteractableDefListLoader();
-	
+
 	Signlink getSignlink();
-	
+
 	ServerData getWorldData();
 
 	void setCallback(Callback cb);

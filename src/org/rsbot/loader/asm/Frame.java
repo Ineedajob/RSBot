@@ -497,9 +497,9 @@ final class Frame {
 	 * Initializes the input frame of the first basic block from the method
 	 * descriptor.
 	 *
-	 * @param cw		the ClassWriter to which this label belongs.
-	 * @param access	the access flags of the method to which this label belongs.
-	 * @param args	  the formal parameter types of this method.
+	 * @param cw        the ClassWriter to which this label belongs.
+	 * @param access    the access flags of the method to which this label belongs.
+	 * @param args      the formal parameter types of this method.
 	 * @param maxLocals the maximum number of local variables of this method.
 	 */
 	void initInputFrame(
@@ -533,8 +533,8 @@ final class Frame {
 	 * Simulates the action of the given instruction on the output stack frame.
 	 *
 	 * @param opcode the opcode of the instruction.
-	 * @param arg	the operand of the instruction, if any.
-	 * @param cw	 the class writer to which this label belongs.
+	 * @param arg    the operand of the instruction, if any.
+	 * @param cw     the class writer to which this label belongs.
 	 * @param item   the operand of the instructions, if any.
 	 */
 	void execute(
@@ -961,7 +961,7 @@ final class Frame {
 	 * frames of this basic block. Returns <tt>true</tt> if the input frame of
 	 * the given label has been changed by this operation.
 	 *
-	 * @param cw	the ClassWriter to which this label belongs.
+	 * @param cw    the ClassWriter to which this label belongs.
 	 * @param frame the basic block whose input frame must be updated.
 	 * @param edge  the kind of the {@link Edge} between this label and 'label'.
 	 *              See {@link Edge#info}.
@@ -1064,8 +1064,8 @@ final class Frame {
 	 * type. Returns <tt>true</tt> if the type array has been modified by this
 	 * operation.
 	 *
-	 * @param cw	the ClassWriter to which this label belongs.
-	 * @param t	 the type with which the type array element must be merged.
+	 * @param cw    the ClassWriter to which this label belongs.
+	 * @param t     the type with which the type array element must be merged.
 	 * @param types an array of types.
 	 * @param index the index of the type that must be merged in 'types'.
 	 * @return <tt>true</tt> if the type array has been modified by this

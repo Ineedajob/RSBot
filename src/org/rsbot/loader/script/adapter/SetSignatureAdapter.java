@@ -17,7 +17,7 @@ public class SetSignatureAdapter extends ClassAdapter {
 		public String new_desc;
 	}
 
-	private Signature[] signatures;
+	private final Signature[] signatures;
 
 	public SetSignatureAdapter(ClassVisitor delegate, Signature[] signatures) {
 		super(delegate);

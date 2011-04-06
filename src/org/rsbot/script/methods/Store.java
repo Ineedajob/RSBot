@@ -66,10 +66,7 @@ public class Store extends MethodProvider {
 				} else
 					return false;
 			} else {
-				if (methods.inventory.getCount(true) > inventoryCount)
-					return true;
-				else
-					return false;
+				return methods.inventory.getCount(true) > inventoryCount;
 			}
 		}
 		return false;
@@ -149,10 +146,10 @@ public class Store extends MethodProvider {
 		ArrayList<RSItem> items = new ArrayList<RSItem>();
 		RSComponent[] components = getInterface().getComponent(INTERFACE_STORE_ITEMS).getComponents();
 
-		for (int i = 0; i < components.length; ++i) {
+		for (RSComponent component : components) {
 
-			if (components[i] != null && components[i].getComponentID() != -1)
-				items.add(new RSItem(methods, components[i]));
+			if (component != null && component.getComponentID() != -1)
+				items.add(new RSItem(methods, component));
 		}
 
 		return items.toArray(new RSItem[items.size()]);

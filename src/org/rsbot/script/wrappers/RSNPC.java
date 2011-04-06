@@ -1,8 +1,8 @@
 package org.rsbot.script.wrappers;
 
-import java.lang.ref.SoftReference;
-
 import org.rsbot.script.methods.MethodContext;
+
+import java.lang.ref.SoftReference;
 
 /**
  * Represents a non-player character.
@@ -58,8 +58,8 @@ public class RSNPC extends RSCharacter {
 	@Override
 	public boolean isInteractingWithLocalPlayer() {
 		RSNPC npc = methods.npcs.getNearest(getID());
-		return npc.getInteracting() != null ? npc.getInteracting().equals(
-				methods.players.getMyPlayer()) : false;
+		return npc.getInteracting() != null && npc.getInteracting().equals(
+				methods.players.getMyPlayer());
 	}
 
 	@Override

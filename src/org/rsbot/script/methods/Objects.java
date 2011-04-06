@@ -40,7 +40,7 @@ public class Objects extends MethodProvider {
 	public RSObject[] getAll() {
 		return getAll(Objects.ALL_FILTER);
 	}
-	
+
 	/**
 	 * Returns all the <tt>RSObject</tt>s in the local region
 	 * accepted by the provided Filter.
@@ -157,7 +157,7 @@ public class Objects extends MethodProvider {
 	 * Returns the top <tt>RSObject</tt> on the specified tile
 	 * matching types specified by the flags in the provided mask.
 	 *
-	 * @param t	The tile on which to search.
+	 * @param t    The tile on which to search.
 	 * @param mask The type flags.
 	 * @return The top RSObject on the provided tile matching the
 	 *         specified flags; or null if none found.
@@ -171,7 +171,7 @@ public class Objects extends MethodProvider {
 	 * Returns the <tt>RSObject</tt>s which are on the specified <tt>RSTile</tt>
 	 * matching types specified by the flags in the provided mask.
 	 *
-	 * @param t	The tile on which to search.
+	 * @param t    The tile on which to search.
 	 * @param mask The type flags.
 	 * @return An RSObject[] of the objects on the specified tile.
 	 */

@@ -25,7 +25,7 @@ public class ScreenshotUtil {
 		}
 	}
 
-	public static void saveScreenshot(final Bot bot, final File file, final String type, final boolean hideUsername) {
+	private static void saveScreenshot(final Bot bot, final File file, final String type, final boolean hideUsername) {
 		try {
 			BufferedImage image = takeScreenshot(bot, hideUsername);
 

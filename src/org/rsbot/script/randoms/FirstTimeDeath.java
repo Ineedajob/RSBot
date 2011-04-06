@@ -6,7 +6,7 @@ import org.rsbot.script.wrappers.RSNPC;
 import org.rsbot.script.wrappers.RSObject;
 import org.rsbot.script.wrappers.RSTile;
 
-@ScriptManifest(authors = { "Taha" }, name = "FirstTimeDeath", version = 1.1)
+@ScriptManifest(authors = {"Taha"}, name = "FirstTimeDeath", version = 1.1)
 public class FirstTimeDeath extends Random {
 	private int step;
 	private boolean exit;
@@ -37,31 +37,31 @@ public class FirstTimeDeath extends Random {
 			return random(200, 400);
 		}
 		switch (step) {
-		case 0:
-			RSObject reaperChair = objects.getNearest(45802);
-			reaperChair.doAction("Talk-to");
-			sleep(random(1000, 1200));
-			if (!interfaces.canContinue()) {
-				walking.walkTileOnScreen(new RSTile(
-						reaper.getLocation().getX() + 2, reaper.getLocation()
-								.getY() + 1));
-				camera.turnTo(reaperChair);
-			}
-			break;
-
-		case 1:
-			int portalID = 45803;
-			RSObject portal = objects.getNearest(portalID);
-			RSTile loc = getMyPlayer().getLocation();
-			portal.doAction("Enter");
-			sleep(random(1000, 1200));
-			if (calc.distanceTo(loc) < 10) {
-				camera.turnTo(portal);
-				if (!calc.tileOnScreen(portal.getLocation())) {
-					walking.walkTileOnScreen(portal.getLocation());
+			case 0:
+				RSObject reaperChair = objects.getNearest(45802);
+				reaperChair.doAction("Talk-to");
+				sleep(random(1000, 1200));
+				if (!interfaces.canContinue()) {
+					walking.walkTileOnScreen(new RSTile(
+							reaper.getLocation().getX() + 2, reaper.getLocation()
+									.getY() + 1));
+					camera.turnTo(reaperChair);
 				}
-			}
-			break;
+				break;
+
+			case 1:
+				int portalID = 45803;
+				RSObject portal = objects.getNearest(portalID);
+				RSTile loc = getMyPlayer().getLocation();
+				portal.doAction("Enter");
+				sleep(random(1000, 1200));
+				if (calc.distanceTo(loc) < 10) {
+					camera.turnTo(portal);
+					if (!calc.tileOnScreen(portal.getLocation())) {
+						walking.walkTileOnScreen(portal.getLocation());
+					}
+				}
+				break;
 		}
 		return random(200, 400);
 	}
