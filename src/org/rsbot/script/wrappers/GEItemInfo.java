@@ -40,12 +40,12 @@ public class GEItemInfo {
 	/**
 	 * Default constructor.
 	 *
-	 * @param id		  Item ID number
-	 * @param minPrice	Current minimum price
-	 * @param maxPrice	Current maximum price
+	 * @param id          Item ID number
+	 * @param minPrice    Current minimum price
+	 * @param maxPrice    Current maximum price
 	 * @param marketPrice Current market price
-	 * @param change30	Change in the last thirty days
-	 * @param change90	Change in the last ninety days
+	 * @param change30    Change in the last thirty days
+	 * @param change90    Change in the last ninety days
 	 * @param change180   Change in the last 180 days
 	 */
 	public GEItemInfo(final int id, final int minPrice, final int maxPrice, final int marketPrice, final String change30, final String change90, final String change180) {

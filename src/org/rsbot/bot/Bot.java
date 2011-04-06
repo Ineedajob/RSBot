@@ -35,7 +35,7 @@ public class Bot {
 	private InputManager im;
 	private RSLoader loader;
 	private ScriptHandler sh;
-        private BreakHandler bh;
+	private BreakHandler bh;
 	private Map<String, EventListener> listeners;
 
 	/**
@@ -79,7 +79,7 @@ public class Bot {
 			}
 		});
 		sh = new ScriptHandler(this);
-                bh = new BreakHandler();
+		bh = new BreakHandler();
 		backBuffer = new BufferedImage(size.width, size.height, BufferedImage.TYPE_INT_RGB);
 		image = new BufferedImage(size.width, size.height, BufferedImage.TYPE_INT_RGB);
 		paintEvent = new PaintEvent();

@@ -1,13 +1,11 @@
 package org.rsbot.script;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Point;
-import java.util.logging.Level;
-
 import org.rsbot.event.listeners.PaintListener;
 import org.rsbot.script.methods.MethodContext;
 import org.rsbot.script.methods.Methods;
+
+import java.awt.*;
+import java.util.logging.Level;
 
 public abstract class Random extends Methods implements PaintListener {
 
@@ -16,9 +14,9 @@ public abstract class Random extends Methods implements PaintListener {
 	private volatile boolean enabled = true;
 
 	public int i = 50;
-	
+
 	public boolean up = false;
-	
+
 	private Script script;
 
 	private long timeout = random(240, 300);
@@ -66,7 +64,7 @@ public abstract class Random extends Methods implements PaintListener {
 		super.init(ctx);
 		onStart();
 	}
-	
+
 	public final boolean isActive() {
 		return script != null;
 	}
@@ -134,12 +132,12 @@ public abstract class Random extends Methods implements PaintListener {
 	public final void onRepaint(Graphics g) {
 		Point p = mouse.getLocation();
 		int w = game.getWidth(), h = game.getHeight();
-		if(i >= 70 && !up) {
+		if (i >= 70 && !up) {
 			i--;
 		} else {
 			i++;
 			up = true;
-			if(i >= 130) {
+			if (i >= 130) {
 				up = false;
 			}
 		}

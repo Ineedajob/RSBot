@@ -1,12 +1,8 @@
 package org.rsbot.script.methods;
 
-import org.rsbot.script.wrappers.RSGroundItem;
-import org.rsbot.script.wrappers.RSNPC;
-import org.rsbot.script.wrappers.RSObject;
-import org.rsbot.script.wrappers.RSPlayer;
-import org.rsbot.script.wrappers.RSTile;
+import org.rsbot.script.wrappers.*;
 
-import java.awt.Color;
+import java.awt.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -139,9 +135,8 @@ public class Methods {
 
 	/**
 	 * For internal use only: initializes the method providers.
-	 * 
-	 * @param ctx
-	 *            The MethodContext.
+	 *
+	 * @param ctx The MethodContext.
 	 */
 	public void init(MethodContext ctx) {
 		this.skills = ctx.skills;
@@ -176,7 +171,7 @@ public class Methods {
 
 	/**
 	 * Returns the current client's local player.
-	 * 
+	 *
 	 * @return The current client's <tt>RSPlayer</tt>.
 	 * @see Players#getMyPlayer()
 	 */
@@ -187,11 +182,9 @@ public class Methods {
 	/**
 	 * Returns a random integer with min as the inclusive lower bound and max as
 	 * the exclusive upper bound.
-	 * 
-	 * @param min
-	 *            The inclusive lower bound.
-	 * @param max
-	 *            The exclusive upper bound.
+	 *
+	 * @param min The inclusive lower bound.
+	 * @param max The exclusive upper bound.
 	 * @return Random integer min <= n < max.
 	 */
 	public int random(int min, int max) {
@@ -200,34 +193,38 @@ public class Methods {
 	}
 
 	/**
-	 * Checks for the existence of a NPC. 
+	 * Checks for the existence of a NPC.
+	 *
 	 * @param npc The NPC to check for.
 	 * @return <tt>true</tt> if found.
 	 */
 	public boolean verify(RSNPC npc) {
 		return npc != null;
 	}
-	
+
 	/**
 	 * Checks for the existence of a RSObject.
+	 *
 	 * @param o The RSObject to check for.
 	 * @return <tt>true</tt> if found.
 	 */
 	public boolean verify(RSObject o) {
 		return o != null;
 	}
-	
+
 	/**
 	 * Checks for the existence of a RSTile.
+	 *
 	 * @param t The RSTile to check for.
 	 * @return <tt>true</tt> if found.
 	 */
 	public boolean verify(RSTile t) {
 		return t != null;
 	}
-	
+
 	/**
-	 * Checks for the existence of a RSGroundItem. 
+	 * Checks for the existence of a RSGroundItem.
+	 *
 	 * @param i The RSGroundItem to check for.
 	 * @return <tt>true</tt> if found.
 	 */
@@ -238,11 +235,9 @@ public class Methods {
 	/**
 	 * Returns a random double with min as the inclusive lower bound and max as
 	 * the exclusive upper bound.
-	 * 
-	 * @param min
-	 *            The inclusive lower bound.
-	 * @param max
-	 *            The exclusive upper bound.
+	 *
+	 * @param min The inclusive lower bound.
+	 * @param max The exclusive upper bound.
 	 * @return Random double min <= n < max.
 	 */
 	public double random(double min, double max) {
@@ -251,11 +246,9 @@ public class Methods {
 
 	/**
 	 * Pauses execution for a random amount of time between two values.
-	 * 
-	 * @param minSleep
-	 *            The minimum time to sleep.
-	 * @param maxSleep
-	 *            The maximum time to sleep.
+	 *
+	 * @param minSleep The minimum time to sleep.
+	 * @param maxSleep The maximum time to sleep.
 	 * @see #sleep(int)
 	 * @see #random(int, int)
 	 */
@@ -265,9 +258,8 @@ public class Methods {
 
 	/**
 	 * Pauses execution for a given number of milliseconds.
-	 * 
-	 * @param toSleep
-	 *            The time to sleep in milliseconds.
+	 *
+	 * @param toSleep The time to sleep in milliseconds.
 	 */
 	public void sleep(int toSleep) {
 		try {
@@ -286,9 +278,8 @@ public class Methods {
 
 	/**
 	 * Prints to the RSBot log.
-	 * 
-	 * @param message
-	 *            Object to log.
+	 *
+	 * @param message Object to log.
 	 */
 	public void log(Object message) {
 		log.info(message.toString());
@@ -296,14 +287,12 @@ public class Methods {
 
 	/**
 	 * Prints to the RSBot log with a font color
-	 * 
-	 * @param color
-	 *            The color of the font
-	 * @param message
-	 *            Object to log
-	 * */
+	 *
+	 * @param color   The color of the font
+	 * @param message Object to log
+	 */
 	public void log(Color color, Object message) {
-		Object[] parameters = { color };
+		Object[] parameters = {color};
 		log.log(Level.INFO, message.toString(), parameters);
 	}
 }

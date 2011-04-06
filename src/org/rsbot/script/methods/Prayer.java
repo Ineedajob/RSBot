@@ -1,11 +1,12 @@
 package org.rsbot.script.methods;
 
-import java.util.ArrayList;
-
 import org.rsbot.script.wrappers.RSComponent;
+
+import java.util.ArrayList;
 
 /**
  * Prayer related operations.
+ *
  * @author Aut0r, kiko
  */
 public class Prayer extends MethodProvider {
@@ -13,10 +14,10 @@ public class Prayer extends MethodProvider {
 	Prayer(MethodContext ctx) {
 		super(ctx);
 	}
-	
+
 	/**
 	 * Provides Prayer Book(s) Information.
-	 * 
+	 *
 	 * @author Aut0r
 	 */
 	public static enum Book {
@@ -48,7 +49,7 @@ public class Prayer extends MethodProvider {
 			this.index = index;
 			this.level = level;
 		}
-		
+
 		public int getIndex() {
 			return index;
 		}
@@ -58,21 +59,20 @@ public class Prayer extends MethodProvider {
 		}
 
 	}
-	
+
 	/**
 	 * Checks if the player's prayer book is set to Ancient Curses.
-	 * 
+	 *
 	 * @return <tt>true</tt> if Curses are enabled; otherwise <tt>false</tt>.
 	 */
 	public boolean isCursing() {
 		return methods.interfaces.getComponent(271, 7).getComponents().length < 29;
 	}
-	
+
 	/**
 	 * Returns true if designated prayer is turned on.
-	 * 
-	 * @param prayer
-	 *            The prayer to check.
+	 *
+	 * @param prayer The prayer to check.
 	 * @return <tt>true</tt> if enabled; otherwise <tt>false</tt>.
 	 */
 	public boolean isPrayerOn(Book prayer) {
@@ -85,25 +85,23 @@ public class Prayer extends MethodProvider {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Returns true if the quick prayer interface has been used to activate
 	 * prayers.
-	 * 
+	 *
 	 * @return <tt>true</tt> if quick prayer is on; otherwise <tt>false</tt>.
 	 */
 	public boolean isQuickPrayerOn() {
 		return methods.interfaces.getComponent(Game.INTERFACE_PRAYER_ORB, 2)
 				.getBackgroundColor() == 782;
 	}
-	
+
 	/**
 	 * Activates/deactivates a prayer via interfaces.
-	 * 
-	 * @param prayer
-	 *            The prayer to activate.
-	 * @param activate
-	 *            <tt>true</tt> to activate; <tt>false</tt> to deactivate.
+	 *
+	 * @param prayer   The prayer to activate.
+	 * @param activate <tt>true</tt> to activate; <tt>false</tt> to deactivate.
 	 * @return <tt>true</tt> if the interface was clicked; otherwise <tt>false</tt>.
 	 */
 	public boolean setPrayer(final Book prayer, final boolean activate) {
@@ -114,14 +112,12 @@ public class Prayer extends MethodProvider {
 		return (pray.getBackgroundColor() == -1) == activate
 				&& pray.doAction(activate ? "Activate" : "Deactivate");
 	}
-	
+
 	/**
 	 * Activates/deactivates quick prayers via interfaces.
-	 * 
-	 * @param prayer
-	 *            The prayer to activate.
-	 * @param activate
-	 *            <tt>true</tt> to activate; <tt>false</tt> to deactivate.
+	 *
+	 * @param prayer   The prayer to activate.
+	 * @param activate <tt>true</tt> to activate; <tt>false</tt> to deactivate.
 	 * @return <tt>true</tt> if the interface was clicked; otherwise
 	 *         <tt>false</tt>.
 	 */
@@ -132,7 +128,7 @@ public class Prayer extends MethodProvider {
 	/**
 	 * Returns an array of RSComponents representing the prayers that are
 	 * selected.
-	 * 
+	 *
 	 * @return An <code>RSComponent</code> array containing all the components
 	 *         that represent selected prayers.
 	 */

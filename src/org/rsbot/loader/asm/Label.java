@@ -229,9 +229,9 @@ public class Label {
 	 * directly. Otherwise, a null offset is written and a new forward reference
 	 * is declared for this label.
 	 *
-	 * @param owner	  the code writer that calls this method.
-	 * @param out		the bytecode of the method.
-	 * @param source	 the position of first byte of the bytecode instruction that
+	 * @param owner      the code writer that calls this method.
+	 * @param out        the bytecode of the method.
+	 * @param source     the position of first byte of the bytecode instruction that
 	 *                   contains this label.
 	 * @param wideOffset <tt>true</tt> if the reference must be stored in 4
 	 *                   bytes, or <tt>false</tt> if it must be stored with 2 bytes.
@@ -266,7 +266,7 @@ public class Label {
 	 * yet. For backward references, the offset of the reference can be, and
 	 * must be, computed and stored directly.
 	 *
-	 * @param sourcePosition	the position of the referencing instruction. This
+	 * @param sourcePosition    the position of the referencing instruction. This
 	 *                          position will be used to compute the offset of this forward
 	 *                          reference.
 	 * @param referencePosition the position where the offset for this forward
@@ -297,9 +297,9 @@ public class Label {
 	 * position becomes known. This method fills in the blanks that where left
 	 * in the bytecode by each forward reference previously added to this label.
 	 *
-	 * @param owner	the code writer that calls this method.
+	 * @param owner    the code writer that calls this method.
 	 * @param position the position of this label in the bytecode.
-	 * @param data	 the bytecode of the method.
+	 * @param data     the bytecode of the method.
 	 * @return <tt>true</tt> if a blank that was left for this label was to
 	 *         small to store the offset. In such a case the corresponding jump
 	 *         instruction is replaced with a pseudo instruction (using unused
@@ -326,14 +326,14 @@ public class Label {
 				offset = position - source;
 				if (offset < Short.MIN_VALUE || offset > Short.MAX_VALUE) {
 					/*
-										 * changes the opcode of the jump instruction, in order to
-										 * be able to find it later (see resizeInstructions in
-										 * MethodWriter). These temporary opcodes are similar to
-										 * jump instruction opcodes, except that the 2 bytes offset
-										 * is unsigned (and can therefore represent values from 0 to
-										 * 65535, which is sufficient since the size of a method is
-										 * limited to 65535 bytes).
-										 */
+																  * changes the opcode of the jump instruction, in order to
+																  * be able to find it later (see resizeInstructions in
+																  * MethodWriter). These temporary opcodes are similar to
+																  * jump instruction opcodes, except that the 2 bytes offset
+																  * is unsigned (and can therefore represent values from 0 to
+																  * 65535, which is sufficient since the size of a method is
+																  * limited to 65535 bytes).
+																  */
 					int opcode = data[reference - 1] & 0xFF;
 					if (opcode <= Opcodes.JSR) {
 						// changes IFEQ ... JSR to opcodes 202 to 217
@@ -409,7 +409,7 @@ public class Label {
 	/**
 	 * Marks this basic block as belonging to the given subroutine.
 	 *
-	 * @param id			a subroutine id.
+	 * @param id            a subroutine id.
 	 * @param nbSubroutines the total number of subroutines in the method.
 	 */
 	void addToSubroutine(final long id, final int nbSubroutines) {
@@ -426,10 +426,10 @@ public class Label {
 	 * flow graph to find all the blocks that are reachable from the current
 	 * block WITHOUT following any JSR target.
 	 *
-	 * @param JSR		   a JSR block that jumps to this subroutine. If this JSR is not
+	 * @param JSR           a JSR block that jumps to this subroutine. If this JSR is not
 	 *                      null it is added to the successor of the RET blocks found in the
 	 *                      subroutine.
-	 * @param id			the id of this subroutine.
+	 * @param id            the id of this subroutine.
 	 * @param nbSubroutines the total number of subroutines in the method.
 	 */
 	void visitSubroutine(final Label JSR, final long id, final int nbSubroutines) {

@@ -81,26 +81,26 @@ public class DrawBoundaries implements PaintListener {
 					}
 				}
 				/*
-									 * render.setColor(Color.cyan); if ((curBlock & (1<<20)) != 0) {
-									 * if (miniBL != null && miniBR != null && miniTR != null &&
-									 * miniTL != null) { render.fillPolygon(new
-									 * int[]{miniBL.x,miniBR.x,miniTR.x,miniTL.x}, new
-									 * int[]{miniBL.y,miniBR.y,miniTR.y,miniTL.y},4); } if (tl !=
-									 * null && br != null && tr != null && bl != null) {
-									 * render.fillPolygon(new int[]{bl.x,br.x,tr.x,tl.x}, new
-									 * int[]{bl.y,br.y,tr.y,tl.y},4); } }
-									 */
+														 * render.setColor(Color.cyan); if ((curBlock & (1<<20)) != 0) {
+														 * if (miniBL != null && miniBR != null && miniTR != null &&
+														 * miniTL != null) { render.fillPolygon(new
+														 * int[]{miniBL.x,miniBR.x,miniTR.x,miniTL.x}, new
+														 * int[]{miniBL.y,miniBR.y,miniTR.y,miniTL.y},4); } if (tl !=
+														 * null && br != null && tr != null && bl != null) {
+														 * render.fillPolygon(new int[]{bl.x,br.x,tr.x,tl.x}, new
+														 * int[]{bl.y,br.y,tr.y,tl.y},4); } }
+														 */
 				// Point miniCent = Calculations.worldToMinimap(i+ baseX, j+
 				// baseY);
 				// Point cent = Calculations.tileToScreen(i+ baseX, j+ baseY,
 				// 0.5,0.5, 0);
 				/*
-									 * if (cent.x != -1 && cent.y != -1) {
-									 * render.setColor(Color.yellow); render.drawString("" +
-									 * Calculations.getRealDistanceTo(cur.getX()-baseX,
-									 * cur.getY()-baseY, i, j, false), (int)cent.getX(),
-									 * (int)cent.getY()); }
-									 */
+														 * if (cent.x != -1 && cent.y != -1) {
+														 * render.setColor(Color.yellow); render.drawString("" +
+														 * Calculations.getRealDistanceTo(cur.getX()-baseX,
+														 * cur.getY()-baseY, i, j, false), (int)cent.getX(),
+														 * (int)cent.getY()); }
+														 */
 			}
 		}
 		final Point mini = ctx.players.getMyPlayer().getMinimapLocation();

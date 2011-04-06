@@ -1,16 +1,16 @@
 package org.rsbot.script.randoms;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import org.rsbot.script.Random;
 import org.rsbot.script.ScriptManifest;
 import org.rsbot.script.wrappers.RSComponent;
 
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * Closes interfaces that scripts may open by mistake.
  */
-@ScriptManifest(authors = { "Jacmob", "HeyyamaN", "Pervy Shuya" }, name = "InterfaceCloser", version = 1.9)
+@ScriptManifest(authors = {"Jacmob", "HeyyamaN", "Pervy Shuya"}, name = "InterfaceCloser", version = 1.9)
 public class CloseAllInterface extends Random {
 
 	static class ComponentDef {
@@ -69,7 +69,7 @@ public class CloseAllInterface extends Random {
 				RSComponent comp = interfaces.getComponent(c.parent, c.child);
 				if (comp.isValid()
 						&& !(c.text && (comp.getText() == null || comp
-								.getText().isEmpty()))) {
+						.getText().isEmpty()))) {
 					return true;
 				}
 			}

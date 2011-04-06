@@ -1,12 +1,6 @@
 package org.rsbot.loader.script.adapter;
 
-import org.rsbot.loader.asm.AnnotationVisitor;
-import org.rsbot.loader.asm.Attribute;
-import org.rsbot.loader.asm.ClassAdapter;
-import org.rsbot.loader.asm.ClassVisitor;
-import org.rsbot.loader.asm.FieldVisitor;
-import org.rsbot.loader.asm.Label;
-import org.rsbot.loader.asm.MethodVisitor;
+import org.rsbot.loader.asm.*;
 
 /**
  * @author Liang
@@ -32,7 +26,7 @@ public class OverrideClassAdapter extends ClassAdapter {
 	}
 
 	public FieldVisitor visitField(int access, String name, String desc, String signature, Object value) {
-		if(desc.equals("L" + old_clazz + ";"))
+		if (desc.equals("L" + old_clazz + ";"))
 			desc = "L" + new_clazz + ";";
 
 		return cv.visitField(access, name, desc, signature, value);
@@ -90,21 +84,21 @@ public class OverrideClassAdapter extends ClassAdapter {
 		}
 
 		public void visitTypeInsn(int opcode, String type) {
-			if(type.equals(old_clazz))
+			if (type.equals(old_clazz))
 				type = new_clazz;
 
 			mv.visitTypeInsn(opcode, type);
 		}
 
 		public void visitFieldInsn(int opcode, String owner, String name, String desc) {
-			if(desc.contains(old_clazz))
+			if (desc.contains(old_clazz))
 				desc = desc.replace("L" + old_clazz + ";", "L" + new_clazz + ";");
 
 			mv.visitFieldInsn(opcode, owner, name, desc);
 		}
 
 		public void visitMethodInsn(int opcode, String owner, String name, String desc) {
-			if(owner.equals(old_clazz)) {
+			if (owner.equals(old_clazz)) {
 				owner = new_clazz;
 				desc = desc.replace("L" + old_clazz + ";", "L" + new_clazz + ";");
 			}

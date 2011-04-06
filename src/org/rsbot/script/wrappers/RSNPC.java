@@ -1,8 +1,8 @@
 package org.rsbot.script.wrappers;
 
-import java.lang.ref.SoftReference;
-
 import org.rsbot.script.methods.MethodContext;
+
+import java.lang.ref.SoftReference;
 
 /**
  * Represents a non-player character.

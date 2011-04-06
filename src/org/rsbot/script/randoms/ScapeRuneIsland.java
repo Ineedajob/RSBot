@@ -2,11 +2,7 @@ package org.rsbot.script.randoms;
 
 import org.rsbot.script.Random;
 import org.rsbot.script.ScriptManifest;
-import org.rsbot.script.wrappers.RSComponent;
-import org.rsbot.script.wrappers.RSGroundItem;
-import org.rsbot.script.wrappers.RSNPC;
-import org.rsbot.script.wrappers.RSObject;
-import org.rsbot.script.wrappers.RSTile;
+import org.rsbot.script.wrappers.*;
 
 /*
  * Updated by Arbiter (Oct 19, 2010)
@@ -16,7 +12,7 @@ import org.rsbot.script.wrappers.RSTile;
 @ScriptManifest(authors = "Arbiter", name = "ScapeRuneIsland", version = 2.2)
 public class ScapeRuneIsland extends Random {
 
-	public int[] STATUE_IDS = { 8992, 8993, 8990, 8991 };
+	public int[] STATUE_IDS = {8992, 8993, 8990, 8991};
 	public RSTile CENTER_TILE = new RSTile(3421, 4777);
 
 	public RSObject direction;
@@ -50,15 +46,15 @@ public class ScapeRuneIsland extends Random {
 		}
 		if (interfaces.get(241).getComponent(4).isValid()
 				&& interfaces.get(241).getComponent(4).getText()
-						.contains("catnap"))
+				.contains("catnap"))
 			finished = true;
 		if (interfaces.get(64).getComponent(4).isValid()
 				&& interfaces.get(64).getComponent(4).getText()
-						.contains("fallen asleep"))
+				.contains("fallen asleep"))
 			finished = true;
 		if (interfaces.get(242).getComponent(4).isValid()
 				&& interfaces.get(242).getComponent(4).getText()
-						.contains("Wait! Before"))
+				.contains("Wait! Before"))
 			forceTalk = true;
 		if (interfaces.canContinue())
 			if (interfaces.clickContinue())

@@ -1,20 +1,17 @@
 package org.rsbot.gui;
 
-import java.awt.BorderLayout;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Frame;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import org.rsbot.util.GlobalConfiguration;
+
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableColumnModel;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.security.MessageDigest;
@@ -23,25 +20,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Logger;
-
-import javax.swing.DefaultCellEditor;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableColumnModel;
-
-import org.rsbot.util.GlobalConfiguration;
 
 /**
  * @author Tekk
@@ -55,17 +33,17 @@ public class AccountManager extends JDialog implements ActionListener {
 	private static final String FILE_NAME = GlobalConfiguration.Paths
 			.getAccountsFile();
 
-	private static final String[] RANDOM_REWARDS = { "Cash", "Runes", "Coal",
+	private static final String[] RANDOM_REWARDS = {"Cash", "Runes", "Coal",
 			"Essence", "Ore", "Bars", "Gems", "Herbs", "Seeds", "Charms",
 			"Surprise", "Emote", "Costume", "Attack", "Defence", "Strength",
 			"Constitution", "Range", "Prayer", "Magic", "Cooking",
 			"Woodcutting", "Fletching", "Fishing", "Firemaking", "Crafting",
 			"Smithing", "Mining", "Herblore", "Agility", "Thieving", "Slayer",
 			"Farming", "Runecrafting", "Hunter", "Construction", "Summoning",
-			"Dungeoneering" };
+			"Dungeoneering"};
 
-	private static final String[] VALID_KEYS = { "password", "pin", "reward",
-			"member", "take_breaks" };
+	private static final String[] VALID_KEYS = {"password", "pin", "reward",
+			"member", "take_breaks"};
 
 	private static Map<String, Map<String, String>> accounts;
 
@@ -176,7 +154,7 @@ public class AccountManager extends JDialog implements ActionListener {
 			return b.toString();
 		}
 
-		@SuppressWarnings({ "unchecked", "rawtypes" })
+		@SuppressWarnings({"unchecked", "rawtypes"})
 		@Override
 		public Class getColumnClass(int column) {
 			if (getColumnName(column).equals("Member"))
@@ -292,8 +270,8 @@ public class AccountManager extends JDialog implements ActionListener {
 
 		GridBagLayout gbl = new GridBagLayout();
 		bar.setLayout(gbl);
-		gbl.rowHeights = new int[] { 0, 0 };
-		gbl.rowWeights = new double[] { 0.0, 1.0E-4 };
+		gbl.rowHeights = new int[]{0, 0};
+		gbl.rowWeights = new double[]{0.0, 1.0E-4};
 
 		newButton.setText("Add");
 		bar.add(newButton, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
@@ -329,11 +307,9 @@ public class AccountManager extends JDialog implements ActionListener {
 
 	/**
 	 * Encipher/decipher a string using a SHA1 hash of key.
-	 * 
-	 * @param start
-	 *            The input String
-	 * @param en
-	 *            true to encrypt; false to decipher.
+	 *
+	 * @param start The input String
+	 * @param en    true to encrypt; false to decipher.
 	 * @return The ciphered String.
 	 */
 	private static String cipher(final String start, final boolean en) {
@@ -379,9 +355,8 @@ public class AccountManager extends JDialog implements ActionListener {
 	/**
 	 * Capitalizes the first character and replaces spaces with underscores
 	 * Purely aesthetic
-	 * 
-	 * @param name
-	 *            The name of the account
+	 *
+	 * @param name The name of the account
 	 * @return Fixed name
 	 */
 	private static String fixName(String name) {
@@ -396,7 +371,7 @@ public class AccountManager extends JDialog implements ActionListener {
 
 	/**
 	 * Access the list of names for loaded accounts
-	 * 
+	 *
 	 * @return Array of the names
 	 */
 	public static String[] getAccountNames() {
@@ -410,9 +385,8 @@ public class AccountManager extends JDialog implements ActionListener {
 
 	/**
 	 * Access the account password of the given name
-	 * 
-	 * @param name
-	 *            The name of the account
+	 *
+	 * @param name The name of the account
 	 * @return Unencrypted password
 	 */
 	public static String getPassword(final String name) {
@@ -446,9 +420,8 @@ public class AccountManager extends JDialog implements ActionListener {
 
 	/**
 	 * Access the account pin of the given string
-	 * 
-	 * @param name
-	 *            The name of the account
+	 *
+	 * @param name The name of the account
 	 * @return Pin or an empty string
 	 */
 	public static String getPin(final String name) {
@@ -481,9 +454,8 @@ public class AccountManager extends JDialog implements ActionListener {
 
 	/**
 	 * Access the account desired reward of the given string
-	 * 
-	 * @param name
-	 *            The name of the account
+	 *
+	 * @param name The name of the account
 	 * @return The desired reward
 	 */
 	public static String getReward(final String name) {
@@ -497,9 +469,8 @@ public class AccountManager extends JDialog implements ActionListener {
 
 	/**
 	 * Access the account state of the given string
-	 * 
-	 * @param name
-	 *            Name of the account
+	 *
+	 * @param name Name of the account
 	 * @return true if the account is member, false if it isn't
 	 */
 	public static boolean isMember(final String name) {
@@ -510,9 +481,8 @@ public class AccountManager extends JDialog implements ActionListener {
 
 	/**
 	 * Access the account state of the given string
-	 * 
-	 * @param name
-	 *            Name of the account
+	 *
+	 * @param name Name of the account
 	 * @return true if the account is member, false if it isn't
 	 */
 	public static boolean isTakingBreaks(final String name) {
@@ -523,9 +493,8 @@ public class AccountManager extends JDialog implements ActionListener {
 
 	/**
 	 * Check if the string is a valid key
-	 * 
-	 * @param key
-	 *            The key
+	 *
+	 * @param key The key
 	 * @return true if the object is supported, false if it isn't
 	 */
 	private static boolean isValidKey(final String key) {
@@ -537,9 +506,8 @@ public class AccountManager extends JDialog implements ActionListener {
 
 	/**
 	 * Checks if the given string is a valid pin
-	 * 
-	 * @param pin
-	 *            The pin
+	 *
+	 * @param pin The pin
 	 * @return true if the pin is valid, false if it isn't
 	 */
 	private static boolean isValidPin(final String pin) {
@@ -557,7 +525,7 @@ public class AccountManager extends JDialog implements ActionListener {
 
 	/**
 	 * Loads the account from the account file
-	 * 
+	 *
 	 * @return A map of the accounts' information
 	 */
 	private static Map<String, Map<String, String>> loadAccounts() {

@@ -5,14 +5,7 @@ import org.rsbot.client.Client;
 import org.rsbot.client.input.Mouse;
 import org.rsbot.event.listeners.PaintListener;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Paint;
-import java.awt.Point;
-import java.awt.RadialGradientPaint;
-import java.awt.Rectangle;
-import java.awt.RenderingHints;
+import java.awt.*;
 import java.awt.geom.Point2D;
 import java.util.LinkedList;
 import java.util.List;
@@ -103,10 +96,10 @@ public class DrawMouse implements PaintListener {
 						RadialGradientPaint gradPaint = new RadialGradientPaint(
 								new Point2D.Double(rect.x + rect.width / 2.0D,
 										rect.y + rect.height / 2.0D),
-										(float) (rect.getWidth() / 2.0D),
-								new float[] { 0.0F, 1.0F }, new Color[] {
+								(float) (rect.getWidth() / 2.0D),
+								new float[]{0.0F, 1.0F}, new Color[]{
 										new Color(c.getRed(), c.getGreen(), c.getBlue(), 40),
-										new Color(0.0F, 0.0F, 0.0F, 0.4F) });
+										new Color(0.0F, 0.0F, 0.0F, 0.4F)});
 						g.setPaint(gradPaint);
 						g.fillRoundRect(rect.x, rect.y,
 								rect.width, rect.height,

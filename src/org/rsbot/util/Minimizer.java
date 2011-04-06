@@ -1,12 +1,6 @@
 package org.rsbot.util;
 
-import java.awt.Component;
-import java.awt.HeadlessException;
-import java.awt.Image;
-import java.awt.MenuItem;
-import java.awt.PopupMenu;
-import java.awt.SystemTray;
-import java.awt.TrayIcon;
+import java.awt.*;
 import java.awt.TrayIcon.MessageType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -84,15 +78,15 @@ public class Minimizer {
 	public static void displayMessage(Object o, MessageType t) {
 		String option = null;
 		switch (t) {
-		case INFO:
-			option = "Information";
-			break;
-		case ERROR:
-			option = "Error !";
-			break;
-		case WARNING:
-			option = "Warning !";
-			break;
+			case INFO:
+				option = "Information";
+				break;
+			case ERROR:
+				option = "Error !";
+				break;
+			case WARNING:
+				option = "Warning !";
+				break;
 		}
 		icon.displayMessage(option, o.toString(), t);
 	}

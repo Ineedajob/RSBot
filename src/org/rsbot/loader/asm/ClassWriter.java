@@ -480,7 +480,7 @@ public class ClassWriter implements ClassVisitor {
 	 *                    class. It will be used to copy the entire constant pool from the
 	 *                    original class and also to copy other fragments of original
 	 *                    bytecode where applicable.
-	 * @param flags	   option flags that can be used to modify the default behavior
+	 * @param flags       option flags that can be used to modify the default behavior
 	 *                    of this class. <i>These option flags do not affect methods that
 	 *                    are copied as is in the new class. This means that the maximum
 	 *                    stack size nor the stack frames will be computed for these

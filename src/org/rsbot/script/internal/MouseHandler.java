@@ -65,7 +65,7 @@ public class MouseHandler {
 	 * Omits points along the spline in order to move in steps rather then pixel
 	 * by pixel
 	 *
-	 * @param spline	The pixel by pixel spline
+	 * @param spline    The pixel by pixel spline
 	 * @param msForMove The ammount of time taken to traverse the spline. should be a
 	 *                  value from {@link #fittsLaw}
 	 * @param msPerMove The ammount of time per each move
@@ -171,10 +171,10 @@ public class MouseHandler {
 	/**
 	 * Creates random control points for a spline. Written by Benland100
 	 *
-	 * @param sx		   Begining X position
-	 * @param sy		   Begining Y position
-	 * @param ex		   Begining X position
-	 * @param ey		   Begining Y position
+	 * @param sx           Begining X position
+	 * @param sy           Begining Y position
+	 * @param ex           Begining X position
+	 * @param ey           Begining Y position
 	 * @param ctrlSpacing  Distance between control origins
 	 * @param ctrlVariance Max X or Y variance of each control point from its origin
 	 * @return An array of Points that represents the control points of the
@@ -261,10 +261,10 @@ public class MouseHandler {
 	 *
 	 * @param speed the speed to move the mouse. Anything under
 	 *              {@link #DEFAULT_MOUSE_SPEED} is faster than normal.
-	 * @param x1	from x
-	 * @param y1	from y
-	 * @param x2	to x
-	 * @param y2	to y
+	 * @param x1    from x
+	 * @param y1    from y
+	 * @param x2    to x
+	 * @param y2    to y
 	 * @param randX randomness in the x direction
 	 * @param randY randomness in the y direction
 	 */

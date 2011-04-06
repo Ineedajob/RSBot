@@ -6,15 +6,7 @@ import org.rsbot.script.methods.Mouse;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
+import java.awt.event.*;
 
 import static org.rsbot.script.methods.Environment.INPUT_KEYBOARD;
 import static org.rsbot.script.methods.Environment.INPUT_MOUSE;

@@ -72,13 +72,13 @@ public class Attribute {
 	 * the <tt>len</tt> bytes starting at the given offset, in the given class
 	 * reader.
 	 *
-	 * @param cr	  the class that contains the attribute to be read.
-	 * @param off	 index of the first byte of the attribute's content in {@link
+	 * @param cr      the class that contains the attribute to be read.
+	 * @param off     index of the first byte of the attribute's content in {@link
 	 *                ClassReader#b cr.b}. The 6 attribute header bytes, containing the
 	 *                type and the length of the attribute, are not taken into account
 	 *                here.
-	 * @param len	 the length of the attribute's content.
-	 * @param buf	 buffer to be used to call
+	 * @param len     the length of the attribute's content.
+	 * @param buf     buffer to be used to call
 	 *                {@link ClassReader#readUTF8 readUTF8},
 	 *                {@link ClassReader#readClass(int, char[]) readClass} or
 	 *                {@link ClassReader#readConst readConst}.
@@ -108,13 +108,13 @@ public class Attribute {
 	/**
 	 * Returns the byte array form of this attribute.
 	 *
-	 * @param cw		the class to which this attribute must be added. This parameter
+	 * @param cw        the class to which this attribute must be added. This parameter
 	 *                  can be used to add to the constant pool of this class the items
 	 *                  that corresponds to this attribute.
-	 * @param code	  the bytecode of the method corresponding to this code
+	 * @param code      the bytecode of the method corresponding to this code
 	 *                  attribute, or <tt>null</tt> if this attribute is not a code
 	 *                  attributes.
-	 * @param len	   the length of the bytecode of the method corresponding to this
+	 * @param len       the length of the bytecode of the method corresponding to this
 	 *                  code attribute, or <tt>null</tt> if this attribute is not a code
 	 *                  attribute.
 	 * @param maxStack  the maximum stack size of the method corresponding to
@@ -155,12 +155,12 @@ public class Attribute {
 	/**
 	 * Returns the size of all the attributes in this attribute list.
 	 *
-	 * @param cw		the class writer to be used to convert the attributes into byte
+	 * @param cw        the class writer to be used to convert the attributes into byte
 	 *                  arrays, with the {@link #write write} method.
-	 * @param code	  the bytecode of the method corresponding to these code
+	 * @param code      the bytecode of the method corresponding to these code
 	 *                  attributes, or <tt>null</tt> if these attributes are not code
 	 *                  attributes.
-	 * @param len	   the length of the bytecode of the method corresponding to
+	 * @param len       the length of the bytecode of the method corresponding to
 	 *                  these code attributes, or <tt>null</tt> if these attributes are
 	 *                  not code attributes.
 	 * @param maxStack  the maximum stack size of the method corresponding to
@@ -192,12 +192,12 @@ public class Attribute {
 	 * Writes all the attributes of this attribute list in the given byte
 	 * vector.
 	 *
-	 * @param cw		the class writer to be used to convert the attributes into byte
+	 * @param cw        the class writer to be used to convert the attributes into byte
 	 *                  arrays, with the {@link #write write} method.
-	 * @param code	  the bytecode of the method corresponding to these code
+	 * @param code      the bytecode of the method corresponding to these code
 	 *                  attributes, or <tt>null</tt> if these attributes are not code
 	 *                  attributes.
-	 * @param len	   the length of the bytecode of the method corresponding to
+	 * @param len       the length of the bytecode of the method corresponding to
 	 *                  these code attributes, or <tt>null</tt> if these attributes are
 	 *                  not code attributes.
 	 * @param maxStack  the maximum stack size of the method corresponding to
@@ -206,7 +206,7 @@ public class Attribute {
 	 * @param maxLocals the maximum number of local variables of the method
 	 *                  corresponding to these code attributes, or -1 if these attributes
 	 *                  are not code attributes.
-	 * @param out	   where the attributes must be written.
+	 * @param out       where the attributes must be written.
 	 */
 	final void put(
 			final ClassWriter cw,

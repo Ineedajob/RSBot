@@ -165,7 +165,7 @@ public class MethodContext {
 	 * The singleton of Prayer
 	 */
 	public final Prayer prayer = new Prayer(this);
-	
+
 	/**
 	 * The Bot's input manager
 	 */

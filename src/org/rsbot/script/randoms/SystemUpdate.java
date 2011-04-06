@@ -7,10 +7,10 @@ import org.rsbot.script.util.Timer;
 /**
  * Advanced System Update script that will logout at a random time during a
  * system update.
- * 
+ *
  * @author Gnarly
  */
-@ScriptManifest(authors = { "Gnarly", "Pervy Shuya" }, name = "SystemUpdate", version = 1.5)
+@ScriptManifest(authors = {"Gnarly", "Pervy Shuya"}, name = "SystemUpdate", version = 1.5)
 public class SystemUpdate extends Random {
 
 	private int logoutMinutes;
@@ -22,7 +22,7 @@ public class SystemUpdate extends Random {
 	public boolean activateCondition() {
 		if (game.isLoggedIn()
 				&& interfaces.getComponent(754, 5).getText()
-						.startsWith("<col=ffff00>System update in")
+				.startsWith("<col=ffff00>System update in")
 				&& !getMyPlayer().isInCombat()) {
 			check();
 		}

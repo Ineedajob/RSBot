@@ -2,11 +2,7 @@ package org.rsbot.script.randoms;
 
 import org.rsbot.script.Random;
 import org.rsbot.script.ScriptManifest;
-import org.rsbot.script.wrappers.RSCharacter;
-import org.rsbot.script.wrappers.RSComponent;
-import org.rsbot.script.wrappers.RSInterface;
-import org.rsbot.script.wrappers.RSNPC;
-import org.rsbot.script.wrappers.RSObject;
+import org.rsbot.script.wrappers.*;
 
 import java.awt.*;
 
@@ -318,9 +314,9 @@ public class Exam extends Random {
 	}
 
 	/*
-		 * Don't use this with any other monster.I edited for this script only cause
-		 * Mr. Mordaunt doesn't move
-		 */
+			  * Don't use this with any other monster.I edited for this script only cause
+			  * Mr. Mordaunt doesn't move
+			  */
 	public boolean clickCharacter(final RSCharacter c, final String action) {
 		try {
 			Point screenLoc;

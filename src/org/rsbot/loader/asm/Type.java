@@ -500,7 +500,7 @@ public class Type {
 	 * Returns the descriptor corresponding to the given argument and return
 	 * types.
 	 *
-	 * @param returnType	the return type of the method.
+	 * @param returnType    the return type of the method.
 	 * @param argumentTypes the argument types of the method.
 	 * @return the descriptor corresponding to the given argument and return
 	 *         types.

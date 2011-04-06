@@ -1,19 +1,18 @@
 package org.rsbot.script.wrappers;
 
-import java.awt.Point;
-import java.awt.Polygon;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-
 import org.rsbot.client.Model;
 import org.rsbot.script.methods.MethodContext;
 import org.rsbot.script.methods.MethodProvider;
 import org.rsbot.script.util.Filter;
 
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
+
 /**
  * A screen space model.
- * 
+ *
  * @author Jacmob, SpeedWing
  */
 public abstract class RSModel extends MethodProvider {
@@ -21,9 +20,8 @@ public abstract class RSModel extends MethodProvider {
 	/**
 	 * Returns a filter that matches against the array of point indices for the
 	 * A vertices of each triangle. Use in scripts is discouraged.
-	 * 
-	 * @param vertex_a
-	 *            The array of indices for A vertices.
+	 *
+	 * @param vertex_a The array of indices for A vertices.
 	 * @return The vertex point index based model filter.
 	 */
 	public static Filter<RSModel> newVertexFilter(final short[] vertex_a) {
@@ -60,8 +58,7 @@ public abstract class RSModel extends MethodProvider {
 	protected abstract void update();
 
 	/**
-	 * @param p
-	 *            A point on the screen
+	 * @param p A point on the screen
 	 * @return true of the point is within the bounds of the model
 	 */
 	private boolean contains(Point p) {
@@ -78,9 +75,8 @@ public abstract class RSModel extends MethodProvider {
 
 	/**
 	 * Clicks the RSModel.
-	 * 
-	 * @param leftClick
-	 *            if true it left clicks.
+	 *
+	 * @param leftClick if true it left clicks.
 	 * @return true if clicked.
 	 */
 	public boolean doClick(boolean leftClick) {
@@ -99,9 +95,8 @@ public abstract class RSModel extends MethodProvider {
 
 	/**
 	 * Clicks the RSModel and clicks the menu action
-	 * 
-	 * @param action
-	 *            the action to be clicked in the menu
+	 *
+	 * @param action the action to be clicked in the menu
 	 * @return true if clicked, false if failed.
 	 */
 	public boolean doAction(String action) {
@@ -125,12 +120,10 @@ public abstract class RSModel extends MethodProvider {
 
 	/**
 	 * Returns a random screen point.
-	 * 
-	 * @see #getCentralPoint()
-	 * 
-	 * @see #getPointOnScreen()
-	 * 
+	 *
 	 * @return A screen point, or Point(-1, -1) if the model is not on screen.
+	 * @see #getCentralPoint()
+	 * @see #getPointOnScreen()
 	 */
 	public Point getPoint() {
 		update();
@@ -149,7 +142,7 @@ public abstract class RSModel extends MethodProvider {
 
 	/**
 	 * Returns all the screen points.
-	 * 
+	 *
 	 * @return All the points that are on the screen, if the model is not on the
 	 *         screen it will return null.
 	 */
@@ -168,7 +161,7 @@ public abstract class RSModel extends MethodProvider {
 
 	/**
 	 * Gets a point on a model that is on screen.
-	 * 
+	 *
 	 * @return First point that it finds on screen else a random point on screen
 	 *         of an object.
 	 */
@@ -196,10 +189,9 @@ public abstract class RSModel extends MethodProvider {
 	 * Generates a rough central point. Performs the calculation by first
 	 * generating a rough point, and then finding the point closest to the rough
 	 * point that is actually on the RSModel.
-	 * 
-	 * @author !@!@!
-	 * 
+	 *
 	 * @return The rough central point.
+	 * @author !@!@!
 	 */
 	public Point getCentralPoint() {
 		try {
@@ -214,9 +206,9 @@ public abstract class RSModel extends MethodProvider {
 			}
 			Point central = new Point(x / total, y / total);
 			/*
-			 * Find a real point on the character that is closest to the central
-			 * point
-			 */
+							* Find a real point on the character that is closest to the central
+							* point
+							*/
 			Point curCentral = null;
 			double dist = 20000;
 			for (Polygon poly : getTriangles()) {
@@ -239,7 +231,7 @@ public abstract class RSModel extends MethodProvider {
 
 	/**
 	 * Returns an array of triangles containing the screen points of this model.
-	 * 
+	 *
 	 * @return The on screen triangles of this model.
 	 */
 	public Polygon[] getTriangles() {
@@ -259,8 +251,8 @@ public abstract class RSModel extends MethodProvider {
 					+ yPoints[indices3[i]]);
 
 			if (one.x >= 0 && two.x >= 0 && three.x >= 0) {
-				polygons.add(new Polygon(new int[] { one.x, two.x, three.x },
-						new int[] { one.y, two.y, three.y }, 3));
+				polygons.add(new Polygon(new int[]{one.x, two.x, three.x},
+						new int[]{one.y, two.y, three.y}, 3));
 			}
 		}
 		return polygons.toArray(new Polygon[polygons.size()]);
@@ -277,7 +269,7 @@ public abstract class RSModel extends MethodProvider {
 	 * Returns true if the provided object is an RSModel with the same x, y and
 	 * z points as this model. This method compares all of the values in the
 	 * three vertex arrays.
-	 * 
+	 *
 	 * @return <tt>true</tt> if the provided object is a model with the same
 	 *         points as this.
 	 */

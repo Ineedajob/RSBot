@@ -9,7 +9,7 @@ import org.rsbot.script.wrappers.RSNPC;
 /**
  * Updated by Iscream Feb 22,10 Updated by Parameter Jan 1, 11
  */
-@ScriptManifest(authors = { "Nightmares18", "joku.rules", "Taha", "Fred" }, name = "FrogCave", version = 2.3)
+@ScriptManifest(authors = {"Nightmares18", "joku.rules", "Taha", "Fred"}, name = "FrogCave", version = 2.3)
 public class FrogCave extends Random {
 
 	private RSNPC frog;
@@ -59,7 +59,7 @@ public class FrogCave extends Random {
 							242, 4);
 					talkedToHerald = heraldTalkComp.isValid()
 							&& (heraldTalkComp.containsText("crown") || heraldTalkComp
-									.containsText("is still waiting"));
+							.containsText("is still waiting"));
 				}
 				if (!interfaces.clickContinue()) {
 					interfaces.getComponent(65, 6).doClick();

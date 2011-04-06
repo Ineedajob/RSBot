@@ -4,14 +4,7 @@ import org.rsbot.loader.asm.ClassAdapter;
 import org.rsbot.loader.asm.ClassReader;
 import org.rsbot.loader.asm.ClassVisitor;
 import org.rsbot.loader.asm.ClassWriter;
-import org.rsbot.loader.script.adapter.AddFieldAdapter;
-import org.rsbot.loader.script.adapter.AddGetterAdapter;
-import org.rsbot.loader.script.adapter.AddInterfaceAdapter;
-import org.rsbot.loader.script.adapter.AddMethodAdapter;
-import org.rsbot.loader.script.adapter.InsertCodeAdapter;
-import org.rsbot.loader.script.adapter.OverrideClassAdapter;
-import org.rsbot.loader.script.adapter.SetSignatureAdapter;
-import org.rsbot.loader.script.adapter.SetSuperAdapter;
+import org.rsbot.loader.script.adapter.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -115,7 +108,7 @@ public class ModScript {
 					f.owner = buff.gstr();
 					f.name = buff.gstr();
 					f.desc = buff.gstr();
-					
+
 					fields[ptr++] = f;
 				}
 				adapters.put(clazz, new AddGetterAdapter(delegate(clazz), op == Opcodes.GET_FIELD, fields));
@@ -184,11 +177,11 @@ public class ModScript {
 				}
 				adapters.put(clazz, new InsertCodeAdapter(delegate(clazz),
 						name, desc, fragments, buff.g1(), buff.g1()));
-			} else if(op == Opcodes.OVERRIDE_CLASS) {
+			} else if (op == Opcodes.OVERRIDE_CLASS) {
 				String old_clazz = buff.gstr();
 				String new_clazz = buff.gstr();
 				int count = buff.g1();
-				while(count-- > 0) {
+				while (count-- > 0) {
 					String clazz = buff.gstr();
 					adapters.put(clazz, new OverrideClassAdapter(delegate(clazz), old_clazz, new_clazz));
 				}

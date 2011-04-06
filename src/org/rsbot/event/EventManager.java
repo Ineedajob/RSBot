@@ -16,6 +16,7 @@ public class EventManager implements Runnable {
 		@Override
 		public void dispatch(final EventListener el) {
 		}
+
 		@Override
 		public long getMask() {
 			return -1;
@@ -114,7 +115,7 @@ public class EventManager implements Runnable {
 	 * Registers a listener.
 	 *
 	 * @param listener the listener to add.
-	 * @param mask	 the event type mask.
+	 * @param mask     the event type mask.
 	 */
 	public void addListener(EventListener listener, long mask) {
 		multicaster.addListener(listener, mask);

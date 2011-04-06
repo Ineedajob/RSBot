@@ -1,10 +1,6 @@
 package org.rsbot.loader.script.adapter;
 
-import org.rsbot.loader.asm.ClassAdapter;
-import org.rsbot.loader.asm.ClassVisitor;
-import org.rsbot.loader.asm.MethodAdapter;
-import org.rsbot.loader.asm.MethodVisitor;
-import org.rsbot.loader.asm.Opcodes;
+import org.rsbot.loader.asm.*;
 
 /**
  * @author Jacmob

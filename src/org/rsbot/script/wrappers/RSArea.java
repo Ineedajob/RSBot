@@ -30,8 +30,8 @@ public class RSArea {
 	}
 
 	/**
-	 * @param sw	The <i>South West</i> <b>RSTile</b> of the <b>RSArea</b>
-	 * @param ne	The <i>North East</i> <b>RSTile</b> of the <b>RSArea</b>
+	 * @param sw    The <i>South West</i> <b>RSTile</b> of the <b>RSArea</b>
+	 * @param ne    The <i>North East</i> <b>RSTile</b> of the <b>RSArea</b>
 	 * @param plane The plane of the <b>RSArea</b>.
 	 */
 	public RSArea(RSTile sw, RSTile ne, int plane) {

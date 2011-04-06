@@ -7,11 +7,7 @@ import org.rsbot.script.wrappers.RSGroundItem;
 import org.rsbot.script.wrappers.RSModel;
 import org.rsbot.script.wrappers.RSObject;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Point;
-import java.awt.Polygon;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.HashMap;
@@ -31,8 +27,8 @@ public class DrawModel implements PaintListener, MouseListener {
 		color_map.put(RSObject.Type.WALL_DECORATION, Color.GRAY);
 	}
 
-	private static final String[] OPTIONS = { "Objects", "Players", "NPCs", "Piles" };
-	private static boolean[] enabled = { true, true, true, true };
+	private static final String[] OPTIONS = {"Objects", "Players", "NPCs", "Piles"};
+	private static boolean[] enabled = {true, true, true, true};
 
 	private MethodContext ctx;
 

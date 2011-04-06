@@ -48,7 +48,7 @@ public class StringUtil {
 	 * Available colours: red, green, cyan, purple, white.
 	 *
 	 * @param render The Graphics object to be used.
-	 * @param row	The index where you want the text.
+	 * @param row    The index where you want the text.
 	 * @param text   The text you want to render. Colours can be set like [red].
 	 */
 	public static void drawLine(Graphics render, int row, String text) {

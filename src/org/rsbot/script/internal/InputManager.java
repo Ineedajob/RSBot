@@ -167,8 +167,8 @@ public class InputManager {
 	 * Moves the mouse to the specified point at a certain sped.
 	 *
 	 * @param speed   the lower, the faster.
-	 * @param x	   the x value
-	 * @param y	   the y value
+	 * @param x       the x value
+	 * @param y       the y value
 	 * @param randomX x-axis randomness (added to x)
 	 * @param randomY y-axis randomness (added to y)
 	 */
@@ -337,8 +337,8 @@ public class InputManager {
 	 * Moves the mouse from a certain point to another, with specified speed.
 	 *
 	 * @param speed   the lower, the faster.
-	 * @param curX	the x value to move from
-	 * @param curY	the y value to move from
+	 * @param curX    the x value to move from
+	 * @param curY    the y value to move from
 	 * @param targetX the x value to move to
 	 * @param targetY the y value to move to
 	 */

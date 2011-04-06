@@ -10,10 +10,8 @@ public class RSTile {
 	private final int z;
 
 	/**
-	 * @param x
-	 *            the x axel of the Tile
-	 * @param y
-	 *            the y axel of the Tile
+	 * @param x the x axel of the Tile
+	 * @param y the y axel of the Tile
 	 */
 	public RSTile(final int x, final int y) {
 		this.x = x;
@@ -22,12 +20,9 @@ public class RSTile {
 	}
 
 	/**
-	 * @param x
-	 *            the x axel of the Tile
-	 * @param y
-	 *            the y axel of the Tile
-	 * @param z
-	 *            the z axel of the Tile( the floor)
+	 * @param x the x axel of the Tile
+	 * @param y the y axel of the Tile
+	 * @param z the z axel of the Tile( the floor)
 	 */
 	public RSTile(final int x, final int y, final int z) {
 		this.x = x;
@@ -49,11 +44,9 @@ public class RSTile {
 
 	/**
 	 * Randomizes this tile.
-	 * 
-	 * @param maxXDeviation
-	 *            Max X distance from tile x.
-	 * @param maxYDeviation
-	 *            Max Y distance from tile y.
+	 *
+	 * @param maxXDeviation Max X distance from tile x.
+	 * @param maxYDeviation Max Y distance from tile y.
 	 * @return The randomized tile
 	 */
 	public RSTile randomize(final int maxXDeviation, final int maxYDeviation) {

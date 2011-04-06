@@ -6,11 +6,7 @@ import org.rsbot.bot.Bot;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.FocusEvent;
-import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferInt;
-import java.awt.image.DirectColorModel;
-import java.awt.image.Raster;
-import java.awt.image.WritableRaster;
+import java.awt.image.*;
 import java.util.Hashtable;
 
 public class Canvas extends java.awt.Canvas {

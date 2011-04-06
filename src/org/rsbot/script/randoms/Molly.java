@@ -1,23 +1,19 @@
 package org.rsbot.script.randoms;
 
-import java.util.ArrayList;
-
 import org.rsbot.script.Random;
 import org.rsbot.script.ScriptManifest;
-import org.rsbot.script.wrappers.RSComponent;
-import org.rsbot.script.wrappers.RSInterface;
-import org.rsbot.script.wrappers.RSNPC;
-import org.rsbot.script.wrappers.RSObject;
-import org.rsbot.script.wrappers.RSTile;
+import org.rsbot.script.wrappers.*;
+
+import java.util.ArrayList;
 
 /**
  * Updated by aman (Nov 14, 09) Updated by Equilibrium (Dec 13, 09) Updated by
  * Fred (Dec 25, 09) Updated by Iscream (Jan 31, 10) Updated by Iscream (Feb 20,
  * 10) Updated by Jacmob (Oct 24, 10) Updated by Arbiter (Nov 11, 10)
- * 
+ *
  * @author PwnZ
  */
-@ScriptManifest(authors = { "PwnZ" }, name = "Molly", version = 1.9)
+@ScriptManifest(authors = {"PwnZ"}, name = "Molly", version = 1.9)
 public class Molly extends Random {
 
 	static final int CLAW_ID = 14976;
@@ -131,11 +127,11 @@ public class Molly extends Random {
 			if (talkedToMolly
 					&& !finished
 					&& (interfaces.get(Molly.MOLLY_CHATBOX_INTERFACEGROUP) == null || interfaces
-							.get(Molly.MOLLY_CHATBOX_INTERFACEGROUP)
-							.getComponent(0).getAbsoluteY() < 2)
+					.get(Molly.MOLLY_CHATBOX_INTERFACEGROUP)
+					.getComponent(0).getAbsoluteY() < 2)
 					&& (interfaces.get(Molly.MOLLY_CHATBOX_NOTHANKS) == null || interfaces
-							.get(Molly.MOLLY_CHATBOX_NOTHANKS).getComponent(0)
-							.getAbsoluteY() < 2)) {
+					.get(Molly.MOLLY_CHATBOX_NOTHANKS).getComponent(0)
+					.getAbsoluteY() < 2)) {
 				openDoor();
 				sleep(random(800, 1200));
 			} else {
