@@ -186,4 +186,4 @@ public class RandomAccessFile {
 		} else
 			raf.write(b);
 	}
-};
+}
