@@ -12,8 +12,8 @@ public class WebTile extends RSTile {
 	public Task req = null;
 	public double g = 0.00, f = 0.00;
 
-	private WebTile(final RSTile tile, final int[] neighbors,
-	                final Task requirement) {
+	public WebTile(final RSTile tile, final int[] neighbors,
+	               final Task requirement) {
 		super(tile.getX(), tile.getY());
 		this.neighbors = neighbors;
 		this.req = requirement;

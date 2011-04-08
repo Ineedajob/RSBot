@@ -3,6 +3,7 @@ package org.rsbot.script.wrappers;
 import org.rsbot.script.methods.MethodContext;
 
 import java.util.EnumSet;
+import java.util.logging.Logger;
 
 /**
  * A wrapper for traversing on a web path.
@@ -15,6 +16,8 @@ public class WebPath extends WebSkeleton {
 	 * The web tile array.
 	 */
 	private final WebTile[] web;
+
+	private final Logger log = Logger.getLogger(WebPath.class.getName());
 
 	public WebPath(final MethodContext ctx, final WebTile[] tiles) {
 		super(ctx);
@@ -31,18 +34,17 @@ public class WebPath extends WebSkeleton {
 		if (options.contains(TraversalOption.HANDLE_RUN) && !methods.walking.isRunEnabled() && methods.walking.getEnergy() > 40) {
 			methods.walking.setRun(true);
 		}
-		if (options.contains(TraversalOption.SPACE_ACTIONS) && methods.walking.getDestination() != null && methods.calc.distanceTo(methods.walking.getDestination()) > random(5, 12)) {
+		if (options.contains(TraversalOption.SPACE_ACTIONS) && methods.walking.getDestination() != null && methods.calc.distanceTo(methods.walking.getDestination()) > random(2, 8)) {
 			return true;
 		}
 		RSTile nextTile = getNext();
 		if (nextTile != null) {
 			int nextTileIndex = getNextIndex();
-			if (nextTileIndex < web.length) {
-				RSTile offTile = web[nextTileIndex];
-				if (methods.walking.isLocal(offTile)) {
-					nextTile = offTile;
-				}
+			if (nextTileIndex < web.length - 1 && methods.walking.isLocal(web[nextTileIndex])) {
+				nextTileIndex++;
+				nextTile = web[nextTileIndex];
 			}
+			log.severe(nextTile.toString());
 			RSLocalPath path = new RSLocalPath(methods, nextTile);
 			path.random(2, 2);
 			path.traverse(null);
@@ -66,9 +68,9 @@ public class WebPath extends WebSkeleton {
 	 */
 	public RSTile getNext() {
 		RSTile finalTile = null;
-		for (RSTile tile : web) {
-			if (methods.calc.tileOnMap(tile)) {
-				finalTile = tile;
+		for (int i = web.length - 1; i > -1; i--) {
+			if (methods.calc.tileOnMap(web[i])) {
+				finalTile = web[i];
 			}
 		}
 		return finalTile;
@@ -81,16 +83,10 @@ public class WebPath extends WebSkeleton {
 	 */
 	public int getNextIndex() {
 		int finalIndex = -1;
-		int i = 0;
-		for (RSTile tile : web) {
-			if (methods.calc.tileOnMap(tile)) {
+		int i = web.length;
+		for (i = web.length - 1; i > -1; i--) {
+			if (methods.calc.tileOnMap(web[i])) {
 				finalIndex = i;
-			}
-			i++;
-		}
-		for (int ii = i; ii < web.length; ii++) {
-			if (!methods.calc.tileOnMap(web[ii])) {
-				return ii;
 			}
 		}
 		return finalIndex;

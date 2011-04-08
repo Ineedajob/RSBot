@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Crawler {
+class Crawler {
 	private static final Logger log = Logger.getLogger(Crawler.class.getName());
 
 	private static HashMap<String, String> parameters;
