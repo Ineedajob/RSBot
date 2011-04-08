@@ -24,7 +24,7 @@ public class DrawMouse implements PaintListener {
 		return System.currentTimeMillis() % 3600 / 10.0D;
 	}
 
-	public void onRepaint(final Graphics render) {// TODO optimize.
+	public void onRepaint(final Graphics render) {//TODO optimize.
 		Mouse mouse = client.getMouse();
 		if (mouse != null) {
 			final Point location = new Point(mouse.getX(), mouse.getY());
@@ -34,13 +34,8 @@ public class DrawMouse implements PaintListener {
 			g.rotate(Math.toRadians(getRot()), location.x, location.y);
 			g.drawLine(location.x, location.y - 5, location.x, location.y + 5);
 			g.drawLine(location.x - 5, location.y, location.x + 5, location.y);
-			if (mouse.isPressed()
-					&& ((clicks.size() > 0
-							&& clicks.get(clicks.size() - 1).getAge() > 100 && clicks
-							.get(clicks.size() - 1).getStart() != mouse
-							.getPressTime()) || clicks.size() == 0)) {
-				Cross newCross = new Cross(1500, mouse.getPressTime(),
-						location, getRot());
+			if (mouse.isPressed() && ((clicks.size() > 0 && clicks.get(clicks.size() - 1).getAge() > 100 && clicks.get(clicks.size() - 1).getStart() != mouse.getPressTime()) || clicks.size() == 0)) {
+				Cross newCross = new Cross(1500, mouse.getPressTime(), location, getRot());
 				if (!clicks.contains(newCross)) {
 					clicks.add(newCross);
 				}
@@ -50,8 +45,7 @@ public class DrawMouse implements PaintListener {
 				while (clickIterator.hasNext()) {
 					Cross toDraw = clickIterator.next();
 					if (toDraw.handle()) {
-						drawPoint(toDraw.getLocation(), toDraw.getRot(), gg,
-								toDraw.getAlpha());
+						drawPoint(toDraw.getLocation(), toDraw.getRot(), gg, toDraw.getAlpha());
 					} else {
 						clicks.remove(toDraw);
 					}
@@ -90,8 +84,7 @@ public class DrawMouse implements PaintListener {
 		}
 
 		public int getAlpha() {
-			return Math.min(255,
-					Math.max(0, (int) (256.0D * (getAge() / 1500.0D))));
+			return Math.min(255, Math.max(0, (int) (256.0D * (getAge() / 1500.0D))));
 		}
 
 		public boolean handle() {

@@ -157,7 +157,7 @@ public class BotMenuBar extends JMenuBar {
 		}
 	}
 
-	private void enable(String item, boolean selected) {
+	public void enable(String item, boolean selected) {
 		commandCheckMap.get(item).setSelected(selected);
 		commandCheckMap.get(item).setEnabled(true);
 	}

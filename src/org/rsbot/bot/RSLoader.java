@@ -37,7 +37,7 @@ public class RSLoader extends Applet implements Runnable, Loader {
 	/**
 	 * The game class loader
 	 */
-	public RSClassLoader classLoader;
+	private RSClassLoader classLoader;
 
 	@Override
 	public final synchronized void destroy() {
@@ -103,12 +103,17 @@ public class RSLoader extends Applet implements Runnable, Loader {
 	}
 
 	public void load() {
-		ClientLoader cl = new ClientLoader();
 		try {
-			cl.init(new URL(GlobalConfiguration.Paths.URLs.UPDATE), new File(GlobalConfiguration.Paths.getModScriptCache()));
-			cl.load(new File(GlobalConfiguration.Paths.getClientCache()), new File(GlobalConfiguration.Paths.getVersionCache()));
-			targetName = cl.getTargetName();
-			classLoader = new RSClassLoader(cl.getClasses(), new URL("http://" + targetName + ".com/"));
+			WebLoader webLoader = new WebLoader();
+			if (webLoader.load()) {
+				ClientLoader cl = new ClientLoader();
+				cl.init(new URL(GlobalConfiguration.Paths.URLs.UPDATE), new File(GlobalConfiguration.Paths.getModScriptCache()));
+				cl.load(new File(GlobalConfiguration.Paths.getClientCache()), new File(GlobalConfiguration.Paths.getVersionCache()));
+				targetName = cl.getTargetName();
+				classLoader = new RSClassLoader(cl.getClasses(), new URL("http://" + targetName + ".com/"));
+			} else {
+				log.severe("Unable to download web data.");
+			}
 		} catch (IOException ex) {
 			log.severe("Unable to load client - " + ex.getMessage());
 		} catch (ParseException ex) {

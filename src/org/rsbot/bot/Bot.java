@@ -27,16 +27,16 @@ public class Bot {
 	private Client client;
 	private MethodContext methods;
 	private Component panel;
-	private PaintEvent paintEvent;
-	private TextPaintEvent textPaintEvent;
-	private EventManager eventManager;
+	private final PaintEvent paintEvent;
+	private final TextPaintEvent textPaintEvent;
+	private final EventManager eventManager;
 	private BufferedImage backBuffer;
 	private BufferedImage image;
-	private InputManager im;
+	private final InputManager im;
 	private RSLoader loader;
-	private ScriptHandler sh;
-	private BreakHandler bh;
-	private Map<String, EventListener> listeners;
+	private final ScriptHandler sh;
+	private final BreakHandler bh;
+	private final Map<String, EventListener> listeners;
 
 	/**
 	 * Whether or not user input is allowed despite a script's preference.

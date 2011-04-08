@@ -1,9 +1,6 @@
 package org.rsbot.script.methods;
 
-import org.rsbot.script.wrappers.RSLocalPath;
-import org.rsbot.script.wrappers.RSPath;
-import org.rsbot.script.wrappers.RSTile;
-import org.rsbot.script.wrappers.RSTilePath;
+import org.rsbot.script.wrappers.*;
 
 import java.awt.*;
 
@@ -516,6 +513,16 @@ public class Walking extends MethodProvider {
 			rez[i] = randomize(path[i], maxXDeviation, maxYDeviation);
 		}
 		return rez;
+	}
+
+	/**
+	 * Returns the web of a path.
+	 *
+	 * @param to The tile to walk to.
+	 * @return Returns the web allocation.
+	 */
+	public Web getWebPath(final RSTile to) {
+		return new Web(methods, methods.players.getMyPlayer().getLocation(), to);
 	}
 
 }
