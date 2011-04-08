@@ -3,8 +3,8 @@ package org.rsbot.script.wrappers;
 /**
  * A RSTile modified for A-Star.
  *
- * @author Aut0r
  * @author Timer
+ * @author Aut0r
  */
 public class WebTile extends RSTile {
 

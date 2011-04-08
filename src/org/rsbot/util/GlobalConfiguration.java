@@ -24,7 +24,6 @@ public class GlobalConfiguration {
 	public static class Paths {
 		public static class Resources {
 			public static final String ROOT = "resources";
-			public static final String THEME = "theme.pb";
 			public static final String SCRIPTS = Paths.SCRIPTS_NAME_SRC + "/";
 			public static final String ROOT_IMG = "/" + Resources.ROOT
 					+ "/images";
@@ -78,8 +77,7 @@ public class GlobalConfiguration {
 			public static final String UPDATER = "http://links.powerbot.org/";
 			public static final String DOWNLOAD = UPDATER + "update";
 			public static final String UPDATE = UPDATER + "modscript";
-			//public static final String WEB = UPDATER + "web";
-			public static final String WEB = "http://rsbot-client.googlecode.com/files/web003.dat";
+			public static final String WEB = UPDATER + "webwalker";
 			public static final String VERSION = UPDATER + "version";
 			public static final String PROJECT = "http://code.google.com/p/rsbot-client";
 			public static final String SITE = "http://www.powerbot.org";

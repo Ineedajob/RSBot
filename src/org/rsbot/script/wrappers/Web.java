@@ -29,7 +29,7 @@ public class Web extends WebSkeleton {
 	/**
 	 * The WebMap allocation.
 	 */
-	private WebMap map = null;
+	private static WebMap map = null;
 
 	/**
 	 * @param ctx The MethodContext.
@@ -120,8 +120,6 @@ public class Web extends WebSkeleton {
 					}
 				}
 				map = new WebMap(teTiles.toArray(new WebTile[teTiles.size()]));
-				dis.close();
-				fis.close();
 				br.close();
 				return;
 			}
@@ -243,6 +241,9 @@ public class Web extends WebSkeleton {
 	 * @return The web map.
 	 */
 	public WebMap map() {
+		if (mapNeedsSet()) {
+			setMap();
+		}
 		return map;
 	}
 

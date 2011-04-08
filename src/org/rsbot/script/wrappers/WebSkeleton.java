@@ -8,6 +8,7 @@ import java.util.EnumSet;
 /**
  * A class that walks a web skeleton path.
  *
+ * @author Timer
  * @author Aut0r
  */
 
