@@ -9,6 +9,7 @@ import java.util.logging.Logger;
  * A wrapper for traversing on a web path.
  *
  * @author Timer
+ * @author Aut0r
  */
 
 public class WebPath extends WebSkeleton {
