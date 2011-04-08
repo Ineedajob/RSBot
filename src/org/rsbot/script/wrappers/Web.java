@@ -11,6 +11,7 @@ import java.util.logging.Logger;
  * The web generation and wrapper control.
  *
  * @author Timer
+ * @author Aut0r
  */
 
 public class Web extends WebSkeleton {
