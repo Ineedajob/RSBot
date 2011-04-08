@@ -41,6 +41,7 @@ public class BotMenuBar extends JMenuBar {
 		DEBUG_MAP.put("Ground Items", DrawItems.class);
 		DEBUG_MAP.put("Calc Test", DrawBoundaries.class);
 		DEBUG_MAP.put("Settings", DrawSettings.class);
+		DEBUG_MAP.put("Web", DrawWeb.class);
 
 		// Other
 		DEBUG_MAP.put("Log Messages", MessageLogger.class);
