@@ -1,8 +1,5 @@
 package org.rsbot.script.wrappers;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * The web map data.
  *
@@ -34,33 +31,12 @@ public class WebMap {
 	}
 
 	/**
-	 * The surrounding indices of a web tile.
+	 * Returns this maps tile array;
 	 *
-	 * @param tile The web tile you wish to access.
-	 * @return The indices.
+	 * @return The tile array.
 	 */
-	public int[] getSurroundingOf(final WebTile tile) {
-		List<Integer> goodL = new ArrayList<Integer>();
-		int[] neighbors = tile.connectingIndex();
-		for (int in : neighbors) {
-			WebTile ctile = getWebTile(in);
-			if (ctile != null) {
-				if (ctile.req != null) {
-					if (ctile.req.canDo()) {
-						goodL.add(in);
-					}
-				} else {
-					goodL.add(in);
-				}
-			}
-		}
-		int[] good = new int[goodL.size()];
-		if (goodL.size() > 0) {
-			for (int i = 0; i < goodL.size(); i++) {
-				good[i] = goodL.get(i);
-			}
-		}
-		return good;
+	public WebTile[] getTiles() {
+		return tiles;
 	}
 
 	/**

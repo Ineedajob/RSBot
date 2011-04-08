@@ -2,17 +2,9 @@ package org.rsbot.script.wrappers;
 
 import org.rsbot.script.methods.MethodContext;
 import org.rsbot.util.GlobalConfiguration;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import java.awt.*;
-import java.io.File;
+import java.io.*;
 import java.util.*;
-import java.util.List;
 import java.util.logging.Logger;
 
 /**
@@ -58,102 +50,84 @@ public class Web extends WebSkeleton {
 		return map == null;
 	}
 
-	private static String substringBetween(String str, String open, String close) {
-		if (str == null || open == null || close == null) {
-			return null;
-		}
-		int start = str.indexOf(open);
-		if (start != -1) {
-			int end = str.indexOf(close, start + open.length());
-			if (end != -1) {
-				return str.substring(start + open.length(), end);
-			}
-		}
-		return null;
-	}
+	private final Logger log = Logger.getLogger(Web.class.getName());
 
 	/**
 	 * Sets the map up.
 	 */
 	public void setMap() {
-		File mapData = new File(GlobalConfiguration.Paths.getWebCache());
-		if (mapData.exists() && mapData.canRead()) {
-			final int xOff = 2044;
-			final int yOff = 4168;
-			HashMap<Integer, RSTile> nodes = new HashMap<Integer, RSTile>();
-			List<Point> edges = new ArrayList<Point>();
-			try {
-				File file = new File(GlobalConfiguration.Paths.getWebCache());
-				DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-				DocumentBuilder db = dbf.newDocumentBuilder();
-				Document doc = db.parse(file);
-				doc.getDocumentElement().normalize();
-				NodeList nodeLst = doc.getElementsByTagName("Node");
-				for (int s = 0; s < nodeLst.getLength(); s++) {
-					Node NodeIndex = nodeLst.item(s);
-					if (NodeIndex.getNodeType() == Node.ELEMENT_NODE) {
-						Element MasterNodeElement = (Element) NodeIndex;
-
-						NodeList NodeListX = MasterNodeElement.getElementsByTagName("x");
-						Element NodeElementX = (Element) NodeListX.item(0);
-						NodeList NodeX = NodeElementX.getChildNodes();
-						int x = Integer.parseInt(((Node) NodeX.item(0)).getNodeValue());
-
-						NodeList NodeListY = MasterNodeElement.getElementsByTagName("y");
-						Element NodeElementY = (Element) NodeListY.item(0);
-						NodeList NodeY = NodeElementY.getChildNodes();
-						int y = Integer.parseInt(((Node) NodeY.item(0)).getNodeValue());
-
-						nodes.put(s, new RSTile(xOff + x, yOff - y));
+		try {
+			List<WebTile> teTiles = new ArrayList<WebTile>();
+			File mapData = new File(GlobalConfiguration.Paths.getWebCache());
+			if (mapData.exists() && mapData.canRead()) {
+				final int xOff = 2044;
+				final int yOff = 4168;
+				FileInputStream fis = new FileInputStream(mapData);
+				DataInputStream dis = new DataInputStream(fis);
+				BufferedReader br = new BufferedReader(new InputStreamReader(dis));
+				String strLine = "";
+				while ((strLine = br.readLine()) != null) {
+					try {
+						String[] strArr = strLine.split("=");
+						if (strArr != null && strArr.length == 3) {
+							String[] spl = strArr[2].split(",");
+							int[] nA = new int[spl.length];
+							int i = 0;
+							for (String iSPL : spl) {
+								if (iSPL.length() > 0) {
+									nA[i] = Integer.parseInt(iSPL);
+									i++;
+								}
+							}
+							int[] nAA = new int[i];
+							for (int na : nA) {
+								i--;
+								nAA[i] = na;
+								if (i == 0) {
+									break;
+								}
+							}
+							teTiles.add(new WebTile(new RSTile(xOff + Integer
+									.parseInt(strArr[0]), yOff - Integer
+									.parseInt(strArr[1])), nAA, null));
+							log.info("Added.");
+						} else if (strArr != null && strArr.length == 5) {
+							String[] spl = strArr[4].split(",");
+							int[] nA = new int[spl.length];
+							int i = 0;
+							for (String iSPL : spl) {
+								if (iSPL.length() > 0) {
+									nA[i] = Integer.parseInt(iSPL);
+									i++;
+								}
+							}
+							int[] nAA = new int[i];
+							for (int na : nA) {
+								i--;
+								nAA[i] = na;
+								if (i == 0) {
+									break;
+								}
+							}
+							teTiles.add(new WebTile(new RSTile(xOff + Integer
+									.parseInt(strArr[0]), yOff - Integer
+									.parseInt(strArr[1])), nAA, null));
+							log.info("Added.");
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+						map = null;
+						return;
 					}
 				}
-				NodeList edgeList = doc.getElementsByTagName("Edge");
-				for (int s = 0; s < edgeList.getLength(); s++) {
-					Node NodeIndex = edgeList.item(s);
-					if (NodeIndex.getNodeType() == Node.ELEMENT_NODE) {
-						Element MasterNodeElement = (Element) NodeIndex;
-
-						NodeList NodeListX = MasterNodeElement.getElementsByTagName("a");
-						Element NodeElementX = (Element) NodeListX.item(0);
-						NodeList NodeX = NodeElementX.getChildNodes();
-						int x = Integer.parseInt(((Node) NodeX.item(0)).getNodeValue());
-
-						NodeList NodeListY = MasterNodeElement.getElementsByTagName("b");
-						Element NodeElementY = (Element) NodeListY.item(0);
-						NodeList NodeY = NodeElementY.getChildNodes();
-						int y = Integer.parseInt(((Node) NodeY.item(0)).getNodeValue());
-
-						edges.add(new Point(x, y));
-					}
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
+				map = new WebMap(teTiles.toArray(new WebTile[teTiles.size()]));
+				dis.close();
+				fis.close();
+				br.close();
+				return;
 			}
-			Set<Integer> keySet = nodes.keySet();
-			Iterator<Integer> keys = keySet.iterator();
-			List<WebTile> webTiles = new ArrayList<WebTile>();
-			while (keys.hasNext()) {
-				int key = keys.next();
-				RSTile tile = nodes.get(key);
-				List<Integer> surrounding = new ArrayList<Integer>();
-				Iterator<Point> edgeIterator = edges.listIterator();
-				while (edgeIterator.hasNext()) {
-					Point currentEdge = edgeIterator.next();
-					if (currentEdge.x == key) {
-						surrounding.add(currentEdge.y);
-					} else if (currentEdge.y == key) {
-						surrounding.add(currentEdge.x);
-					}
-				}
-				int[] surrounding_arr = new int[surrounding.size()];
-				for (int f = 0; f < surrounding_arr.length; f++) {
-					surrounding_arr[f] = surrounding.get(f).intValue();
-				}
-				WebTile temp = new WebTile(tile, surrounding_arr, null);
-				webTiles.add(temp);
-			}
-			map = new WebMap(webTiles.toArray(new WebTile[webTiles.size()]));
-			return;
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		map = null;
 	}
@@ -265,6 +239,15 @@ public class Web extends WebSkeleton {
 	}
 
 	/**
+	 * Returns a map.
+	 *
+	 * @return The web map.
+	 */
+	public WebMap map() {
+		return map;
+	}
+
+	/**
 	 * Reconstructs the path.
 	 *
 	 * @param end The final web tile.
@@ -278,21 +261,6 @@ public class Web extends WebSkeleton {
 			p = p.parent;
 		}
 		return path.toArray(new WebTile[path.size()]);
-	}
-
-	/**
-	 * Get next tile.
-	 *
-	 * @return The next tile in the skeleton.
-	 */
-	public RSTile getNext() {
-		RSTile finalTile = null;
-		for (RSTile tile : path()) {
-			if (methods.calc.tileOnMap(tile)) {
-				finalTile = tile;
-			}
-		}
-		return finalTile;
 	}
 
 	/**

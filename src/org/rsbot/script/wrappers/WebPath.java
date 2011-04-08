@@ -33,21 +33,22 @@ public class WebPath extends WebSkeleton {
 	public boolean traverse(EnumSet<TraversalOption> options) {
 		if (options.contains(TraversalOption.HANDLE_RUN) && !methods.walking.isRunEnabled() && methods.walking.getEnergy() > 40) {
 			methods.walking.setRun(true);
+			sleep(random(500, 800));
 		}
 		if (options.contains(TraversalOption.SPACE_ACTIONS) && methods.walking.getDestination() != null && methods.calc.distanceTo(methods.walking.getDestination()) > random(2, 8)) {
 			return true;
 		}
-		RSTile nextTile = getNext();
-		if (nextTile != null) {
-			int nextTileIndex = getNextIndex();
-			if (nextTileIndex < web.length - 1 && methods.walking.isLocal(web[nextTileIndex])) {
+		int nextTileIndex = getNextIndex();
+		if (nextTileIndex != -1) {
+			if (nextTileIndex < web.length - 1 && methods.walking.isLocal(web[nextTileIndex + 1])) {
 				nextTileIndex++;
-				nextTile = web[nextTileIndex];
 			}
-			log.severe(nextTile.toString());
-			RSLocalPath path = new RSLocalPath(methods, nextTile);
+			log.info(web[nextTileIndex].toString());
+			RSLocalPath path = new RSLocalPath(methods, web[nextTileIndex]);
 			path.random(2, 2);
-			path.traverse(null);
+			return path.traverse(null);
+		} else {
+			log.severe("No next tile!");
 		}
 		return false;
 	}
@@ -62,34 +63,17 @@ public class WebPath extends WebSkeleton {
 	}
 
 	/**
-	 * Get next tile.
-	 *
-	 * @return The next tile in the skeleton.
-	 */
-	public RSTile getNext() {
-		RSTile finalTile = null;
-		for (int i = web.length - 1; i > -1; i--) {
-			if (methods.calc.tileOnMap(web[i])) {
-				finalTile = web[i];
-			}
-		}
-		return finalTile;
-	}
-
-	/**
 	 * Get next tile index off screen.
 	 *
 	 * @return The next tile in the skeleton.
 	 */
 	public int getNextIndex() {
-		int finalIndex = -1;
-		int i = web.length;
-		for (i = web.length - 1; i > -1; i--) {
+		for (int i = web.length - 1; i > -1; i--) {
 			if (methods.calc.tileOnMap(web[i])) {
-				finalIndex = i;
+				return i;
 			}
 		}
-		return finalIndex;
+		return -1;
 	}
 
 	/**
