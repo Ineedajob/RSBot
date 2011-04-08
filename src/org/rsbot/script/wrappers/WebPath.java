@@ -43,7 +43,6 @@ public class WebPath extends WebSkeleton {
 			if (nextTileIndex < web.length - 1 && methods.walking.isLocal(web[nextTileIndex + 1])) {
 				nextTileIndex++;
 			}
-			log.info(web[nextTileIndex].toString());
 			RSLocalPath path = new RSLocalPath(methods, web[nextTileIndex]);
 			path.random(2, 2);
 			return path.traverse(null);

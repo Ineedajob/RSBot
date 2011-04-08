@@ -90,7 +90,6 @@ public class Web extends WebSkeleton {
 							teTiles.add(new WebTile(new RSTile(xOff + Integer
 									.parseInt(strArr[0]), yOff - Integer
 									.parseInt(strArr[1])), nAA, null));
-							log.info("Added.");
 						} else if (strArr != null && strArr.length == 5) {
 							String[] spl = strArr[4].split(",");
 							int[] nA = new int[spl.length];
@@ -112,7 +111,6 @@ public class Web extends WebSkeleton {
 							teTiles.add(new WebTile(new RSTile(xOff + Integer
 									.parseInt(strArr[0]), yOff - Integer
 									.parseInt(strArr[1])), nAA, null));
-							log.info("Added.");
 						}
 					} catch (Exception e) {
 						e.printStackTrace();
