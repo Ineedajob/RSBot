@@ -10,11 +10,9 @@ import java.awt.*;
 import java.util.ArrayList;
 
 /**
- * Updated by Iscream Feb 05,10
- * Updated by Iscream Feb 06,10
- * Updated by Iscream Feb 09,10
+ * Updated by Iscream Apr 07,11
  */
-@ScriptManifest(authors = {"Zenzie", "Iscream"}, name = "Maze", version = 1.5)
+@ScriptManifest(authors = {"Zenzie", "Iscream"}, name = "Maze", version = 1.6)
 public class Maze extends Random {
 
 	public ArrayList<Door> paths = new ArrayList<Door>();
@@ -29,7 +27,7 @@ public class Maze extends Random {
 	public long lastTry = 0;
 	public RSTile lastDoor = null;
 
-	//working as of 1/31/2010
+	//working as of 4/07/2011
 	public void loadGreenPath() {
 
 		paths.add(new Door(new RSTile(2903, 4555), 's', 0));
@@ -75,7 +73,7 @@ public class Maze extends Random {
 		log("Loaded blue path");
 	}
 
-	//working as of 2/06/2010
+	//working as of  4/07/2011
 	public void loadCyanPath() {
 
 		paths.add(new Door(new RSTile(2930, 4555), 's', 0));
@@ -182,7 +180,7 @@ public class Maze extends Random {
 				}
 				RSObject obj = objects.getTopAt(walkToTile, Objects.TYPE_BOUNDARY);
 				if (obj != null && obj.doAction("Open") || atDoor(walkToTile, doorDir)) {
-					return random(400, 500);
+					return random(2750,3250);
 				}
 			}
 		}
