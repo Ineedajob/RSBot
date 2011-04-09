@@ -54,9 +54,9 @@ public class WebMap {
 				break;
 			}
 			double sqrt = Math.sqrt((ctrl.getX() - tile.getX())
- 						* (ctrl.getX() - tile.getX())
- 						+ (ctrl.getY() - tile.getY())
-						* (ctrl.getY() - tile.getY()));
+					* (ctrl.getX() - tile.getX())
+					+ (ctrl.getY() - tile.getY())
+					* (ctrl.getY() - tile.getY()));
 			if (sqrt < maxDist) {
 				webTile = ctrl;
 				maxDist = sqrt;
@@ -97,24 +97,6 @@ public class WebMap {
 					* (curr.getX() - dest.getX())
 					+ (curr.getY() - dest.getY())
 					* (curr.getY() - dest.getY()));
-		} else {
-			return 1.0;
-		}
-	}
-
-	/**
-	 * Gets the dist.
-	 *
-	 * @param start Starting tile.
-	 * @param end   Ending tile.
-	 * @return The dist.
-	 */
-	public double dist(RSTile start, RSTile end) {
-		if (start.getX() != end.getX() && start.getY() != end.getY()) {
-			return Math.sqrt((start.getX() - end.getX())
-					* (start.getX() - end.getX())
-					+ (start.getY() - end.getY())
-					* (start.getY() - end.getY()));
 		} else {
 			return 1.0;
 		}
