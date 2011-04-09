@@ -6,7 +6,7 @@ import org.rsbot.script.wrappers.RSNPC;
 import org.rsbot.script.wrappers.RSObject;
 import org.rsbot.script.wrappers.RSTile;
 
-@ScriptManifest(authors = {"Keilgo"}, name = "DrillDemon", version = 0.1)
+@ScriptManifest(authors = {"Keilgo"}, name = "DrillDemon", version = 0.2)
 public class DrillDemon extends Random {
 
 	public int demonID = 2790;
@@ -199,13 +199,13 @@ public class DrillDemon extends Random {
 				} else {
 					mat1.doAction("Use");
 				}
-				return random(1000, 1500);
+				return random(2000,2500);
 			} else if (sign2 == 1) {
 				mat2.doAction("Use");
-				return random(1000, 1500);
+				return random(2000,2500);
 			} else if (sign3 == 1) {
 				mat3.doAction("Use");
-				return random(1000, 1500);
+				return random(2000,2500);
 			} else if (sign4 == 1) {
 				if (calc.distanceTo(new RSTile(3159, 4820)) < 2) {
 					walking.walkTileMM(walking.randomize(
@@ -214,7 +214,7 @@ public class DrillDemon extends Random {
 				} else {
 					mat4.doAction("Use");
 				}
-				return random(1000, 1500);
+				return random(2000,2500);
 			}
 		} else if (interfaces.getComponent(148, 1).getText()
 				.contains("push ups")) {
@@ -226,13 +226,13 @@ public class DrillDemon extends Random {
 				} else {
 					mat1.doAction("Use");
 				}
-				return random(1000, 1500);
+				return random(2000,2500);
 			} else if (sign2 == 2) {
 				mat2.doAction("Use");
-				return random(1000, 1500);
+				return random(2000,2500);
 			} else if (sign3 == 2) {
 				mat3.doAction("Use");
-				return random(1000, 1500);
+				return random(2000,2500);
 			} else if (sign4 == 2) {
 				if (calc.distanceTo(new RSTile(3159, 4820)) < 2) {
 					walking.walkTileMM(walking.randomize(
@@ -241,7 +241,7 @@ public class DrillDemon extends Random {
 				} else {
 					mat4.doAction("Use");
 				}
-				return random(1000, 1500);
+				return random(2000,2500);
 			}
 		} else if (interfaces.getComponent(148, 1).getText()
 				.contains("sit ups")) {
@@ -256,10 +256,10 @@ public class DrillDemon extends Random {
 				return random(1000, 1500);
 			} else if (sign2 == 3) {
 				mat2.doAction("Use");
-				return random(1000, 1500);
+				return random(2000,2500);
 			} else if (sign3 == 3) {
 				mat3.doAction("Use");
-				return random(1000, 1500);
+				return random(2000,2500);
 			} else if (sign4 == 3) {
 				if (calc.distanceTo(new RSTile(3159, 4820)) < 2) {
 					walking.walkTileMM(walking.randomize(
@@ -268,7 +268,7 @@ public class DrillDemon extends Random {
 				} else {
 					mat4.doAction("Use");
 				}
-				return random(1000, 1500);
+				return random(2000,2500);
 			}
 		} else if (interfaces.getComponent(148, 1).getText().contains("jog on")) {
 			if (sign1 == 4) {
@@ -279,13 +279,13 @@ public class DrillDemon extends Random {
 				} else {
 					mat1.doAction("Use");
 				}
-				return random(1000, 1500);
+				return random(2000,2500);
 			} else if (sign2 == 4) {
 				mat2.doAction("Use");
-				return random(1000, 1500);
+				return random(2000,2500);
 			} else if (sign3 == 4) {
 				mat3.doAction("Use");
-				return random(1000, 1500);
+				return random(2000,2500);
 			} else if (sign4 == 4) {
 				if (calc.distanceTo(new RSTile(3159, 4820)) < 2) {
 					walking.walkTileMM(walking.randomize(
@@ -294,7 +294,7 @@ public class DrillDemon extends Random {
 				} else {
 					mat4.doAction("Use");
 				}
-				return random(1000, 1500);
+				return random(2000,2500);
 			}
 		}
 
@@ -302,7 +302,7 @@ public class DrillDemon extends Random {
 			demon.doAction("Talk-to");
 		}
 
-		return random(1000, 1500);
+		return random(2000,2500);
 	}
 
 	public boolean myClickContinue() {

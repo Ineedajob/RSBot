@@ -6,6 +6,8 @@ import org.rsbot.script.wrappers.*;
 
 import java.util.ArrayList;
 
+//Checked 3/7/10
+
 /**
  * Updated by aman (Nov 14, 09) Updated by Equilibrium (Dec 13, 09) Updated by
  * Fred (Dec 25, 09) Updated by Iscream (Jan 31, 10) Updated by Iscream (Feb 20,
@@ -119,7 +121,7 @@ public class Molly extends Random {
 		}
 		if (finished && inControlRoom()) {
 			if (!openDoor()) {
-				return (random(400, 500));
+				return (random(1000,1500));
 			}
 			return (random(400, 600));
 		}

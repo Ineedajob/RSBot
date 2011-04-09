@@ -108,7 +108,7 @@ public class BeehiveSolver extends Random {
 			log.info("Interfaces not valid.");
 		}
 
-		if (getMyPlayer().getInteracting() == null) {
+		if (getMyPlayer().getInteracting() == null && !solved) {
 			final RSNPC npc = npcs.getNearest(BEEHIVE_KEEPER_ID);
 			if (npc != null) {
 				if (!npc.doAction("Talk-to")) {
