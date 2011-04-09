@@ -6,9 +6,9 @@ import org.rsbot.script.wrappers.Web;
 import javax.swing.*;
 
 /**
- * @author Timer
+ * @author Timer, Aut0r
  */
-@ScriptManifest(authors = {"Timer"}, name = "Web Testster", description="Tests the web walking, input a tile like ####,####", keywords = "Development")
+@ScriptManifest(authors = {"Timer, Aut0r"}, name = "Web Tester", description = "Tests the web walking, input a tile like ####,####", keywords = "Development")
 public class WebTest extends Script {
 
 	private Web web = null;
@@ -33,7 +33,7 @@ public class WebTest extends Script {
 			web.traverse();
 			sleep(50);//So it doesn't burn out your CPU.
 		}
-		return 0;
+		return web.atDestination() ? -1 : 0;
 	}
 
 }
