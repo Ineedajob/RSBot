@@ -53,7 +53,10 @@ public class WebMap {
 			if (maxDist == 0.0) {
 				break;
 			}
-			double sqrt = dist(ctrl, tile);
+			double sqrt = Math.sqrt((ctrl.getX() - tile.getX())
+ 						* (ctrl.getX() - tile.getX())
+ 						+ (ctrl.getY() - tile.getY())
+						* (ctrl.getY() - tile.getY()));
 			if (sqrt < maxDist) {
 				webTile = ctrl;
 				maxDist = sqrt;
