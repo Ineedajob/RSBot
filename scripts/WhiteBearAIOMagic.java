@@ -1205,13 +1205,13 @@ public class WhiteBearAIOMagic extends Script implements PaintListener,
 						drawStringMain(
 								g,
 								"Break Distance:",
-								Integer.toString(midTime) + " ±"
+								Integer.toString(midTime) + " \u00B1"
 										+ Integer.toString(randTime), r, 20,
 								35, 0, true);
 						drawStringMain(
 								g,
 								"Break Length:",
-								Integer.toString(midLength) + " ±"
+								Integer.toString(midLength) + " \u00B1"
 										+ Integer.toString(randLength), r, 20,
 								35, 1, true);
 					}

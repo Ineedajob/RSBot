@@ -2911,7 +2911,7 @@ public class DebaucherySoulWars extends Script implements MouseListener,
 				message.replace(":", "");
 				message.replace("*", "");
 				message.replace("$", "");
-				message.replace("£", "");
+				message.replace("\u00A3", "");
 				message.replace("_", "");
 				message.replace(" ", "");
 				if (!message.contains("bot") && !message.contains("winnin")
