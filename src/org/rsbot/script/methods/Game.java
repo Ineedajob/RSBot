@@ -1,5 +1,11 @@
 package org.rsbot.script.methods;
 
+import org.rsbot.script.Random;
+import org.rsbot.script.randoms.BankPins;
+import org.rsbot.script.randoms.CloseAllInterface;
+import org.rsbot.script.randoms.ImprovedRewardsBox;
+import org.rsbot.script.randoms.LoginBot;
+import org.rsbot.script.randoms.TeleotherCloser;
 import org.rsbot.script.wrappers.RSComponent;
 import org.rsbot.script.wrappers.RSInterface;
 import org.rsbot.script.wrappers.RSTile;
@@ -368,6 +374,26 @@ public class Game extends MethodProvider {
 		return methods.walking.getEnergy();
 	}
 
+	
+	/**
+	 * Excludes Loginbot, BankPin, TeleotherCloser, CloseAllInterface, ImprovedRewardsBox
+	 * 
+	 * @return True if player is in a random
+	 */
+	public Boolean inRandom() {
+		for (Random random : methods.bot.getScriptHandler().getRandoms()) {
+			if (random.getClass().equals(new LoginBot()) || random.getClass().equals(new BankPins()) 
+					|| random.getClass().equals(new TeleotherCloser())  || random.getClass().equals(new CloseAllInterface())  || 
+					random.getClass().equals(new ImprovedRewardsBox()))  {
+				continue;
+			} else {
+				if (random.activateCondition()) 
+					return true;
+			}
+		}
+		return false;
+	}
+	
 	/**
 	 * Returns the valid chat component.
 	 *
