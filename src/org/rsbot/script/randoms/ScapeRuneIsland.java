@@ -41,7 +41,7 @@ public class ScapeRuneIsland extends Random {
 		RSObject statue2 = objects.getNearest(STATUE_IDS[1]);
 		RSObject statue3 = objects.getNearest(STATUE_IDS[2]);
 		RSObject statue4 = objects.getNearest(STATUE_IDS[3]);
-		if (getMyPlayer().isMoving() || getMyPlayer().getAnimation() == 620) {
+		if (getMyPlayer().isMoving() || getMyPlayer().getAnimation() != -1) {
 			return random(550, 700);
 		}
 		if (interfaces.get(241).getComponent(4).isValid()
