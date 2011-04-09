@@ -42,7 +42,8 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 	private JScrollPane textScroll;
 	private BotHome home;
 	private List<Bot> bots = new ArrayList<Bot>();
-
+	private boolean showAds = true;
+	
 	public BotGUI() {
 		init();
 		pack();
@@ -55,7 +56,10 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 			public void run() {
 				JPopupMenu.setDefaultLightWeightPopupEnabled(false);
 				ToolTipManager.sharedInstance().setLightWeightPopupEnabled(false);
-				new SplashAd(BotGUI.this).display();
+				
+				if (showAds)
+					new SplashAd(BotGUI.this).display();
+				
 				if (GlobalConfiguration.RUNNING_FROM_JAR) {
 					UpdateUtil updater = new UpdateUtil(BotGUI.this);
 					updater.checkUpdate(false);
@@ -134,6 +138,8 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 		} else if (menu.equals("Edit")) {
 			if (option.equals("Accounts")) {
 				AccountManager.getInstance().showGUI();
+			} else if (option.equals("Disable Advertisments")) {
+				showAds = ((JCheckBoxMenuItem) evt.getSource()).isSelected();
 			} else {
 				Bot current = getCurrentBot();
 				if (current != null) {
