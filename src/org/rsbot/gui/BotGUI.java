@@ -205,6 +205,7 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 				toolBar.setScriptButton(BotToolBar.RUN_SCRIPT);
 				toolBar.setOverrideInput(false);
 				toolBar.setInputState(Environment.INPUT_KEYBOARD | Environment.INPUT_MOUSE);
+				toolBar.updateInputButton();
 			} else {
 				setTitle(curr.getAccountName());
 				Map<Integer, Script> scriptMap = curr.getScriptHandler().getRunningScripts();
@@ -219,6 +220,7 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 				}
 				toolBar.setOverrideInput(curr.overrideInput);
 				toolBar.setInputState(curr.inputFlags);
+				toolBar.updateInputButton();
 			}
 		} else if (menu.equals("Run")) {
 			Bot current = getCurrentBot();
