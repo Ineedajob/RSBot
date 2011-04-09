@@ -110,7 +110,7 @@ public class LostAndFound extends Random {
 		} catch (final Exception ignored) {
 		}
 
-		return random(50, 100);
+		return random(1000,2000);
 	}
 
 }
