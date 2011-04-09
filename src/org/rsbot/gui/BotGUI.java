@@ -42,7 +42,8 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 	private JScrollPane textScroll;
 	private BotHome home;
 	private List<Bot> bots = new ArrayList<Bot>();
-
+	private boolean showAds = true;
+	
 	public BotGUI() {
 		init();
 		pack();
@@ -55,7 +56,10 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 			public void run() {
 				JPopupMenu.setDefaultLightWeightPopupEnabled(false);
 				ToolTipManager.sharedInstance().setLightWeightPopupEnabled(false);
-				new SplashAd(BotGUI.this).display();
+				
+				if (showAds)
+					new SplashAd(BotGUI.this).display();
+				
 				if (GlobalConfiguration.RUNNING_FROM_JAR) {
 					UpdateUtil updater = new UpdateUtil(BotGUI.this);
 					updater.checkUpdate(false);
@@ -134,6 +138,8 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 		} else if (menu.equals("Edit")) {
 			if (option.equals("Accounts")) {
 				AccountManager.getInstance().showGUI();
+			} else if (option.equals("Disable Advertisments")) {
+				showAds = ((JCheckBoxMenuItem) evt.getSource()).isSelected();
 			} else {
 				Bot current = getCurrentBot();
 				if (current != null) {
@@ -190,9 +196,9 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 			} else if (option.equals("Project")) {
 				openURL(GlobalConfiguration.Paths.URLs.PROJECT);
 			} else if (option.equals("About")) {
-				JOptionPane.showMessageDialog(this, new String[]{"An open source bot,currently developed by Aut0r as " + '\n' + "Lead developer and his team of devs and contributers.",
-						"Visit " + GlobalConfiguration.Paths.URLs.SITE + "/ for more information."},
-						"About", JOptionPane.INFORMATION_MESSAGE);
+ 					JOptionPane.showMessageDialog(this, new String[]{"An open source bot,currently developed by Aut0r as " + '\n' + "Lead Developer and by his Team of Contributers.",
+ 							"Visit " + GlobalConfiguration.Paths.URLs.SITE + "/ for more information."},
+ 							"About", JOptionPane.INFORMATION_MESSAGE);
 			}
 		} else if (menu.equals("Tab")) {
 			Bot curr = getCurrentBot();
@@ -205,7 +211,6 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 				toolBar.setScriptButton(BotToolBar.RUN_SCRIPT);
 				toolBar.setOverrideInput(false);
 				toolBar.setInputState(Environment.INPUT_KEYBOARD | Environment.INPUT_MOUSE);
-				toolBar.updateInputButton();
 			} else {
 				setTitle(curr.getAccountName());
 				Map<Integer, Script> scriptMap = curr.getScriptHandler().getRunningScripts();
@@ -220,7 +225,6 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 				}
 				toolBar.setOverrideInput(curr.overrideInput);
 				toolBar.setInputState(curr.inputFlags);
-				toolBar.updateInputButton();
 			}
 		} else if (menu.equals("Run")) {
 			Bot current = getCurrentBot();
