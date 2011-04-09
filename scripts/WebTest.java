@@ -31,6 +31,7 @@ public class WebTest extends Script {
 			web = walking.getWebPath(tile);
 		} else {
 			web.traverse();
+			sleep(50);//So it doesn't burn out your CPU.
 		}
 		return 0;
 	}
