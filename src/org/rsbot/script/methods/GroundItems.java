@@ -146,8 +146,9 @@ public class GroundItems extends MethodProvider {
 
 		org.rsbot.client.NodeListCache itemNLC = (org.rsbot.client.NodeListCache) methods.nodes.lookup(itemNC, id);
 
-		if (itemNLC == null)
+		if (itemNLC == null) {
 			return new RSGroundItem[0];
+		}
 
 		Deque<org.rsbot.client.RSItem> itemNL = new Deque<org.rsbot.client.RSItem>(itemNLC.getNodeList());
 		for (org.rsbot.client.RSItem item = itemNL.getHead(); item != null; item = itemNL.getNext()) {

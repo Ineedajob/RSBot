@@ -32,11 +32,14 @@ public class WebPath extends WebSkeleton {
 	 * @return <tt>True</tt> if walked, otherwise false.
 	 */
 	public boolean traverse(EnumSet<TraversalOption> options) {
-		if (options.contains(TraversalOption.HANDLE_RUN) && !methods.walking.isRunEnabled() && methods.walking.getEnergy() > 40) {
+		if (options.contains(
+				TraversalOption.HANDLE_RUN) && !methods.walking.isRunEnabled() && methods.walking.getEnergy() > 40) {
 			methods.walking.setRun(true);
 			sleep(random(500, 800));
 		}
-		if (options.contains(TraversalOption.SPACE_ACTIONS) && methods.walking.getDestination() != null && methods.calc.distanceTo(methods.walking.getDestination()) > random(2, 8)) {
+		if (options.contains(
+				TraversalOption.SPACE_ACTIONS) && methods.walking.getDestination() != null && methods.calc.distanceTo(
+				methods.walking.getDestination()) > random(2, 8)) {
 			return true;
 		}
 		int nextTileIndex = getNextIndex();

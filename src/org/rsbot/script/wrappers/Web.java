@@ -29,7 +29,7 @@ public class Web extends WebSkeleton {
 	/**
 	 * The WebMap allocation.
 	 */
-	private static WebMap map = null;
+	private WebMap map = null;
 
 	/**
 	 * @param ctx The MethodContext.

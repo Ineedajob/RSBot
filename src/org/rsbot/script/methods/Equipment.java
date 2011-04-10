@@ -141,8 +141,9 @@ public class Equipment extends MethodProvider {
 	public boolean containsOneOf(int... items) {
 		for (RSItem item : getItems()) {
 			for (int id : items) {
-				if (item.getID() == id)
+				if (item.getID() == id) {
 					return true;
+				}
 			}
 		}
 		return false;

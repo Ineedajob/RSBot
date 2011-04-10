@@ -26,8 +26,9 @@ public class DrillDemon extends Random {
 		camera.setPitch(true);
 		camera.setCompass('N');
 
-		if (getMyPlayer().isMoving() || (getMyPlayer().getAnimation() != -1))
+		if (getMyPlayer().isMoving() || (getMyPlayer().getAnimation() != -1)) {
 			return random(1200, 1500);
+		}
 
 		final RSNPC demon = npcs.getNearest(demonID);
 		final RSObject mat1 = objects.getNearest(10076);
@@ -35,8 +36,9 @@ public class DrillDemon extends Random {
 		final RSObject mat3 = objects.getNearest(10078);
 		final RSObject mat4 = objects.getNearest(10079);
 
-		if (demon == null)
+		if (demon == null) {
 			return -1;
+		}
 
 		myClickContinue();
 		sleep(random(750, 1000));
@@ -199,13 +201,13 @@ public class DrillDemon extends Random {
 				} else {
 					mat1.doAction("Use");
 				}
-				return random(2000,2500);
+				return random(2000, 2500);
 			} else if (sign2 == 1) {
 				mat2.doAction("Use");
-				return random(2000,2500);
+				return random(2000, 2500);
 			} else if (sign3 == 1) {
 				mat3.doAction("Use");
-				return random(2000,2500);
+				return random(2000, 2500);
 			} else if (sign4 == 1) {
 				if (calc.distanceTo(new RSTile(3159, 4820)) < 2) {
 					walking.walkTileMM(walking.randomize(
@@ -214,10 +216,10 @@ public class DrillDemon extends Random {
 				} else {
 					mat4.doAction("Use");
 				}
-				return random(2000,2500);
+				return random(2000, 2500);
 			}
 		} else if (interfaces.getComponent(148, 1).getText()
-				.contains("push ups")) {
+		                     .contains("push ups")) {
 			if (sign1 == 2) {
 				if (calc.distanceTo(new RSTile(3167, 4820)) < 2) {
 					walking.walkTileMM(walking.randomize(
@@ -226,13 +228,13 @@ public class DrillDemon extends Random {
 				} else {
 					mat1.doAction("Use");
 				}
-				return random(2000,2500);
+				return random(2000, 2500);
 			} else if (sign2 == 2) {
 				mat2.doAction("Use");
-				return random(2000,2500);
+				return random(2000, 2500);
 			} else if (sign3 == 2) {
 				mat3.doAction("Use");
-				return random(2000,2500);
+				return random(2000, 2500);
 			} else if (sign4 == 2) {
 				if (calc.distanceTo(new RSTile(3159, 4820)) < 2) {
 					walking.walkTileMM(walking.randomize(
@@ -241,10 +243,10 @@ public class DrillDemon extends Random {
 				} else {
 					mat4.doAction("Use");
 				}
-				return random(2000,2500);
+				return random(2000, 2500);
 			}
 		} else if (interfaces.getComponent(148, 1).getText()
-				.contains("sit ups")) {
+		                     .contains("sit ups")) {
 			if (sign1 == 3) {
 				if (calc.distanceTo(new RSTile(3167, 4820)) < 2) {
 					walking.walkTileMM(walking.randomize(
@@ -256,10 +258,10 @@ public class DrillDemon extends Random {
 				return random(1000, 1500);
 			} else if (sign2 == 3) {
 				mat2.doAction("Use");
-				return random(2000,2500);
+				return random(2000, 2500);
 			} else if (sign3 == 3) {
 				mat3.doAction("Use");
-				return random(2000,2500);
+				return random(2000, 2500);
 			} else if (sign4 == 3) {
 				if (calc.distanceTo(new RSTile(3159, 4820)) < 2) {
 					walking.walkTileMM(walking.randomize(
@@ -268,7 +270,7 @@ public class DrillDemon extends Random {
 				} else {
 					mat4.doAction("Use");
 				}
-				return random(2000,2500);
+				return random(2000, 2500);
 			}
 		} else if (interfaces.getComponent(148, 1).getText().contains("jog on")) {
 			if (sign1 == 4) {
@@ -279,13 +281,13 @@ public class DrillDemon extends Random {
 				} else {
 					mat1.doAction("Use");
 				}
-				return random(2000,2500);
+				return random(2000, 2500);
 			} else if (sign2 == 4) {
 				mat2.doAction("Use");
-				return random(2000,2500);
+				return random(2000, 2500);
 			} else if (sign3 == 4) {
 				mat3.doAction("Use");
-				return random(2000,2500);
+				return random(2000, 2500);
 			} else if (sign4 == 4) {
 				if (calc.distanceTo(new RSTile(3159, 4820)) < 2) {
 					walking.walkTileMM(walking.randomize(
@@ -294,7 +296,7 @@ public class DrillDemon extends Random {
 				} else {
 					mat4.doAction("Use");
 				}
-				return random(2000,2500);
+				return random(2000, 2500);
 			}
 		}
 
@@ -302,7 +304,7 @@ public class DrillDemon extends Random {
 			demon.doAction("Talk-to");
 		}
 
-		return random(2000,2500);
+		return random(2000, 2500);
 	}
 
 	public boolean myClickContinue() {

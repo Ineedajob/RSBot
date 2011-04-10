@@ -62,8 +62,9 @@ public class RSPlayer extends RSCharacter {
 				methods.mouse.move(screenLoc);
 			}
 			String[] items = methods.menu.getItems();
-			if (items.length <= 1)
+			if (items.length <= 1) {
 				return false;
+			}
 			if (items[0].toLowerCase().contains(action.toLowerCase())) {
 				methods.mouse.click(true);
 				return true;

@@ -38,7 +38,7 @@ public class DrawModel implements PaintListener, MouseListener {
 
 	public void onRepaint(Graphics render) {
 		drawRect(render);
-		if (enabled[0])
+		if (enabled[0]) {
 			for (org.rsbot.script.wrappers.RSObject o : ctx.objects.getAll()) {
 				RSModel model = o.getModel();
 				if (model != null) {
@@ -51,7 +51,8 @@ public class DrawModel implements PaintListener, MouseListener {
 					render.fillOval(p.x - 1, p.y - 1, 2, 2);
 				}
 			}
-		if (enabled[1])
+		}
+		if (enabled[1]) {
 			for (org.rsbot.script.wrappers.RSCharacter c : ctx.players.getAll()) {
 				RSModel model = c.getModel();
 				if (model != null) {
@@ -61,7 +62,8 @@ public class DrawModel implements PaintListener, MouseListener {
 					}
 				}
 			}
-		if (enabled[2])
+		}
+		if (enabled[2]) {
 			for (org.rsbot.script.wrappers.RSCharacter c : ctx.npcs.getAll()) {
 				RSModel model = c.getModel();
 				if (model != null) {
@@ -71,7 +73,8 @@ public class DrawModel implements PaintListener, MouseListener {
 					}
 				}
 			}
-		if (enabled[3])
+		}
+		if (enabled[3]) {
 			for (RSGroundItem item : ctx.groundItems.getAll()) {
 				RSModel model = item.getModel();
 				if (model != null) {
@@ -81,6 +84,7 @@ public class DrawModel implements PaintListener, MouseListener {
 					}
 				}
 			}
+		}
 	}
 
 	public final void drawRect(Graphics render) {
@@ -89,12 +93,14 @@ public class DrawModel implements PaintListener, MouseListener {
 		for (int i = 0; i < OPTIONS.length; i++) {
 			int alpha = 150;
 			render.setColor(new Color(j.getRed(), j.getGreen(), j.getBlue(), alpha));
-			if (enabled[i])
+			if (enabled[i]) {
 				render.setColor(new Color(w.getRed(), w.getGreen(), w.getBlue(), alpha));
+			}
 			render.fillRect(90 + (80 * i), 3, 80, 12);
 			render.setColor(Color.white);
-			if (enabled[i])
+			if (enabled[i]) {
 				render.setColor(Color.BLACK);
+			}
 			render.drawString(OPTIONS[i], 90 + (80 * i) + 10, 13);
 			render.setColor(Color.black);
 			render.drawRect(90 + (80 * i), 3, 80, 12);

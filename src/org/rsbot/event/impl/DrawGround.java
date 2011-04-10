@@ -18,11 +18,13 @@ public class DrawGround implements PaintListener {
 	}
 
 	public void onRepaint(final Graphics render) {
-		if (!ctx.game.isLoggedIn())
+		if (!ctx.game.isLoggedIn()) {
 			return;
+		}
 		final RSPlayer player = ctx.players.getMyPlayer();
-		if (player == null)
+		if (player == null) {
 			return;
+		}
 		render.setColor(Color.WHITE);
 		final RSTile location = player.getLocation();
 		for (int x = location.getX() - 25; x < location.getX() + 25; x++) {

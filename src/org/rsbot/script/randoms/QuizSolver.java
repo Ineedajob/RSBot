@@ -5,11 +5,10 @@ import org.rsbot.script.ScriptManifest;
 import org.rsbot.script.wrappers.RSNPC;
 
 
-
 //Checked 4/7/10
+
 /**
  * Updated by Arbiter Sep 20, 10: Replaced getModelZoom with getComponentID() and new sets of possible IDs as solutions
- *
  */
 @ScriptManifest(authors = {"PwnZ"}, name = "Quiz", version = 1.0)
 public class QuizSolver extends Random {
@@ -29,8 +28,9 @@ public class QuizSolver extends Random {
 		public boolean activateCondition() {
 			if (ID_to_Slot(ID_One) != -1) {
 				if (ID_to_Slot(ID_Two) != -1) {
-					if (ID_to_Slot(ID_Three) != -1)
+					if (ID_to_Slot(ID_Three) != -1) {
 						return true;
+					}
 				}
 			}
 
@@ -75,9 +75,9 @@ public class QuizSolver extends Random {
 
 			if (answer != -1) {
 				int slot;
-				if ((slot = findNotInAnswerArray()) != -1)
+				if ((slot = findNotInAnswerArray()) != -1) {
 					return atSlot(slot);
-				else {
+				} else {
 					log.info("findNotInAnswerArray() fail.");
 					return false;
 				}
@@ -89,14 +89,15 @@ public class QuizSolver extends Random {
 		}
 
 		public int findNotInAnswerArray() {
-			if (!arrayContains(items[answer], ID_One))
+			if (!arrayContains(items[answer], ID_One)) {
 				return 1;
-			else if (!arrayContains(items[answer], ID_Two))
+			} else if (!arrayContains(items[answer], ID_Two)) {
 				return 2;
-			else if (!arrayContains(items[answer], ID_Three))
+			} else if (!arrayContains(items[answer], ID_Three)) {
 				return 3;
-			else
+			} else {
 				return -1;
+			}
 		}
 	}
 
@@ -133,35 +134,38 @@ public class QuizSolver extends Random {
 	}
 
 	public int ID_to_Slot(final int id) {
-		if (Slot_to_ID(1) == id)
+		if (Slot_to_ID(1) == id) {
 			return 1;
-		else if (Slot_to_ID(2) == id)
+		} else if (Slot_to_ID(2) == id) {
 			return 2;
-		else if (Slot_to_ID(3) == id)
+		} else if (Slot_to_ID(3) == id) {
 			return 3;
-		else
+		} else {
 			return -1;
+		}
 	}
 
 	@Override
 	public int loop() {
 		final RSNPC quizMaster = npcs.getNearest("Quiz Master");
-		if (quizMaster == null)
+		if (quizMaster == null) {
 			return -1;
+		}
 
 		if (Slot_to_ID(1) != -1) {
 			log.info("Question detected.");
 			final QuizQuestion question = new QuizQuestion(Slot_to_ID(1), Slot_to_ID(2), Slot_to_ID(3));
-			if (question.clickAnswer())
+			if (question.clickAnswer()) {
 				return random(2200, 3000);
-			else {
+			} else {
 				log.info("Trying Random Answer");
 				atRandom();
 				return random(1200, 2200);
 			}
 		} else {
-			if (interfaces.clickContinue())
+			if (interfaces.clickContinue()) {
 				return random(800, 1200);
+			}
 		}
 		return random(1200, 2000);
 	}

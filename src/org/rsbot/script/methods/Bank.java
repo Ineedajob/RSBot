@@ -9,17 +9,17 @@ import java.awt.*;
  */
 public class Bank extends MethodProvider {
 
-	public static final int[] BANKERS = {44, 45, 494, 495, 499, 958, 1036,
-			2271, 2354, 2355, 3824, 5488, 5901, 5912, 5913, 6362, 6532, 6533,
-			6534, 6535, 7605, 8948, 9710, 14367};
+	public static final int[] BANKERS = {44, 45, 494, 495, 499, 553, 958, 1036,
+	                                     2271, 2354, 2355, 2759, 3824, 5488, 5901, 5912, 5913, 6362, 6532, 6533,
+	                                     6534, 6535, 7605, 8948, 9710, 14367};
 	public static final int[] BANK_BOOTHS = {2213, 4483, 6084, 11402, 11758,
-			12759, 14367, 19230, 24914, 25808, 26972, 27663, 29085, 34752,
-			35647, 36786};
+	                                         12759, 14367, 19230, 24914, 25808, 26972, 27663, 29085, 34752,
+	                                         35647, 36786};
 	public static final int[] BANK_CHESTS = {4483, 12308, 21301, 27663, 42192};
 	public static final int[] BANK_DEPOSIT_BOX = {9398, 20228, 26969, 36788};
 
 	public static final int[] DO_NOT_DEPOSIT = new int[]{1265, 1267, 1269,
-			1273, 1271, 1275, 1351, 590, 303};
+	                                                     1273, 1271, 1275, 1351, 590, 303};
 
 	public static final int INTERFACE_BANK = 762;
 	public static final int INTERFACE_BANK_BUTTON_CLOSE = 43;
@@ -49,9 +49,9 @@ public class Bank extends MethodProvider {
 	public static final int INTERFACE_COLLECTION_BOX_CLOSE = 13;
 
 	public static final int[] INTERFACE_BANK_TAB = {63, 61, 59, 57, 55, 53,
-			51, 49, 47};
+	                                                51, 49, 47};
 	public static final int[] INTERFACE_BANK_TAB_FIRST_ITEM = {78, 79, 80, 81,
-			82, 83, 84, 85, 86};
+	                                                           82, 83, 84, 85, 86};
 
 	public static final int INTERFACE_DEPOSIT_BOX = 11;
 	public static final int INTERFACE_DEPOSIT_BOX_BUTTON_CLOSE = 15;
@@ -71,13 +71,13 @@ public class Bank extends MethodProvider {
 	public boolean close() {
 		if (isOpen()) {
 			methods.interfaces.getComponent(INTERFACE_BANK,
-					INTERFACE_BANK_BUTTON_CLOSE).doClick();
+			                                INTERFACE_BANK_BUTTON_CLOSE).doClick();
 			sleep(random(500, 600));
 			return !isOpen();
 		}
 		if (isDepositOpen()) {
 			methods.interfaces.getComponent(INTERFACE_DEPOSIT_BOX,
-					INTERFACE_DEPOSIT_BOX_BUTTON_CLOSE).doClick();
+			                                INTERFACE_DEPOSIT_BOX_BUTTON_CLOSE).doClick();
 			sleep(random(500, 600));
 			return !isDepositOpen();
 		}
@@ -97,18 +97,18 @@ public class Bank extends MethodProvider {
 		if (isOpen() || isDepositOpen()) {
 			if (number < 0) {
 				throw new IllegalArgumentException("number < 0 (" + number
-						+ ")");
+						                                   + ")");
 			}
 			RSComponent item = null;
 			int itemCount = 0;
 			int invCount = isOpen() ? methods.inventory.getCount(true)
-					: getBoxCount();
+			                        : getBoxCount();
 
 			if (!isOpen()) {
 				boolean match = false;
 				for (int i = 0; i < 28; i++) {
 					RSComponent comp = methods.interfaces.get(11)
-							.getComponent(17).getComponent(i);
+					                                     .getComponent(17).getComponent(i);
 					if (comp.getComponentID() == itemID) {
 						itemCount += comp.getComponentStackSize();
 						if (!match) {
@@ -145,14 +145,14 @@ public class Bank extends MethodProvider {
 						if (item.doAction("Deposit-X")) {
 							sleep(random(1000, 1300));
 							methods.inputManager.sendKeys(String.valueOf(number),
-									true);
+							                              true);
 						}
 					}
 					break;
 			}
 			sleep(300);
 			int cInvCount = isOpen() ? methods.inventory.getCount(true)
-					: getBoxCount();
+			                         : getBoxCount();
 			return cInvCount < invCount || cInvCount == 0;
 		}
 		return false;
@@ -166,12 +166,12 @@ public class Bank extends MethodProvider {
 	public boolean depositAll() {
 		if (isOpen()) {
 			return methods.interfaces.getComponent(INTERFACE_BANK,
-					INTERFACE_BANK_BUTTON_DEPOSIT_CARRIED_ITEMS).doClick();
+			                                       INTERFACE_BANK_BUTTON_DEPOSIT_CARRIED_ITEMS).doClick();
 		}
 		return isDepositOpen()
 				&& methods.interfaces.getComponent(INTERFACE_DEPOSIT_BOX,
-				INTERFACE_DEPOSIT_BUTTON_DEPOSIT_CARRIED_ITEMS)
-				.doClick();
+				                                   INTERFACE_DEPOSIT_BUTTON_DEPOSIT_CARRIED_ITEMS)
+				                     .doClick();
 	}
 
 	/**
@@ -185,12 +185,14 @@ public class Bank extends MethodProvider {
 		if (isOpen() || isDepositOpen()) {
 			boolean deposit = true;
 			int invCount = isOpen() ? methods.inventory.getCount(true)
-					: getBoxCount();
+			                        : getBoxCount();
 			outer:
 			for (int i = 0; i < 28; i++) {
 				RSComponent item = isOpen() ? methods.inventory.getItemAt(i)
-						.getComponent() : methods.interfaces.get(11)
-						.getComponent(17).getComponent(i);
+				                                               .getComponent() : methods.interfaces.get(11)
+				                                                                                   .getComponent(
+						                                                                                   17).getComponent(
+								i);
 				if (item != null && item.getComponentID() != -1) {
 					for (int id : items) {
 						if (item.getComponentID() == id) {
@@ -224,11 +226,11 @@ public class Bank extends MethodProvider {
 	public boolean depositAllEquipped() {
 		if (isOpen()) {
 			return methods.interfaces.getComponent(INTERFACE_BANK,
-					INTERFACE_BANK_BUTTON_DEPOSIT_WORN_ITEMS).doClick();
+			                                       INTERFACE_BANK_BUTTON_DEPOSIT_WORN_ITEMS).doClick();
 		}
 		return isDepositOpen()
 				&& methods.interfaces.getComponent(INTERFACE_DEPOSIT_BOX,
-				INTERFACE_DEPOSIT_BUTTON_DEPOSIT_WORN_ITEMS).doClick();
+				                                   INTERFACE_DEPOSIT_BUTTON_DEPOSIT_WORN_ITEMS).doClick();
 	}
 
 	/**
@@ -238,10 +240,12 @@ public class Bank extends MethodProvider {
 	 * @since 6 March 2009.
 	 */
 	public boolean depositAllFamiliar() {
-		if (isOpen())
+		if (isOpen()) {
 			return methods.interfaces.getComponent(INTERFACE_BANK,
-					INTERFACE_BANK_BUTTON_DEPOSIT_BEAST_INVENTORY).doClick();
-		return isDepositOpen() && methods.interfaces.getComponent(INTERFACE_DEPOSIT_BOX, INTERFACE_DEPOSIT_BUTTON_DEPOSIT_BEAST_INVENTORY).doClick();
+			                                       INTERFACE_BANK_BUTTON_DEPOSIT_BEAST_INVENTORY).doClick();
+		}
+		return isDepositOpen() && methods.interfaces.getComponent(INTERFACE_DEPOSIT_BOX,
+		                                                          INTERFACE_DEPOSIT_BUTTON_DEPOSIT_BEAST_INVENTORY).doClick();
 	}
 
 	/**
@@ -271,9 +275,10 @@ public class Bank extends MethodProvider {
 	public int getCurrentTab() {
 		for (int i = 0; i < INTERFACE_BANK_TAB.length; i++) {
 			if (methods.interfaces.get(INTERFACE_BANK)
-					.getComponent(INTERFACE_BANK_TAB[i] - 1)
-					.getBackgroundColor() == 1419)
+			                      .getComponent(INTERFACE_BANK_TAB[i] - 1)
+			                      .getBackgroundColor() == 1419) {
 				return i;
+			}
 		}
 		return -1; // no selected ones. Bank may not be open.
 	}
@@ -308,8 +313,9 @@ public class Bank extends MethodProvider {
 		final RSItem[] items = getItems();
 		if (items != null) {
 			for (final RSItem item : items) {
-				if (item.getComponent().getComponentIndex() == index)
+				if (item.getComponent().getComponentIndex() == index) {
 					return item;
+				}
 			}
 		}
 
@@ -326,8 +332,9 @@ public class Bank extends MethodProvider {
 		final RSItem[] items = getItems();
 		if (items != null) {
 			for (final RSItem item : items) {
-				if (item.getID() == id)
+				if (item.getID() == id) {
 					return item;
+				}
 			}
 		}
 		return null;
@@ -341,12 +348,14 @@ public class Bank extends MethodProvider {
 	 * @return The point of the item or new Point(-1, -1) if null.
 	 */
 	public Point getItemPoint(final int slot) {
-		if (slot < 0)
+		if (slot < 0) {
 			throw new IllegalArgumentException("slot < 0 " + slot);
+		}
 
 		final RSItem item = getItemAt(slot);
-		if (item != null)
+		if (item != null) {
 			return item.getComponent().getLocation();
+		}
 
 		return new Point(-1, -1);
 	}
@@ -358,8 +367,9 @@ public class Bank extends MethodProvider {
 	 */
 	public RSItem[] getItems() {
 		if ((getInterface() == null)
-				|| (getInterface().getComponent(INTERFACE_BANK_INVENTORY) == null))
+				|| (getInterface().getComponent(INTERFACE_BANK_INVENTORY) == null)) {
 			return new RSItem[0];
+		}
 
 		RSComponent[] components = getInterface().getComponent(
 				INTERFACE_BANK_INVENTORY).getComponents();
@@ -430,7 +440,7 @@ public class Bank extends MethodProvider {
 						|| ((bankChest != null)
 						&& (methods.calc.distanceTo(bankChest) < 8)
 						&& methods.calc.tileOnMap(bankChest
-						.getLocation())
+								                          .getLocation())
 						&& methods.calc.canReach(
 						bankChest.getLocation(), true) && !isOpen())) {
 					if (bankBooth != null) {
@@ -542,7 +552,7 @@ public class Bank extends MethodProvider {
 	public boolean openTab(final int tabNumber) {
 		return isOpen()
 				&& methods.interfaces.getComponent(INTERFACE_BANK,
-				INTERFACE_BANK_TAB[tabNumber - 1]).doClick();
+				                                   INTERFACE_BANK_TAB[tabNumber - 1]).doClick();
 	}
 
 	/**
@@ -561,11 +571,12 @@ public class Bank extends MethodProvider {
 	 * @return <tt>true</tt> on success.
 	 */
 	public boolean searchItem(final String itemName) {
-		if (!isOpen())
+		if (!isOpen()) {
 			return false;
+		}
 
 		methods.interfaces.getComponent(INTERFACE_BANK,
-				INTERFACE_BANK_BUTTON_SEARCH).doAction("Search");
+		                                INTERFACE_BANK_BUTTON_SEARCH).doAction("Search");
 		sleep(random(1000, 1500));
 		if (!isSearchOpen()) {
 			sleep(500);
@@ -584,12 +595,13 @@ public class Bank extends MethodProvider {
 	 * @return <tt>true</tt> on success.
 	 */
 	public boolean setRearrangeModeToInsert() {
-		if (!isOpen())
+		if (!isOpen()) {
 			return false;
+		}
 		if (methods.settings
 				.getSetting(Settings.SETTING_BANK_TOGGLE_REARRANGE_MODE) != 1) {
 			methods.interfaces.getComponent(INTERFACE_BANK,
-					INTERFACE_BANK_BUTTON_INSERT).doClick();
+			                                INTERFACE_BANK_BUTTON_INSERT).doClick();
 			sleep(random(500, 700));
 		}
 		return methods.settings
@@ -602,12 +614,13 @@ public class Bank extends MethodProvider {
 	 * @return <tt>true</tt> on success.
 	 */
 	public boolean setRearrangeModeToSwap() {
-		if (!isOpen())
+		if (!isOpen()) {
 			return false;
+		}
 		if (methods.settings
 				.getSetting(Settings.SETTING_BANK_TOGGLE_REARRANGE_MODE) != 0) {
 			methods.interfaces.getComponent(INTERFACE_BANK,
-					INTERFACE_BANK_BUTTON_SWAP).doClick();
+			                                INTERFACE_BANK_BUTTON_SWAP).doClick();
 			sleep(random(500, 700));
 		}
 		return methods.settings
@@ -620,12 +633,13 @@ public class Bank extends MethodProvider {
 	 * @return <tt>true</tt> on success.
 	 */
 	public boolean setWithdrawModeToItem() {
-		if (!isOpen())
+		if (!isOpen()) {
 			return false;
+		}
 		if (methods.settings
 				.getSetting(Settings.SETTING_BANK_TOGGLE_WITHDRAW_MODE) != 0) {
 			methods.interfaces.getComponent(INTERFACE_BANK,
-					INTERFACE_BANK_BUTTON_ITEM).doClick();
+			                                INTERFACE_BANK_BUTTON_ITEM).doClick();
 			sleep(random(500, 700));
 		}
 		return methods.settings
@@ -638,12 +652,13 @@ public class Bank extends MethodProvider {
 	 * @return <tt>true</tt> on success.
 	 */
 	public boolean setWithdrawModeToNote() {
-		if (!isOpen())
+		if (!isOpen()) {
 			return false;
+		}
 		if (methods.settings
 				.getSetting(Settings.SETTING_BANK_TOGGLE_WITHDRAW_MODE) != 1) {
 			methods.interfaces.getComponent(INTERFACE_BANK,
-					INTERFACE_BANK_BUTTON_NOTE).doClick();
+			                                INTERFACE_BANK_BUTTON_NOTE).doClick();
 			sleep(random(500, 700));
 		}
 		return methods.settings
@@ -661,26 +676,30 @@ public class Bank extends MethodProvider {
 	 */
 	public boolean withdraw(final int itemID, final int count) {
 		if (isOpen()) {
-			if (count < 0)
+			if (count < 0) {
 				throw new IllegalArgumentException("count (" + count + ") < 0");
+			}
 			RSItem rsi = getItem(itemID);
-			if (rsi == null)
+			if (rsi == null) {
 				return false;
+			}
 			RSComponent item = rsi.getComponent();
-			if (item == null)
+			if (item == null) {
 				return false;
+			}
 
 			// Check tab
 			while (item.getRelativeX() == 0 && getCurrentTab() != 0) {
 				methods.interfaces.getComponent(INTERFACE_BANK,
-						INTERFACE_BANK_TAB[0]).doClick();
+				                                INTERFACE_BANK_TAB[0]).doClick();
 				sleep(random(800, 1300));
 			}
 
 			// Scroll to the item
 			if (!methods.interfaces.scrollTo(item, (INTERFACE_BANK << 16)
-					+ INTERFACE_BANK_SCROLLBAR))
+					+ INTERFACE_BANK_SCROLLBAR)) {
 				return false;
+			}
 
 			int invCount = methods.inventory.getCount(true);
 			switch (count) {
@@ -725,7 +744,7 @@ public class Bank extends MethodProvider {
 			for (int id : ids) {
 				if (methods.interfaces.get(11).getComponent(17).isValid()
 						&& methods.interfaces.get(11).getComponent(17)
-						.getComponent(i).getComponentID() == id) {
+						                     .getComponent(i).getComponentID() == id) {
 					count++;
 				}
 			}
@@ -747,7 +766,7 @@ public class Bank extends MethodProvider {
 		for (int i = 0; i < 28; i++) {
 			if (methods.interfaces.get(11).getComponent(17).isValid()
 					&& methods.interfaces.get(11).getComponent(17)
-					.getComponent(i).getComponentID() != -1) {
+					                     .getComponent(i).getComponentID() != -1) {
 				count++;
 			}
 		}
@@ -762,14 +781,16 @@ public class Bank extends MethodProvider {
 	 */
 	public RSItem[] getEquipmentItems() {
 		if (methods.interfaces.get(INTERFACE_EQUIPMENT)
-				.getComponent(INTERFACE_EQUIPMENT_COMPONENT).isValid())
+		                      .getComponent(INTERFACE_EQUIPMENT_COMPONENT).isValid()) {
 			return new RSItem[0];
+		}
 
 		RSComponent[] components = methods.interfaces.get(INTERFACE_EQUIPMENT)
-				.getComponent(INTERFACE_EQUIPMENT_COMPONENT).getComponents();
+		                                             .getComponent(INTERFACE_EQUIPMENT_COMPONENT).getComponents();
 		RSItem[] items = new RSItem[components.length];
-		for (int i = 0; i < items.length; i++)
+		for (int i = 0; i < items.length; i++) {
 			items[i] = new RSItem(methods, components[i]);
+		}
 
 		return items;
 	}
@@ -785,8 +806,9 @@ public class Bank extends MethodProvider {
 		RSItem[] items = getEquipmentItems();
 		if (items != null) {
 			for (final RSItem item : items) {
-				if (item.getID() == id)
+				if (item.getID() == id) {
 					return item;
+				}
 			}
 		}
 		return null;
@@ -803,8 +825,9 @@ public class Bank extends MethodProvider {
 		RSItem[] items = getEquipmentItems();
 		if (items != null) {
 			for (final RSItem item : items) {
-				if (item.getName().contains(name))
+				if (item.getName().contains(name)) {
 					return item.getID();
+				}
 			}
 		}
 		return -1;
@@ -817,7 +840,8 @@ public class Bank extends MethodProvider {
 	 * @author LastCoder
 	 */
 	public boolean openEquipment() {
-		return getInterface().getComponent(INTERFACE_BANK_BUTTON_OPEN_EQUIP).isValid() && getInterface().getComponent(INTERFACE_BANK_BUTTON_OPEN_EQUIP).doClick();
+		return getInterface().getComponent(INTERFACE_BANK_BUTTON_OPEN_EQUIP).isValid() && getInterface().getComponent(
+				INTERFACE_BANK_BUTTON_OPEN_EQUIP).doClick();
 	}
 
 	/**
@@ -831,14 +855,18 @@ public class Bank extends MethodProvider {
 		RSItem[] items = getItems();
 		if (items != null) {
 			// Search matching name first
-			for (final RSItem item : items)
-				if (item.getName().toLowerCase().equals(name.toLowerCase()))
+			for (final RSItem item : items) {
+				if (item.getName().toLowerCase().equals(name.toLowerCase())) {
 					return item.getID();
+				}
+			}
 
 			// No exact match found, search partial match
-			for (final RSItem item : items)
-				if (item.getName().toLowerCase().contains(name.toLowerCase()))
+			for (final RSItem item : items) {
+				if (item.getName().toLowerCase().contains(name.toLowerCase())) {
 					return item.getID();
+				}
+			}
 		}
 
 		// No matches

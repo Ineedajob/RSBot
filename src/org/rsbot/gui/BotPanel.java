@@ -194,19 +194,20 @@ public class BotPanel extends JPanel {
 					if (e instanceof MouseWheelEvent) {
 						MouseWheelEvent mwe = (MouseWheelEvent) e;
 						c.dispatchEvent(new MouseWheelEvent(c, e.getID(), System.currentTimeMillis(),
-								0, e.getX(), e.getY(), 0, e.isPopupTrigger(),
-								mwe.getScrollType(), mwe.getScrollAmount(), mwe.getWheelRotation()));
+						                                    0, e.getX(), e.getY(), 0, e.isPopupTrigger(),
+						                                    mwe.getScrollType(), mwe.getScrollAmount(),
+						                                    mwe.getWheelRotation()));
 					} else {
 						c.dispatchEvent(new MouseEvent(c, e.getID(), System.currentTimeMillis(),
-								0, e.getX(), e.getY(), 0, e.isPopupTrigger(), e.getButton()));
+						                               0, e.getX(), e.getY(), 0, e.isPopupTrigger(), e.getButton()));
 					}
 				} else {
 					c.dispatchEvent(new MouseEvent(c, MouseEvent.MOUSE_ENTERED, System.currentTimeMillis(),
-							0, e.getX(), e.getY(), 0, false));
+					                               0, e.getX(), e.getY(), 0, false));
 				}
 			} else if (present) {
 				c.dispatchEvent(new MouseEvent(c, MouseEvent.MOUSE_EXITED, System.currentTimeMillis(),
-						0, e.getX(), e.getY(), 0, false));
+				                               0, e.getX(), e.getY(), 0, false));
 			}
 		}
 	}
@@ -232,14 +233,14 @@ public class BotPanel extends JPanel {
 			} else {
 				present = true;
 				bot.getEventManager().dispatchEvent(new MouseEvent(c,
-						MouseEvent.MOUSE_ENTERED, System.currentTimeMillis(),
-						0, e.getX(), e.getY(), 0, false));
+				                                                   MouseEvent.MOUSE_ENTERED, System.currentTimeMillis(),
+				                                                   0, e.getX(), e.getY(), 0, false));
 			}
 		} else if (present) {
 			present = false;
 			bot.getEventManager().dispatchEvent(new MouseEvent(c,
-					MouseEvent.MOUSE_EXITED, System.currentTimeMillis(),
-					0, e.getX(), e.getY(), 0, false));
+			                                                   MouseEvent.MOUSE_EXITED, System.currentTimeMillis(),
+			                                                   0, e.getX(), e.getY(), 0, false));
 		}
 	}
 

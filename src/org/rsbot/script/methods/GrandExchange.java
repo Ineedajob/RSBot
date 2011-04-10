@@ -89,8 +89,9 @@ public class GrandExchange extends MethodProvider {
 				} else if (input.matches("(?i).+ (price|days):</b> .+")) {
 					values[i] = parse(input);
 					i++;
-				} else if (input.matches("<div id=\"legend\">"))
+				} else if (input.matches("<div id=\"legend\">")) {
 					break;
+				}
 			}
 			return new GEItem(name, examine, itemID, values);
 		} catch (IOException ignore) {
@@ -108,8 +109,8 @@ public class GrandExchange extends MethodProvider {
 	public GEItem lookup(final String itemName) {
 		try {
 			URL url = new URL(GrandExchange.HOST
-					+ "/m=itemdb_rs/results.ws?query=" + itemName
-					+ "&price=all&members=");
+					                  + "/m=itemdb_rs/results.ws?query=" + itemName
+					                  + "&price=all&members=");
 			BufferedReader br = new BufferedReader(new InputStreamReader(
 					url.openStream()));
 			String input;
@@ -153,8 +154,9 @@ public class GrandExchange extends MethodProvider {
 	}
 
 	private String stripFormatting(final String str) {
-		if (str != null && !str.isEmpty())
+		if (str != null && !str.isEmpty()) {
 			return str.replaceAll("(^[^<]+>|<[^>]+>|<[^>]+$)", "");
+		}
 		return "";
 	}
 
