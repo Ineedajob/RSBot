@@ -34,21 +34,21 @@ public class AccountManager extends JDialog implements ActionListener {
 			.getAccountsFile();
 
 	private static final String[] RANDOM_REWARDS = {"Cash", "Runes", "Coal",
-			"Essence", "Ore", "Bars", "Gems", "Herbs", "Seeds", "Charms",
-			"Surprise", "Emote", "Costume", "Attack", "Defence", "Strength",
-			"Constitution", "Range", "Prayer", "Magic", "Cooking",
-			"Woodcutting", "Fletching", "Fishing", "Firemaking", "Crafting",
-			"Smithing", "Mining", "Herblore", "Agility", "Thieving", "Slayer",
-			"Farming", "Runecrafting", "Hunter", "Construction", "Summoning",
-			"Dungeoneering"};
+	                                                "Essence", "Ore", "Bars", "Gems", "Herbs", "Seeds", "Charms",
+	                                                "Surprise", "Emote", "Costume", "Attack", "Defence", "Strength",
+	                                                "Constitution", "Range", "Prayer", "Magic", "Cooking",
+	                                                "Woodcutting", "Fletching", "Fishing", "Firemaking", "Crafting",
+	                                                "Smithing", "Mining", "Herblore", "Agility", "Thieving", "Slayer",
+	                                                "Farming", "Runecrafting", "Hunter", "Construction", "Summoning",
+	                                                "Dungeoneering"};
 
 	private static final String[] VALID_KEYS = {"password", "pin", "reward",
-			"member", "take_breaks"};
+	                                            "member", "take_breaks"};
 
 	private static Map<String, Map<String, String>> accounts;
 
 	private static final Logger log = Logger.getLogger(AccountManager.class
-			.getName());
+			                                                   .getName());
 
 	private static String key;
 
@@ -122,12 +122,13 @@ public class AccountManager extends JDialog implements ActionListener {
 					if (str == null || str.isEmpty()) {
 						return null;
 					}
-					if (getColumnClass(column) == Boolean.class)
+					if (getColumnClass(column) == Boolean.class) {
 						return Boolean.parseBoolean(str);
-					else if (getColumnClass(column) == Integer.class)
+					} else if (getColumnClass(column) == Integer.class) {
 						return Integer.parseInt(str);
-					else
+					} else {
 						return str;
+					}
 				}
 			}
 			return null;
@@ -135,8 +136,9 @@ public class AccountManager extends JDialog implements ActionListener {
 
 		@Override
 		public String getColumnName(int column) {
-			if (column == 0)
+			if (column == 0) {
 				return "Username";
+			}
 			String str = VALID_KEYS[column - 1];
 			StringBuilder b = new StringBuilder();
 			boolean space = true;
@@ -153,10 +155,12 @@ public class AccountManager extends JDialog implements ActionListener {
 		@SuppressWarnings({"unchecked", "rawtypes"})
 		@Override
 		public Class getColumnClass(int column) {
-			if (getColumnName(column).equals("Member"))
+			if (getColumnName(column).equals("Member")) {
 				return Boolean.class;
-			if (getColumnName(column).equals("Take Breaks"))
+			}
+			if (getColumnName(column).equals("Take Breaks")) {
 				return Boolean.class;
+			}
 			return Object.class;
 		}
 
@@ -168,10 +172,11 @@ public class AccountManager extends JDialog implements ActionListener {
 		@Override
 		public void setValueAt(Object value, int row, int column) {
 			Map<String, String> acc = accounts.get(userForRow(row));
-			if (acc == null)
+			if (acc == null) {
 				return;
+			}
 			acc.put(getColumnName(column).toLowerCase().replace(' ', '_'),
-					String.valueOf(value));
+			        String.valueOf(value));
 			fireTableCellUpdated(row, column);
 		}
 
@@ -180,8 +185,9 @@ public class AccountManager extends JDialog implements ActionListener {
 			for (int k = 0; it.hasNext() && k < row; k++) {
 				it.next();
 			}
-			if (it.hasNext())
+			if (it.hasNext()) {
 				return it.next();
+			}
 			return null;
 		}
 
@@ -202,10 +208,11 @@ public class AccountManager extends JDialog implements ActionListener {
 				dispose();
 			} else if (label.equals("Add")) {
 				String str = JOptionPane.showInputDialog(getParent(),
-						"Enter the account username.", "New Account",
-						JOptionPane.QUESTION_MESSAGE);
-				if (str == null || str.isEmpty())
+				                                         "Enter the account username.", "New Account",
+				                                         JOptionPane.QUESTION_MESSAGE);
+				if (str == null || str.isEmpty()) {
 					return;
+				}
 				accounts.put(str, new TreeMap<String, String>());
 				accounts.get(str).put("reward", RANDOM_REWARDS[0]);
 				int row = table.getRowCount();
@@ -270,17 +277,17 @@ public class AccountManager extends JDialog implements ActionListener {
 
 		newButton.setText("Add");
 		bar.add(newButton, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
-				GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(
+		                                          GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(
 						0, 0, 5, 5), 0, 0));
 
 		removeButton.setText("Remove");
 		bar.add(removeButton, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0,
-				GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(
+		                                             GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(
 						0, 0, 5, 5), 0, 0));
 
 		doneButton.setText("Done");
 		bar.add(doneButton, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0,
-				GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(
+		                                           GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(
 						0, 0, 5, 0), 0, 0));
 
 		newButton.addActionListener(this);
@@ -403,8 +410,9 @@ public class AccountManager extends JDialog implements ActionListener {
 					return "";
 				}
 				return password;
-			} else
+			} else {
 				return null;
+			}
 		} catch (NoSuchAlgorithmException e) {
 			log.info("Fail getting password");
 		} catch (UnsupportedEncodingException e) {
@@ -493,9 +501,11 @@ public class AccountManager extends JDialog implements ActionListener {
 	 * @return true if the object is supported, false if it isn't
 	 */
 	private static boolean isValidKey(final String key) {
-		for (String check : VALID_KEYS)
-			if (key.equalsIgnoreCase(check))
+		for (String check : VALID_KEYS) {
+			if (key.equalsIgnoreCase(check)) {
 				return true;
+			}
+		}
 		return false;
 	}
 
@@ -540,7 +550,7 @@ public class AccountManager extends JDialog implements ActionListener {
 							names.put(AccountManager.fixName(name), keys);
 						}
 						name = line.trim().substring(1)
-								.substring(0, line.length() - 2);
+						           .substring(0, line.length() - 2);
 						keys = new TreeMap<String, String>();
 						continue;
 					}
@@ -554,8 +564,8 @@ public class AccountManager extends JDialog implements ActionListener {
 							if (split[0].equals("pin")) {
 								if (!isValidPin(value)) {
 									log.warning("Invalid pin '" + value
-											+ "' on account: " + name
-											+ " (ignored)");
+											            + "' on account: " + name
+											            + " (ignored)");
 									value = null;
 								}
 							}
@@ -592,7 +602,7 @@ public class AccountManager extends JDialog implements ActionListener {
 				bw.append("[").append(name).append("]");
 				bw.newLine();
 				for (final String key : AccountManager.accounts.get(name)
-						.keySet()) {
+				                                               .keySet()) {
 					if (key.isEmpty()) {
 						continue;
 					}
@@ -603,7 +613,7 @@ public class AccountManager extends JDialog implements ActionListener {
 							&& !isValidPin(value)) {
 						if (!value.isEmpty()) {
 							log.warning("Invalid pin '" + value
-									+ "' on account: " + name + " (ignored)");
+									            + "' on account: " + name + " (ignored)");
 						}
 						AccountManager.accounts.get(name).remove(key);
 					}
@@ -629,10 +639,11 @@ public class AccountManager extends JDialog implements ActionListener {
 			int halfbyte = (aData >>> 4) & 0x0F;
 			int two_halfs = 0;
 			do {
-				if ((0 <= halfbyte) && (halfbyte <= 9))
+				if ((0 <= halfbyte) && (halfbyte <= 9)) {
 					buf.append((char) ('0' + halfbyte));
-				else
+				} else {
 					buf.append((char) ('a' + (halfbyte - 10)));
+				}
 				halfbyte = aData & 0x0F;
 			} while (two_halfs++ < 1);
 		}

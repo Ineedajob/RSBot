@@ -122,8 +122,9 @@ public class Walking extends MethodProvider {
 		// Just a few ideas that could improve this method.
 		RSTile dest = r > 0 ? new RSTile(t.getX() + random(-r, r + 1), t.getY()
 				+ random(-r, r + 1)) : t;
-		if (methods.players.getMyPlayer().getLocation().equals(dest))
+		if (methods.players.getMyPlayer().getLocation().equals(dest)) {
 			return false;
+		}
 		Point p = methods.calc.tileToMinimap(dest);
 		if (p.x == -1) {
 			dest = getClosestTileOnMap(t);
@@ -150,7 +151,7 @@ public class Walking extends MethodProvider {
 	 */
 	public boolean walkTileOnScreen(final RSTile tileToWalk) {
 		return methods.tiles.doAction(methods.calc.getTileOnScreen(tileToWalk),
-				"Walk ");
+		                              "Walk ");
 	}
 
 	/**
@@ -247,9 +248,9 @@ public class Walking extends MethodProvider {
 		if (!methods.calc.tileOnMap(tile) && methods.game.isLoggedIn()) {
 			RSTile loc = methods.players.getMyPlayer().getLocation();
 			RSTile walk = new RSTile((loc.getX() + tile.getX()) / 2,
-					(loc.getY() + tile.getY()) / 2);
+			                         (loc.getY() + tile.getY()) / 2);
 			return methods.calc.tileOnMap(walk) ? walk
-					: getClosestTileOnMap(walk);
+			                                    : getClosestTileOnMap(walk);
 		}
 		return tile;
 	}
@@ -271,7 +272,7 @@ public class Walking extends MethodProvider {
 	public int getEnergy() {
 		try {
 			return Integer.parseInt(methods.interfaces.getComponent(750, 5)
-					.getText());
+			                                          .getText());
 		} catch (NumberFormatException e) {
 			return 0;
 		}
@@ -485,16 +486,18 @@ public class Walking extends MethodProvider {
 
 		for (int i = closest; i < path.length; i++) {
 
-			if (methods.calc.distanceTo(path[i]) <= skipDist)
+			if (methods.calc.distanceTo(path[i]) <= skipDist) {
 				feasibleTileIndex = i;
-			else
+			} else {
 				break;
+			}
 		}
 
-		if (feasibleTileIndex == -1)
+		if (feasibleTileIndex == -1) {
 			return null;
-		else
+		} else {
 			return path[feasibleTileIndex];
+		}
 	}
 
 	/**

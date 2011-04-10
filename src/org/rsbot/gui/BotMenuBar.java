@@ -48,8 +48,10 @@ public class BotMenuBar extends JMenuBar {
 
 		TITLES = new String[]{"File", "Edit", "View", "Help"};
 		ELEMENTS = new String[][]{
-				{"New Bot", "Close Bot", "-", "Run Script", "Stop Script", "Pause Script", "-", "Snap to Tray", "Save Screenshot", "-", "Exit"},
-				{"Accounts", "-", "ToggleF Force Input", "ToggleF Less CPU", "-", "ToggleF Disable Anti-Randoms", "ToggleF Disable Auto Login", "-", "ToggleF Disable Advertisments"},
+				{"New Bot", "Close Bot", "-", "Run Script", "Stop Script", "Pause Script", "-", "Snap to Tray",
+				 "Save Screenshot", "-", "Exit"},
+				{"Accounts", "-", "ToggleF Force Input", "ToggleF Less CPU", "-", "ToggleF Disable Anti-Randoms",
+				 "ToggleF Disable Auto Login", "-", "ToggleF Disable Advertisments"},
 				constructDebugs(),
 				{"Site", "Project", "About"}};
 	}
@@ -123,7 +125,7 @@ public class BotMenuBar extends JMenuBar {
 				item.setEnabled(false);
 			}
 			disable("All Debugging", "Force Input", "Less CPU",
-					"Disable Anti-Randoms", "Disable Auto Login");
+			        "Disable Anti-Randoms", "Disable Auto Login");
 		} else {
 			commandMenuItem.get("Close Bot").setEnabled(true);
 			commandMenuItem.get("Run Script").setEnabled(true);

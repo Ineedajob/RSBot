@@ -166,8 +166,9 @@ public class LogTextArea extends JList {
 		public Component getListCellRendererComponent(final JList list,
 		                                              final Object value, final int index, final boolean isSelected,
 		                                              final boolean cellHasFocus) {
-			if (!(value instanceof WrappedLogRecord))
+			if (!(value instanceof WrappedLogRecord)) {
 				return new JLabel();
+			}
 			final WrappedLogRecord wlr = (WrappedLogRecord) value;
 
 			final JTextPane result = new JTextPane();
@@ -176,7 +177,7 @@ public class LogTextArea extends JList {
 			result.setComponentOrientation(list.getComponentOrientation());
 			result.setFont(list.getFont());
 			result.setBorder(cellHasFocus || isSelected ? SELECTED_BORDER
-					: EMPTY_BORDER);
+			                                            : EMPTY_BORDER);
 
 			result.setForeground(Color.DARK_GRAY);
 			result.setBackground(Color.WHITE);

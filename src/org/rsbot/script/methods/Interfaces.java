@@ -27,8 +27,9 @@ public class Interfaces extends MethodProvider {
 	public synchronized RSInterface[] getAll() {
 		enlargeCache();
 		final org.rsbot.client.RSInterface[][] inters = methods.client.getRSInterfaceCache();
-		if (inters == null)
+		if (inters == null) {
 			return new RSInterface[0];
+		}
 		final List<RSInterface> out = new ArrayList<RSInterface>();
 		for (int i = 0; i < inters.length; i++) {
 			if (inters[i] != null) {
@@ -119,8 +120,9 @@ public class Interfaces extends MethodProvider {
 	 * @return <tt>RSComponent</tt> containing "Click here to continue"; otherwise null.
 	 */
 	public RSComponent getContinueComponent() {
-		if (methods.client.getRSInterfaceCache() == null)
+		if (methods.client.getRSInterfaceCache() == null) {
 			return null;
+		}
 		RSInterface[] valid = getAll();
 		for (RSInterface iface : valid) {
 			if (iface.getIndex() != 137) {
@@ -128,8 +130,9 @@ public class Interfaces extends MethodProvider {
 				for (int i = 0; i < len; i++) {
 					RSComponent child = iface.getComponent(i);
 					if (child.containsText("Click here to continue") && child.isValid()
-							&& child.getAbsoluteX() > 10 && child.getAbsoluteY() > 300)
+							&& child.getAbsoluteX() > 10 && child.getAbsoluteY() > 300) {
 						return child;
+					}
 				}
 			}
 		}
@@ -144,19 +147,22 @@ public class Interfaces extends MethodProvider {
 	 * @return <tt>true</tt> if the action was clicked; otherwise <tt>false</tt>.
 	 */
 	public boolean clickComponent(final RSComponent c, final String action) {
-		if (!c.isValid())
+		if (!c.isValid()) {
 			return false;
+		}
 		Rectangle rect = c.getArea();
-		if (rect.x == -1)
+		if (rect.x == -1) {
 			return false;
+		}
 		// 1 pixel is not enough for all components
 		int minX = rect.x + 2, minY = rect.y + 2, width = rect.width - 4, height = rect.height - 4;
 		Rectangle actual = new Rectangle(minX, minY, width, height);
 		// Check if the menu already contains the action otherwise reposition
 		// before clicking
 		if (actual.contains(methods.mouse.getLocation()) && methods.menu.contains(action)
-				&& methods.menu.doAction(action))
+				&& methods.menu.doAction(action)) {
 			return true;
+		}
 		methods.mouse.move(random(minX, minX + width), random(minY, minY + height));
 		return methods.menu.doAction(action);
 	}
@@ -175,8 +181,9 @@ public class Interfaces extends MethodProvider {
 		if (inter.isValid()) {
 			option = option.toLowerCase();
 			for (RSComponent c : inter.getComponents()) {
-				if (c.getText().toLowerCase().contains(option))
+				if (c.getText().toLowerCase().contains(option)) {
 					return c.doClick();
+				}
 			}
 		}
 		return false;
@@ -218,42 +225,50 @@ public class Interfaces extends MethodProvider {
 	 */
 	public boolean scrollTo(RSComponent component, RSComponent scrollBar) {
 		//Check arguments
-		if (component == null || scrollBar == null || !component.isValid())
+		if (component == null || scrollBar == null || !component.isValid()) {
 			return false;
+		}
 
-		if (scrollBar.getComponents().length != 6)
+		if (scrollBar.getComponents().length != 6) {
 			return true; //no scrollbar, so probably not scrollable
+		}
 
 		//Find scrollable area
 		RSComponent scrollableArea = component;
-		while ((scrollableArea.getScrollableContentHeight() == 0) && (scrollableArea.getParentID() != -1))
+		while ((scrollableArea.getScrollableContentHeight() == 0) && (scrollableArea.getParentID() != -1)) {
 			scrollableArea = getComponent(scrollableArea.getParentID());
+		}
 
 		//Check scrollable area
-		if (scrollableArea.getScrollableContentHeight() == 0)
+		if (scrollableArea.getScrollableContentHeight() == 0) {
 			return false;
+		}
 
 		//Get scrollable area height
 		int areaY = scrollableArea.getAbsoluteY();
 		int areaHeight = scrollableArea.getRealHeight();
 
 		//Check if the component is already visible
-		if ((component.getAbsoluteY() >= areaY) && (component.getAbsoluteY() <= areaY + areaHeight - component.getRealHeight()))
+		if ((component.getAbsoluteY() >= areaY) && (component.getAbsoluteY() <= areaY + areaHeight - component.getRealHeight())) {
 			return true;
+		}
 
 		//Calculate scroll bar position to click
 		RSComponent scrollBarArea = scrollBar.getComponent(0);
 		int contentHeight = scrollableArea.getScrollableContentHeight();
 
-		int pos = (int) ((float) scrollBarArea.getRealHeight() / contentHeight * (component.getRelativeY() + random(-areaHeight / 2, areaHeight / 2 - component.getRealHeight())));
+		int pos = (int) ((float) scrollBarArea.getRealHeight() / contentHeight * (component.getRelativeY() + random(
+				-areaHeight / 2, areaHeight / 2 - component.getRealHeight())));
 		if (pos < 0) //inner
+		{
 			pos = 0;
-		else if (pos >= scrollBarArea.getRealHeight())
+		} else if (pos >= scrollBarArea.getRealHeight()) {
 			pos = scrollBarArea.getRealHeight() - 1; //outer
+		}
 
 		//Click on the scrollbar
 		methods.mouse.click(scrollBarArea.getAbsoluteX() + random(0, scrollBarArea.getRealWidth()),
-				scrollBarArea.getAbsoluteY() + pos, true);
+		                    scrollBarArea.getAbsoluteY() + pos, true);
 
 		//Wait a bit
 		sleep(random(200, 400));

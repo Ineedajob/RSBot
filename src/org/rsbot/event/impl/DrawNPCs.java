@@ -18,8 +18,9 @@ public class DrawNPCs implements PaintListener {
 	}
 
 	public void onRepaint(final Graphics render) {
-		if (!ctx.game.isLoggedIn())
+		if (!ctx.game.isLoggedIn()) {
 			return;
+		}
 
 		final FontMetrics metrics = render.getFontMetrics();
 		for (int element : ctx.client.getRSNPCIndexArray()) {

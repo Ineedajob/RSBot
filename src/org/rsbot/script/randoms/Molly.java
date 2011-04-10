@@ -121,7 +121,7 @@ public class Molly extends Random {
 		}
 		if (finished && inControlRoom()) {
 			if (!openDoor()) {
-				return (random(1000,1500));
+				return (random(1000, 1500));
 			}
 			return (random(400, 600));
 		}
@@ -172,8 +172,9 @@ public class Molly extends Random {
 	}
 
 	private void navigateClaw() {
-		if (!inControlInterface() || (mollyID < 1))
+		if (!inControlInterface() || (mollyID < 1)) {
 			return;
+		}
 		RSObject claw;
 		RSNPC suspect;
 		while ((claw = objects.getNearest(Molly.CLAW_ID)) != null
@@ -199,7 +200,7 @@ public class Molly extends Random {
 			final RSInterface i = interfaces.get(Molly.CONTROL_INTERFACEGROUP);
 			if ((i != null) && i.isValid()) {
 				i.getComponent(options.get(random(0, options.size())))
-						.doClick();
+				 .doClick();
 			}
 			delayTime = System.currentTimeMillis();
 			while (!hasClawMoved(clawLoc)
@@ -211,8 +212,9 @@ public class Molly extends Random {
 
 	private boolean hasClawMoved(RSTile prevClawLoc) {
 		RSObject claw = objects.getNearest(Molly.CLAW_ID);
-		if (claw == null)
+		if (claw == null) {
 			return false;
+		}
 		RSTile currentClawLoc = claw.getLocation();
 		return (currentClawLoc.getX() - prevClawLoc.getX() != 0)
 				|| (currentClawLoc.getY() - prevClawLoc.getY() != 0);
@@ -220,8 +222,9 @@ public class Molly extends Random {
 
 	private boolean openDoor() {
 		final RSObject door = objects.getNearest(Molly.DOOR_ID);
-		if (door == null)
+		if (door == null) {
 			return false;
+		}
 		if (!calc.tileOnScreen(door.getLocation())) {
 			walking.walkTileOnScreen(door.getLocation());
 			sleep(1000, 2000);

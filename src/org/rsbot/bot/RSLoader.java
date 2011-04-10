@@ -107,8 +107,10 @@ public class RSLoader extends Applet implements Runnable, Loader {
 			WebLoader webLoader = new WebLoader();
 			if (webLoader.load()) {
 				ClientLoader cl = new ClientLoader();
-				cl.init(new URL(GlobalConfiguration.Paths.URLs.UPDATE), new File(GlobalConfiguration.Paths.getModScriptCache()));
-				cl.load(new File(GlobalConfiguration.Paths.getClientCache()), new File(GlobalConfiguration.Paths.getVersionCache()));
+				cl.init(new URL(GlobalConfiguration.Paths.URLs.UPDATE),
+				        new File(GlobalConfiguration.Paths.getModScriptCache()));
+				cl.load(new File(GlobalConfiguration.Paths.getClientCache()),
+				        new File(GlobalConfiguration.Paths.getVersionCache()));
 				targetName = cl.getTargetName();
 				classLoader = new RSClassLoader(cl.getClasses(), new URL("http://" + targetName + ".com/"));
 			} else {
@@ -156,8 +158,9 @@ public class RSLoader extends Applet implements Runnable, Loader {
 	public final void update(Graphics graphics) {
 		if (client != null) {
 			client.update(graphics);
-		} else
+		} else {
 			paint(graphics);
+		}
 	}
 
 	public final void setSize(int width, int height) {

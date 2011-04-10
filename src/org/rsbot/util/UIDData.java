@@ -16,15 +16,17 @@ public class UIDData {
 
 	public UIDData() {
 		File fUIDs = new File(GlobalConfiguration.Paths.getUIDsFile());
-		if (!fUIDs.exists())
+		if (!fUIDs.exists()) {
 			return;
+		}
 
 		try {
 			final BufferedReader in = new BufferedReader(new FileReader(fUIDs));
 			String line;// Used to store the lines from the file
 			while ((line = in.readLine()) != null) {
-				if (line.isEmpty())
+				if (line.isEmpty()) {
 					continue;
+				}
 
 				String[] data = line.split(separator, 2);
 				uids.put(data[0], data[1].getBytes());
@@ -38,21 +40,24 @@ public class UIDData {
 	}
 
 	public byte[] getUID(String name) {
-		if (name.equals(""))
+		if (name.equals("")) {
 			name = "DEFAULT";
+		}
 
 		lastUsed = name;
 
 		byte[] data = uids.get(name);
-		if (data == null)
+		if (data == null) {
 			return new byte[0];
+		}
 
 		return data;
 	}
 
 	public void setUID(String name, byte[] uid) {
-		if (name.equals(""))
+		if (name.equals("")) {
 			name = "DEFAULT";
+		}
 
 		uids.put(name, uid);
 	}
