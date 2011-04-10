@@ -192,9 +192,9 @@ public class Camera extends MethodProvider {
 	public boolean setPitch(int percent) {
 		int curAlt = getPitch();
 		int lastAlt = 0;
-		if (curAlt == percent)
+		if (curAlt == percent) {
 			return true;
-		else if (curAlt < percent) {
+		} else if (curAlt < percent) {
 			methods.inputManager.pressKey((char) KeyEvent.VK_UP);
 			long start = System.currentTimeMillis();
 			while (curAlt < percent && System.currentTimeMillis() - start < random(50, 100)) {
@@ -236,10 +236,12 @@ public class Camera extends MethodProvider {
 		int lowestCamAltPossible = random(75, 100);
 		int vertical = random(0, 20) < 15 ? KeyEvent.VK_UP : KeyEvent.VK_DOWN;
 		int horizontal = random(0, 20) < 5 ? KeyEvent.VK_LEFT : KeyEvent.VK_RIGHT;
-		if (random(0, 10) < 8)
+		if (random(0, 10) < 8) {
 			methods.inputManager.pressKey((char) vertical);
-		if (random(0, 10) < 8)
+		}
+		if (random(0, 10) < 8) {
 			methods.inputManager.pressKey((char) horizontal);
+		}
 		while (timeToHold.isRunning() && methods.client.getCamPosZ() >= lowestCamAltPossible) {
 			sleep(10);
 		}

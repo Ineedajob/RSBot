@@ -142,11 +142,13 @@ public class Maze extends Random {
 
 	@Override
 	public int loop() {
-		if (!activateCondition())
+		if (!activateCondition()) {
 			return -1;
+		}
 
-		if (getMyPlayer().isMoving())
+		if (getMyPlayer().isMoving()) {
 			return random(150, 200);
+		}
 
 		if (getMyPlayer().getLocation().equals(new RSTile(2911, 4576))) {
 			if (getMyPlayer().getAnimation() == -1) {
@@ -167,8 +169,9 @@ public class Maze extends Random {
 		}
 
 		if ((walkToTile != null) && (calc.distanceTo(walkToTile) >= 3)) {
-			if (!walking.getPath(walkToTile).traverse())
+			if (!walking.getPath(walkToTile).traverse()) {
 				walking.walkTileMM(walkToTile.randomize(2, 2));
+			}
 
 			return random(500, 600);
 		}
@@ -180,7 +183,7 @@ public class Maze extends Random {
 				}
 				RSObject obj = objects.getTopAt(walkToTile, Objects.TYPE_BOUNDARY);
 				if (obj != null && obj.doAction("Open") || atDoor(walkToTile, doorDir)) {
-					return random(2750,3250);
+					return random(2750, 3250);
 				}
 			}
 		}
@@ -285,8 +288,9 @@ public class Maze extends Random {
 	}
 
 	public boolean atDoor(final RSTile location, final char direction) {
-		if (location == null)
+		if (location == null) {
 			return false;
+		}
 		int x = location.getX(), y = location.getY();
 		boolean fail = false;
 		switch (direction) {
@@ -309,8 +313,9 @@ public class Maze extends Random {
 			default:
 				fail = true;
 		}
-		if (fail)
+		if (fail) {
 			throw new IllegalArgumentException();
+		}
 		return atDoorTiles(location, new RSTile(x, y));
 	}
 
@@ -327,7 +332,8 @@ public class Maze extends Random {
 		lastTry = System.currentTimeMillis();
 		if (tryCount > 4) {
 			if (random(0, 10) < random(2, 4)) {
-				camera.setAngle(camera.getAngle() + (random(0, 9) < random(6, 8) ? random(-20, 20) : random(-360, 360)));
+				camera.setAngle(
+						camera.getAngle() + (random(0, 9) < random(6, 8) ? random(-20, 20) : random(-360, 360)));
 			}
 			if (random(0, 14) < random(0, 2)) {
 				camera.setPitch(random(0, 100));
@@ -360,10 +366,13 @@ public class Maze extends Random {
 					xTotal += thePoint.getX();
 					yTotal += thePoint.getY();
 				}
-				final Point location = new Point((int) (xTotal / thePoints.length), (int) (yTotal / thePoints.length) - random(0, 40));
-				if ((location.x == -1) || (location.y == -1))
+				final Point location = new Point((int) (xTotal / thePoints.length),
+				                                 (int) (yTotal / thePoints.length) - random(0, 40));
+				if ((location.x == -1) || (location.y == -1)) {
 					return false;
-				if (Math.sqrt(Math.pow((mouse.getLocation().getX() - location.getX()), 2) + Math.pow((mouse.getLocation().getY() - location.getY()), 2)) < random(20, 30)) {
+				}
+				if (Math.sqrt(Math.pow((mouse.getLocation().getX() - location.getX()), 2) + Math.pow(
+						(mouse.getLocation().getY() - location.getY()), 2)) < random(20, 30)) {
 					for (final String command : menu.getItems()) {
 						if (command.contains("Open")) {
 							if (menu.doAction("Open")) {

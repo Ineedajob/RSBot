@@ -80,7 +80,8 @@ public class Objects extends MethodProvider {
 				Set<RSObject> objs = getAtLocal(x, y, -1);
 				for (RSObject o : objs) {
 					if (filter.accept(o)) {
-						double distTmp = methods.calc.distanceBetween(methods.players.getMyPlayer().getLocation(), o.getLocation());
+						double distTmp = methods.calc.distanceBetween(methods.players.getMyPlayer().getLocation(),
+						                                              o.getLocation());
 						if (cur == null) {
 							dist = distTmp;
 							cur = o;
@@ -176,7 +177,8 @@ public class Objects extends MethodProvider {
 	 * @return An RSObject[] of the objects on the specified tile.
 	 */
 	public RSObject[] getAt(final RSTile t, final int mask) {
-		Set<RSObject> objects = getAtLocal(t.getX() - methods.client.getBaseX(), t.getY() - methods.client.getBaseY(), mask);
+		Set<RSObject> objects = getAtLocal(t.getX() - methods.client.getBaseX(), t.getY() - methods.client.getBaseY(),
+		                                   mask);
 		return objects.toArray(new RSObject[objects.size()]);
 	}
 
@@ -187,7 +189,8 @@ public class Objects extends MethodProvider {
 	 * @return An RSObject[] of the objects on the specified tile.
 	 */
 	public RSObject[] getAllAt(final RSTile t) {
-		Set<RSObject> objects = getAtLocal(t.getX() - methods.client.getBaseX(), t.getY() - methods.client.getBaseY(), -1);
+		Set<RSObject> objects = getAtLocal(t.getX() - methods.client.getBaseX(), t.getY() - methods.client.getBaseY(),
+		                                   -1);
 		return objects.toArray(new RSObject[objects.size()]);
 	}
 
@@ -239,15 +242,17 @@ public class Objects extends MethodProvider {
 					obj = rsGround.getBoundary1();
 					if (obj != null) {
 						rsObj = (org.rsbot.client.RSObject) obj;
-						if (rsObj.getID() != -1)
+						if (rsObj.getID() != -1) {
 							objects.add(new RSObject(methods, rsObj, RSObject.Type.BOUNDARY, plane));
+						}
 					}
 
 					obj = rsGround.getBoundary2();
 					if (obj != null) {
 						rsObj = (org.rsbot.client.RSObject) obj;
-						if (rsObj.getID() != -1)
+						if (rsObj.getID() != -1) {
 							objects.add(new RSObject(methods, rsObj, RSObject.Type.BOUNDARY, plane));
+						}
 					}
 				}
 
@@ -256,15 +261,17 @@ public class Objects extends MethodProvider {
 					obj = rsGround.getWallDecoration1();
 					if (obj != null) {
 						rsObj = (org.rsbot.client.RSObject) obj;
-						if (rsObj.getID() != -1)
+						if (rsObj.getID() != -1) {
 							objects.add(new RSObject(methods, rsObj, RSObject.Type.WALL_DECORATION, plane));
+						}
 					}
 
 					obj = rsGround.getWallDecoration2();
 					if (obj != null) {
 						rsObj = (org.rsbot.client.RSObject) obj;
-						if (rsObj.getID() != -1)
+						if (rsObj.getID() != -1) {
 							objects.add(new RSObject(methods, rsObj, RSObject.Type.WALL_DECORATION, plane));
+						}
 					}
 				}
 			}

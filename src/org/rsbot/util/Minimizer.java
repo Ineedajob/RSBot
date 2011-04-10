@@ -60,7 +60,7 @@ public class Minimizer {
 		icon = new TrayIcon(getImage().getScaledInstance(
 				SystemTray.getSystemTray().getTrayIconSize().width,
 				SystemTray.getSystemTray().getTrayIconSize().height, 0),
-				"Rsbot", createPopupMenu());
+		                    "Rsbot", createPopupMenu());
 
 		icon.addActionListener(new ActionListener() {
 

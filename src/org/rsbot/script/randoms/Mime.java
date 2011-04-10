@@ -22,8 +22,9 @@ public class Mime extends Random {
 	}
 
 	private boolean clickAnimation(final String find) {
-		if (!interfaces.get(188).isValid())
+		if (!interfaces.get(188).isValid()) {
 			return false;
+		}
 		for (int a = 0; a < interfaces.get(188).getChildCount(); a++) {
 			if (interfaces.get(188).getComponent(a).getText().contains(find)) {
 				log("Clicked on: " + find);
@@ -43,22 +44,25 @@ public class Mime extends Random {
 	}
 
 	private Stage getStage() {
-		if (interfaces.canContinue() && getMyPlayer().getLocation().equals(new RSTile(2008, 4764)))
+		if (interfaces.canContinue() && getMyPlayer().getLocation().equals(new RSTile(2008, 4764))) {
 			return Stage.click;
-		else if (mime == null)
+		} else if (mime == null) {
 			return Stage.findMime;
-		else if ((interfaces.get(372).getComponent(2).getText().contains("Watch") || interfaces.get(372).getComponent(3).getText().contains("Watch")) && (mime.getAnimation() != -1) && (mime.getAnimation() != 858))
+		} else if ((interfaces.get(372).getComponent(2).getText().contains("Watch") || interfaces.get(372).getComponent(
+				3).getText().contains("Watch")) && (mime.getAnimation() != -1) && (mime.getAnimation() != 858)) {
 			return Stage.findAnimation;
-		else if (interfaces.get(188).isValid())
+		} else if (interfaces.get(188).isValid()) {
 			return Stage.clickAnimation;
-		else
+		} else {
 			return Stage.wait;
+		}
 	}
 
 	@Override
 	public int loop() {
-		if (!activateCondition())
+		if (!activateCondition()) {
 			return -1;
+		}
 		switch (getStage()) {
 			case click:
 				interfaces.clickContinue();
@@ -76,12 +80,14 @@ public class Mime extends Random {
 				animation = mime.getAnimation();
 				log.info("Found Mime animation: " + animation);
 				sleep(1000);
-				if (interfaces.get(188).isValid())
+				if (interfaces.get(188).isValid()) {
 					return random(400, 800);
+				}
 				final long start = System.currentTimeMillis();
 				while (System.currentTimeMillis() - start >= 5000) {
-					if (interfaces.get(188).isValid())
+					if (interfaces.get(188).isValid()) {
 						return random(1000, 1600);
+					}
 					sleep(random(1000, 1500));
 				}
 				return random(200, 400);
