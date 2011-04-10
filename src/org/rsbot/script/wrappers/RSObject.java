@@ -36,7 +36,7 @@ public class RSObject extends MethodProvider {
 	 */
 	public RSTile getLocation() {
 		return new RSTile(methods.client.getBaseX() + obj.getX() / 512,
-				methods.client.getBaseY() + obj.getY() / 512, plane);
+		                  methods.client.getBaseY() + obj.getY() / 512, plane);
 	}
 
 	/**
@@ -49,9 +49,9 @@ public class RSObject extends MethodProvider {
 		if (obj instanceof RSAnimable) {
 			RSAnimable a = (RSAnimable) obj;
 			RSTile sw = new RSTile(methods.client.getBaseX() + a.getX1(),
-					methods.client.getBaseY() + a.getY1());
+			                       methods.client.getBaseY() + a.getY1());
 			RSTile ne = new RSTile(methods.client.getBaseX() + a.getX2(),
-					methods.client.getBaseY() + a.getY2());
+			                       methods.client.getBaseY() + a.getY2());
 			return new RSArea(sw, ne, plane);
 		}
 		RSTile loc = getLocation();

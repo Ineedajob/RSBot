@@ -20,8 +20,9 @@ public class FirstTimeDeath extends Random {
 
 	@Override
 	public int loop() {
-		if (!activateCondition())
+		if (!activateCondition()) {
 			return -1;
+		}
 		camera.setPitch(true);
 		if (interfaces.canContinue() && !exit) {
 			if (interfaces.getComponent(241, 4).getText().contains("Yes?")) {
@@ -29,7 +30,7 @@ public class FirstTimeDeath extends Random {
 				exit = true;
 				return random(200, 400);
 			} else if (interfaces.getComponent(242, 5).getText()
-					.contains("Enjoy!")) {
+			                     .contains("Enjoy!")) {
 				step++;
 				exit = true;
 			}
@@ -44,7 +45,7 @@ public class FirstTimeDeath extends Random {
 				if (!interfaces.canContinue()) {
 					walking.walkTileOnScreen(new RSTile(
 							reaper.getLocation().getX() + 2, reaper.getLocation()
-									.getY() + 1));
+							                                       .getY() + 1));
 					camera.turnTo(reaperChair);
 				}
 				break;

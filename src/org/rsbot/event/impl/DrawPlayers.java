@@ -16,11 +16,13 @@ public class DrawPlayers implements PaintListener {
 	}
 
 	public void onRepaint(final Graphics render) {
-		if (!ctx.game.isLoggedIn())
+		if (!ctx.game.isLoggedIn()) {
 			return;
+		}
 		final org.rsbot.client.RSPlayer[] players = ctx.client.getRSPlayerArray();
-		if (players == null)
+		if (players == null) {
 			return;
+		}
 		final FontMetrics metrics = render.getFontMetrics();
 		for (final org.rsbot.client.RSPlayer element : players) {
 			if (element == null) {
@@ -49,7 +51,8 @@ public class DrawPlayers implements PaintListener {
 			}
 			if (msg != null) {
 				render.setColor(Color.ORANGE);
-				render.drawString(msg, location.x - metrics.stringWidth(msg) / 2, location.y - metrics.getHeight() * (raised ? 5 : 3) / 2);
+				render.drawString(msg, location.x - metrics.stringWidth(msg) / 2,
+				                  location.y - metrics.getHeight() * (raised ? 5 : 3) / 2);
 			}
 		}
 	}

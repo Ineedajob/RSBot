@@ -49,8 +49,9 @@ public class RSItem extends MethodProvider {
 				} else if (ref instanceof SoftReference) {
 					Object def = ((SoftReference) ref).getReference().get();
 
-					if (def != null)
+					if (def != null) {
 						return new RSItemDef((org.rsbot.client.RSItemDef) def);
+					}
 				}
 			}
 			return null;

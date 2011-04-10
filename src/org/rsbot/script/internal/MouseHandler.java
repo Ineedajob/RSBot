@@ -49,11 +49,13 @@ public class MouseHandler {
 				if (Math.abs(a.x - b.x) != 0) {
 					final double slope = (double) (a.y - b.y) / (double) (a.x - b.x);
 					final double incpt = a.y - slope * a.x;
-					for (int c = a.x < b.x ? a.x + 1 : b.x - 1; a.x < b.x ? c < b.x : c > a.x; c += a.x < b.x ? 1 : -1) {
+					for (int c = a.x < b.x ? a.x + 1 : b.x - 1; a.x < b.x ? c < b.x : c > a.x;
+					     c += a.x < b.x ? 1 : -1) {
 						points.add(i++, new Point(c, (int) Math.round(incpt + slope * c)));
 					}
 				} else {
-					for (int c = a.y < b.y ? a.y + 1 : b.y - 1; a.y < b.y ? c < b.y : c > a.y; c += a.y < b.y ? 1 : -1) {
+					for (int c = a.y < b.y ? a.y + 1 : b.y - 1; a.y < b.y ? c < b.y : c > a.y;
+					     c += a.y < b.y ? 1 : -1) {
 						points.add(i++, new Point(a.x, c));
 					}
 				}
@@ -132,7 +134,8 @@ public class MouseHandler {
 	 * @return the ammount of time (in ms) the movement should take
 	 */
 	public static long fittsLaw(final double targetDist, final double targetSize) {
-		return (long) (MouseHandler.reactionTime + MouseHandler.msPerBit * Math.log10(targetDist / targetSize + 1) / Math.log10(2));
+		return (long) (MouseHandler.reactionTime + MouseHandler.msPerBit * Math.log10(
+				targetDist / targetSize + 1) / Math.log10(2));
 	}
 
 	/**
@@ -226,7 +229,8 @@ public class MouseHandler {
 			double x = 0;
 			double y = 0;
 			for (double index = 0; index <= degree; index++) {
-				final double probPoly = MouseHandler.nCk((int) degree, (int) index) * Math.pow(theta, index) * Math.pow(1D - theta, degree - index);
+				final double probPoly = MouseHandler.nCk((int) degree, (int) index) * Math.pow(theta, index) * Math.pow(
+						1D - theta, degree - index);
 				x += probPoly * controls[(int) index].x;
 				y += probPoly * controls[(int) index].y;
 			}
@@ -270,10 +274,12 @@ public class MouseHandler {
 	 */
 	public void moveMouse(final int speed, final int x1, final int y1, final int x2, final int y2, int randX, int randY) {
 		if ((x2 == -1) && (y2 == -1))
-			// MouseHandler.log
-			// .warning("Non-fatal error. Please post log on forums. ("
-			// + x2 + "," + y2 + ")");
+		// MouseHandler.log
+		// .warning("Non-fatal error. Please post log on forums. ("
+		// + x2 + "," + y2 + ")");
+		{
 			return;
+		}
 		if (randX <= 0) {
 			randX = 1;
 		}
@@ -281,9 +287,11 @@ public class MouseHandler {
 			randY = 1;
 		}
 		try {
-			if ((x2 == x1) && (y2 == y1))
+			if ((x2 == x1) && (y2 == y1)) {
 				return;
-			final Point[] controls = MouseHandler.generateControls(x1, y1, x2 + random.nextInt(randX), y2 + random.nextInt(randY), 50, 120);
+			}
+			final Point[] controls = MouseHandler.generateControls(x1, y1, x2 + random.nextInt(randX),
+			                                                       y2 + random.nextInt(randY), 50, 120);
 			final Point[] spline = MouseHandler.generateSpline(controls);
 			final long timeToMove = MouseHandler.fittsLaw(Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2)), 10);
 			final Point[] path = MouseHandler.applyDynamism(spline, (int) timeToMove, MouseHandler.DEFAULT_MOUSE_SPEED);

@@ -134,8 +134,9 @@ public class EventManager implements Runnable {
 	 * The thread entry point.
 	 */
 	public void run() {
-		if (!isEventThread())
+		if (!isEventThread()) {
 			throw new IllegalThreadStateException();
+		}
 		while (true) {
 			try {
 				EventObject event = null;

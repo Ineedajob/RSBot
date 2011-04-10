@@ -23,31 +23,35 @@ public class RSNPC extends RSCharacter {
 
 	public String[] getActions() {
 		org.rsbot.client.RSNPCDef def = getDefInternal();
-		if (def != null)
+		if (def != null) {
 			return def.getActions();
+		}
 		return new String[0];
 	}
 
 	public int getID() {
 		org.rsbot.client.RSNPCDef def = getDefInternal();
-		if (def != null)
+		if (def != null) {
 			return def.getType();
+		}
 		return -1;
 	}
 
 	@Override
 	public String getName() {
 		org.rsbot.client.RSNPCDef def = getDefInternal();
-		if (def != null)
+		if (def != null) {
 			return def.getName();
+		}
 		return "";
 	}
 
 	@Override
 	public int getLevel() {
 		org.rsbot.client.RSNPCDef def = getDefInternal();
-		if (def != null)
+		if (def != null) {
 			return def.getLevel();
+		}
 		return -1;
 	}
 
@@ -78,10 +82,11 @@ public class RSNPC extends RSCharacter {
 
 	org.rsbot.client.RSNPCDef getDefInternal() {
 		org.rsbot.client.RSNPC c = npc.get();
-		if (c == null)
+		if (c == null) {
 			return null;
-		else
+		} else {
 			return c.getRSNPCDef();
+		}
 	}
 
 }
