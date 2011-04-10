@@ -61,7 +61,7 @@ public class Web extends WebSkeleton {
 			List<WebTile> teTiles = new ArrayList<WebTile>();
 			File mapData = new File(GlobalConfiguration.Paths.getWebCache());
 			if (mapData.exists() && mapData.canRead()) {
-				final int xOff = 2044;
+				final int xOff = 2045;
 				final int yOff = 4168;
 				FileInputStream fis = new FileInputStream(mapData);
 				DataInputStream dis = new DataInputStream(fis);
