@@ -39,8 +39,9 @@ public class Pinball extends Random {
 	}
 
 	public int loop() {
-		if (!activateCondition())
+		if (!activateCondition()) {
 			return -1;
+		}
 //		
 //		if (interfaces.canContinue() && continueCounter < 10) {
 //			log.info("trying to continue");
@@ -86,15 +87,17 @@ public class Pinball extends Random {
 
 			sleep(random(400, 500));
 
-			if (!tiles.doAction(pillar.getLocation(), "Tag"))
+			if (!tiles.doAction(pillar.getLocation(), "Tag")) {
 				return random(50, 100);
-			else
+			} else {
 				sleep(500, 1000);
+			}
 
 			int before = getScore();
 			for (int i = 0; i < 100; i++) {
-				if (getScore() > before)
+				if (getScore() > before) {
 					return random(50, 100);
+				}
 				sleep(25, 75);
 			}
 			return random(1000, 1300);

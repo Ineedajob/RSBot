@@ -84,13 +84,15 @@ public class Menu extends MethodProvider {
 	 */
 	public boolean itemHasAction(final RSItem item, final String action) {
 		// Used to determine if an item is droppable/destroyable
-		if (item == null)
+		if (item == null) {
 			return false;
+		}
 		RSItemDef itemDef = item.getDefinition();
 		if (itemDef != null) {
 			for (String a : itemDef.getActions()) {
-				if (a.equalsIgnoreCase(action))
+				if (a.equalsIgnoreCase(action)) {
 					return true;
+				}
 			}
 		}
 		return false;
