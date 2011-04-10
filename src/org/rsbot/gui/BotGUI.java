@@ -60,11 +60,11 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				JPopupMenu.setDefaultLightWeightPopupEnabled(false);
-				ToolTipManager.sharedInstance().setLightWeightPopupEnabled(
-						false);
+				ToolTipManager.sharedInstance().setLightWeightPopupEnabled(false);
 
-				if (showAds)
+				if (showAds) {
 					new SplashAd(BotGUI.this).display();
+				}
 
 				if (GlobalConfiguration.RUNNING_FROM_JAR) {
 					UpdateUtil updater = new UpdateUtil(BotGUI.this);
@@ -78,10 +78,10 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 	public void setTitle(String title) {
 		if (title != null) {
 			super.setTitle(title + " - " + GlobalConfiguration.NAME + " v"
-					+ ((float) GlobalConfiguration.getVersion() / 100));
+					               + ((float) GlobalConfiguration.getVersion() / 100));
 		} else {
 			super.setTitle(GlobalConfiguration.NAME + " v"
-					+ ((float) GlobalConfiguration.getVersion() / 100));
+					               + ((float) GlobalConfiguration.getVersion() / 100));
 		}
 	}
 
@@ -124,11 +124,8 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 				if (current != null) {
 					try {
 						if (!SystemTray.isSupported()) {
-							JOptionPane
-									.showMessageDialog(
-											this,
-											"System-Tray feature is not supported by your OS.",
-											"Error", JOptionPane.ERROR_MESSAGE);
+							JOptionPane.showMessageDialog(this, "System-Tray feature is not supported by your OS.",
+							                              "Error", JOptionPane.ERROR_MESSAGE);
 							return;
 						}
 						this.setVisible(false);
@@ -214,17 +211,10 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 			} else if (option.equals("Project")) {
 				openURL(GlobalConfiguration.Paths.URLs.PROJECT);
 			} else if (option.equals("About")) {
-				JOptionPane
-						.showMessageDialog(
-								this,
-								new String[] {
-										"An open source bot,currently developed by Aut0r as "
-												+ '\n'
-												+ "Lead Developer and by his Team of Contributers.",
-										"Visit "
-												+ GlobalConfiguration.Paths.URLs.SITE
-												+ "/ for more information." },
-								"About", JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.showMessageDialog(this, new String[]{
+						"An open source bot,currently developed by Aut0r as " + '\n' + "Lead Developer and by his Team of Contributers.",
+						"Visit " + GlobalConfiguration.Paths.URLs.SITE + "/ for more information."},
+				                              "About", JOptionPane.INFORMATION_MESSAGE);
 			}
 		} else if (menu.equals("Tab")) {
 			Bot curr = getCurrentBot();
@@ -363,9 +353,9 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 			ScriptManifest prop = s.getClass().getAnnotation(
 					ScriptManifest.class);
 			int result = JOptionPane.showConfirmDialog(this,
-					"Would you like to stop the script " + prop.name() + "?",
-					"Script", JOptionPane.OK_CANCEL_OPTION,
-					JOptionPane.QUESTION_MESSAGE);
+			                                           "Would you like to stop the script " + prop.name() + "?",
+			                                           "Script", JOptionPane.OK_CANCEL_OPTION,
+			                                           JOptionPane.QUESTION_MESSAGE);
 
 			if (result == JOptionPane.OK_OPTION) {
 				sh.stopScript(id);

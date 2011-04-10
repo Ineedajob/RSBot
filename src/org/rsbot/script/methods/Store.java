@@ -28,10 +28,12 @@ public class Store extends MethodProvider {
 	 * @return <tt>true</tt> on success
 	 */
 	public boolean buy(final int itemID, final int count) {
-		if (count < 0)
+		if (count < 0) {
 			return false;
-		if (!isOpen())
+		}
+		if (!isOpen()) {
 			return false;
+		}
 		final int inventoryCount = methods.inventory.getCount(true);
 		RSItem item = getItem(itemID);
 		if (item != null) {
@@ -39,32 +41,37 @@ public class Store extends MethodProvider {
 				if (item.doAction("Buy 500")) {
 					sleep(random(500, 700));
 					return buy(itemID, (count - 500));
-				} else
+				} else {
 					return false;
+				}
 			} else if (count >= 50 && count < 500) {
 				if (item.doAction("Buy 50")) {
 					sleep(random(500, 700));
 					return buy(itemID, (count - 50));
-				} else
+				} else {
 					return false;
+				}
 			} else if (count >= 10 && count < 50) {
 				if (item.doAction("Buy 10")) {
 					sleep(random(500, 700));
 					return buy(itemID, (count - 10));
-				} else
+				} else {
 					return false;
+				}
 			} else if (count >= 5 && count < 10) {
 				if (item.doAction("Buy 5")) {
 					sleep(random(500, 700));
 					return buy(itemID, (count - 5));
-				} else
+				} else {
 					return false;
+				}
 			} else if (count >= 1 && count < 5) {
 				if (item.doAction("Buy 1")) {
 					sleep(random(500, 700));
 					return buy(itemID, (count - 1));
-				} else
+				} else {
 					return false;
+				}
 			} else {
 				return methods.inventory.getCount(true) > inventoryCount;
 			}
@@ -78,14 +85,16 @@ public class Store extends MethodProvider {
 	 * @return <tt>true</tt> if the interface is no longer open
 	 */
 	public boolean close() {
-		if (!isOpen())
+		if (!isOpen()) {
 			return true;
+		}
 
 		if (methods.interfaces.getComponent(INTERFACE_STORE, INTERFACE_STORE_BUTTON_CLOSE).doClick()) {
 			sleep(random(500, 600));
 			return !isOpen();
-		} else
+		} else {
 			return false;
+		}
 	}
 
 	/**
@@ -107,8 +116,9 @@ public class Store extends MethodProvider {
 		final RSItem[] items = getItems();
 		if (items != null) {
 			for (final RSItem item : items) {
-				if (item.getComponent().getComponentIndex() == index)
+				if (item.getComponent().getComponentIndex() == index) {
 					return item;
+				}
 			}
 		}
 
@@ -125,8 +135,9 @@ public class Store extends MethodProvider {
 		final RSItem[] items = getItems();
 		if (items != null) {
 			for (final RSItem item : items) {
-				if (item.getID() == id)
+				if (item.getID() == id) {
 					return item;
+				}
 			}
 		}
 
@@ -140,16 +151,18 @@ public class Store extends MethodProvider {
 	 *         stores <tt>RSInterface</tt>.
 	 */
 	public RSItem[] getItems() {
-		if ((getInterface() == null) || (getInterface().getComponent(INTERFACE_STORE_ITEMS) == null))
+		if ((getInterface() == null) || (getInterface().getComponent(INTERFACE_STORE_ITEMS) == null)) {
 			return null;
+		}
 
 		ArrayList<RSItem> items = new ArrayList<RSItem>();
 		RSComponent[] components = getInterface().getComponent(INTERFACE_STORE_ITEMS).getComponents();
 
 		for (RSComponent component : components) {
 
-			if (component != null && component.getComponentID() != -1)
+			if (component != null && component.getComponentID() != -1) {
 				items.add(new RSItem(methods, component));
+			}
 		}
 
 		return items.toArray(new RSItem[items.size()]);

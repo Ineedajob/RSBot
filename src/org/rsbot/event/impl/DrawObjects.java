@@ -28,11 +28,13 @@ public class DrawObjects implements PaintListener {
 	}
 
 	public void onRepaint(final Graphics render) {
-		if (!ctx.game.isLoggedIn())
+		if (!ctx.game.isLoggedIn()) {
 			return;
+		}
 		final RSPlayer player = ctx.players.getMyPlayer();
-		if (player == null)
+		if (player == null) {
 			return;
+		}
 		final FontMetrics metrics = render.getFontMetrics();
 		final RSTile location = player.getLocation();
 		final int locX = location.getX();

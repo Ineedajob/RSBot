@@ -24,7 +24,9 @@ public class Pillory extends Random implements MessageListener {
 	public RSTile myLoc;
 
 	public RSTile South = new RSTile(2606, 3105);
-	RSTile[] cagetiles = {new RSTile(2608, 3105), new RSTile(2606, 3105), new RSTile(2604, 3105), new RSTile(3226, 3407), new RSTile(3228, 3407), new RSTile(3230, 3407), new RSTile(2685, 3489), new RSTile(2683, 3489), new RSTile(2681, 3489)};
+	RSTile[] cagetiles = {new RSTile(2608, 3105), new RSTile(2606, 3105), new RSTile(2604, 3105),
+	                      new RSTile(3226, 3407), new RSTile(3228, 3407), new RSTile(3230, 3407),
+	                      new RSTile(2685, 3489), new RSTile(2683, 3489), new RSTile(2681, 3489)};
 
 	@Override
 	public boolean activateCondition() {
@@ -103,12 +105,15 @@ public class Pillory extends Random implements MessageListener {
 				log.info("\t   Triangle");
 				break;
 		}
-		if (interfaces.get(GameInterface).getComponent(5).getModelID() == key)
+		if (interfaces.get(GameInterface).getComponent(5).getModelID() == key) {
 			return 1;
-		if (interfaces.get(GameInterface).getComponent(6).getModelID() == key)
+		}
+		if (interfaces.get(GameInterface).getComponent(6).getModelID() == key) {
 			return 2;
-		if (interfaces.get(GameInterface).getComponent(7).getModelID() == key)
+		}
+		if (interfaces.get(GameInterface).getComponent(7).getModelID() == key) {
 			return 3;
+		}
 		return -1;
 	}
 
@@ -151,13 +156,22 @@ public class Pillory extends Random implements MessageListener {
 			log.info(String.valueOf(key));
 			switch (key) {
 				case 1:
-					mouse.click(interfaces.get(GameInterface).getComponent(5).getArea().getLocation().x + random(10, 13), interfaces.get(GameInterface).getComponent(5).getArea().getLocation().y + random(46, 65), true);
+					mouse.click(
+							interfaces.get(GameInterface).getComponent(5).getArea().getLocation().x + random(10, 13),
+							interfaces.get(GameInterface).getComponent(5).getArea().getLocation().y + random(46, 65),
+							true);
 					break;
 				case 2:
-					mouse.click(interfaces.get(GameInterface).getComponent(6).getArea().getLocation().x + random(10, 13), interfaces.get(GameInterface).getComponent(6).getArea().getLocation().y + random(46, 65), true);
+					mouse.click(
+							interfaces.get(GameInterface).getComponent(6).getArea().getLocation().x + random(10, 13),
+							interfaces.get(GameInterface).getComponent(6).getArea().getLocation().y + random(46, 65),
+							true);
 					break;
 				case 3:
-					mouse.click(interfaces.get(GameInterface).getComponent(7).getArea().getLocation().x + random(10, 13), interfaces.get(GameInterface).getComponent(7).getArea().getLocation().y + random(46, 65), true);
+					mouse.click(
+							interfaces.get(GameInterface).getComponent(7).getArea().getLocation().x + random(10, 13),
+							interfaces.get(GameInterface).getComponent(7).getArea().getLocation().y + random(46, 65),
+							true);
 					break;
 				default:
 					log.info("Bad Combo?");

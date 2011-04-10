@@ -43,11 +43,13 @@ public class Mouse extends MethodProvider {
 	public void moveRandomly(final int minDistance, final int maxDistance) {
 		/* Generate a random vector for the direction the mouse will move in */
 		double xvec = Math.random();
-		if (random(0, 2) == 1)
+		if (random(0, 2) == 1) {
 			xvec = -xvec;
+		}
 		double yvec = Math.sqrt(1 - xvec * xvec);
-		if (random(0, 2) == 1)
+		if (random(0, 2) == 1) {
 			yvec = -yvec;
+		}
 		/* Start the maximum distance at maxDistance */
 		double distance = maxDistance;
 		/* Get the current location of the cursor */
@@ -62,8 +64,9 @@ public class Mouse extends MethodProvider {
 		distance -= Math.abs((maxY - Math.max(0, Math.min(methods.game.getHeight(), maxY))) / yvec);
 		/* If the maximum distance in the generated direction is too small,
 				 * don't move the mouse at all*/
-		if (distance < minDistance)
+		if (distance < minDistance) {
 			return;
+		}
 		/* With the calculated maximum distance, pick a random distance to move
 				 * the mouse between maxDistance and the calculated maximum distance */
 		distance = random(minDistance, (int) distance);
@@ -79,19 +82,19 @@ public class Mouse extends MethodProvider {
 			switch (random(0, 4)) {
 				case 0: // up
 					move(random(-10, methods.game.getWidth() + 10),
-							random(-100, -10));
+					     random(-100, -10));
 					break;
 				case 1: // down
 					move(random(-10, methods.game.getWidth() + 10),
-							methods.game.getHeight() + random(10, 100));
+					     methods.game.getHeight() + random(10, 100));
 					break;
 				case 2: // left
 					move(random(-100, -10),
-							random(-10, methods.game.getHeight() + 10));
+					     random(-10, methods.game.getHeight() + 10));
 					break;
 				case 3: // right
 					move(random(10, 100) + methods.game.getWidth(),
-							random(-10, methods.game.getHeight() + 10));
+					     random(-10, methods.game.getHeight() + 10));
 					break;
 			}
 		}
@@ -133,7 +136,7 @@ public class Mouse extends MethodProvider {
 			sleep(random(50, 350));
 			Point pos = getLocation();
 			move(pos.x - moveAfterDist, pos.y - moveAfterDist,
-					moveAfterDist * 2, moveAfterDist * 2);
+			     moveAfterDist * 2, moveAfterDist * 2);
 		}
 	}
 
@@ -218,9 +221,9 @@ public class Mouse extends MethodProvider {
 	public void clickSlightly() {
 		Point p = new Point(
 				(int) (getLocation().getX() + (Math.random() * 50 > 25 ?
-						1 : -1) * (30 + Math.random() * 90)),
+				                               1 : -1) * (30 + Math.random() * 90)),
 				(int) (getLocation().getY() + (Math.random() * 50 > 25 ?
-						1 : -1) * (30 + Math.random() * 90)));
+				                               1 : -1) * (30 + Math.random() * 90)));
 		if (p.getX() < 1 || p.getY() < 1 || p.getX() > 761 || p.getY() > 499) {
 			clickSlightly();
 			return;
@@ -315,7 +318,7 @@ public class Mouse extends MethodProvider {
 				sleep(random(60, 300));
 				Point pos = getLocation();
 				move(pos.x - afterOffset, pos.y - afterOffset, afterOffset * 2,
-						afterOffset * 2);
+				     afterOffset * 2);
 			}
 		}
 	}
@@ -406,10 +409,10 @@ public class Mouse extends MethodProvider {
 	public void moveSlightly() {
 		Point p = new Point(
 				(int) (getLocation().getX() + (Math.random() * 50 > 25 ? 1
-						: -1)
+				                                                       : -1)
 						* (30 + Math.random() * 90)),
 				(int) (getLocation().getY() + (Math.random() * 50 > 25 ? 1
-						: -1)
+				                                                       : -1)
 						* (30 + Math.random() * 90)));
 		if (p.getX() < 1 || p.getY() < 1 || p.getX() > 761 || p.getY() > 499) {
 			moveSlightly();
@@ -424,11 +427,12 @@ public class Mouse extends MethodProvider {
 	 */
 	public int getRandomX(final int maxDistance) {
 		Point p = getLocation();
-		if (p.x < 0 || maxDistance <= 0)
+		if (p.x < 0 || maxDistance <= 0) {
 			return -1;
-		if (random(0, 2) == 0)
+		}
+		if (random(0, 2) == 0) {
 			return p.x - random(0, p.x < maxDistance ? p.x : maxDistance);
-		else {
+		} else {
 			int dist = methods.game.getWidth() - p.x;
 			return p.x + random(1, dist < maxDistance && dist > 0 ? dist : maxDistance);
 		}
@@ -440,11 +444,12 @@ public class Mouse extends MethodProvider {
 	 */
 	public int getRandomY(final int maxDistance) {
 		Point p = getLocation();
-		if (p.y < 0 || maxDistance <= 0)
+		if (p.y < 0 || maxDistance <= 0) {
 			return -1;
-		if (random(0, 2) == 0)
+		}
+		if (random(0, 2) == 0) {
 			return p.y - random(0, p.y < maxDistance ? p.y : maxDistance);
-		else {
+		} else {
 			int dist = methods.game.getHeight() - p.y;
 			return p.y + random(1, dist < maxDistance && dist > 0 ? dist : maxDistance);
 		}

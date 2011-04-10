@@ -148,8 +148,9 @@ public class EventMulticaster implements EventListener {
 	 */
 	public void addListener(EventListener el, long mask) {
 		synchronized (EventMulticaster.treeLock) {
-			if (listeners.contains(el))
+			if (listeners.contains(el)) {
 				return;
+			}
 
 			if (el instanceof EventMulticaster) {
 				final EventMulticaster em = (EventMulticaster) el;
@@ -171,11 +172,13 @@ public class EventMulticaster implements EventListener {
 	 * Has to hold tree lock.
 	 */
 	private void addMulticaster(EventMulticaster em) {
-		if (em.parent != null)
+		if (em.parent != null) {
 			throw new IllegalArgumentException("adding multicaster to multiple multicasters");
+		}
 		for (EventMulticaster cur = this; cur != null; cur = cur.parent) {
-			if (cur == em)
+			if (cur == em) {
 				throw new IllegalArgumentException("adding multicaster's parent to itself");
+			}
 		}
 		listeners.add(em);
 		em.parent = this;
@@ -314,8 +317,9 @@ public class EventMulticaster implements EventListener {
 	public void removeListener(EventListener el) {
 		synchronized (EventMulticaster.treeLock) {
 			final int idx = listeners.indexOf(el);
-			if (idx == -1)
+			if (idx == -1) {
 				return;
+			}
 			el = listeners.remove(idx);
 			if (el instanceof EventMulticaster) {
 				final EventMulticaster em = (EventMulticaster) el;

@@ -39,8 +39,9 @@ public final class RSClassLoader extends ClassLoader {
 
 				byte[] buff = new byte[1024];
 				int len;
-				while ((len = is.read(buff)) != -1)
+				while ((len = is.read(buff)) != -1) {
 					bos.write(buff, 0, len);
+				}
 
 				byte[] data = bos.toByteArray();
 
@@ -49,8 +50,9 @@ public final class RSClassLoader extends ClassLoader {
 			} catch (IOException e) {
 				e.printStackTrace();
 			} finally {
-				if (is != null)
+				if (is != null) {
 					is.close();
+				}
 			}
 		} catch (final Exception ignored) {
 		}

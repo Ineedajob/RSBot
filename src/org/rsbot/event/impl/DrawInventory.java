@@ -17,11 +17,13 @@ public class DrawInventory implements PaintListener {
 	}
 
 	public void onRepaint(final Graphics render) {
-		if (!ctx.game.isLoggedIn())
+		if (!ctx.game.isLoggedIn()) {
 			return;
+		}
 
-		if (ctx.game.getCurrentTab() != Game.TAB_INVENTORY)
+		if (ctx.game.getCurrentTab() != Game.TAB_INVENTORY) {
 			return;
+		}
 
 		render.setColor(Color.WHITE);
 		final RSItem[] inventoryItems = ctx.inventory.getItems();

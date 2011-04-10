@@ -72,8 +72,9 @@ public class RSTile {
 
 	@Override
 	public boolean equals(final Object obj) {
-		if (obj == this)
+		if (obj == this) {
 			return true;
+		}
 		if (obj instanceof RSTile) {
 			final RSTile tile = (RSTile) obj;
 			return (tile.x == x) && (tile.y == y) && (tile.z == z);

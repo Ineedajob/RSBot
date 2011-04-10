@@ -34,7 +34,8 @@ public class DrawMouse implements PaintListener {
 			g.rotate(Math.toRadians(getRot()), location.x, location.y);
 			g.drawLine(location.x, location.y - 5, location.x, location.y + 5);
 			g.drawLine(location.x - 5, location.y, location.x + 5, location.y);
-			if (mouse.isPressed() && ((clicks.size() > 0 && clicks.get(clicks.size() - 1).getAge() > 100 && clicks.get(clicks.size() - 1).getStart() != mouse.getPressTime()) || clicks.size() == 0)) {
+			if (mouse.isPressed() && ((clicks.size() > 0 && clicks.get(clicks.size() - 1).getAge() > 100 && clicks.get(
+					clicks.size() - 1).getStart() != mouse.getPressTime()) || clicks.size() == 0)) {
 				Cross newCross = new Cross(1500, mouse.getPressTime(), location, getRot());
 				if (!clicks.contains(newCross)) {
 					clicks.add(newCross);

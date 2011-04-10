@@ -19,8 +19,9 @@ public class DrawBoundaries implements PaintListener {
 	}
 
 	public void onRepaint(final Graphics render) {
-		if (!ctx.game.isLoggedIn())
+		if (!ctx.game.isLoggedIn()) {
 			return;
+		}
 		final int blocks[][] = ctx.client.getRSGroundDataArray()[ctx.client.getPlane()].getBlocks();
 		final int baseX = ctx.client.getBaseX();
 		final int baseY = ctx.client.getBaseY();
@@ -59,7 +60,8 @@ public class DrawBoundaries implements PaintListener {
 						render.fillPolygon(new int[]{bl.x, br.x, tr.x, tl.x}, new int[]{bl.y, br.y, tr.y, tl.y}, 4);
 					}
 					if ((miniBL != null) && (miniBR != null) && (miniTR != null) && (miniTL != null)) {
-						render.fillPolygon(new int[]{miniBL.x, miniBR.x, miniTR.x, miniTL.x}, new int[]{miniBL.y, miniBR.y, miniTR.y, miniTL.y}, 4);
+						render.fillPolygon(new int[]{miniBL.x, miniBR.x, miniTR.x, miniTL.x},
+						                   new int[]{miniBL.y, miniBR.y, miniTR.y, miniTL.y}, 4);
 					}
 				}
 				if (((blocks[i][j - 1] & 0x1280102) != 0) || ((curBlock & 0x1280120) != 0)) {

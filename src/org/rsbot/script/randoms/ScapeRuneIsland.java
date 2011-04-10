@@ -46,30 +46,36 @@ public class ScapeRuneIsland extends Random {
 		}
 		if (interfaces.get(241).getComponent(4).isValid()
 				&& interfaces.get(241).getComponent(4).getText()
-				.contains("catnap"))
+				             .contains("catnap")) {
 			finished = true;
+		}
 		if (interfaces.get(64).getComponent(4).isValid()
 				&& interfaces.get(64).getComponent(4).getText()
-				.contains("fallen asleep"))
+				             .contains("fallen asleep")) {
 			finished = true;
+		}
 		if (interfaces.get(242).getComponent(4).isValid()
 				&& interfaces.get(242).getComponent(4).getText()
-				.contains("Wait! Before"))
+				             .contains("Wait! Before")) {
 			forceTalk = true;
-		if (interfaces.canContinue())
-			if (interfaces.clickContinue())
+		}
+		if (interfaces.canContinue()) {
+			if (interfaces.clickContinue()) {
 				return random(500, 1000);
+			}
+		}
 		if (forceTalk) {
 			RSNPC servant = npcs.getNearest(2481);
 			if (servant != null && direction == null
 					&& settings.getSetting(344) == 0) {
 				if (!calc.tileOnScreen(servant.getLocation())) {
 					walking.walkTileMM(walking.getClosestTileOnMap(servant
-							.getLocation()));
+							                                               .getLocation()));
 					return 700;
 				}
-				if (servant.doAction("Talk-to"))
+				if (servant.doAction("Talk-to")) {
 					forceTalk = false;
+				}
 				return random(1000, 2000);
 			}
 			if (servant == null) {
@@ -86,11 +92,12 @@ public class ScapeRuneIsland extends Random {
 			if (portal != null) {
 				if (!calc.tileOnScreen(portal.getLocation())) {
 					walking.walkTileMM(walking.getClosestTileOnMap(portal
-							.getLocation()));
+							                                               .getLocation()));
 					return random(500, 1000);
 				} else {
-					if (portal.doAction("Enter"))
+					if (portal.doAction("Enter")) {
 						return random(3000, 5000);
+					}
 					return random(500, 1000);
 				}
 			} else {
@@ -100,14 +107,16 @@ public class ScapeRuneIsland extends Random {
 		if (bank.isDepositOpen()
 				&& bank.getBoxCount() - bank.getBoxCount(6209, 6202, 6200) >= 27) {
 			RSComponent randomItem = interfaces.get(11).getComponent(17)
-					.getComponent(random(16, 26));
+			                                   .getComponent(random(16, 26));
 			int randomID = randomItem.getComponentID();
-			if (randomID < 0)
+			if (randomID < 0) {
 				return random(50, 100);
+			}
 			log("Item with ID " + randomID + " was deposited.");
 			if (interfaces.get(11).getComponent(17)
-					.getComponent(random(16, 26)).doAction("Dep"))
+			              .getComponent(random(16, 26)).doAction("Dep")) {
 				return random(500, 1000);
+			}
 			return random(50, 100);
 		}
 		if (bank.isDepositOpen()
@@ -119,7 +128,7 @@ public class ScapeRuneIsland extends Random {
 			RSObject box = objects.getNearest(32930);
 			if (!calc.tileOnScreen(box.getLocation())) {
 				walking.walkTileMM(walking.getClosestTileOnMap(box
-						.getLocation()));
+						                                               .getLocation()));
 				return random(1000, 2000);
 			} else {
 				log("Depositing item(s) to make room.");
@@ -132,7 +141,7 @@ public class ScapeRuneIsland extends Random {
 			if (pot != null) {
 				if (!calc.tileOnScreen(pot.getLocation())) {
 					walking.walkTileMM(walking.getClosestTileOnMap(pot
-							.getLocation()));
+							                                               .getLocation()));
 					return random(400, 800);
 				}
 				inventory.getItem(6202).doAction("Use");
@@ -150,7 +159,7 @@ public class ScapeRuneIsland extends Random {
 			if (net != null) {
 				if (!calc.tileOnScreen(net.getLocation())) {
 					walking.walkTileMM(walking.getClosestTileOnMap(net
-							.getLocation()));
+							                                               .getLocation()));
 					return random(800, 1000);
 				} else {
 					tiles.doAction(net.getLocation(), "Take");
@@ -186,7 +195,7 @@ public class ScapeRuneIsland extends Random {
 			sleep(random(1000, 1200));
 			if (!calc.tileOnScreen(direction.getLocation())) {
 				walking.walkTileMM(walking.getClosestTileOnMap(direction
-						.getLocation()));
+						                                               .getLocation()));
 				return random(400, 600);
 			}
 			final RSObject spot = objects.getNearest(8986);
@@ -212,7 +221,7 @@ public class ScapeRuneIsland extends Random {
 			if (cat != null) {
 				if (!calc.tileOnScreen(cat.getLocation())) {
 					walking.walkTileMM(walking.getClosestTileOnMap(cat
-							.getLocation()));
+							                                               .getLocation()));
 				}
 				inventory.getItem(6200).doAction("Use");
 				sleep(random(500, 1000));
@@ -227,7 +236,7 @@ public class ScapeRuneIsland extends Random {
 				&& settings.getSetting(344) == 0) {
 			if (!calc.tileOnScreen(servant.getLocation())) {
 				walking.walkTileMM(walking.getClosestTileOnMap(servant
-						.getLocation()));
+						                                               .getLocation()));
 				return 700;
 			}
 			servant.doAction("Talk-to");
