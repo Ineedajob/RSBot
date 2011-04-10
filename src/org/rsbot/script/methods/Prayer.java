@@ -26,9 +26,12 @@ public class Prayer extends MethodProvider {
 				3, 8), MYSTIC_WILL(4, 9), ROCK_SKIN(5, 10), SUPERHUMAN_STRENGTH(
 				6, 13), IMPROVED_REFLEXES(7, 16), RAPID_RESTORE(8, 19), RAPID_HEAL(
 				9, 22), PROTECT_ITEM(10, 25), HAWK_EYE(11, 26), MYSTIC_LORE(12,
-				27), STEEL_SKIN(13, 28), ULTIMATE_STRENGTH(14, 31), INCREDIBLE_REFLEXES(
+		                                                                    27), STEEL_SKIN(13, 28), ULTIMATE_STRENGTH(
+				14, 31), INCREDIBLE_REFLEXES(
 				15, 34), PROTECT_FROM_SUMMONING(16, 35), PROTECT_FROM_MAGIC(17,
-				37), PROTECT_FROM_MISSILES(18, 40), PROTECT_FROM_MELEE(19, 43), EAGLE_EYE(
+		                                                                    37), PROTECT_FROM_MISSILES(18,
+		                                                                                               40), PROTECT_FROM_MELEE(
+				19, 43), EAGLE_EYE(
 				20, 44), MYSTIC_MIGHT(21, 45), RETRIBUTION(22, 46), REDEMPTION(
 				23, 49), SMITE(24, 52), CHIVALRY(25, 60), RAPID_RENEWAL(26, 65), PIETY(
 				27, 70), RIGOUR(28, 74), AUGURY(29, 77),
@@ -77,11 +80,12 @@ public class Prayer extends MethodProvider {
 	 */
 	public boolean isPrayerOn(Book prayer) {
 		RSComponent[] prayers = methods.interfaces.getComponent(271, 7)
-				.getComponents();
+		                                          .getComponents();
 		for (RSComponent c : prayers) {
 			if (c.getComponentIndex() == prayer.getIndex()
-					&& c.getBackgroundColor() != -1)
+					&& c.getBackgroundColor() != -1) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -94,7 +98,7 @@ public class Prayer extends MethodProvider {
 	 */
 	public boolean isQuickPrayerOn() {
 		return methods.interfaces.getComponent(Game.INTERFACE_PRAYER_ORB, 2)
-				.getBackgroundColor() == 782;
+		                         .getBackgroundColor() == 782;
 	}
 
 	/**
@@ -105,8 +109,9 @@ public class Prayer extends MethodProvider {
 	 * @return <tt>true</tt> if the interface was clicked; otherwise <tt>false</tt>.
 	 */
 	public boolean setPrayer(final Book prayer, final boolean activate) {
-		if (isPrayerOn(prayer) == activate)
+		if (isPrayerOn(prayer) == activate) {
 			return false;
+		}
 		RSComponent pray = methods.interfaces.getComponent(271, 7).getComponent(prayer.getIndex());
 		// Check that the background color == activate, otherwise click
 		return (pray.getBackgroundColor() == -1) == activate
@@ -135,7 +140,7 @@ public class Prayer extends MethodProvider {
 	public RSComponent[] getSelectedPrayers() {
 		ArrayList<RSComponent> selected = new ArrayList<RSComponent>();
 		RSComponent[] prayers = methods.interfaces.getComponent(271, 7)
-				.getComponents();
+		                                          .getComponents();
 		for (RSComponent prayer : prayers) {
 			if (prayer.getBackgroundColor() != -1) {
 				selected.add(prayer);

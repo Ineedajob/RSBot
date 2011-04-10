@@ -26,8 +26,9 @@ public class OverrideClassAdapter extends ClassAdapter {
 	}
 
 	public FieldVisitor visitField(int access, String name, String desc, String signature, Object value) {
-		if (desc.equals("L" + old_clazz + ";"))
+		if (desc.equals("L" + old_clazz + ";")) {
 			desc = "L" + new_clazz + ";";
+		}
 
 		return cv.visitField(access, name, desc, signature, value);
 	}
@@ -84,15 +85,17 @@ public class OverrideClassAdapter extends ClassAdapter {
 		}
 
 		public void visitTypeInsn(int opcode, String type) {
-			if (type.equals(old_clazz))
+			if (type.equals(old_clazz)) {
 				type = new_clazz;
+			}
 
 			mv.visitTypeInsn(opcode, type);
 		}
 
 		public void visitFieldInsn(int opcode, String owner, String name, String desc) {
-			if (desc.contains(old_clazz))
+			if (desc.contains(old_clazz)) {
 				desc = desc.replace("L" + old_clazz + ";", "L" + new_clazz + ";");
+			}
 
 			mv.visitFieldInsn(opcode, owner, name, desc);
 		}

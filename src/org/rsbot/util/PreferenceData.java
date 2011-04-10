@@ -77,8 +77,9 @@ public class PreferenceData {
 		switch (type) {
 
 			case 1: {
-				if (data.length <= 40)
+				if (data.length <= 40) {
 					break;
+				}
 
 				data[19] = 3; //Graphics Mode
 			}

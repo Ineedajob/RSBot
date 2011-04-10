@@ -13,8 +13,9 @@ public class BankPins extends Random {
 	}
 
 	void enterCode(final String pin) {
-		if (!interfaces.get(13).isValid())
+		if (!interfaces.get(13).isValid()) {
 			return;
+		}
 		final RSComponent[] children = interfaces.get(13).getComponents();
 		int state = 0;
 		for (int i = 1; i < 5; i++) {
@@ -23,8 +24,9 @@ public class BankPins extends Random {
 			}
 		}
 		state = 4 - state;
-		if (!interfaces.get(759).isValid())
+		if (!interfaces.get(759).isValid()) {
 			return;
+		}
 		final RSComponent[] bankPin = interfaces.get(759).getComponents();
 		for (RSComponent aBankPin : bankPin) {
 			if (aBankPin.containsText(pin.substring(state, state + 1))) {

@@ -230,8 +230,12 @@ public class RSLocalPath extends RSPath {
 	private double heuristic(Node start, Node end) {
 		double dx = start.x - end.x;
 		double dy = start.y - end.y;
-		if (dx < 0) dx = -dx;
-		if (dy < 0) dy = -dy;
+		if (dx < 0) {
+			dx = -dx;
+		}
+		if (dy < 0) {
+			dy = -dy;
+		}
 		return dx < dy ? dy : dx;
 		//double diagonal = dx > dy ? dy : dx;
 		//double manhattan = dx + dy;

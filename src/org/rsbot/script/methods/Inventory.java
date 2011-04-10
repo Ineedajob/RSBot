@@ -59,8 +59,9 @@ public class Inventory extends MethodProvider {
 	 */
 	public boolean destroyItem(final int itemID) {
 		RSItem item = getItem(itemID);
-		if (!itemHasAction(item, "Destroy"))
+		if (!itemHasAction(item, "Destroy")) {
 			return false;
+		}
 		while (item != null) {
 			if (methods.interfaces.get(94).isValid()) {
 				methods.interfaces.getComponent(94, 3).doClick();
@@ -126,13 +127,15 @@ public class Inventory extends MethodProvider {
 	 */
 	public boolean itemHasAction(final RSItem item, final String action) {
 		// Used to determine if an item is droppable/destroyable
-		if (item == null)
+		if (item == null) {
 			return false;
+		}
 		RSItemDef itemDef = item.getDefinition();
 		if (itemDef != null) {
 			for (String a : itemDef.getActions()) {
-				if (a.equalsIgnoreCase(action))
+				if (a.equalsIgnoreCase(action)) {
 					return true;
+				}
 			}
 		}
 		return false;
@@ -167,10 +170,12 @@ public class Inventory extends MethodProvider {
 				&& !methods.interfaces.get(Store.INTERFACE_STORE).isValid()) {
 			methods.game.openTab(Game.TAB_INVENTORY);
 		}
-		if (col < 0 || col > 3 || row < 0 || row > 6)
+		if (col < 0 || col > 3 || row < 0 || row > 6) {
 			return;
-		if (getItems()[col + row * 4].getID() == -1)
+		}
+		if (getItems()[col + row * 4].getID() == -1) {
 			return;
+		}
 		Point p;
 		p = methods.mouse.getLocation();
 		if (p.x < 563 + col * 42 || p.x >= 563 + col * 42 + 32
@@ -209,8 +214,9 @@ public class Inventory extends MethodProvider {
 	 */
 	public boolean containsAll(final int... itemID) {
 		for (int i : itemID) {
-			if (getItem(i) == null)
+			if (getItem(i) == null) {
 				return false;
+			}
 		}
 		return true;
 	}
@@ -228,8 +234,9 @@ public class Inventory extends MethodProvider {
 		RSItem[] items = getItems();
 		for (RSItem item : items) {
 			for (int i : itemID) {
-				if (item.getID() == i)
+				if (item.getID() == i) {
 					return true;
+				}
 			}
 		}
 		return false;
@@ -263,13 +270,16 @@ public class Inventory extends MethodProvider {
 	 */
 	public boolean selectItem(final int itemID) {
 		RSItem selItem = getSelectedItem(), iItem = getItem(itemID);
-		if (selItem != null && selItem.getID() == itemID)
+		if (selItem != null && selItem.getID() == itemID) {
 			return true;
-		if (!iItem.doAction("Use"))
+		}
+		if (!iItem.doAction("Use")) {
 			return false;
+		}
 		for (int c = 0; c < 5; c++) {
-			if (getSelectedItem() != null)
+			if (getSelectedItem() != null) {
 				break;
+			}
 			sleep(random(200, 300));
 		}
 		selItem = getSelectedItem();
@@ -335,14 +345,17 @@ public class Inventory extends MethodProvider {
 			methods.game.openTab(Game.TAB_INVENTORY);
 		}
 		RSItem item = getItem(itemID);
-		if (item == null)
+		if (item == null) {
 			return false;
+		}
 		RSTile objTile = object.getLocation();
 		String iName = item.getName(), oName = object.getName(object);
-		if (!selectItem(itemID))
+		if (!selectItem(itemID)) {
 			return false;
-		if (oName.isEmpty())
+		}
+		if (oName.isEmpty()) {
 			methods.camera.turnTo(objTile, random(5, 15));
+		}
 		return object.doAction(!iName.isEmpty() ? "Use " + iName + " -> "
 				+ oName : "Use");
 	}
@@ -379,8 +392,9 @@ public class Inventory extends MethodProvider {
 	public int getSelectedItemIndex() {
 		RSComponent[] comps = getInterface().getComponents();
 		for (int i = 0; i < Math.min(28, comps.length); ++i) {
-			if (comps[i].getBorderThickness() == 2)
+			if (comps[i].getBorderThickness() == 2) {
 				return i;
+			}
 		}
 		return -1;
 	}
@@ -426,7 +440,7 @@ public class Inventory extends MethodProvider {
 	public RSItem getItemAt(final int index) {
 		RSComponent comp = getInterface().getComponent(index);
 		return 0 <= index && index < 28 && comp != null ? new RSItem(methods,
-				comp) : null;
+		                                                             comp) : null;
 	}
 
 	/**
@@ -548,8 +562,9 @@ public class Inventory extends MethodProvider {
 		RSItem[] items = getItems();
 		for (RSItem item : items) {
 			for (int id : ids) {
-				if (item.getID() == id)
+				if (item.getID() == id) {
 					return item;
+				}
 			}
 		}
 		return null;

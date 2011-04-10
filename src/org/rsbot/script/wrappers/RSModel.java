@@ -61,13 +61,16 @@ public abstract class RSModel extends MethodProvider {
 	 * @return true of the point is within the bounds of the model
 	 */
 	private boolean contains(Point p) {
-		if (this == null)
+		if (this == null) {
 			return false;
+		}
 
 		Polygon[] triangles = this.getTriangles();
-		for (Polygon poly : triangles)
-			if (poly.contains(p))
+		for (Polygon poly : triangles) {
+			if (poly.contains(p)) {
 				return true;
+			}
+		}
 
 		return false;
 	}
@@ -144,15 +147,17 @@ public abstract class RSModel extends MethodProvider {
 	 *         screen it will return null.
 	 */
 	public Point[] getPoints() {
-		if (this == null)
+		if (this == null) {
 			return null;
+		}
 		Polygon[] polys = getTriangles();
 		Point[] points = new Point[polys.length * 3];
 		int index = 0;
-		for (Polygon poly : polys)
+		for (Polygon poly : polys) {
 			for (int i = 0; i < 3; i++) {
 				points[index++] = new Point(poly.xpoints[i], poly.ypoints[i]);
 			}
+		}
 		return points;
 	}
 
@@ -210,8 +215,9 @@ public abstract class RSModel extends MethodProvider {
 			for (Polygon poly : getTriangles()) {
 				for (int i = 0; i < poly.npoints; i++) {
 					Point p = new Point(poly.xpoints[i], poly.ypoints[i]);
-					if (!methods.calc.pointOnScreen(p))
+					if (!methods.calc.pointOnScreen(p)) {
 						continue;
+					}
 					double dist2 = methods.calc.distanceBetween(central, p);
 					if (curCentral == null || dist2 < dist) {
 						curCentral = p;
@@ -239,16 +245,16 @@ public abstract class RSModel extends MethodProvider {
 		int height = methods.calc.tileHeight(locX, locY);
 		for (int i = 0; i < len; ++i) {
 			Point one = methods.calc.worldToScreen(locX + xPoints[indices1[i]],
-					locY + zPoints[indices1[i]], height + yPoints[indices1[i]]);
+			                                       locY + zPoints[indices1[i]], height + yPoints[indices1[i]]);
 			Point two = methods.calc.worldToScreen(locX + xPoints[indices2[i]],
-					locY + zPoints[indices2[i]], height + yPoints[indices2[i]]);
+			                                       locY + zPoints[indices2[i]], height + yPoints[indices2[i]]);
 			Point three = methods.calc.worldToScreen(locX
-					+ xPoints[indices3[i]], locY + zPoints[indices3[i]], height
+					                                         + xPoints[indices3[i]], locY + zPoints[indices3[i]], height
 					+ yPoints[indices3[i]]);
 
 			if (one.x >= 0 && two.x >= 0 && three.x >= 0) {
 				polygons.add(new Polygon(new int[]{one.x, two.x, three.x},
-						new int[]{one.y, two.y, three.y}, 3));
+				                         new int[]{one.y, two.y, three.y}, 3));
 			}
 		}
 		return polygons.toArray(new Polygon[polygons.size()]);
@@ -287,14 +293,14 @@ public abstract class RSModel extends MethodProvider {
 		int height = methods.calc.tileHeight(locX, locY);
 		for (int i = start; i < end; ++i) {
 			Point one = methods.calc.worldToScreen(locX + xPoints[indices1[i]],
-					locY + zPoints[indices1[i]], height + yPoints[indices1[i]]);
+			                                       locY + zPoints[indices1[i]], height + yPoints[indices1[i]]);
 			int x = -1, y = -1;
 			if (one.x >= 0) {
 				x = one.x;
 				y = one.y;
 			}
 			Point two = methods.calc.worldToScreen(locX + xPoints[indices2[i]],
-					locY + zPoints[indices2[i]], height + yPoints[indices2[i]]);
+			                                       locY + zPoints[indices2[i]], height + yPoints[indices2[i]]);
 			if (two.x >= 0) {
 				if (x >= 0) {
 					x = (x + two.x) / 2;
@@ -305,7 +311,7 @@ public abstract class RSModel extends MethodProvider {
 				}
 			}
 			Point three = methods.calc.worldToScreen(locX
-					+ xPoints[indices3[i]], locY + zPoints[indices3[i]], height
+					                                         + xPoints[indices3[i]], locY + zPoints[indices3[i]], height
 					+ yPoints[indices3[i]]);
 			if (three.x >= 0) {
 				if (x >= 0) {

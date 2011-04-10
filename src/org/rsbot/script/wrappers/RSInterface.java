@@ -44,8 +44,9 @@ public class RSInterface extends MethodProvider implements Iterable<RSComponent>
 			if (child == null) {
 				continue;
 			}
-			if (child.getActions() == null)
+			if (child.getActions() == null) {
 				return false;
+			}
 			for (final String action : child.getActions()) {
 				if (action == null) {
 					continue;
@@ -96,8 +97,9 @@ public class RSInterface extends MethodProvider implements Iterable<RSComponent>
 	 */
 	public int getChildCount() {
 		final org.rsbot.client.RSInterface[] children = getChildrenInternal();
-		if (children != null)
+		if (children != null) {
 			return children.length;
+		}
 		return 0;
 	}
 
@@ -109,9 +111,9 @@ public class RSInterface extends MethodProvider implements Iterable<RSComponent>
 	public RSComponent[] getComponents() {
 		synchronized (childLock) {
 			final org.rsbot.client.RSInterface[] children = getChildrenInternal();
-			if (children == null)
+			if (children == null) {
 				return childCache.clone(); // return as is
-			else {
+			} else {
 				if (childCache.length < children.length) { // extend if necessary
 					final int prevLen = childCache.length;
 					childCache = Arrays.copyOf(childCache, children.length);
@@ -144,8 +146,9 @@ public class RSInterface extends MethodProvider implements Iterable<RSComponent>
 		if (children != null) {
 			for (final org.rsbot.client.RSInterface child : children) {
 				if (child != null) {
-					if ((child.getMasterX() != -1) && (child.getMasterY() != -1))
+					if ((child.getMasterX() != -1) && (child.getMasterY() != -1)) {
 						return new Point(child.getMasterX(), child.getMasterY());
+					}
 				}
 			}
 		}
@@ -237,8 +240,9 @@ public class RSInterface extends MethodProvider implements Iterable<RSComponent>
 			return null;
 		}
 		final org.rsbot.client.RSInterface[][] inters = c.getRSInterfaceCache();
-		if ((inters != null) && (index < inters.length))
+		if ((inters != null) && (index < inters.length)) {
 			return inters[index];
+		}
 		return null;
 	}
 
@@ -258,8 +262,9 @@ public class RSInterface extends MethodProvider implements Iterable<RSComponent>
 	 */
 	@Override
 	public boolean equals(final Object obj) {
-		if (obj == this)
+		if (obj == this) {
 			return true;
+		}
 		if (obj instanceof RSInterface) {
 			final RSInterface inter = (RSInterface) obj;
 			return inter.index == index;

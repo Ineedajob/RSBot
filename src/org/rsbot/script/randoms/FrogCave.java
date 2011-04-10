@@ -18,9 +18,9 @@ public class FrogCave extends Random {
 
 	@Override
 	public boolean activateCondition() {
-		if (!game.isLoggedIn())
+		if (!game.isLoggedIn()) {
 			return false;
-		else if ((npcs.getNearest("Frog Herald") != null)
+		} else if ((npcs.getNearest("Frog Herald") != null)
 				&& (objects.getNearest(5917) != null)) {
 			sleep(random(2000, 3000));
 			return (npcs.getNearest("Frog Herald") != null)

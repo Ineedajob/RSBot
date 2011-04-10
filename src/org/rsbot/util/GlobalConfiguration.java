@@ -157,15 +157,17 @@ public class GlobalConfiguration {
 
 		public static String getHomeDirectory() {
 			final String env = System.getenv(GlobalConfiguration.NAME
-					.toUpperCase() + "_HOME");
-			if ((env == null) || env.isEmpty())
+					                                 .toUpperCase() + "_HOME");
+			if ((env == null) || env.isEmpty()) {
 				return (GlobalConfiguration.getCurrentOperatingSystem() == OperatingSystem.WINDOWS ? FileSystemView
 						.getFileSystemView().getDefaultDirectory()
 						.getAbsolutePath()
-						: Paths.getUnixHome())
+				                                                                                   :
+				        Paths.getUnixHome())
 						+ File.separator + GlobalConfiguration.NAME;
-			else
+			} else {
 				return env;
+			}
 		}
 
 		public static String getLogsDirectory() {
@@ -251,7 +253,7 @@ public class GlobalConfiguration {
 
 	static {
 		final URL resource = GlobalConfiguration.class.getClassLoader()
-				.getResource(Paths.Resources.VERSION);
+		                                              .getResource(Paths.Resources.VERSION);
 		if (resource != null) {
 			GlobalConfiguration.RUNNING_FROM_JAR = true;
 		}
@@ -289,13 +291,13 @@ public class GlobalConfiguration {
 		String logFormatter = LogFormatter.class.getCanonicalName();
 		String fileHandler = FileHandler.class.getCanonicalName();
 		logging.setProperty("handlers",
-				TextAreaLogHandler.class.getCanonicalName() + "," + fileHandler);
+		                    TextAreaLogHandler.class.getCanonicalName() + "," + fileHandler);
 		logging.setProperty(".level", "INFO");
 		logging.setProperty(SystemConsoleHandler.class.getCanonicalName()
-				+ ".formatter", logFormatter);
+				                    + ".formatter", logFormatter);
 		logging.setProperty(fileHandler + ".formatter", logFormatter);
 		logging.setProperty(TextAreaLogHandler.class.getCanonicalName()
-				+ ".formatter", logFormatter);
+				                    + ".formatter", logFormatter);
 		logging.setProperty(fileHandler + ".pattern", Paths.getLogsDirectory()
 				+ File.separator + "%u.%g.log");
 		logging.setProperty(fileHandler + ".count", "10");
@@ -373,9 +375,9 @@ public class GlobalConfiguration {
 	                                             final String referer) throws IOException {
 		final URLConnection con = url.openConnection();
 		con.addRequestProperty("Accept",
-				"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+		                       "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
 		con.addRequestProperty("Accept-Charset",
-				"ISO-8859-1,utf-8;q=0.7,*;q=0.7");
+		                       "ISO-8859-1,utf-8;q=0.7,*;q=0.7");
 		con.addRequestProperty("Accept-Encoding", "gzip,deflate");
 		con.addRequestProperty("Accept-Language", "en-us,en;q=0.5");
 		con.addRequestProperty("Connection", "keep-alive");
