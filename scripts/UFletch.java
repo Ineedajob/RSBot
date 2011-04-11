@@ -5,26 +5,21 @@ import java.io.*;
 import java.net.*;
 import java.sql.Timestamp;
 import java.util.*;
-import java.util.Random;
 import java.util.logging.*;
 import java.util.regex.*;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
-import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.*;
 
 import org.rsbot.event.events.MessageEvent;
 import org.rsbot.event.listeners.*;
 import org.rsbot.util.GlobalConfiguration;
 import org.rsbot.script.*;
-import org.rsbot.script.methods.Environment;
-import org.rsbot.script.methods.Skills;
-import org.rsbot.script.wrappers.RSInterface;
-import org.rsbot.script.wrappers.RSTile;
+import org.rsbot.script.methods.*;
+import org.rsbot.script.wrappers.*;
 
-@ScriptManifest(authors = { "Fletch To 99" }, keywords = "Fletching", name = "UFletch", version = 2.2, description = "The best fletcher!")
+@ScriptManifest(authors = { "Fletch To 99" }, keywords = "Fletching", name = "UFletch", version = 2.21, description = "The best fletcher!")
 /**
  * All-in-One Fletching script for RSBot 2.XX
  * @author Fletch To 99
@@ -53,6 +48,7 @@ public class UFletch extends Script implements PaintListener, MouseListener,
 		MenuItem item3 = new MenuItem("Resume");
 		MenuItem item4 = new MenuItem("Open Gui");
 		MenuItem item5 = new MenuItem("Help");
+		MenuItem item6 = new MenuItem("IRC");
 		static final String server = "irc.rizon.net";
 		static final String channel = "#ufletch";
 	}
@@ -97,7 +93,6 @@ public class UFletch extends Script implements PaintListener, MouseListener,
 
 	private String status = "";
 	private String name = null;
-	private String uniqueID = null;
 
 	private gui gui;
 	private trayInfo trayInfo;
@@ -107,6 +102,7 @@ public class UFletch extends Script implements PaintListener, MouseListener,
 	private Irc irc;
 	private Thread i;
 	private IRCGui IRCgui;
+	private ircNameGUI nameGUI;
 	private Document doc;
 	private Document users;
 	private RSTile[] path;
@@ -699,19 +695,6 @@ public class UFletch extends Script implements PaintListener, MouseListener,
 					&& skills.getRealLevel(Skills.FLETCHING) == 99 && !has99) {
 				log("If you have 99 already, Disable at 99 for screenshots!");
 				env.saveScreenshot(true);
-				if (gui.checkBox21.isSelected()) {
-					try {
-						URL url = new URL(
-								"http://www.universalscripts.org/UFletch/levelup.php?mail="
-										+ gui.textField3.getText()
-										+ "&lvl="
-										+ skills.getCurrentLevel(Skills.FLETCHING));
-						url.openConnection();
-						url.openStream();
-					} catch (MalformedURLException e) {
-					} catch (IOException e) {
-					}
-				}
 				has99 = true;
 			}
 			trayInfo.systray.displayMessage("Level UP", "You are now level: "
@@ -720,18 +703,6 @@ public class UFletch extends Script implements PaintListener, MouseListener,
 			sleep(150, 1500);
 			interfaces.get(740).getComponent(3).doClick(true);
 			sleep(150, 400);
-			if (gui.checkBox20.isSelected()) {
-				try {
-					URL url = new URL(
-							"http://www.universalscripts.org/UFletch/levelup.php?mail="
-									+ gui.textField3.getText() + "&lvl="
-									+ skills.getCurrentLevel(Skills.FLETCHING));
-					url.openConnection();
-					url.openStream();
-				} catch (MalformedURLException e) {
-				} catch (IOException e) {
-				}
-			}
 		}
 	}
 
@@ -1158,20 +1129,25 @@ public class UFletch extends Script implements PaintListener, MouseListener,
 		try {
 			String m = e.getMessage().toLowerCase();
 			int person = e.getID();
-			if (m.contains("you carefully cut")) {
+			if (m.contains("you carefully cut")
+					&& person == MessageEvent.MESSAGE_ACTION) {
 				fletched++;
 			}
-			if (m.contains("you add a string to the bow")) {
+			if (m.contains("you add a string to the bow")
+					&& person == MessageEvent.MESSAGE_ACTION) {
 				strung++;
 			}
-			if (m.contains("you can't reach that")) {
+			if (m.contains("you can't reach that")
+					&& person == MessageEvent.MESSAGE_ACTION) {
 				fail++;
 			}
-			if (m.contains("your inventory is too full")) {
+			if (m.contains("your inventory is too full")
+					&& person == MessageEvent.MESSAGE_ACTION) {
 				fail++;
 				full++;
 			}
-			if (m.contains("you need a")) {
+			if (m.contains("you need a")
+					&& person == MessageEvent.MESSAGE_ACTION) {
 				log("not high enough level! Stopping!");
 				stopScript(true);
 			}
@@ -1257,41 +1233,50 @@ public class UFletch extends Script implements PaintListener, MouseListener,
 						"You already have the latest version of the script.");
 				return false;
 			}
-			log("Update found! Downloading version " + newVer);
-			String scriptFilePath = GlobalConfiguration.Paths
-					.getScriptsSourcesDirectory()
-					+ "\\"
-					+ constants.UPDATER_FILE_NAME;
-			PrintWriter out = new PrintWriter(scriptFilePath);
-			out.print(lines);
-			while ((line = in.readLine()) != null)
-				out.println(line);
-			out.close();
-			in.close();
-			JOptionPane.showMessageDialog(null,
-					"Update Downloaded successfully! Attempting to compile!");
-			log("Successfully saved " + constants.UPDATER_FILE_NAME + " to "
-					+ GlobalConfiguration.Paths.getScriptsSourcesDirectory());
-			log("Compiling...");
-			BufferedReader pathfile = new BufferedReader(new FileReader(
-					GlobalConfiguration.Paths.getSettingsDirectory() + "\\"
-							+ "path.txt"));
-			String path = pathfile.readLine();
-			try {
-				Runtime.getRuntime().exec(
-						new String[] { "javac", "-cp", path, scriptFilePath });
-			} catch (Exception ex) {
-				JOptionPane.showMessageDialog(null,
-						"Error Compiling, please manually compile!");
-				log("Could not compile the script. Please manually compile to finish the update.");
+			String pick = JOptionPane.showInputDialog(null,
+					"Update found! Type yes to download!");
+			if (pick.contains("yes")) {
+				log("Update found! Downloading version " + newVer);
+				String scriptFilePath = GlobalConfiguration.Paths
+						.getScriptsSourcesDirectory()
+						+ "\\"
+						+ constants.UPDATER_FILE_NAME;
+				PrintWriter out = new PrintWriter(scriptFilePath);
+				out.print(lines);
+				while ((line = in.readLine()) != null)
+					out.println(line);
+				out.close();
+				in.close();
+				JOptionPane
+						.showMessageDialog(null,
+								"Update Downloaded successfully! Attempting to compile!");
+				log("Successfully saved "
+						+ constants.UPDATER_FILE_NAME
+						+ " to "
+						+ GlobalConfiguration.Paths
+								.getScriptsSourcesDirectory());
+				log("Compiling...");
+				BufferedReader pathfile = new BufferedReader(new FileReader(
+						GlobalConfiguration.Paths.getSettingsDirectory() + "\\"
+								+ "path.txt"));
+				String path = pathfile.readLine();
+				try {
+					Runtime.getRuntime()
+							.exec(new String[] { "javac", "-cp", path,
+									scriptFilePath });
+				} catch (Exception ex) {
+					JOptionPane.showMessageDialog(null,
+							"Error Compiling, please manually compile!");
+					log("Could not compile the script. Please manually compile to finish the update.");
+					stopScript();
+					return false;
+				}
+				log("Update successful!");
+				log("The new version will appear near the bottom of the script selector.");
+				log("Stopping the script. restart to run the newer version.");
 				stopScript();
-				return false;
+				return true;
 			}
-			log("Update successful!");
-			log("The new version will appear near the bottom of the script selector.");
-			log("Stopping the script. restart to run the newer version.");
-			stopScript();
-			return true;
 		} catch (IOException e) {
 			log(e.toString());
 			log("Update failed.");
@@ -1351,11 +1336,11 @@ public class UFletch extends Script implements PaintListener, MouseListener,
 		}
 		JOptionPane.showMessageDialog(null, "Please wait while gui loads.");
 		getVersionNumbers();
-		getUnique();
+		nameGUI = new ircNameGUI();
 		gui = new gui();
-		gui.textField3.setText("Doesn't work with hotmail!!");
 		gui.setVisible(true);
 		loadSettings();
+		gui.checkBox16.setSelected(false);
 		if (gui.checkBox7.isSelected()) {
 			checkForUpdates();
 		}
@@ -1373,14 +1358,18 @@ public class UFletch extends Script implements PaintListener, MouseListener,
 		while (gui.isVisible()) {
 			sleep(random(200, 400));
 		}
-		if (gui.checkBox22.isSelected()) {
+		nameGUI.setVisible(true);
+		while (nameGUI.isVisible()) {
+			sleep(random(200, 400));
+		}
+		if (nameGUI.checkBox1.isSelected()) {
 			IRCgui = new IRCGui();
 			doc = IRCgui.textArea1.getDocument();
 			users = IRCgui.textArea2.getDocument();
 			irc = new Irc();
 			i = new Thread(irc);
-			IRCgui.setVisible(true);
 			i.start();
+			IRCgui.setVisible(true);
 		}
 		if (gui.checkBox16.isSelected()) {
 			beep = new beeper();
@@ -1389,7 +1378,6 @@ public class UFletch extends Script implements PaintListener, MouseListener,
 		}
 		getExtraInfo();
 		trayInfo = new trayInfo();
-		gui.checkBox22.setEnabled(false);
 		gui.checkBox16.setEnabled(false);
 		sleep(random(50, 75));
 		return true;
@@ -1499,19 +1487,8 @@ public class UFletch extends Script implements PaintListener, MouseListener,
 		if (gui.checkBox1.isSelected()) {
 			env.saveScreenshot(true);
 		}
-		if (gui.checkBox19.isSelected()) {
-			try {
-				URL url = new URL(
-						"http://www.universalscripts.org/UFletch/mail.php?mail="
-								+ gui.textField3.getText());
-				url.openConnection();
-				url.openStream();
-			} catch (MalformedURLException e) {
-			} catch (IOException e) {
-			}
-		}
 		SystemTray.getSystemTray().remove(trayInfo.systray);
-		if (gui.checkBox22.isSelected()) {
+		if (nameGUI.checkBox1.isSelected()) {
 			irc.leave();
 			i.interrupt();
 			i.suspend();
@@ -2095,19 +2072,6 @@ public class UFletch extends Script implements PaintListener, MouseListener,
 		}
 	}
 
-	public String getUnique() {
-		String str = new String(
-				"QAa0bcLdUK2eHfJgTP8XhiFj61DOklNm9nBoI5pGqYVrs3CtSuMZvwWx4yE7zR");
-		StringBuffer sb = new StringBuffer();
-		Random r = new Random();
-		int te = 0;
-		for (int i = 1; i <= 4; i++) {
-			te = r.nextInt(62);
-			sb.append(str.charAt(te));
-		}
-		return uniqueID = sb.toString();
-	}
-
 	private int getValue(boolean b) {
 		if (b)
 			return 1;
@@ -2115,12 +2079,16 @@ public class UFletch extends Script implements PaintListener, MouseListener,
 	}
 
 	private void loadSettings() {
-		if (!new File("UFletch.ini").exists()) {
+		if (!new File(GlobalConfiguration.Paths.getHomeDirectory()
+				+ File.separator + "Settings" + File.separator + "UFletch.ini")
+				.exists()) {
 			return;
 		}
 		try {
 			DataInputStream in = new DataInputStream(new FileInputStream(
-					"UFletch.ini"));
+					GlobalConfiguration.Paths.getHomeDirectory()
+							+ File.separator + "Settings" + File.separator
+							+ "UFletch.ini"));
 			BufferedReader br = new BufferedReader(new InputStreamReader(in));
 			String line;
 			while ((line = br.readLine()) != null) {
@@ -2202,20 +2170,10 @@ public class UFletch extends Script implements PaintListener, MouseListener,
 									w = 32;
 								} else if (isDoing.contains("<Beep>")) {
 									w = 33;
-								} else if (isDoing.contains("<Efinish>")) {
-									w = 34;
-								} else if (isDoing.contains("<Elevel>")) {
-									w = 35;
-								} else if (isDoing.contains("<E99>")) {
-									w = 36;
-								} else if (isDoing.contains("<IRC>")) {
-									w = 37;
-								} else if (isDoing.contains("<Email>")) {
-									w = 38;
 								} else if (isDoing.contains("<IRCname>")) {
-									w = 39;
+									w = 34;
 								} else if (isDoing.contains("<Speed>")) {
-									w = 40;
+									w = 35;
 								}
 								checkWhat = false;
 								isDoing = "";
@@ -2224,7 +2182,7 @@ public class UFletch extends Script implements PaintListener, MouseListener,
 						} else if (w == 1 || w == 2 || w == 3 || w == 4
 								|| w == 5 || w == 6 || w == 7 || w == 8
 								|| w == 9 || w == 10 || w == 11 || w == 12
-								|| w == 13 || w == 15 || w == 38 || w == 39) {
+								|| w == 13 || w == 15 || w == 34) {
 							if (c == '(') {
 								isDoing = "";
 							} else if (c == ',' || c == ')') {
@@ -2256,10 +2214,8 @@ public class UFletch extends Script implements PaintListener, MouseListener,
 									gui.comboBox15.setSelectedItem(isDoing);
 								} else if (w == 15) {
 									gui.textField2.setText(isDoing);
-								} else if (w == 38) {
-									gui.textField3.setText(isDoing);
-								} else if (w == 39) {
-									gui.textField4.setText(isDoing);
+								} else if (w == 34) {
+									nameGUI.textField1.setText(isDoing);
 								}
 							} else {
 								isDoing += c;
@@ -2311,15 +2267,7 @@ public class UFletch extends Script implements PaintListener, MouseListener,
 									gui.checkBox15.setSelected(val);
 								} else if (w == 33) {
 									gui.checkBox16.setSelected(val);
-								} else if (w == 34) {
-									gui.checkBox19.setSelected(val);
 								} else if (w == 35) {
-									gui.checkBox20.setSelected(val);
-								} else if (w == 36) {
-									gui.checkBox21.setSelected(val);
-								} else if (w == 37) {
-									gui.checkBox22.setSelected(val);
-								} else if (w == 40) {
 									gui.slider1.setValue(tempID);
 								}
 								isDoing = "";
@@ -2376,16 +2324,13 @@ public class UFletch extends Script implements PaintListener, MouseListener,
 			s.add("<UserCircle>(" + getValue(gui.checkBox18.isSelected()) + ")");
 			s.add("<Message>(" + getValue(gui.checkBox15.isSelected()) + ")");
 			s.add("<Beep>(" + getValue(gui.checkBox16.isSelected()) + ")");
-			s.add("<Efinish>(" + getValue(gui.checkBox19.isSelected()) + ")");
-			s.add("<Elevel>(" + getValue(gui.checkBox20.isSelected()) + ")");
-			s.add("<E99>(" + getValue(gui.checkBox21.isSelected()) + ")");
-			s.add("<IRC>(" + getValue(gui.checkBox22.isSelected()) + ")");
-			s.add("<Email>(" + (String) gui.textField3.getText() + ")");
-			s.add("<IRCname>(" + (String) gui.textField4.getText() + ")");
+			s.add("<IRCname>(" + (String) nameGUI.textField1.getText() + ")");
 			s.add("<Speed>(" + (int) gui.slider1.getValue() + ")");
 
 			final BufferedWriter writer = new BufferedWriter(new FileWriter(
-					"UFletch.ini"));
+					GlobalConfiguration.Paths.getHomeDirectory()
+							+ File.separator + "Settings" + File.separator
+							+ "UFletch.ini"));
 			for (String str : s) {
 				writer.write(str);
 				writer.newLine();
@@ -2432,6 +2377,13 @@ public class UFletch extends Script implements PaintListener, MouseListener,
 			gui.setVisible(true);
 		}
 
+		private void item6ActionPerformed(ActionEvent e) {
+			if (nameGUI.checkBox1.isSelected()) {
+				irc.connect();
+				IRCgui.setVisible(true);
+			}
+		}
+
 		private void initComponents() {
 			if (!SystemTray.isSupported()) {
 				JOptionPane.showMessageDialog(null, "SystemTray not supported");
@@ -2464,6 +2416,14 @@ public class UFletch extends Script implements PaintListener, MouseListener,
 				constants.item5.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						item5ActionPerformed(e);
+					}
+				});
+				if (nameGUI.checkBox1.isSelected()) {
+					menu.add(constants.item6);
+				}
+				constants.item6.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						item6ActionPerformed(e);
 					}
 				});
 				try {
@@ -2545,27 +2505,12 @@ public class UFletch extends Script implements PaintListener, MouseListener,
 			}
 		}
 
-		private void button6ActionPerformed(ActionEvent e) {
-			try {
-				Desktop.getDesktop()
-						.browse(new URL(
-								"http://www.powerbot.org/vb/showthread.php?t=542486")
-								.toURI());
-			} catch (MalformedURLException e1) {
-			} catch (IOException e1) {
-			} catch (URISyntaxException e1) {
-			}
-		}
-
 		private void button2ActionPerformed(ActionEvent e) {
 			checkForUpdates();
 		}
 
 		private void button1ActionPerformed(ActionEvent e) {
 			setVisible(false);
-			if (checkBox6.isSelected()) {
-				saveSettings();
-			}
 			log("Task: "
 					+ constants.optionLog[gui.comboBox2.getSelectedIndex()]
 					+ " "
@@ -2599,24 +2544,6 @@ public class UFletch extends Script implements PaintListener, MouseListener,
 			button3.setEnabled(false);
 			button2.setEnabled(false);
 			textField2.setEnabled(false);
-		}
-
-		private void button7ActionPerformed(ActionEvent e) {
-			button7.setEnabled(false);
-			try {
-				URL url = new URL(
-						"http://www.universalscripts.org/UFletch/contact.php?s="
-								+ gui.textField6.getText() + "&u="
-								+ textField5.getText() + "&b="
-								+ textPane1.getText());
-				sleep(25);
-				url.openConnection();
-				url.openStream();
-				url.openConnection();
-			} catch (MalformedURLException e1) {
-			} catch (IOException e1) {
-			}
-			JOptionPane.showMessageDialog(null, "Sent!");
 		}
 
 		private void initComponents() {
@@ -2716,34 +2643,7 @@ public class UFletch extends Script implements PaintListener, MouseListener,
 			checkBox15 = new JCheckBox();
 			label49 = new JLabel();
 			checkBox16 = new JCheckBox();
-			panel6 = new JPanel();
-			label66 = new JLabel();
-			checkBox19 = new JCheckBox();
-			label67 = new JLabel();
-			checkBox20 = new JCheckBox();
-			checkBox21 = new JCheckBox();
-			label68 = new JLabel();
-			textField3 = new JTextField();
-			label69 = new JLabel();
-			label70 = new JLabel();
-			checkBox22 = new JCheckBox();
-			label71 = new JLabel();
-			label72 = new JLabel();
-			textField4 = new JTextField();
-			button6 = new JButton();
-			label73 = new JLabel();
-			label74 = new JLabel();
-			label75 = new JLabel();
-			label76 = new JLabel();
-			label77 = new JLabel();
-			panel7 = new JPanel();
-			label78 = new JLabel();
-			textField5 = new JTextField();
-			label79 = new JLabel();
-			textField6 = new JTextField();
-			textPane1 = new JTextPane();
-			label80 = new JLabel();
-			button7 = new JButton();
+
 			panel5 = new JPanel();
 			label50 = new JLabel();
 			label51 = new JLabel();
@@ -3399,236 +3299,6 @@ public class UFletch extends Script implements PaintListener, MouseListener,
 				}
 				tabbedPane1.addTab("Other Settings", panel3);
 
-				// ======== panel6 ========
-				{
-					panel6.setLayout(null);
-
-					// ---- label66 ----
-					label66.setText("Email: Upon finish:");
-					label66.setFont(new Font("Tahoma", Font.PLAIN, 16));
-					panel6.add(label66);
-					label66.setBounds(5, 10, label66.getPreferredSize().width,
-							20);
-
-					// ---- checkBox19 ----
-					checkBox19.setFont(new Font("Tahoma", Font.PLAIN, 16));
-					panel6.add(checkBox19);
-					checkBox19.setBounds(150, 10, 15, 20);
-
-					// ---- label67 ----
-					label67.setText("Upon level:");
-					label67.setFont(new Font("Tahoma", Font.PLAIN, 16));
-					panel6.add(label67);
-					label67.setBounds(175, 10,
-							label67.getPreferredSize().width, 20);
-
-					// ---- checkBox20 ----
-					checkBox20.setFont(new Font("Tahoma", Font.PLAIN, 16));
-					panel6.add(checkBox20);
-					checkBox20.setBounds(265, 10, 15, 20);
-
-					// ---- checkBox21 ----
-					checkBox21.setFont(new Font("Tahoma", Font.PLAIN, 16));
-					panel6.add(checkBox21);
-					checkBox21.setBounds(385, 10,
-							checkBox21.getPreferredSize().width, 20);
-
-					// ---- label68 ----
-					label68.setText("Getting 99:");
-					label68.setFont(new Font("Tahoma", Font.PLAIN, 16));
-					panel6.add(label68);
-					label68.setBounds(new Rectangle(new Point(295, 10), label68
-							.getPreferredSize()));
-					panel6.add(textField3);
-					textField3.setBounds(120, 35, 290,
-							textField3.getPreferredSize().height);
-
-					// ---- label69 ----
-					label69.setText("Email address:");
-					label69.setFont(new Font("Tahoma", Font.PLAIN, 16));
-					panel6.add(label69);
-					label69.setBounds(new Rectangle(new Point(5, 35), label69
-							.getPreferredSize()));
-
-					// ---- label70 ----
-					label70.setText("UFletch Chat - Chat with other botters using UFletch!");
-					label70.setFont(new Font("Tahoma", Font.PLAIN, 16));
-					label70.setForeground(Color.blue);
-					panel6.add(label70);
-					label70.setBounds(new Rectangle(new Point(5, 80), label70
-							.getPreferredSize()));
-
-					// ---- checkBox22 ----
-					checkBox22.setFont(new Font("Tahoma", Font.PLAIN, 18));
-					checkBox22.setSelected(true);
-					panel6.add(checkBox22);
-					checkBox22.setBounds(135, 100,
-							checkBox22.getPreferredSize().width, 22);
-
-					// ---- label71 ----
-					label71.setText("Run UFletch chat:");
-					label71.setFont(new Font("Tahoma", Font.PLAIN, 16));
-					panel6.add(label71);
-					label71.setBounds(new Rectangle(new Point(5, 100), label71
-							.getPreferredSize()));
-
-					// ---- label72 ----
-					label72.setText("Chat Name:");
-					label72.setFont(new Font("Tahoma", Font.PLAIN, 16));
-					panel6.add(label72);
-					label72.setBounds(new Rectangle(new Point(150, 100),
-							label72.getPreferredSize()));
-
-					// ---- textField4 ----
-					textField4.setText("UFletchUser");
-					textField4.setFont(new Font("Tahoma", Font.PLAIN, 12));
-					panel6.add(textField4);
-					textField4.setBounds(235, 100, 110,
-							textField4.getPreferredSize().height);
-
-					// ---- button6 ----
-					button6.setText("Visit UFletch on Powerbot.");
-					button6.setForeground(Color.magenta);
-					button6.setFont(new Font("Tahoma", Font.PLAIN, 28));
-					button6.setBackground(Color.magenta);
-					button6.addActionListener(new ActionListener() {
-						public void actionPerformed(ActionEvent e) {
-							button6ActionPerformed(e);
-						}
-					});
-					panel6.add(button6);
-					button6.setBounds(-5, 205, 420, 85);
-
-					// ---- label73 ----
-					label73.setText("_" + uniqueID);
-					label73.setFont(new Font("Tahoma", Font.PLAIN, 16));
-					panel6.add(label73);
-					label73.setBounds(345, 100, 65, 20);
-
-					// ---- label74 ----
-					label74.setText("Email will not work with Hotmail! It works with G-Mail.");
-					label74.setFont(new Font("Tahoma", Font.PLAIN, 16));
-					label74.setForeground(Color.red);
-					panel6.add(label74);
-					label74.setBounds(new Rectangle(new Point(5, 60), label74
-							.getPreferredSize()));
-
-					// ---- label75 ----
-					label75.setText("UFletch chat is a way for you to chat with other people");
-					label75.setFont(new Font("Tahoma", Font.PLAIN, 16));
-					label75.setForeground(Color.magenta);
-					panel6.add(label75);
-					label75.setBounds(new Rectangle(new Point(5, 125), label75
-							.getPreferredSize()));
-
-					// ---- label76 ----
-					label76.setText("from powerbot who also use UFletch.(Using IRC protocall)");
-					label76.setFont(new Font("Tahoma", Font.PLAIN, 16));
-					label76.setForeground(Color.magenta);
-					panel6.add(label76);
-					label76.setBounds(new Rectangle(new Point(5, 150), label76
-							.getPreferredSize()));
-
-					// ---- label77 ----
-					label77.setText("Server: irc.rizon.net | Channel: #ufletch");
-					label77.setForeground(Color.orange);
-					label77.setFont(new Font("Tahoma", Font.PLAIN, 16));
-					panel6.add(label77);
-					label77.setBounds(new Rectangle(new Point(60, 175), label77
-							.getPreferredSize()));
-
-					{ // compute preferred size
-						Dimension preferredSize = new Dimension();
-						for (int i = 0; i < panel6.getComponentCount(); i++) {
-							Rectangle bounds = panel6.getComponent(i)
-									.getBounds();
-							preferredSize.width = Math.max(bounds.x
-									+ bounds.width, preferredSize.width);
-							preferredSize.height = Math.max(bounds.y
-									+ bounds.height, preferredSize.height);
-						}
-						Insets insets = panel6.getInsets();
-						preferredSize.width += insets.right;
-						preferredSize.height += insets.bottom;
-						panel6.setMinimumSize(preferredSize);
-						panel6.setPreferredSize(preferredSize);
-					}
-				}
-				tabbedPane1.addTab("Extras", panel6);
-
-				// ======== panel7 ========
-				{
-					panel7.setLayout(null);
-
-					// ---- label78 ----
-					label78.setText("(Powerbot username please) From: ");
-					label78.setFont(new Font("Tahoma", Font.PLAIN, 16));
-					panel7.add(label78);
-					label78.setBounds(new Rectangle(new Point(5, 5), label78
-							.getPreferredSize()));
-
-					// ---- textField5 ----
-					textField5.setBackground(Color.pink);
-					panel7.add(textField5);
-					textField5.setBounds(260, 5, 155,
-							textField5.getPreferredSize().height);
-
-					// ---- label79 ----
-					label79.setText("Subject:");
-					label79.setFont(new Font("Tahoma", Font.PLAIN, 16));
-					panel7.add(label79);
-					label79.setBounds(new Rectangle(new Point(5, 30), label79
-							.getPreferredSize()));
-
-					// ---- textField6 ----
-					textField6.setBackground(Color.pink);
-					panel7.add(textField6);
-					textField6.setBounds(70, 30, 345,
-							textField6.getPreferredSize().height);
-
-					// ---- textPane1 ----
-					textPane1.setBackground(Color.pink);
-					panel7.add(textPane1);
-					textPane1.setBounds(5, 70, 410, 170);
-
-					// ---- label80 ----
-					label80.setText("Message");
-					label80.setFont(new Font("Tahoma", Font.PLAIN, 16));
-					panel7.add(label80);
-					label80.setBounds(160, 50, 65,
-							label80.getPreferredSize().height);
-
-					// ---- button7 ----
-					button7.setText("Send!");
-					button7.setBackground(new Color(255, 204, 255));
-					button7.setFont(new Font("Tahoma", Font.PLAIN, 16));
-					button7.addActionListener(new ActionListener() {
-						public void actionPerformed(ActionEvent e) {
-							button7ActionPerformed(e);
-						}
-					});
-					panel7.add(button7);
-					button7.setBounds(5, 245, 410, 45);
-
-					{ // compute preferred size
-						Dimension preferredSize = new Dimension();
-						for (int i = 0; i < panel7.getComponentCount(); i++) {
-							Rectangle bounds = panel7.getComponent(i)
-									.getBounds();
-							preferredSize.width = Math.max(bounds.x
-									+ bounds.width, preferredSize.width);
-							preferredSize.height = Math.max(bounds.y
-									+ bounds.height, preferredSize.height);
-						}
-						Insets insets = panel7.getInsets();
-						preferredSize.width += insets.right;
-						preferredSize.height += insets.bottom;
-						panel7.setMinimumSize(preferredSize);
-						panel7.setPreferredSize(preferredSize);
-					}
-				}
-				tabbedPane1.addTab("Contact", panel7);
-
 				// ======== panel5 ========
 				{
 					panel5.setLayout(null);
@@ -3875,34 +3545,6 @@ public class UFletch extends Script implements PaintListener, MouseListener,
 		private JCheckBox checkBox15;
 		private JLabel label49;
 		private JCheckBox checkBox16;
-		private JPanel panel6;
-		private JLabel label66;
-		private JCheckBox checkBox19;
-		private JLabel label67;
-		private JCheckBox checkBox20;
-		private JCheckBox checkBox21;
-		private JLabel label68;
-		private JTextField textField3;
-		private JLabel label69;
-		private JLabel label70;
-		private JCheckBox checkBox22;
-		private JLabel label71;
-		private JLabel label72;
-		private JTextField textField4;
-		private JButton button6;
-		private JLabel label73;
-		private JLabel label74;
-		private JLabel label75;
-		private JLabel label76;
-		private JLabel label77;
-		private JPanel panel7;
-		private JLabel label78;
-		private JTextField textField5;
-		private JLabel label79;
-		private JTextField textField6;
-		private JTextPane textPane1;
-		private JLabel label80;
-		private JButton button7;
 		private JPanel panel5;
 		private JLabel label50;
 		private JLabel label51;
@@ -4052,12 +3694,14 @@ public class UFletch extends Script implements PaintListener, MouseListener,
 		}
 
 		private void listAllNick(String message) {
-			log("Current Users: [" + constants.channel + "]");
 			StringTokenizer st = new StringTokenizer(message);
 			while (st.hasMoreTokens()) {
-				IRCgui.textArea2.insert("\n" + st.nextToken(), 0);
+				try {
+					users.insertString(users.getLength(),
+							"\n" + st.nextToken(), new SimpleAttributeSet());
+				} catch (BadLocationException e) {
+				}
 			}
-			log("Current Users: [" + constants.channel + "]");
 		}
 
 		public String IRCMessage(String IRCLine) {
@@ -4083,11 +3727,6 @@ public class UFletch extends Script implements PaintListener, MouseListener,
 						users.insertString(users.getLength(), "\n"
 								+ getIRCUserName(line),
 								new SimpleAttributeSet());
-						doc.insertString(doc.getLength(),
-								"\n(" + irc.getTimeStamp() + ")"
-										+ getIRCUserName(line)
-										+ " has joined the chat.",
-								new SimpleAttributeSet());
 					} else if (line.contains("PART")
 							|| line.contains("QUIT")
 							&& IRCgui.textArea2.getText().contains(
@@ -4096,16 +3735,18 @@ public class UFletch extends Script implements PaintListener, MouseListener,
 								IRCgui.textArea2.getText().indexOf(
 										getIRCUserName(line).trim()) - 1,
 								getIRCUserName(line).length() + 1);
-						doc.insertString(doc.getLength(),
-								"\n(" + irc.getTimeStamp() + ")"
-										+ getIRCUserName(line)
-										+ " has left the chat.",
-								new SimpleAttributeSet());
-					} else if (!line.contains("PING")) {
+					} else if (line.contains("KICK")
+							&& getIRCUserName(line).equals(
+									nameGUI.textField1.getText())) {
+						nameGUI.setVisible(false);
+						irc.leave();
+						JOptionPane.showMessageDialog(null,
+								"You have been kicked.");
+					} else if (!line.contains("PING") && !line.contains("QUIT")) {
 						text = IRCMessage(line);
-						doc.insertString(doc.getLength(), "\n("
-								+ getTimeStamp() + ")<" + getIRCUserName(line)
-								+ ">: " + text, new SimpleAttributeSet());
+						doc.insertString(0, "\n(" + getTimeStamp() + ")<"
+								+ getIRCUserName(line) + ">: " + text,
+								new SimpleAttributeSet());
 					}
 				}
 			} catch (IOException e) {
@@ -4139,31 +3780,45 @@ public class UFletch extends Script implements PaintListener, MouseListener,
 						socket.getOutputStream()));
 				reader = new BufferedReader(new InputStreamReader(
 						socket.getInputStream()));
-				sendRaw("USER " + gui.textField4.getText() + "_" + uniqueID
-						+ " 8 * :" + gui.textField4.getText() + "\n");
-				sendRaw("NICK " + gui.textField4.getText() + "_" + uniqueID
-						+ "\r\n");
+				sendRaw("USER " + nameGUI.textField1.getText() + " 8 * :"
+						+ nameGUI.textField1.getText() + "\n");
+				sendRaw("NICK " + nameGUI.textField1.getText() + "\r\n");
 				while ((line = reader.readLine()) != null) {
 					if (line.indexOf("433") >= 0) {
 						log("Nickname is already in use.");
-						return;
+						JOptionPane.showMessageDialog(null,
+								"Name taken please change your name!");
+						nameGUI.setVisible(true);
+						while (nameGUI.isVisible()) {
+							sleep(random(200, 400));
+						}
+						sendRaw("USER " + nameGUI.textField1.getText()
+								+ " 8 * :" + nameGUI.textField1.getText()
+								+ "\n");
+						sendRaw("NICK " + nameGUI.textField1.getText() + "\r\n");
 					}
 					if (line.indexOf("376") >= 0) {
 						sendRaw("JOIN " + constants.channel + "\r\n");
-						log("joined");
+						break;
 					}
 					if (line.indexOf("353") >= 0) {
+
+					}
+				}
+				while ((line = reader.readLine()) != null) {
+					if (line.indexOf("353") >= 0) {
 						listAllNick(IRCMessage(line));
+						Thread.sleep(100);
 						break;
 					}
 				}
 				while ((line = reader.readLine()) != null) {
 					if (line.indexOf("366") >= 0) {
-						log("started");
 						break;
 					}
 				}
 			} catch (IOException e) {
+			} catch (InterruptedException e) {
 			}
 		}
 	}
@@ -4176,6 +3831,7 @@ public class UFletch extends Script implements PaintListener, MouseListener,
 
 		public IRCGui() {
 			initComponents();
+			textArea1.setCaretPosition(textArea1.getDocument().getLength());
 		}
 
 		private void button1ActionPerformed(ActionEvent e) {
@@ -4199,11 +3855,9 @@ public class UFletch extends Script implements PaintListener, MouseListener,
 			} else if (!IRCgui.textField1.getText().equals("/clear")) {
 				irc.sendMessage(IRCgui.textField1.getText());
 				try {
-					doc.insertString(
-							doc.getLength(),
-							"\n(" + irc.getTimeStamp() + ")<"
-									+ gui.textField4.getText() + "_" + uniqueID
-									+ ">: " + IRCgui.textField1.getText(),
+					doc.insertString(0, "\n(" + irc.getTimeStamp() + ")<"
+							+ nameGUI.textField1.getText() + ">: "
+							+ IRCgui.textField1.getText(),
 							new SimpleAttributeSet());
 				} catch (BadLocationException e1) {
 				}
@@ -4229,6 +3883,29 @@ public class UFletch extends Script implements PaintListener, MouseListener,
 			setTitle("UFletch - IRC");
 			setIconImage(null);
 			setResizable(false);
+			addWindowListener(new WindowListener() {
+				public void windowClosed(WindowEvent arg0) {
+					irc.leave();
+				}
+
+				public void windowActivated(WindowEvent arg0) {
+				}
+
+				public void windowClosing(WindowEvent arg0) {
+				}
+
+				public void windowDeactivated(WindowEvent arg0) {
+				}
+
+				public void windowDeiconified(WindowEvent arg0) {
+				}
+
+				public void windowIconified(WindowEvent arg0) {
+				}
+
+				public void windowOpened(WindowEvent arg0) {
+				}
+			});
 			Container contentPane = getContentPane();
 			contentPane.setLayout(null);
 			contentPane.add(textField1);
@@ -4327,6 +4004,7 @@ public class UFletch extends Script implements PaintListener, MouseListener,
 			}
 			setSize(710, 355);
 			setLocationRelativeTo(getOwner());
+			textArea1.setAutoscrolls(true);
 			// JFormDesigner - End of component initialization
 			// //GEN-END:initComponents
 		}
@@ -4344,4 +4022,90 @@ public class UFletch extends Script implements PaintListener, MouseListener,
 		private JButton button2;
 		// JFormDesigner - End of variables declaration //GEN-END:variables
 	}
+
+	public class ircNameGUI extends JFrame {
+		private static final long serialVersionUID = 1L;
+
+		public ircNameGUI() {
+			initComponents();
+		}
+
+		private void initComponents() {
+			// JFormDesigner - Component initialization - DO NOT MODIFY
+			// //GEN-BEGIN:initComponents
+			checkBox1 = new JCheckBox();
+			label1 = new JLabel();
+			button1 = new JButton();
+			textField1 = new JTextField();
+
+			// ======== this ========
+			Container contentPane = getContentPane();
+			contentPane.setLayout(null);
+
+			// ---- checkBox1 ----
+			checkBox1.setText("Use Irc Chat system");
+			checkBox1.setFont(new Font("Tahoma", Font.PLAIN, 16));
+			contentPane.add(checkBox1);
+			checkBox1.setBounds(new Rectangle(new Point(5, 25), checkBox1
+					.getPreferredSize()));
+
+			// ---- label1 ----
+			label1.setText("Name:");
+			label1.setFont(new Font("Tahoma", Font.PLAIN, 16));
+			contentPane.add(label1);
+			label1.setBounds(new Rectangle(new Point(5, 5), label1
+					.getPreferredSize()));
+
+			// ---- button1 ----
+			button1.setText("Start");
+			button1.setFont(new Font("Tahoma", Font.PLAIN, 16));
+			button1.setForeground(Color.blue);
+			contentPane.add(button1);
+			button1.setBounds(5, 55, 165, 35);
+			contentPane.add(textField1);
+			textField1.setBounds(55, 5, 110,
+					textField1.getPreferredSize().height);
+			button1.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					button1ActionPerformed(e);
+				}
+
+				private void button1ActionPerformed(ActionEvent e) {
+					setVisible(false);
+					if (gui.checkBox6.isSelected()) {
+						saveSettings();
+					}
+				}
+			});
+
+			{ // compute preferred size
+				Dimension preferredSize = new Dimension();
+				for (int i = 0; i < contentPane.getComponentCount(); i++) {
+					Rectangle bounds = contentPane.getComponent(i).getBounds();
+					preferredSize.width = Math.max(bounds.x + bounds.width,
+							preferredSize.width);
+					preferredSize.height = Math.max(bounds.y + bounds.height,
+							preferredSize.height);
+				}
+				Insets insets = contentPane.getInsets();
+				preferredSize.width += insets.right;
+				preferredSize.height += insets.bottom;
+				contentPane.setMinimumSize(preferredSize);
+				contentPane.setPreferredSize(preferredSize);
+			}
+			pack();
+			setLocationRelativeTo(getOwner());
+			// JFormDesigner - End of component initialization
+			// //GEN-END:initComponents
+		}
+
+		// JFormDesigner - Variables declaration - DO NOT MODIFY
+		// //GEN-BEGIN:variables
+		private JCheckBox checkBox1;
+		private JLabel label1;
+		private JButton button1;
+		private JTextField textField1;
+		// JFormDesigner - End of variables declaration //GEN-END:variables
+	}
+
 }
