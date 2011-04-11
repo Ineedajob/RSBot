@@ -9,7 +9,7 @@ import java.awt.Color;
 /**
  * @author Timer, Aut0r
  */
-@ScriptManifest(authors = {"Timer, Aut0r"}, name = "WorldWalking Test", description = "Tests the web walking, input a tile like ####,####", keywords = "Development")
+@ScriptManifest(authors = {"Timer, Aut0r"}, name = "Web Tester", description = "Tests the web walking, input a tile like ####,####", keywords = "Development")
 public class WebTest extends Script {
 
 	private Web web = null;
@@ -37,7 +37,7 @@ public class WebTest extends Script {
 			sleep(50);//So it doesn't burn out your CPU.
 		}
 		if(web.atDestination())
-			log(C, "I have reached my destination thanks for flying Aut0r/Timer Airlines");
+			log(C, "I have reached my destination thanks for flying Aut0 Timelines!");
 		return web.atDestination() ? -1 : 0;
 	}
 
