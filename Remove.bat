@@ -5,6 +5,7 @@ SET name=RSBot
 TITLE %name% Remover
 ECHO.
 ECHO Please close all instances of %name% before continuing.
+ECHO Note: this removes ALL account information, screenshots and scripts.
 CHOICE /m "Remove all %name% files from your system?"
 IF ERRORLEVEL 2 GOTO :end
 IF ERRORLEVEL 1 GOTO remove

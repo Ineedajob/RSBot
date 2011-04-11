@@ -1,6 +1,9 @@
 .classpath
 .project
 .svn
+.idea
+.file_store_32
+.jagex_cache_32
 /*.class
 /*.diff
 /*.iml
@@ -13,3 +16,4 @@
 /lib/*.jar
 /scripts/*.class
 /temp.txt
+/*.iml
