@@ -31,7 +31,7 @@ public class SplashAd extends JDialog implements MouseListener {
 
 		File file = new File(GlobalConfiguration.Paths.getCacheDirectory(), CACHED_IMAGE);
 
-		if (file.exists() && file.lastModified() < new Date().getTime() - 1000 * 60 * 60 * 24) {
+		if (file.exists() && file.lastModified() < new Date().getTime() - GlobalConfiguration.AD_EXPIRY) {
 			if (!file.delete()) {
 				file.deleteOnExit();
 			}
@@ -39,9 +39,10 @@ public class SplashAd extends JDialog implements MouseListener {
 
 		if (!file.exists()) {
 			try {
-				BufferedImage img = ImageIO.read(new URL(GlobalConfiguration.Paths.URLs.GOLD4RS_IMG));
+				BufferedImage img = ImageIO.read(new URL(GlobalConfiguration.Paths.URLs.AD_IMG));
 				ImageIO.write(img, CACHED_FORMAT, file);
-				BotGUI.openURL(GlobalConfiguration.Paths.URLs.GOLD4RS);
+				if (GlobalConfiguration.AD_OPENWEB)
+					BotGUI.openURL(GlobalConfiguration.Paths.URLs.AD_LINK);
 			} catch (Exception ignored) {
 			}
 		}
@@ -83,7 +84,7 @@ public class SplashAd extends JDialog implements MouseListener {
 	}
 
 	public void mouseReleased(MouseEvent e) {
-		BotGUI.openURL(GlobalConfiguration.Paths.URLs.GOLD4RS);
+		BotGUI.openURL(GlobalConfiguration.Paths.URLs.AD_LINK);
 		dispose();
 	}
 
