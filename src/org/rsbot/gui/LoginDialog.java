@@ -7,7 +7,7 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * @author Jacmob
+ * @author Timer
  */
 public class LoginDialog extends JDialog {
 
@@ -19,6 +19,12 @@ public class LoginDialog extends JDialog {
 
 	public LoginDialog(Frame parent) {
 		super(parent, GlobalConfiguration.SITE_NAME + " Login");
+		setLayout(new BorderLayout());
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		setSize(200, 200);
+		setMinimumSize(getSize());
+		setLocationRelativeTo(getParent());
+		setVisible(true);
 	}
 
 }
