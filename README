@@ -1,0 +1,22 @@
+PowerBot - An open source automation package for the popular MMORPG, Runescape
+
+
+Dependencies
+------------
+
+Apache Ant
+
+
+Compiling - Linux
+-----------------
+
+Powerbot uses a tool known as "Apache Ant" to automate the build process. Ant is
+similar to make, however it is designed specifically for building java
+applications. To build powerbot, simply issue the following inside the project
+directory:
+
+	$ ant
+
+Once complete, you may launch powerbot with the provided run script:
+
+	$ ./run
