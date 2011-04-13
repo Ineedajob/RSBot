@@ -25,13 +25,11 @@ import java.util.logging.Logger;
  * @author Tekk
  * @author Jacmob
  * @author Aion
- * @author Doout
  */
 @SuppressWarnings("serial")
 public class AccountManager extends JDialog implements ActionListener {
 
-	private static final String FILE_NAME = GlobalConfiguration.Paths
-			.getAccountsFile();
+	private static final String FILE_NAME = GlobalConfiguration.Paths.getAccountsFile();
 
 	private static final String[] RANDOM_REWARDS = {"Cash", "Runes", "Coal",
 	                                                "Essence", "Ore", "Bars", "Gems", "Herbs", "Seeds", "Charms",
@@ -42,8 +40,7 @@ public class AccountManager extends JDialog implements ActionListener {
 	                                                "Farming", "Runecrafting", "Hunter", "Construction", "Summoning",
 	                                                "Dungeoneering"};
 
-	private static final String[] VALID_KEYS = {"password", "pin", "reward",
-	                                            "member", "take_breaks"};
+	private static final String[] VALID_KEYS = {"password", "pin", "reward", "member", "take_breaks"};
 
 	private static Map<String, Map<String, String>> accounts;
 
@@ -152,9 +149,8 @@ public class AccountManager extends JDialog implements ActionListener {
 			return b.toString();
 		}
 
-		@SuppressWarnings({"unchecked", "rawtypes"})
 		@Override
-		public Class getColumnClass(int column) {
+		public Class<?> getColumnClass(int column) {
 			if (getColumnName(column).equals("Member")) {
 				return Boolean.class;
 			}
