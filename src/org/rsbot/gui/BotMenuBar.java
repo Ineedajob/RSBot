@@ -218,7 +218,7 @@ public class BotMenuBar extends JMenuBar {
 
 	public void saveProps() {
 		Properties props = new Properties();
-		props.setProperty("Advertisments",
+		props.setProperty("DisableAds",
 				getValue(commandCheckMap.get("Disable Advertisments")
 						.isSelected()));
 		/*
@@ -288,7 +288,7 @@ public class BotMenuBar extends JMenuBar {
 						+ File.separator + "menuBar.properties"));
 			} catch (IOException e) {
 			}
-			if (props.getProperty("Advertisments").contains("true")) {
+			if (props.getProperty("DisableAds").contains("true")) {
 				commandCheckMap.get("Disable Advertisments").setSelected(true);
 				showAds= false;
 			}
