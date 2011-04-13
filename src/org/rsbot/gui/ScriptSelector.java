@@ -58,24 +58,7 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 	private final ScriptTableModel model;
 	private final List<ScriptDefinition> scripts;
 	private JButton submit;
-
-	private static Frame loginFrame = null;
-	private static LoginDialog loginDialog = null;
-	private static final ActionListener listenDisconnected, listenConnected;
-
-	static {
-		loginFrame = new Frame();
-		listenDisconnected = new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				loginDialog = new LoginDialog(loginFrame);
-			}
-		};
-		listenConnected = new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				//To change body of implemented methods use File | Settings | File Templates.
-			}
-		};
-	}
+	private boolean connected = false;
 
 	public ScriptSelector(Frame frame, Bot bot) {
 		super(frame, "Script Selector");
@@ -179,7 +162,7 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 				GlobalConfiguration.getImage(
 						GlobalConfiguration.Paths.Resources.ICON_START,
 						GlobalConfiguration.Paths.ICON_START)));
-		JButton connect = new JButton(new ImageIcon(
+		final JButton connect = new JButton(new ImageIcon(
 				GlobalConfiguration.getImage(
 						GlobalConfiguration.Paths.Resources.ICON_DISCONNECT,
 						GlobalConfiguration.Paths.ICON_DISCONNECT)));
@@ -202,7 +185,37 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 
 		connect.setEnabled(true);
 
-		connect.addActionListener(listenDisconnected);
+		final Frame loginFrame = new Frame();
+		final LoginDialog loginDialog = new LoginDialog(loginFrame);
+		ActionListener listenConnect = new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (connected) {
+					connect.setIcon(new ImageIcon(
+							GlobalConfiguration.getImage(
+									GlobalConfiguration.Paths.Resources.ICON_DISCONNECT,
+									GlobalConfiguration.Paths.ICON_DISCONNECT)));
+					connect.repaint();
+					connected = false;
+				} else {
+					loginDialog.setVisible();
+					while (loginDialog != null && loginDialog.isValid() && loginDialog.isVisible()) {
+						try {
+							Thread.sleep(5);
+						} catch (Exception ee) {
+						}
+					}
+					ScriptBoxSource.Credentials cred = loginDialog.getCredentials();
+					connect.setIcon(new ImageIcon(
+							GlobalConfiguration.getImage(
+									GlobalConfiguration.Paths.Resources.ICON_CONNECT,
+									GlobalConfiguration.Paths.ICON_CONNECT)));
+					connect.repaint();
+					connected = true;
+				}
+			}
+		};
+
+		connect.addActionListener(listenConnect);
 
 		accounts = new JComboBox(AccountManager.getAccountNames());
 		accounts.setMinimumSize(new Dimension(200, 20));
