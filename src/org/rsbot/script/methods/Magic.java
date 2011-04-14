@@ -306,6 +306,11 @@ public class Magic extends MethodProvider {
 		return inter;
 	}
 
+	/**
+	 * Gets the current spell book.
+	 *
+	 * @return The Book enum of your current spell book.
+	 */
 	public Book getCurrentSpellBook() {
 		return methods.interfaces.get(Book.MODERN.getInterfaceID()).isValid() ? Book.MODERN :
 		       methods.interfaces.get(Book.ANCIENT.getInterfaceID()).isValid() ? Book.ANCIENT :
@@ -318,7 +323,7 @@ public class Magic extends MethodProvider {
 	 *
 	 * @param entity A Character or Animable.
 	 * @param spell  The spell to cast.
-	 * @return <tt>true</tt> if casted.
+	 * @return <tt>true</tt> if casted; otherwise <tt>false</tt>.
 	 */
 	public boolean castSpellOn(final Object entity, final int spell) {
 		if (isSpellSelected() || entity == null) {
