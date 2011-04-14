@@ -24,6 +24,7 @@ import java.util.logging.Logger;
  * @author Tekk
  * @author Jacmob
  * @author Aion
+ * @author Timer
  */
 @SuppressWarnings("serial")
 public class AccountManager extends JDialog implements ActionListener {
