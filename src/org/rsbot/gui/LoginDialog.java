@@ -20,70 +20,70 @@ public class LoginDialog extends JDialog {
 	 */
 	private static final long serialVersionUID = -7421702904004119500L;
 	public static final ScriptBoxSource.Credentials CREDENTIALS = new ScriptBoxSource.Credentials();
-	private JPanel a, b;
-	private JTextField d;
-	private JLabel c, e, g;
-	private JPasswordField f;
-	private JButton h;
+	private JPanel masterPane, loginPane;
+	private JTextField usernameField;
+	private JLabel usernameLabel, passwordLabel, registerLabel;
+	private JPasswordField passwordField;
+	private JButton loginButton;
 
 	public LoginDialog(Frame parent) {
 		super(parent, GlobalConfiguration.SITE_NAME + " Login");
-		a = new JPanel();
-		b = new JPanel();
-		c = new JLabel();
-		d = new JTextField();
-		e = new JLabel();
-		f = new JPasswordField();
-		g = new JLabel();
-		h = new JButton();
+		masterPane = new JPanel();
+		loginPane = new JPanel();
+		usernameLabel = new JLabel();
+		usernameField = new JTextField();
+		passwordLabel = new JLabel();
+		passwordField = new JPasswordField();
+		registerLabel = new JLabel();
+		loginButton = new JButton();
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setResizable(false);
 		setMinimumSize(new Dimension(200, 130));
 		setAlwaysOnTop(true);
 		Container localContainer = getContentPane();
 		localContainer.setLayout(new BorderLayout(5, 0));
-		a.setMaximumSize(new Dimension(170, 100));
-		a.setMinimumSize(new Dimension(170, 100));
-		a.setPreferredSize(new Dimension(170, 100));
-		a.setLayout(new BorderLayout());
-		localContainer.add(a);
-		b.setMaximumSize(new Dimension(170, 70));
-		b.setMinimumSize(new Dimension(170, 70));
-		b.setPreferredSize(new Dimension(170, 70));
-		b.setLayout(new GridBagLayout());
-		c.setText("Username:");
-		c.setLabelFor(d);
-		c.setHorizontalAlignment(11);
-		b.add(c, new GridBagConstraints(0, 0, 1, 1, 0.0D, 0.0D, 10, 1, new Insets(0, 0, 5, 5), 0, 0));
-		d.setColumns(12);
-		b.add(d, new GridBagConstraints(1, 0, 1, 1, 0.0D, 0.0D, 10, 1, new Insets(0, 0, 5, 0), 0, 0));
-		e.setText("Password:");
-		e.setLabelFor(f);
-		e.setHorizontalAlignment(11);
-		b.add(e, new GridBagConstraints(0, 1, 1, 1, 0.0D, 0.0D, 10, 1, new Insets(0, 0, 5, 5), 0, 0));
-		f.setColumns(12);
-		b.add(f, new GridBagConstraints(1, 1, 1, 1, 0.0D, 0.0D, 10, 1, new Insets(0, 0, 5, 0), 0, 0));
-		g.setText("Register");
-		g.setHorizontalTextPosition(0);
-		g.setHorizontalAlignment(0);
-		b.add(g, new GridBagConstraints(0, 2, 1, 1, 0.0D, 0.0D, 10, 1, new Insets(0, 0, 0, 5), 0, 0));
-		h.setText("Login");
-		b.add(h, new GridBagConstraints(1, 2, 1, 1, 0.0D, 0.0D, 10, 1, new Insets(0, 0, 0, 0), 0, 0));
-		a.add(b);
-		h.setFocusable(false);
-		h.addMouseListener(new MouseAdapter() {
+		masterPane.setMaximumSize(new Dimension(170, 100));
+		masterPane.setMinimumSize(new Dimension(170, 100));
+		masterPane.setPreferredSize(new Dimension(170, 100));
+		masterPane.setLayout(new BorderLayout());
+		localContainer.add(masterPane);
+		loginPane.setMaximumSize(new Dimension(170, 70));
+		loginPane.setMinimumSize(new Dimension(170, 70));
+		loginPane.setPreferredSize(new Dimension(170, 70));
+		loginPane.setLayout(new GridBagLayout());
+		usernameLabel.setText("Username:");
+		usernameLabel.setLabelFor(usernameField);
+		usernameLabel.setHorizontalAlignment(11);
+		loginPane.add(usernameLabel, new GridBagConstraints(0, 0, 1, 1, 0.0D, 0.0D, 10, 1, new Insets(0, 0, 5, 5), 0, 0));
+		usernameField.setColumns(12);
+		loginPane.add(usernameField, new GridBagConstraints(1, 0, 1, 1, 0.0D, 0.0D, 10, 1, new Insets(0, 0, 5, 0), 0, 0));
+		passwordLabel.setText("Password:");
+		passwordLabel.setLabelFor(passwordField);
+		passwordLabel.setHorizontalAlignment(11);
+		loginPane.add(passwordLabel, new GridBagConstraints(0, 1, 1, 1, 0.0D, 0.0D, 10, 1, new Insets(0, 0, 5, 5), 0, 0));
+		passwordField.setColumns(12);
+		loginPane.add(passwordField, new GridBagConstraints(1, 1, 1, 1, 0.0D, 0.0D, 10, 1, new Insets(0, 0, 5, 0), 0, 0));
+		registerLabel.setText("Register");
+		registerLabel.setHorizontalTextPosition(0);
+		registerLabel.setHorizontalAlignment(0);
+		loginPane.add(registerLabel, new GridBagConstraints(0, 2, 1, 1, 0.0D, 0.0D, 10, 1, new Insets(0, 0, 0, 5), 0, 0));
+		loginButton.setText("Login");
+		loginPane.add(loginButton, new GridBagConstraints(1, 2, 1, 1, 0.0D, 0.0D, 10, 1, new Insets(0, 0, 0, 0), 0, 0));
+		masterPane.add(loginPane);
+		loginButton.setFocusable(false);
+		loginButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				CREDENTIALS.username = d.getText();
-				CREDENTIALS.password = new String(f.getPassword());
+				CREDENTIALS.username = usernameField.getText();
+				CREDENTIALS.password = new String(passwordField.getPassword());
 				dispose();
 			}
 		});
-		f.addActionListener(new ActionListener() {
+		passwordField.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 			}
 		});
-		g.addMouseListener(new MouseAdapter() {
+		registerLabel.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
 				try {
