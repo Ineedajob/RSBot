@@ -1,23 +1,24 @@
 package org.rsbot.script.methods;
 
-import org.rsbot.script.wrappers.RSComponent;
-import org.rsbot.script.wrappers.RSInterface;
+import org.rsbot.script.wrappers.*;
 
 /**
  * Magic tab and spell related operations.
+ *
+ * @author Jacmob, Aut0r, Timer
  */
 public class Magic extends MethodProvider {
 
 	/**
 	 * Provides Magic Book(s) Information.
 	 *
-	 * @author Jacmob, Aut0r
+	 * @author Jacmob
 	 */
 	public static enum Book {
 
-		MODERN(192), ANCIENT(193), LUNAR(430);
+		MODERN(192), ANCIENT(193), LUNAR(430), NULL(-1);
 
-		private int id;
+		private final int id;
 
 		Book(int id) {
 			this.id = id;
@@ -235,6 +236,35 @@ public class Magic extends MethodProvider {
 	}
 
 	/**
+	 * Hovers a specified spell, opens magic tab if not open and uses interface
+	 * of the spell to hover it, so it works if the spells are layout in any
+	 * sway.
+	 *
+	 * @param spell The spell to hover.
+	 * @return <tt>true</tt> if the spell was clicked; otherwise <tt>false</tt>.
+	 */
+	public boolean hoverSpell(final int spell) {
+		if (methods.game.getCurrentTab() != Game.TAB_MAGIC) {
+			methods.game.openTab(Game.TAB_MAGIC);
+			for (int i = 0; i < 100; i++) {
+				sleep(20);
+				if (methods.game.getCurrentTab() == Game.TAB_MAGIC) {
+					break;
+				}
+			}
+			sleep(random(150, 250));
+		}
+		if (methods.game.getCurrentTab() == Game.TAB_MAGIC) {
+			RSInterface inter = getInterface();
+			if (inter != null) {
+				RSComponent comp = inter.getComponent(spell);
+				return comp != null && comp.doHover();
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * Auto-casts a spell via the magic tab.
 	 *
 	 * @param spell The spell to auto-cast.
@@ -274,6 +304,36 @@ public class Magic extends MethodProvider {
 			}
 		}
 		return inter;
+	}
+
+	public Book getCurrentSpellBook() {
+		return methods.interfaces.get(Book.MODERN.getInterfaceID()).isValid() ? Book.MODERN :
+		       methods.interfaces.get(Book.ANCIENT.getInterfaceID()).isValid() ? Book.ANCIENT :
+		       methods.interfaces.get(Book.LUNAR.getInterfaceID()).isValid()
+		       ? Book.LUNAR : Book.NULL;
+	}
+
+	/**
+	 * Casts a spell on a Player/NPC/Object/Ground Item.
+	 *
+	 * @param entity A Character or Animable.
+	 * @param spell  The spell to cast.
+	 * @return <tt>true</tt> if casted.
+	 */
+	public boolean castSpellOn(final Object entity, final int spell) {
+		if (isSpellSelected() || entity == null) {
+			return false;
+		}
+		if (castSpell(spell)) {
+			if (entity instanceof RSCharacter) {
+				return ((RSCharacter) entity).doAction("Cast");
+			} else if (entity instanceof RSObject) {
+				return ((RSObject) entity).doAction("Cast");
+			} else if (entity instanceof RSGroundItem) {
+				return ((RSGroundItem) entity).doAction("Cast");
+			}
+		}
+		return false;
 	}
 
 }
