@@ -1,5 +1,6 @@
 package org.rsbot.gui;
 
+import org.rsbot.service.LoginManager;
 import org.rsbot.service.ScriptBoxSource;
 import org.rsbot.util.GlobalConfiguration;
 
@@ -25,9 +26,14 @@ public class LoginDialog extends JDialog {
 	private JLabel usernameLabel, passwordLabel, registerLabel;
 	private JPasswordField passwordField;
 	private JButton loginButton;
+	private String displayMessage = "Please enter your login details.";
 
 	public LoginDialog(Frame parent) {
 		super(parent, GlobalConfiguration.SITE_NAME + " Login");
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (final Exception ignored) {
+		}
 		masterPane = new JPanel();
 		loginPane = new JPanel();
 		usernameLabel = new JLabel();
@@ -54,19 +60,24 @@ public class LoginDialog extends JDialog {
 		usernameLabel.setText("Username:");
 		usernameLabel.setLabelFor(usernameField);
 		usernameLabel.setHorizontalAlignment(11);
-		loginPane.add(usernameLabel, new GridBagConstraints(0, 0, 1, 1, 0.0D, 0.0D, 10, 1, new Insets(0, 0, 5, 5), 0, 0));
+		loginPane.add(usernameLabel,
+		              new GridBagConstraints(0, 0, 1, 1, 0.0D, 0.0D, 10, 1, new Insets(0, 0, 5, 5), 0, 0));
 		usernameField.setColumns(12);
-		loginPane.add(usernameField, new GridBagConstraints(1, 0, 1, 1, 0.0D, 0.0D, 10, 1, new Insets(0, 0, 5, 0), 0, 0));
+		loginPane.add(usernameField,
+		              new GridBagConstraints(1, 0, 1, 1, 0.0D, 0.0D, 10, 1, new Insets(0, 0, 5, 0), 0, 0));
 		passwordLabel.setText("Password:");
 		passwordLabel.setLabelFor(passwordField);
 		passwordLabel.setHorizontalAlignment(11);
-		loginPane.add(passwordLabel, new GridBagConstraints(0, 1, 1, 1, 0.0D, 0.0D, 10, 1, new Insets(0, 0, 5, 5), 0, 0));
+		loginPane.add(passwordLabel,
+		              new GridBagConstraints(0, 1, 1, 1, 0.0D, 0.0D, 10, 1, new Insets(0, 0, 5, 5), 0, 0));
 		passwordField.setColumns(12);
-		loginPane.add(passwordField, new GridBagConstraints(1, 1, 1, 1, 0.0D, 0.0D, 10, 1, new Insets(0, 0, 5, 0), 0, 0));
+		loginPane.add(passwordField,
+		              new GridBagConstraints(1, 1, 1, 1, 0.0D, 0.0D, 10, 1, new Insets(0, 0, 5, 0), 0, 0));
 		registerLabel.setText("Register");
 		registerLabel.setHorizontalTextPosition(0);
 		registerLabel.setHorizontalAlignment(0);
-		loginPane.add(registerLabel, new GridBagConstraints(0, 2, 1, 1, 0.0D, 0.0D, 10, 1, new Insets(0, 0, 0, 5), 0, 0));
+		loginPane.add(registerLabel,
+		              new GridBagConstraints(0, 2, 1, 1, 0.0D, 0.0D, 10, 1, new Insets(0, 0, 0, 5), 0, 0));
 		loginButton.setText("Login");
 		loginPane.add(loginButton, new GridBagConstraints(1, 2, 1, 1, 0.0D, 0.0D, 10, 1, new Insets(0, 0, 0, 0), 0, 0));
 		masterPane.add(loginPane);
@@ -76,7 +87,15 @@ public class LoginDialog extends JDialog {
 			public void mouseClicked(MouseEvent e) {
 				CREDENTIALS.username = usernameField.getText();
 				CREDENTIALS.password = new String(passwordField.getPassword());
-				dispose();
+				LoginManager lM = new LoginManager(CREDENTIALS);
+				if (lM.valid()) {
+					dispose();
+				} else {
+					CREDENTIALS.username = "";
+					passwordField.setText("");
+					CREDENTIALS.password = "";
+					displayMessage = lM.message();
+				}
 			}
 		});
 		passwordField.addActionListener(new ActionListener() {
@@ -98,6 +117,7 @@ public class LoginDialog extends JDialog {
 
 	public void setVisible() {
 		setLocationRelativeTo(getOwner());
+		setAlwaysOnTop(true);
 		setVisible(true);
 		requestFocus();
 	}

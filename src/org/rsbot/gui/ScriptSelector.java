@@ -183,33 +183,35 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 			}
 		});
 
-		connect.setEnabled(true);
+		connect.setEnabled(GlobalConfiguration.SCRIPT_DRM ? true : false);
 
-		final Frame loginFrame = new Frame();
-		final LoginDialog loginDialog = new LoginDialog(loginFrame);
-		ActionListener listenConnect = new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				if (connected) {
-					connect.setIcon(new ImageIcon(
-							GlobalConfiguration.getImage(
-									GlobalConfiguration.Paths.Resources.ICON_DISCONNECT,
-									GlobalConfiguration.Paths.ICON_DISCONNECT)));
-					connect.repaint();
-					connected = false;
-				} else {
-					loginDialog.setVisible();
-					ScriptBoxSource.Credentials cred = loginDialog.getCredentials();
-					connect.setIcon(new ImageIcon(
-							GlobalConfiguration.getImage(
-									GlobalConfiguration.Paths.Resources.ICON_CONNECT,
-									GlobalConfiguration.Paths.ICON_CONNECT)));
-					connect.repaint();
-					connected = true;
+		if (connect.isEnabled()) {
+			final Frame loginFrame = new Frame();
+			final LoginDialog loginDialog = new LoginDialog(loginFrame);
+			connected = !loginDialog.getCredentials().username.equals("");
+			ActionListener listenConnect = new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					if (connected) {
+						connect.setIcon(new ImageIcon(
+								GlobalConfiguration.getImage(
+										GlobalConfiguration.Paths.Resources.ICON_DISCONNECT,
+										GlobalConfiguration.Paths.ICON_DISCONNECT)));
+						connect.repaint();
+						connected = false;
+					} else {
+						loginDialog.setVisible();
+						connect.setIcon(new ImageIcon(
+								GlobalConfiguration.getImage(
+										GlobalConfiguration.Paths.Resources.ICON_CONNECT,
+										GlobalConfiguration.Paths.ICON_CONNECT)));
+						connect.repaint();
+						connected = true;
+					}
 				}
-			}
-		};
+			};
 
-		connect.addActionListener(listenConnect);
+			connect.addActionListener(listenConnect);
+		}
 
 		accounts = new JComboBox(AccountManager.getAccountNames());
 		accounts.setMinimumSize(new Dimension(200, 20));

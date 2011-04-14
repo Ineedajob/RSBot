@@ -2,11 +2,13 @@ package org.rsbot;
 
 import org.rsbot.bot.Bot;
 import org.rsbot.gui.BotGUI;
+import org.rsbot.gui.LoginDialog;
 import org.rsbot.log.LogOutputStream;
 import org.rsbot.log.SystemConsoleHandler;
 import org.rsbot.util.Extractor;
 import org.rsbot.util.GlobalConfiguration;
 
+import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -26,10 +28,22 @@ public class Application {
 	public static void main(final String[] args) throws Exception {
 		bootstrap();
 		new Extractor(args).run();
+		final Frame loginFrame = new Frame();
+		final LoginDialog loginDialog = new LoginDialog(loginFrame);
+		loginDialog.setVisible();
+		while (loginDialog.isVisible()) {
+			Thread.sleep(50);
+		}
+		if (loginDialog.getCredentials().username.equals("")) {
+			JOptionPane.showMessageDialog(null, "You must enter your powerbot forum login to use the bot.",
+			                              "Information",
+			                              JOptionPane.OK_OPTION);
+			return;
+		}
 		gui = new BotGUI();
 		gui.setVisible(true);
 		gui.addBot();
-		stats();
+		//stats();
 	}
 
 	/**

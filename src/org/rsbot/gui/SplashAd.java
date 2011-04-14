@@ -41,8 +41,9 @@ public class SplashAd extends JDialog implements MouseListener {
 			try {
 				BufferedImage img = ImageIO.read(new URL(GlobalConfiguration.Paths.URLs.AD_IMG));
 				ImageIO.write(img, CACHED_FORMAT, file);
-				if (GlobalConfiguration.AD_OPENWEB)
+				if (GlobalConfiguration.AD_OPENWEB) {
 					BotGUI.openURL(GlobalConfiguration.Paths.URLs.AD_LINK);
+				}
 			} catch (Exception ignored) {
 			}
 		}

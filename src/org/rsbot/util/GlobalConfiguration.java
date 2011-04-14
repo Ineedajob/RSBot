@@ -250,10 +250,12 @@ public class GlobalConfiguration {
 	private static final OperatingSystem CURRENT_OS;
 
 	public static boolean RUNNING_FROM_JAR = false;
-	
+
 	public static final boolean AD_LOAD = true;
 	public static final boolean AD_OPENWEB = false;
 	public static final int AD_EXPIRY = 1000 * 60 * 60 * 24;
+
+	public static final boolean SCRIPT_DRM = false;
 
 	static {
 		final URL resource = GlobalConfiguration.class.getClassLoader()
