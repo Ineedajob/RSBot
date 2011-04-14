@@ -198,12 +198,6 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 					connected = false;
 				} else {
 					loginDialog.setVisible();
-					while (loginDialog != null && loginDialog.isValid() && loginDialog.isVisible()) {
-						try {
-							Thread.sleep(5);
-						} catch (Exception ee) {
-						}
-					}
 					ScriptBoxSource.Credentials cred = loginDialog.getCredentials();
 					connect.setIcon(new ImageIcon(
 							GlobalConfiguration.getImage(
