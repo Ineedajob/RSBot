@@ -3,6 +3,7 @@ package org.rsbot.util;
 import java.awt.*;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -99,5 +100,25 @@ public class StringUtil {
 		}
 		return "";
 	}
+
+	public static byte[] getBytesUtf8(String string) {
+		try {
+			return string.getBytes("UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			throw new IllegalStateException(e);
+		}
+	}
+
+	public static String newStringUtf8(byte[] bytes) {
+		if (bytes == null) {
+			return null;
+		}
+		try {
+			return new String(bytes, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			throw new IllegalStateException(e);
+		}
+	}
+
 
 }

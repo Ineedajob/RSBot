@@ -152,9 +152,8 @@ public class AccountManager extends JDialog implements ActionListener {
 			return b.toString();
 		}
 
-		@SuppressWarnings({"unchecked", "rawtypes"})
 		@Override
-		public Class getColumnClass(int column) {
+		public Class<?> getColumnClass(int column) {
 			if (getColumnName(column).equals("Member")) {
 				return Boolean.class;
 			}
