@@ -186,8 +186,8 @@ public class DebaucherySoulWars extends Script implements MouseListener, Message
                         }
                     }
                     if (clanChatTeam && !inClan) {
-                        friendsChat.joinLastChannel();
-                        inClan = friendsChat.isInChannel();
+                        friendChat.joinLastChannel();
+                        inClan = friendChat.isInChannel();
                     }
                     current = null;
                     WesternGraveyard = 0;
@@ -299,7 +299,7 @@ public class DebaucherySoulWars extends Script implements MouseListener, Message
         int redUsers = 0;
         String[] clanUsers;
         try {
-            clanUsers = friendsChat.getChannelUsers();
+            clanUsers = friendChat.getChannelUsers();
             for (int x = 0; x < clanUsers.length; x++) {
                 RSPlayer temp = players.getNearest(clanUsers[x]);
                 if (temp != null) {
