@@ -11,7 +11,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 /**
- * @author Timer
+ * @author Aut0r
+ * @author fletch to 99
  */
 public class LoginDialog extends JDialog {
 
