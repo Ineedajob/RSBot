@@ -171,8 +171,12 @@ public class AccountManager extends JDialog implements ActionListener {
 			if (acc == null) {
 				return;
 			}
-			acc.setAttribute(getColumnName(column).toLowerCase().replace(' ', '_'),
-			                 String.valueOf(value));
+			if (column == 1) {
+				acc.setPassword(String.valueOf(value));
+			} else {
+				acc.setAttribute(getColumnName(column).toLowerCase().replace(' ', '_'),
+				                 String.valueOf(value));
+			}
 			fireTableCellUpdated(row, column);
 		}
 
@@ -328,10 +332,10 @@ public class AccountManager extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * Access the account pin of the given string
+	 * Access the account password of the given string
 	 *
 	 * @param name The name of the account
-	 * @return Pin or an empty string
+	 * @return Password or an empty string
 	 */
 	public static String getPassword(final String name) {
 		AccountStore.Account values = AccountManager.accountStore.get(name);

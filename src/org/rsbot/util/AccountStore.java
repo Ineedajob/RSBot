@@ -109,7 +109,7 @@ public class AccountStore {
 				if (current != null) {
 					accounts.put(current.username, current);
 				}
-				String name = AccountStore.fixName(line.trim().substring(1).substring(0, line.length() - 2));
+				String name = AccountStore.fixName(decrypt(line.trim().substring(1).substring(0, line.length() - 2)));
 				current = new Account(name);
 				line = br.readLine();
 				if (!line.isEmpty()) {
@@ -119,7 +119,7 @@ public class AccountStore {
 			}
 			if (current != null && line.matches("^\\w+=.+$")) {
 				String[] split = line.trim().split("=");
-				current.setAttribute(split[0], split[1]);
+				current.setAttribute(split[0], decrypt(split[1]));
 			}
 		}
 		if (current != null) {
@@ -133,7 +133,7 @@ public class AccountStore {
 		bw.write(Integer.toString(FORMAT_VERSION));
 		bw.newLine();
 		for (String name : accounts.keySet()) {
-			bw.append("[").append(name).append("]");
+			bw.append("[").append(encrypt(AccountStore.fixName(name.trim()))).append("]");
 			bw.newLine();
 			String password = accounts.get(name).password;
 			if (password != null) {
@@ -141,7 +141,7 @@ public class AccountStore {
 			}
 			bw.newLine();
 			for (Map.Entry<String, String> entry : accounts.get(name).attributes.entrySet()) {
-				bw.append(entry.getKey()).append("=").append(entry.getValue());
+				bw.append(entry.getKey()).append("=").append(encrypt(entry.getValue()));
 				bw.newLine();
 			}
 		}
@@ -213,7 +213,7 @@ public class AccountStore {
 	 */
 	public static String fixName(String name) {
 		if (name.contains("@")) {
-			name = name.toLowerCase();
+			name = name.toLowerCase().trim();
 		} else {
 			if (name.charAt(0) > 91) {
 				name = (char) (name.charAt(0) - 32) + name.substring(1);
