@@ -10,7 +10,7 @@ Apache Ant
 Compiling - Linux
 -----------------
 
-Powerbot uses a tool known as "Apache Ant" to automate the build process. Ant is
+powerbot uses a tool known as "Apache Ant" to automate the build process. Ant is
 similar to make, however it is designed specifically for building java
 applications. To build powerbot, simply issue the following inside the project
 directory:
