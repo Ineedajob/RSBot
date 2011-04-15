@@ -42,7 +42,7 @@ public class FriendChat extends MethodProvider {
         sleep(random(500, 800));
         if (methods.interfaces.get(INTERFACE_JOIN_FRIEND_CHAT).isValid()) {
             String lastChatCompText = methods.interfaces.getComponent(INTERFACE_JOIN_FRIEND_CHAT, INTERFACE_JOIN_FRIEND_CHAT_LAST_CHANNEL).getText();
-            lastCachedChannel = lastChatCompText.substring(lastChatCompText.indexOf(": "));
+            lastCachedChannel = lastChatCompText.substring(lastChatCompText.indexOf(": ")+ 2);
             methods.keyboard.sendText(channel, true);
             sleep(random(1550, 1800));
             if (isInChannel()) {
@@ -71,7 +71,7 @@ public class FriendChat extends MethodProvider {
         sleep(random(500, 800));
         if (methods.interfaces.get(INTERFACE_JOIN_FRIEND_CHAT).isValid()) {
             String lastChatCompText = methods.interfaces.getComponent(INTERFACE_JOIN_FRIEND_CHAT, INTERFACE_JOIN_FRIEND_CHAT_LAST_CHANNEL).getText();
-            lastCachedChannel = lastChatCompText.substring(lastChatCompText.indexOf(": "));
+            lastCachedChannel = lastChatCompText.substring(lastChatCompText.indexOf(": ")+2);
             methods.interfaces.getComponent(INTERFACE_JOIN_FRIEND_CHAT, INTERFACE_JOIN_FRIEND_CHAT_LAST_CHANNEL).doClick();
             sleep(random(1550, 1800));
             if (isInChannel()) {
@@ -150,7 +150,7 @@ public class FriendChat extends MethodProvider {
             methods.game.openTab(Game.TAB_CLAN_CHAT);
             String name = stripFormatting(methods.interfaces.getComponent(
                     INTERFACE_FRIEND_CHAT, INTERFACE_FRIEND_CHAT_CHANNEL_INFO).getText());
-            return name.substring(name.indexOf("Talking in: "));
+            return name.substring(name.indexOf("Talking in: "+12));
         } catch (Exception e) {
             return null;
         }
@@ -169,7 +169,7 @@ public class FriendChat extends MethodProvider {
             }
             String name = stripFormatting(methods.interfaces.getComponent(
                     INTERFACE_FRIEND_CHAT, INTERFACE_FRIEND_CHAT_CHANNEL_INFO).getText());
-            return name.substring(name.indexOf("Owner: "));
+            return name.substring(name.indexOf("Owner: ")+7);
         } catch (Exception e) {
             return null;
         }
