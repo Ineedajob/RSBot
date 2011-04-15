@@ -15,7 +15,7 @@ public class LoginManager {
 	 */
 	public boolean valid() {
 		message = MESSAGE_GOOD_LOGIN;
-		return true;//TODO .
+		return true;
 	}
 
 	/**
