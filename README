@@ -1,22 +1,18 @@
-powerbot - An open source automation package for the popular MMORPG, Runescape
+RSBot - An open source automation package for the popular MMORPG, Runescape
 
 
 Dependencies
 ------------
 
-Apache Ant
+Java Developer Kit
 
 
-Compiling - Linux
+Compiling - Windows
 -----------------
 
-powerbot uses a tool known as "Apache Ant" to automate the build process. Ant is
-similar to make, however it is designed specifically for building java
-applications. To build powerbot, simply issue the following inside the project
-directory:
+RSBot uses JDK to compile.  This can simply be executed by using the Compile.bat provided.
 
-	$ ant
+Running - Windows
+-----------------
 
-Once complete, you may launch powerbot with the provided run script:
-
-	$ ./run
+RSBot requires java to run, and can be started by simply opening the jar file named RSBot.jar.

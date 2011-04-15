@@ -21,8 +21,9 @@ public class LoginDialog extends JDialog {
 	 */
 	private static final long serialVersionUID = -7421702904004119500L;
 	public static final ScriptBoxSource.Credentials CREDENTIALS = new ScriptBoxSource.Credentials();
-	private JPanel masterPane, loginPane;
+	private JPanel masterPane, loginPane, infoPane;
 	private JTextField usernameField;
+	private JTextPane textPane;
 	private JLabel usernameLabel, passwordLabel, registerLabel;
 	private JPasswordField passwordField;
 	private JButton loginButton;
@@ -42,17 +43,18 @@ public class LoginDialog extends JDialog {
 		passwordField = new JPasswordField();
 		registerLabel = new JLabel();
 		loginButton = new JButton();
+		infoPane = new JPanel();
+		textPane = new JTextPane();
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setResizable(false);
-		setMinimumSize(new Dimension(200, 130));
+		setMinimumSize(new Dimension(500, 250));
 		setAlwaysOnTop(true);
-		Container localContainer = getContentPane();
-		localContainer.setLayout(new BorderLayout(5, 0));
-		masterPane.setMaximumSize(new Dimension(170, 100));
-		masterPane.setMinimumSize(new Dimension(170, 100));
-		masterPane.setPreferredSize(new Dimension(170, 100));
+		setLayout(new BorderLayout());
+		masterPane.setMaximumSize(new Dimension(200, 70));
+		masterPane.setMinimumSize(new Dimension(200, 70));
+		masterPane.setPreferredSize(new Dimension(200, 70));
 		masterPane.setLayout(new BorderLayout());
-		localContainer.add(masterPane);
+		add(masterPane, BorderLayout.WEST);
 		loginPane.setMaximumSize(new Dimension(170, 70));
 		loginPane.setMinimumSize(new Dimension(170, 70));
 		loginPane.setPreferredSize(new Dimension(170, 70));
@@ -80,8 +82,18 @@ public class LoginDialog extends JDialog {
 		              new GridBagConstraints(0, 2, 1, 1, 0.0D, 0.0D, 10, 1, new Insets(0, 0, 0, 5), 0, 0));
 		loginButton.setText("Login");
 		loginPane.add(loginButton, new GridBagConstraints(1, 2, 1, 1, 0.0D, 0.0D, 10, 1, new Insets(0, 0, 0, 0), 0, 0));
-		masterPane.add(loginPane);
+		masterPane.add(loginPane, BorderLayout.EAST);
 		loginButton.setFocusable(false);
+		infoPane.setMinimumSize(new Dimension(200, 100));
+		infoPane.setMaximumSize(new Dimension(300, 200));
+		infoPane.setPreferredSize(new Dimension(250, 100));
+		infoPane.setLayout(new GridBagLayout());
+		add(infoPane, BorderLayout.EAST);
+		textPane.setText("Please login to access the bot and decrypt your user accounts.");
+		textPane.setEditable(false);
+		textPane.setMargin(new Insets(5, 5, 5, 5));
+		textPane.setPreferredSize(new Dimension(230, 150));
+		infoPane.add(textPane, new GridBagConstraints(0, 0, 1, 1, 0.0D, 0.0D, 10, 1, new Insets(0, 0, 5, 0), 0, 0));
 		loginButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
