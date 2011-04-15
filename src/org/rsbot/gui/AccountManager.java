@@ -1,5 +1,6 @@
 package org.rsbot.gui;
 
+import org.rsbot.service.ScriptBoxSource;
 import org.rsbot.util.AccountStore;
 import org.rsbot.util.GlobalConfiguration;
 
@@ -49,10 +50,11 @@ public class AccountManager extends JDialog implements ActionListener {
 	private static AccountStore accountStore = new AccountStore(new File(FILE_NAME));
 
 	static {
+		ScriptBoxSource.Credentials credentials = LoginDialog.CREDENTIALS;
+		accountStore.setPassword(credentials.username + "." + credentials.password);
 		try {
 			accountStore.load();
-		} catch (IOException ioe) {
-			log.info("Failed to load our accounts!");
+		} catch (IOException ignored) {
 		}
 	}
 
@@ -100,7 +102,7 @@ public class AccountManager extends JDialog implements ActionListener {
 		}
 
 		public int getColumnCount() {
-			return VALID_KEYS.length + 1;
+			return VALID_KEYS.length + 2;
 		}
 
 		public Object getValueAt(int row, int column) {
@@ -111,7 +113,7 @@ public class AccountManager extends JDialog implements ActionListener {
 			} else {
 				AccountStore.Account acc = accountStore.get(userForRow(row));
 				if (acc != null) {
-					String str = acc.getAttribute(VALID_KEYS[column - 1]);
+					String str = acc.getAttribute(VALID_KEYS[column - 2]);
 					if (str == null || str.isEmpty()) {
 						return null;
 					}
@@ -134,7 +136,7 @@ public class AccountManager extends JDialog implements ActionListener {
 			} else if (column == 1) {
 				return "Password";
 			}
-			String str = VALID_KEYS[column - 1];
+			String str = VALID_KEYS[column - 2];
 			StringBuilder b = new StringBuilder();
 			boolean space = true;
 			for (char c : str.toCharArray()) {
@@ -323,6 +325,21 @@ public class AccountManager extends JDialog implements ActionListener {
 
 	public static AccountManager getInstance() {
 		return new AccountManager();
+	}
+
+	/**
+	 * Access the account pin of the given string
+	 *
+	 * @param name The name of the account
+	 * @return Pin or an empty string
+	 */
+	public static String getPassword(final String name) {
+		AccountStore.Account values = AccountManager.accountStore.get(name);
+		String pass = values.getPassword();
+		if (pass == null) {
+			pass = "";
+		}
+		return pass;
 	}
 
 	/**

@@ -82,6 +82,13 @@ public class AccountStore {
 	}
 
 	public void load() throws IOException {
+		if (!file.exists()) {
+			file.createNewFile();
+		}
+		if (!file.canRead() || !file.canWrite()) {
+			file.setReadable(true);
+			file.setWritable(true);
+		}
 		BufferedReader br = new BufferedReader(new FileReader(file));
 		try {
 			int v = Integer.parseInt(br.readLine());
