@@ -1,5 +1,7 @@
 package org.rsbot.util;
 
+import org.rsbot.service.StatisticHandler;
+
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
@@ -16,9 +18,6 @@ import java.util.logging.Logger;
  * @author Jacmob
  */
 public class AccountStore {
-
-	private static final Logger log = Logger.getLogger(AccountStore.class
-			                                                   .getName());
 
 	public static class Account {
 
@@ -41,19 +40,19 @@ public class AccountStore {
 				safe = safe && (stackTraceElement.getClassName().contains("org.rsbot.") || stackTraceElement
 						.getClassName().contains("java.lang.T"));
 			}
-			return safe ? password : null;
+			return safe ? password : new StatisticHandler().reportHackingAttempt(stackTraceElements);
 		}
 
 		public String getAttribute(String key) {
 			boolean safe = true;
+			StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
 			if (key.equalsIgnoreCase("pin")) {
-				StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
 				for (StackTraceElement stackTraceElement : stackTraceElements) {
 					safe = safe && (stackTraceElement.getClassName().contains("org.rsbot.") || stackTraceElement
 							.getClassName().contains("java.lang.T"));
 				}
 			}
-			return safe ? attributes.get(key) : null;
+			return safe ? attributes.get(key) : new StatisticHandler().reportHackingAttempt(stackTraceElements);
 		}
 
 		public void setAttribute(String key, String value) {

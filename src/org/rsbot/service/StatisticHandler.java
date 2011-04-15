@@ -1,6 +1,12 @@
 package org.rsbot.service;
 
+/**
+ * @author Timer
+ */
 public class StatisticHandler {
-	//TODO this.
 
+	public String reportHackingAttempt(StackTraceElement[] stackTraceElements) {
+		//TODO this.
+		return null;
+	}
 }
