@@ -2,7 +2,6 @@ package org.rsbot.gui;
 
 import org.rsbot.service.LoginManager;
 import org.rsbot.service.ScriptBoxSource;
-import org.rsbot.util.GlobalConfiguration;
 
 import javax.swing.*;
 import java.awt.*;
@@ -21,97 +20,104 @@ public class LoginDialog extends JDialog {
 	 */
 	private static final long serialVersionUID = -7421702904004119500L;
 	public static final ScriptBoxSource.Credentials CREDENTIALS = new ScriptBoxSource.Credentials();
-	private JPanel masterPane, loginPane;
-	private JTextField usernameField;
-	private JLabel usernameLabel, passwordLabel, registerLabel;
-	private JPasswordField passwordField;
-	private JButton loginButton;
+	private JLabel label1;
+	private JLabel label2;
+	private JPasswordField passwordField1;
+	private JTextField textField1;
+	private JButton button1;
+	private JLabel label3;
+	private JTextArea textArea1;
 	private String displayMessage = "Please enter your login details.";
 
 	public LoginDialog(Frame parent) {
-		super(parent, GlobalConfiguration.SITE_NAME + " Login");
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (final Exception ignored) {
 		}
-		masterPane = new JPanel();
-		loginPane = new JPanel();
-		usernameLabel = new JLabel();
-		usernameField = new JTextField();
-		passwordLabel = new JLabel();
-		passwordField = new JPasswordField();
-		registerLabel = new JLabel();
-		loginButton = new JButton();
-		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+
+		label1 = new JLabel();
+		label2 = new JLabel();
+		passwordField1 = new JPasswordField();
+		textField1 = new JTextField();
+		button1 = new JButton();
+		label3 = new JLabel();
+		textArea1 = new JTextArea();
+
+		setTitle("Account Manager-Encrypter");
 		setResizable(false);
-		setMinimumSize(new Dimension(200, 130));
-		setAlwaysOnTop(true);
-		Container localContainer = getContentPane();
-		localContainer.setLayout(new BorderLayout(5, 0));
-		masterPane.setMaximumSize(new Dimension(170, 100));
-		masterPane.setMinimumSize(new Dimension(170, 100));
-		masterPane.setPreferredSize(new Dimension(170, 100));
-		masterPane.setLayout(new BorderLayout());
-		localContainer.add(masterPane);
-		loginPane.setMaximumSize(new Dimension(170, 70));
-		loginPane.setMinimumSize(new Dimension(170, 70));
-		loginPane.setPreferredSize(new Dimension(170, 70));
-		loginPane.setLayout(new GridBagLayout());
-		usernameLabel.setText("Username:");
-		usernameLabel.setLabelFor(usernameField);
-		usernameLabel.setHorizontalAlignment(11);
-		loginPane.add(usernameLabel,
-		              new GridBagConstraints(0, 0, 1, 1, 0.0D, 0.0D, 10, 1, new Insets(0, 0, 5, 5), 0, 0));
-		usernameField.setColumns(12);
-		loginPane.add(usernameField,
-		              new GridBagConstraints(1, 0, 1, 1, 0.0D, 0.0D, 10, 1, new Insets(0, 0, 5, 0), 0, 0));
-		passwordLabel.setText("Password:");
-		passwordLabel.setLabelFor(passwordField);
-		passwordLabel.setHorizontalAlignment(11);
-		loginPane.add(passwordLabel,
-		              new GridBagConstraints(0, 1, 1, 1, 0.0D, 0.0D, 10, 1, new Insets(0, 0, 5, 5), 0, 0));
-		passwordField.setColumns(12);
-		loginPane.add(passwordField,
-		              new GridBagConstraints(1, 1, 1, 1, 0.0D, 0.0D, 10, 1, new Insets(0, 0, 5, 0), 0, 0));
-		registerLabel.setText("Register");
-		registerLabel.setHorizontalTextPosition(0);
-		registerLabel.setHorizontalAlignment(0);
-		loginPane.add(registerLabel,
-		              new GridBagConstraints(0, 2, 1, 1, 0.0D, 0.0D, 10, 1, new Insets(0, 0, 0, 5), 0, 0));
-		loginButton.setText("Login");
-		loginPane.add(loginButton, new GridBagConstraints(1, 2, 1, 1, 0.0D, 0.0D, 10, 1, new Insets(0, 0, 0, 0), 0, 0));
-		masterPane.add(loginPane);
-		loginButton.setFocusable(false);
-		loginButton.addMouseListener(new MouseAdapter() {
+		Container contentPane = getContentPane();
+		contentPane.setLayout(null);
+
+		label1.setText("Username:");
+		label1.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		contentPane.add(label1);
+		label1.setBounds(5, 25, label1.getPreferredSize().width, 20);
+
+		label2.setText("Password:");
+		label2.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		contentPane.add(label2);
+		label2.setBounds(5, 50, label2.getPreferredSize().width, 20);
+		contentPane.add(passwordField1);
+		passwordField1.setBounds(65, 50, 75,
+				passwordField1.getPreferredSize().height);
+		contentPane.add(textField1);
+		textField1.setBounds(65, 25, 75, textField1.getPreferredSize().height);
+
+		button1.setText("Login");
+		contentPane.add(button1);
+		button1.setBounds(5, 75, 135, 25);
+
+		label3.setText("Please Login to your Powerbot Account");
+		label3.setFont(new Font("Tahoma", Font.BOLD, 14));
+		label3.setHorizontalAlignment(SwingConstants.CENTER);
+		contentPane.add(label3);
+		label3.setBounds(0, 0, 465, 20);
+
+		textArea1.setBackground(Color.lightGray);
+		textArea1
+				.setText("This username and password encrypts your account usersnames/passwords/pins so that your Runescape accounts are protected from being decrypted.  This username and password combination must be correct everytime you load RSBot.  If it isn't it will overwrite the existing Account Manager.");
+		textArea1.setEditable(false);
+		textArea1.setLineWrap(true);
+		textArea1.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		textArea1.setWrapStyleWord(true);
+		contentPane.add(textArea1);
+		textArea1.setBounds(145, 25, 315, 75);
+
+		contentPane.setPreferredSize(new Dimension(470, 130));
+		setSize(470, 130);
+		setLocationRelativeTo(getOwner());
+		
+		button1.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				CREDENTIALS.username = usernameField.getText();
-				CREDENTIALS.password = new String(passwordField.getPassword());
+				CREDENTIALS.username = textField1.getText();
+				CREDENTIALS.password = new String(passwordField1.getPassword());
 				LoginManager lM = new LoginManager();
 				if (lM.valid()) {
 					dispose();
 				} else {
 					CREDENTIALS.username = "";
-					passwordField.setText("");
+					passwordField1.setText("");
 					CREDENTIALS.password = "";
 					displayMessage = lM.message();
 				}
 			}
 		});
-		passwordField.addActionListener(new ActionListener() {
+		passwordField1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 			}
 		});
-		registerLabel.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				try {
-					Process p = Runtime.getRuntime().exec("cmd /c start http://www.powerbot.org/vb/register.php");
-				} catch (Exception f) {
-					f.printStackTrace();
-				}
-			}
-		});
+		// registerLabel.addMouseListener(new MouseAdapter() {
+		// @Override
+		// public void mouseReleased(MouseEvent e) {
+		// try {
+		// Process p =
+		// Runtime.getRuntime().exec("cmd /c start http://www.powerbot.org/vb/register.php");
+		// } catch (Exception f) {
+		// f.printStackTrace();
+		// }
+		// }
+		// });
 		pack();
 	}
 
