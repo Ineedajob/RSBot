@@ -12,24 +12,14 @@ import org.rsbot.script.methods.Game;
 import org.rsbot.script.methods.Skills;
 import org.rsbot.script.util.Timer;
 import org.rsbot.script.util.WindowUtil;
-import org.rsbot.script.wrappers.RSArea;
-import org.rsbot.script.wrappers.RSInterface;
-import org.rsbot.script.wrappers.RSItem;
-import org.rsbot.script.wrappers.RSNPC;
-import org.rsbot.script.wrappers.RSObject;
-import org.rsbot.script.wrappers.RSTile;
+import org.rsbot.script.wrappers.*;
 import org.rsbot.util.GlobalConfiguration;
 
 import javax.swing.*;
 import javax.swing.event.MouseInputListener;
 import java.awt.*;
 import java.awt.event.MouseEvent;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.NumberFormat;
@@ -40,7 +30,8 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.prefs.Preferences;
 
-@ScriptManifest(authors = "vilon", name = "Voluntary Thieve", keywords = "Thieving", version = 1.13, description = "Blackjacks/pickpockets the trainers and volunteers in the Thieves' Guild.")
+@ScriptManifest(authors = "vilon", name = "Voluntary Thieve", keywords = "Thieving", version = 1.13,
+                description = "Blackjacks/pickpockets the trainers and volunteers in the Thieves' Guild.")
 public final class VoluntaryThieve extends Script implements MouseInputListener, PaintListener, MessageListener {
 
 	/**
@@ -94,11 +85,16 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 			 *                                  or if any of the maximum times were below zero.
 			 */
 			private Steps(final long... maximumTimes) throws IllegalArgumentException {
-				if (maximumTimes.length != 3) throw new IllegalArgumentException(
-						"Invalid argument length, expected 3 was " + maximumTimes.length + ".");
-				for (final long maximumTime : maximumTimes)
-					if (maximumTime < 0) throw new IllegalArgumentException(
-							"Maximum time was below zero: " + maximumTime);
+				if (maximumTimes.length != 3) {
+					throw new IllegalArgumentException(
+							"Invalid argument length, expected 3 was " + maximumTimes.length + ".");
+				}
+				for (final long maximumTime : maximumTimes) {
+					if (maximumTime < 0) {
+						throw new IllegalArgumentException(
+								"Maximum time was below zero: " + maximumTime);
+					}
+				}
 				this.maximumTimes = maximumTimes;
 			}
 
@@ -145,9 +141,10 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 			 *                               step is the <tt>FINISH</tt>-step.
 			 */
 			private void next() throws IllegalStateException {
-				if (getCurrent() >= FINISH)
+				if (getCurrent() >= FINISH) {
 					throw new IllegalStateException(
 							"Unable to switch step, current step is: " + getCurrent());
+				}
 				currentStep++;
 			}
 
@@ -161,7 +158,9 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 			 *                               not been set.
 			 */
 			private boolean isObsolete() throws IllegalStateException {
-				if (!isStartingTimeSet()) throw new IllegalStateException("Starting time has not been set.");
+				if (!isStartingTimeSet()) {
+					throw new IllegalStateException("Starting time has not been set.");
+				}
 				return (System.currentTimeMillis() - getStartingTime()
 						>= maximumTimes[getCurrent()]);
 			}
@@ -199,8 +198,8 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 		 * Creates a new <tt>Action</tt> with the maximum times for the three
 		 * steps of the action, namely the perform-, confirm- and finish-step.
 		 *
-		 * @param name		 The user-friendly name of this action.
-		 * @param id		   The identification for this action.
+		 * @param name         The user-friendly name of this action.
+		 * @param id           The identification for this action.
 		 * @param maximumTimes The maximum times for the steps, in the order:
 		 *                     PERFORM, CONFIRM, FINISH.
 		 */
@@ -216,8 +215,8 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 		 * confirm-step defaults to completed but can be overridden and will
 		 * in that case be called once before failing.
 		 *
-		 * @param name	The user-friendly name of this action.
-		 * @param id	  The identification for this action.
+		 * @param name    The user-friendly name of this action.
+		 * @param id      The identification for this action.
 		 * @param perform The maximum time before the perform-step is obsolete.
 		 * @param finish  The maximum time before the finish-step is obsolete.
 		 */
@@ -255,10 +254,12 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 		 *         State.FAILED - The action did not complete successfully.
 		 */
 		private State doAction() {
-			if (actionDoneState != null)
+			if (actionDoneState != null) {
 				return actionDoneState;
-			if (!steps.isStartingTimeSet())
+			}
+			if (!steps.isStartingTimeSet()) {
 				steps.setStartingTime();
+			}
 
 			State returnState;
 			switch (steps.getCurrent()) {
@@ -275,15 +276,16 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 					}
 					break;
 				case Steps.FINISH:
-					if ((returnState = finish()) == State.COMPLETED)
+					if ((returnState = finish()) == State.COMPLETED) {
 						return (actionDoneState = State.COMPLETED);
+					}
 					break;
 				default:
 					throw new AssertionError("Unsupported step: " + steps.getCurrent());
 			}
 
 			return (returnState == State.FAILED || steps.isObsolete()) ?
-					(actionDoneState = State.FAILED) : State.PROGRESSING;
+			       (actionDoneState = State.FAILED) : State.PROGRESSING;
 		}
 
 		/**
@@ -342,18 +344,20 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 			 */
 			private int[] getTrainers() {
 				final int[] allTrainers = options.isBlackjacking ? new int[]{11289, 11291, 11293, 11297} :
-						new int[]{11281, 11283, 11285, 11287};
+				                          new int[]{11281, 11283, 11285, 11287};
 
 				final List<Integer> validTrainers = new ArrayList<Integer>();
 				for (final Integer trainer : allTrainers) {
 					final Boolean isIncluded = trainerInclusions.get(trainer);
-					if (isIncluded == null || isIncluded)
+					if (isIncluded == null || isIncluded) {
 						validTrainers.add(trainer);
+					}
 				}
 
 				final int[] resultTrainers = new int[validTrainers.size()];
-				for (int i = 0; i < validTrainers.size(); i++)
+				for (int i = 0; i < validTrainers.size(); i++) {
 					resultTrainers[i] = validTrainers.get(i);
+				}
 				return resultTrainers;
 			}
 
@@ -395,12 +399,15 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 			 *         otherwise <tt>false</tt>.
 			 */
 			private boolean isLureScreenValid() {
-				if (hasKnockoutFailed()) return false;
+				if (hasKnockoutFailed()) {
+					return false;
+				}
 				final int[] screens = {Values.INTERFACE_LURE_FIRST, Values.INTERFACE_LURE_SECOND};
 				for (final int screen : screens) {
 					final RSInterface screenInterface = interfaces.get(screen);
-					if (screenInterface != null && screenInterface.isValid())
+					if (screenInterface != null && screenInterface.isValid()) {
 						return true;
+					}
 				}
 
 				return false;
@@ -434,7 +441,7 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 			private Action getDoorAction() {
 				final RSObject door = methods.getClosedDoor();
 				return (door != null && calc.distanceTo(door.getLocation()) < 5) ?
-						get(Values.ACTION_BANK_DOOR_OPEN) : get(Values.ACTION_BANK_DOOR_WALK);
+				       get(Values.ACTION_BANK_DOOR_OPEN) : get(Values.ACTION_BANK_DOOR_WALK);
 			}
 
 			/**
@@ -444,8 +451,10 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 			 *         otherwise <tt>false</tt>.
 			 */
 			private boolean isInBank() {
-				return new RSArea(new RSTile(4747 + tileOffset.x, 5793 + tileOffset.y), new RSTile(4754 + tileOffset.x, 5797 + tileOffset.y)).
-						contains(getMyPlayer().getLocation());
+				return new RSArea(new RSTile(4747 + tileOffset.x, 5793 + tileOffset.y),
+				                  new RSTile(4754 + tileOffset.x, 5797 + tileOffset.y)).
+						                                                                       contains(
+								                                                                       getMyPlayer().getLocation());
 			}
 
 			/**
@@ -455,8 +464,10 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 			 *         otherwise <tt>false</tt>.
 			 */
 			private boolean isInGuild() {
-				return new RSArea(new RSTile(4745 + tileOffset.x, 5762 + tileOffset.y), new RSTile(4794 + tileOffset.x, 5806 + tileOffset.y)).
-						contains(getMyPlayer().getLocation()) && game.getPlane() == 0;
+				return new RSArea(new RSTile(4745 + tileOffset.x, 5762 + tileOffset.y),
+				                  new RSTile(4794 + tileOffset.x, 5806 + tileOffset.y)).
+						                                                                       contains(
+								                                                                       getMyPlayer().getLocation()) && game.getPlane() == 0;
 			}
 
 			/**
@@ -470,11 +481,13 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 				final RSTile playerLocation = getMyPlayer().getLocation();
 				final Point offset = new Point();
 
-				if (4617 <= playerLocation.getX() && playerLocation.getX() <= 4666)
+				if (4617 <= playerLocation.getX() && playerLocation.getX() <= 4666) {
 					offset.x = -128;
+				}
 
-				if (5890 <= playerLocation.getY() && playerLocation.getY() <= 5934)
+				if (5890 <= playerLocation.getY() && playerLocation.getY() <= 5934) {
 					offset.y = 128;
+				}
 
 				return offset;
 			}
@@ -673,8 +686,9 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 		 *         <tt>null</tt> if unable to get the next step.
 		 */
 		private Action getNext() {
-			if (!methods.isInGuild())
+			if (!methods.isInGuild()) {
 				return get(Values.ACTION_FAILSAFE_TIMEOUT);
+			}
 
 			if (!options.isBlackjacking && isUsingGloves) {
 				if (!isEquipmentChecked) {
@@ -683,25 +697,29 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 				}
 
 				if (!hasGloves) {
-					if (inventory.contains(Values.ITEM_GLOVES_OF_SILENCE))
+					if (inventory.contains(Values.ITEM_GLOVES_OF_SILENCE)) {
 						return get(Values.ACTION_EQUIP_GLOVES);
+					}
 
 					if (options.isBanking) {
 						currentTrainerId = 0;
 
-						if (!methods.isInBank() && !methods.isDoorOpen())
+						if (!methods.isInBank() && !methods.isDoorOpen()) {
 							return methods.getDoorAction();
+						}
 
 						final RSObject bankBooth = objects.getNearest(Values.OBJECT_BANK_BOOTH);
-						if (bankBooth == null)
+						if (bankBooth == null) {
 							return get(Values.ACTION_BANK_WALK_AREA);
+						}
 
-						if (!bankBooth.isOnScreen())
+						if (!bankBooth.isOnScreen()) {
 							return calc.tileOnMap(bankBooth.getLocation()) ?
-									get(Values.ACTION_BANK_WALK) : get(Values.ACTION_BANK_WALK_AREA);
+							       get(Values.ACTION_BANK_WALK) : get(Values.ACTION_BANK_WALK_AREA);
+						}
 
 						return bank.isOpen() ? get(Values.ACTION_BANK_BANKING)
-								: get(Values.ACTION_BANK_OPEN);
+						                     : get(Values.ACTION_BANK_OPEN);
 					} else {
 						isUsingGloves = false;
 						log("Won't be using any more gloves of silence.");
@@ -714,19 +732,22 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 				return get(Values.ACTION_STUNNED_WAIT);
 			}
 
-			if (methods.isInBank() && !methods.isDoorOpen())
+			if (methods.isInBank() && !methods.isDoorOpen()) {
 				return methods.getDoorAction();
+			}
 
 			final int[] trainerIds = (currentTrainerId != 0) ? new int[]
 					{currentTrainerId} : methods.getTrainers();
 
-			if (trainerIds.length == 0)
+			if (trainerIds.length == 0) {
 				return get(Values.ACTION_WALK_TO_TRAINING_AREA);
+			}
 
 			final RSNPC nearestTrainer = npcs.getNearest(trainerIds);
 
-			if (nearestTrainer == null)
+			if (nearestTrainer == null) {
 				return get(Values.ACTION_WALK_TO_TRAINING_AREA);
+			}
 
 			if (isUnableToReach) {
 				trainerInclusions.put(nearestTrainer.getID(), false);
@@ -744,18 +765,23 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 
 				isExtraCheckDone = false;
 				return calc.tileOnMap(nearestTrainer.getLocation()) ? get(Values.ACTION_WALK_TO_TRAINER, nearestTrainer)
-						: get(Values.ACTION_WALK_TO_TRAINING_AREA);
+				                                                    : get(Values.ACTION_WALK_TO_TRAINING_AREA);
 			}
 
 			currentTrainerId = nearestTrainer.getID();
 			if (options.isBlackjacking && nearestTrainer.getAnimation() != Values.ANIMATION_KNOCKED_OUT) {
 				if (!isForcingBlackjack) {
-					if (methods.hasKnockoutFailed())
+					if (methods.hasKnockoutFailed()) {
 						isLured = false;
+					}
 
-					if (!isLured) return methods.isLureScreenValid() ? get(Values.ACTION_LURE_TALK_TRAINER) :
-							get(Values.ACTION_LURE_TRAINER, nearestTrainer);
-				} else isForcingBlackjack = false;
+					if (!isLured) {
+						return methods.isLureScreenValid() ? get(Values.ACTION_LURE_TALK_TRAINER) :
+						       get(Values.ACTION_LURE_TRAINER, nearestTrainer);
+					}
+				} else {
+					isForcingBlackjack = false;
+				}
 
 				return get(Values.ACTION_KNOCK_TRAINER, nearestTrainer);
 			}
@@ -772,60 +798,69 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 		 * @throws IllegalArgumentException If an invalid action was specified.
 		 */
 		private Action get(final int action, final Object... args) throws IllegalArgumentException {
-			if (0 > action || action >= Values.ACTIONS_TOTAL_COUNT)
+			if (0 > action || action >= Values.ACTIONS_TOTAL_COUNT) {
 				throw new IllegalArgumentException("Invalid action: " + action);
+			}
 
-			if (action == Values.ACTION_WALK_TO_TRAINER)
+			if (action == Values.ACTION_WALK_TO_TRAINER) {
 				return new Action("Walking to trainer", Values.ACTION_WALK_TO_TRAINER,
-						random(1425, 1635), random(1645, 1850), random(4925, 5135)) {
+				                  random(1425, 1635), random(1645, 1850), random(4925, 5135)) {
 
 					RSNPC trainer;
 
 					@Override
 					State perform() {
 						if (trainer == null) {
-							if (args.length != 1 || !(args[0] instanceof RSNPC))
+							if (args.length != 1 || !(args[0] instanceof RSNPC)) {
 								throw new IllegalArgumentException();
+							}
 							trainer = (RSNPC) args[0];
 						}
 
-						if (!calc.tileOnMap(trainer.getLocation())) return State.FAILED;
+						if (!calc.tileOnMap(trainer.getLocation())) {
+							return State.FAILED;
+						}
 						return walking.walkTileMM(trainer.getLocation(), 2, 2) ?
-								State.COMPLETED : State.PROGRESSING;
+						       State.COMPLETED : State.PROGRESSING;
 					}
 
 					@Override
 					State confirm() {
 						return getMyPlayer().isMoving() ?
-								State.COMPLETED : State.PROGRESSING;
+						       State.COMPLETED : State.PROGRESSING;
 					}
 
 					@Override
 					State finish() {
-						if (calc.distanceTo(trainer) > random(4, 7))
+						if (calc.distanceTo(trainer) > random(4, 7)) {
 							antibans.perform(new int[]{Antibans.MOUSE_MOVE_RANDOMLY}, random(17, 23));
+						}
 						return trainer.isOnScreen() ?
-								State.COMPLETED : State.PROGRESSING;
+						       State.COMPLETED : State.PROGRESSING;
 					}
 				};
+			}
 
-			if (action == Values.ACTION_PICKPOCKET_TRAINER)
+			if (action == Values.ACTION_PICKPOCKET_TRAINER) {
 				return new Action("Pickpocketing the trainer", Values.ACTION_PICKPOCKET_TRAINER,
-						random(250, 1250), random(515, 725)) {
+				                  random(250, 1250), random(515, 725)) {
 
 					RSNPC trainer;
 
 					@Override
 					State perform() {
 						if (trainer == null) {
-							if (args.length != 1 || !(args[0] instanceof RSNPC))
+							if (args.length != 1 || !(args[0] instanceof RSNPC)) {
 								throw new IllegalArgumentException();
+							}
 							trainer = (RSNPC) args[0];
 						}
 
-						if (!trainer.isOnScreen()) return State.FAILED;
+						if (!trainer.isOnScreen()) {
+							return State.FAILED;
+						}
 						return trainer.doAction(options.isBlackjacking ? "Loot" : "Pickpocket Pickpocketing") ?
-								State.COMPLETED : State.PROGRESSING;
+						       State.COMPLETED : State.PROGRESSING;
 					}
 
 					@Override
@@ -838,15 +873,16 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 						return State.PROGRESSING;
 					}
 				};
+			}
 
-			if (action == Values.ACTION_STUNNED_WAIT)
+			if (action == Values.ACTION_STUNNED_WAIT) {
 				return new Action("Waiting while being stunned", Values.ACTION_STUNNED_WAIT,
-						0, random(4820, 5210)) {
+				                  0, random(4820, 5210)) {
 
 					@Override
 					State perform() {
 						return (stunnedTimer != null) ?
-								State.COMPLETED : State.FAILED;
+						       State.COMPLETED : State.FAILED;
 					}
 
 					@Override
@@ -854,26 +890,30 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 						antibans.perform(new int[]{Antibans.MOUSE_MOVE_RANDOMLY}, 21);
 						antibans.perform(new int[]{Antibans.ALL_ANTIBANS}, 65);
 						return stunnedTimer.isRunning() ?
-								State.PROGRESSING : State.COMPLETED;
+						       State.PROGRESSING : State.COMPLETED;
 					}
 				};
+			}
 
-			if (action == Values.ACTION_EQUIP_GLOVES)
+			if (action == Values.ACTION_EQUIP_GLOVES) {
 				return new Action("Equipping a new pair of gloves", Values.ACTION_EQUIP_GLOVES,
-						random(2345, 2745), random(3215, 3445)) {
+				                  random(2345, 2745), random(3215, 3445)) {
 
 					int inventoryCount;
 
 					@Override
 					State perform() {
-						if (inventoryCount == 0)
+						if (inventoryCount == 0) {
 							inventoryCount = inventory.getCount();
+						}
 
 						final RSItem gloves = inventory.getItem(Values.ITEM_GLOVES_OF_SILENCE);
-						if (gloves == null) return State.FAILED;
+						if (gloves == null) {
+							return State.FAILED;
+						}
 
 						return gloves.doAction("Wear") ?
-								State.COMPLETED : State.PROGRESSING;
+						       State.COMPLETED : State.PROGRESSING;
 					}
 
 					@Override
@@ -886,35 +926,38 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 						return State.PROGRESSING;
 					}
 				};
+			}
 
-			if (action == Values.ACTION_LURE_TRAINER)
+			if (action == Values.ACTION_LURE_TRAINER) {
 				return new Action("Luring the trainer", Values.ACTION_LURE_TRAINER,
-						random(250, 1250), random(1455, 2135)) {
+				                  random(250, 1250), random(1455, 2135)) {
 
 					RSNPC trainer;
 
 					@Override
 					State perform() {
 						if (trainer == null) {
-							if (args.length != 1 || !(args[0] instanceof RSNPC))
+							if (args.length != 1 || !(args[0] instanceof RSNPC)) {
 								throw new IllegalArgumentException();
+							}
 							trainer = (RSNPC) args[0];
 						}
 
 						return trainer.doAction("Lure") ?
-								State.COMPLETED : State.PROGRESSING;
+						       State.COMPLETED : State.PROGRESSING;
 					}
 
 					@Override
 					State finish() {
 						return methods.isLureScreenValid() ?
-								State.COMPLETED : State.PROGRESSING;
+						       State.COMPLETED : State.PROGRESSING;
 					}
 				};
+			}
 
-			if (action == Values.ACTION_LURE_TALK_TRAINER)
+			if (action == Values.ACTION_LURE_TALK_TRAINER) {
 				return new Action("Luring/talking to the trainer", Values.ACTION_LURE_TALK_TRAINER,
-						random(5550, 6750), random(3225, 4475)) {
+				                  random(5550, 6750), random(3225, 4475)) {
 
 					boolean isFirstDone;
 
@@ -928,13 +971,15 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 						if (isFirstDone) {
 							final RSInterface secondTalkScreen = interfaces.get(Values.INTERFACE_LURE_SECOND);
 							if (secondTalkScreen != null && secondTalkScreen.isValid()) {
-								if (secondTalkScreen.getComponent(5).doClick())
+								if (secondTalkScreen.getComponent(5).doClick()) {
 									return State.COMPLETED;
+								}
 							}
 						} else {
 							final RSInterface firstTalkScreen = interfaces.get(Values.INTERFACE_LURE_FIRST);
-							if (firstTalkScreen != null && firstTalkScreen.isValid())
+							if (firstTalkScreen != null && firstTalkScreen.isValid()) {
 								isFirstDone = firstTalkScreen.getComponent(5).doClick();
+							}
 						}
 
 						return State.PROGRESSING;
@@ -951,23 +996,25 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 						return State.PROGRESSING;
 					}
 				};
+			}
 
-			if (action == Values.ACTION_KNOCK_TRAINER)
+			if (action == Values.ACTION_KNOCK_TRAINER) {
 				return new Action("Knocking the trainer", Values.ACTION_KNOCK_TRAINER,
-						random(250, 1250), random(2145, 2625)) {
+				                  random(250, 1250), random(2145, 2625)) {
 
 					RSNPC trainer;
 
 					@Override
 					State perform() {
 						if (trainer == null) {
-							if (args.length != 1 || !(args[0] instanceof RSNPC))
+							if (args.length != 1 || !(args[0] instanceof RSNPC)) {
 								throw new IllegalArgumentException();
+							}
 							trainer = (RSNPC) args[0];
 						}
 
 						return trainer.doAction("Knock-out") ?
-								State.COMPLETED : State.PROGRESSING;
+						       State.COMPLETED : State.PROGRESSING;
 					}
 
 					@Override
@@ -980,94 +1027,108 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 						return State.PROGRESSING;
 					}
 				};
+			}
 
-			if (action == Values.ACTION_BANK_DOOR_WALK)
+			if (action == Values.ACTION_BANK_DOOR_WALK) {
 				return new Action("Walking to the door", Values.ACTION_BANK_DOOR_WALK,
-						random(1245, 1485), random(2145, 2675), random(4595, 5780)) {
+				                  random(1245, 1485), random(2145, 2675), random(4595, 5780)) {
 
 					@Override
 					State perform() {
 						return walking.walkTo(new RSTile(4755 + tileOffset.x, 5795 + tileOffset.y)) ?
-								State.COMPLETED : State.PROGRESSING;
+						       State.COMPLETED : State.PROGRESSING;
 					}
 
 					@Override
 					State confirm() {
 						final RSTile destination = walking.getDestination();
 						return (destination != null && getMyPlayer().isMoving()) ?
-								State.COMPLETED : State.PROGRESSING;
+						       State.COMPLETED : State.PROGRESSING;
 					}
 
 					@Override
 					State finish() {
 						final RSTile destination = walking.getDestination();
-						if (destination == null) return State.FAILED;
+						if (destination == null) {
+							return State.FAILED;
+						}
 
 						final RSObject door = methods.getOpenDoor();
-						if (door != null && door.isOnScreen())
+						if (door != null && door.isOnScreen()) {
 							return State.COMPLETED;
+						}
 
-						if (calc.distanceTo(destination) > random(5, 7))
+						if (calc.distanceTo(destination) > random(5, 7)) {
 							antibans.perform(new int[]{Antibans.MOUSE_MOVE_RANDOMLY}, random(17, 23));
+						}
 						return calc.distanceTo(destination) < random(3, 6) ?
-								State.COMPLETED : State.PROGRESSING;
+						       State.COMPLETED : State.PROGRESSING;
 					}
 				};
+			}
 
-			if (action == Values.ACTION_BANK_DOOR_OPEN)
+			if (action == Values.ACTION_BANK_DOOR_OPEN) {
 				return new Action("Opening the door", Values.ACTION_BANK_DOOR_OPEN,
-						random(4525, 4895), random(2975, 3225)) {
+				                  random(4525, 4895), random(2975, 3225)) {
 
 					boolean isCameraSet;
 
 					@Override
 					State perform() {
 						final RSObject door = methods.getClosedDoor();
-						if (door == null) return State.FAILED;
+						if (door == null) {
+							return State.FAILED;
+						}
 
 						if (!door.isOnScreen()) {
 							if (!isCameraSet) {
 								camera.turnTo(door);
 								isCameraSet = true;
-							} else return State.FAILED;
+							} else {
+								return State.FAILED;
+							}
 						}
 
 						return door.doAction("Open") ?
-								State.COMPLETED : State.PROGRESSING;
+						       State.COMPLETED : State.PROGRESSING;
 					}
 
 					@Override
 					State finish() {
 						return methods.isDoorOpen() ?
-								State.COMPLETED : State.PROGRESSING;
+						       State.COMPLETED : State.PROGRESSING;
 					}
 				};
+			}
 
-			if (action == Values.ACTION_BANK_WALK)
+			if (action == Values.ACTION_BANK_WALK) {
 				return new Action("Walking to the bank", Values.ACTION_BANK_WALK,
-						random(1425, 1635), random(2345, 2755), random(5255, 5825)) {
+				                  random(1425, 1635), random(2345, 2755), random(5255, 5825)) {
 
 					RSObject bankBooth;
 
 					@Override
 					State perform() {
 						bankBooth = objects.getNearest(Values.OBJECT_BANK_BOOTH);
-						if (bankBooth == null || !calc.tileOnMap(bankBooth.getLocation()))
+						if (bankBooth == null || !calc.tileOnMap(bankBooth.getLocation())) {
 							return State.FAILED;
+						}
 
 						return walking.walkTileMM(bankBooth.getLocation(), 2, 2) ?
-								State.COMPLETED : State.PROGRESSING;
+						       State.COMPLETED : State.PROGRESSING;
 					}
 
 					@Override
 					State confirm() {
 						final RSTile destination = walking.getDestination();
 						if (destination != null) {
-							if (calc.distanceBetween(destination, bankBooth.getLocation()) > 3)
+							if (calc.distanceBetween(destination, bankBooth.getLocation()) > 3) {
 								return State.FAILED;
+							}
 
-							if (getMyPlayer().isMoving())
+							if (getMyPlayer().isMoving()) {
 								return State.COMPLETED;
+							}
 						}
 
 						return State.PROGRESSING;
@@ -1075,61 +1136,72 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 
 					@Override
 					State finish() {
-						if (calc.distanceTo(bankBooth) > random(4, 7))
+						if (calc.distanceTo(bankBooth) > random(4, 7)) {
 							antibans.perform(new int[]{Antibans.MOUSE_MOVE_RANDOMLY}, random(17, 23));
+						}
 						return bankBooth.isOnScreen() ?
-								State.COMPLETED : State.PROGRESSING;
+						       State.COMPLETED : State.PROGRESSING;
 					}
 				};
+			}
 
-			if (action == Values.ACTION_BANK_OPEN)
+			if (action == Values.ACTION_BANK_OPEN) {
 				return new Action("Opening the bank", Values.ACTION_BANK_OPEN,
-						random(1425, 1625), random(2452, 2855)) {
+				                  random(1425, 1625), random(2452, 2855)) {
 
 					boolean isCameraSet;
 
 					@Override
 					State perform() {
 						final RSObject bankBooth = objects.getNearest(Values.OBJECT_BANK_BOOTH);
-						if (bankBooth == null) return State.FAILED;
+						if (bankBooth == null) {
+							return State.FAILED;
+						}
 
 						if (!bankBooth.isOnScreen()) {
 							if (!isCameraSet) {
 								camera.turnTo(bankBooth);
 								isCameraSet = true;
-							} else return State.FAILED;
+							} else {
+								return State.FAILED;
+							}
 						}
 
 						return bankBooth.doAction("Use-quickly") ?
-								State.COMPLETED : State.PROGRESSING;
+						       State.COMPLETED : State.PROGRESSING;
 					}
 
 					@Override
 					State finish() {
 						return bank.isOpen() ?
-								State.COMPLETED : State.PROGRESSING;
+						       State.COMPLETED : State.PROGRESSING;
 					}
 				};
+			}
 
-			if (action == Values.ACTION_BANK_BANKING)
+			if (action == Values.ACTION_BANK_BANKING) {
 				return new Action("Banking", Values.ACTION_BANK_BANKING,
-						random(6445, 7125), random(2745, 3465)) {
+				                  random(6445, 7125), random(2745, 3465)) {
 
 					Timer withdrawTimer;
 					boolean hasDeposited;
 
 					@Override
 					State perform() {
-						if (withdrawTimer == null)
+						if (withdrawTimer == null) {
 							withdrawTimer = new Timer(random(1045, 1425));
-						if (withdrawTimer.isRunning())
+						}
+						if (withdrawTimer.isRunning()) {
 							return State.PROGRESSING;
+						}
 
-						if (!bank.isOpen())
+						if (!bank.isOpen()) {
 							return State.FAILED;
+						}
 
-						if (!hasDeposited && inventory.getCount() > 0)
+						if (!hasDeposited && inventory.getCount() > 0) {
 							hasDeposited = bank.depositAll();
+						}
 
 						final RSItem gloves = bank.getItem(Values.ITEM_GLOVES_OF_SILENCE);
 						if (gloves == null) {
@@ -1137,7 +1209,9 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 								log("Character is out of gloves of silence.");
 								isUsingGloves = false;
 								return State.COMPLETED;
-							} else return State.PROGRESSING;
+							} else {
+								return State.PROGRESSING;
+							}
 						}
 
 						bank.withdraw(Values.ITEM_GLOVES_OF_SILENCE, 0);
@@ -1148,75 +1222,82 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 					@Override
 					State finish() {
 						if (withdrawTimer.isRunning()) {
-							if (inventory.contains(Values.ITEM_GLOVES_OF_SILENCE))
+							if (inventory.contains(Values.ITEM_GLOVES_OF_SILENCE)) {
 								withdrawTimer.setEndIn(0);
-							else return State.PROGRESSING;
+							} else {
+								return State.PROGRESSING;
+							}
 						}
 
 						if (inventory.contains(Values.ITEM_GLOVES_OF_SILENCE)) {
 							return bank.close() ? State.COMPLETED
-									: State.PROGRESSING;
+							                    : State.PROGRESSING;
 						}
 
 						return State.FAILED;
 					}
 				};
+			}
 
-			if (action == Values.ACTION_BANK_WALK_AREA)
+			if (action == Values.ACTION_BANK_WALK_AREA) {
 				return new Action("Walking to the bank area", Values.ACTION_BANK_WALK_AREA,
-						random(1245, 1475), random(2345, 2765), random(4985, 5375)) {
+				                  random(1245, 1475), random(2345, 2765), random(4985, 5375)) {
 
 					@Override
 					State perform() {
 						return walking.walkTo(new RSTile(4747 + tileOffset.x, 5795 + tileOffset.y)) ?
-								State.COMPLETED : State.PROGRESSING;
+						       State.COMPLETED : State.PROGRESSING;
 					}
 
 					State confirm() {
 						return getMyPlayer().isMoving() ?
-								State.COMPLETED : State.PROGRESSING;
+						       State.COMPLETED : State.PROGRESSING;
 					}
 
 					@Override
 					State finish() {
 						final RSObject bankBooth = objects.getNearest(Values.OBJECT_BANK_BOOTH);
-						if (bankBooth == null)
+						if (bankBooth == null) {
 							antibans.perform(new int[]{Antibans.MOUSE_MOVE_RANDOMLY}, random(17, 23));
+						}
 
 						return (bankBooth != null && calc.tileOnMap(bankBooth.getLocation())) ?
-								State.COMPLETED : State.PROGRESSING;
+						       State.COMPLETED : State.PROGRESSING;
 					}
 				};
+			}
 
-			if (action == Values.ACTION_WALK_TO_TRAINING_AREA)
+			if (action == Values.ACTION_WALK_TO_TRAINING_AREA) {
 				return new Action("Walking to the training area", Values.ACTION_WALK_TO_TRAINING_AREA,
-						random(1245, 1475), random(2345, 2765), random(4985, 5375)) {
+				                  random(1245, 1475), random(2345, 2765), random(4985, 5375)) {
 
 					@Override
 					State perform() {
 						return walking.walkTo(new RSTile(4763 + tileOffset.x, 5793 + tileOffset.y)) ?
-								State.COMPLETED : State.PROGRESSING;
+						       State.COMPLETED : State.PROGRESSING;
 					}
 
 					State confirm() {
 						return getMyPlayer().isMoving() ?
-								State.COMPLETED : State.PROGRESSING;
+						       State.COMPLETED : State.PROGRESSING;
 					}
 
 					@Override
 					State finish() {
 						final RSNPC nearestTrainer = npcs.getNearest(methods.getTrainers());
-						if (nearestTrainer == null)
+						if (nearestTrainer == null) {
 							antibans.perform(new int[]{Antibans.MOUSE_MOVE_RANDOMLY}, random(17, 23));
+						}
 
 						return (nearestTrainer != null && calc.tileOnMap(nearestTrainer.getLocation())) ?
-								State.COMPLETED : State.PROGRESSING;
+						       State.COMPLETED : State.PROGRESSING;
 					}
 				};
+			}
 
-			if (action == Values.ACTION_FAILSAFE_TIMEOUT)
+			if (action == Values.ACTION_FAILSAFE_TIMEOUT) {
 				return new Action("Failsafe timeout", Values.ACTION_FAILSAFE_TIMEOUT,
-						0, random(7200, 13250)) {
+				                  0, random(7200, 13250)) {
 
 					@Override
 					State perform() {
@@ -1227,9 +1308,10 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 					@Override
 					State finish() {
 						return methods.isInGuild() ?
-								State.COMPLETED : State.PROGRESSING;
+						       State.COMPLETED : State.PROGRESSING;
 					}
 				};
+			}
 
 			throw new AssertionError("Unsupported action: " + action);
 		}
@@ -1297,17 +1379,23 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 		 */
 		private boolean perform(final int[] selection, final int probability) throws IllegalArgumentException {
 			if (currentAntiban == 0) {
-				if (selection == null) throw new IllegalArgumentException("The selection of antibans is null.");
-				if (probability < 1) throw new IllegalArgumentException(
-						"The probability is below one: " + probability);
+				if (selection == null) {
+					throw new IllegalArgumentException("The selection of antibans is null.");
+				}
+				if (probability < 1) {
+					throw new IllegalArgumentException(
+							"The probability is below one: " + probability);
+				}
 
-				if (selection.length == 0 || random(0, probability) != 0)
+				if (selection.length == 0 || random(0, probability) != 0) {
 					return false;
+				}
 
 				currentAntiban = (selection.length == 1 && selection[0] == ALL_ANTIBANS) ?
-						random(0, ALL_ANTIBANS) : selection[random(0, selection.length)];
-				if (0 > currentAntiban || currentAntiban >= ALL_ANTIBANS)
+				                 random(0, ALL_ANTIBANS) : selection[random(0, selection.length)];
+				if (0 > currentAntiban || currentAntiban >= ALL_ANTIBANS) {
 					throw new IllegalArgumentException("Invalid antiban in selection: " + currentAntiban);
+				}
 				timer.setEndIn(counter = 0);
 			}
 
@@ -1316,30 +1404,39 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 
 			switch (currentAntiban) {
 				case MOUSE_MOVE_RANDOMLY:
-					if (timer.isRunning()) break;
+					if (timer.isRunning()) {
+						break;
+					}
 					timer.setEndIn(random(755, 2345));
 
-					if (++counter < random(2, 5))
+					if (++counter < random(2, 5)) {
 						mouse.move(random(5, game.getWidth() - 253), random(5, game.getHeight() - 169));
-					else currentAntiban = 0;
+					} else {
+						currentAntiban = 0;
+					}
 					break;
 				case CAMERA_MOVE_SLIGHTLY:
 					camera.setAngle(camera.getAngle() + random(-80, 80));
 					currentAntiban = 0;
 					break;
 				case SKILLS_HOVER_THIEVING:
-					if (timer.isRunning()) break;
+					if (timer.isRunning()) {
+						break;
+					}
 					if (counter == 0) {
 						skills.doHover(Skills.INTERFACE_THIEVING);
 						timer.setEndIn(random(1735, 2865));
 						counter++;
-					} else currentAntiban = 0;
+					} else {
+						currentAntiban = 0;
+					}
 					break;
 				case TABS_SELECT_RANDOM:
-					final int[] tabs = {Game.TAB_ACHIEVEMENTS, Game.TAB_ATTACK, Game.TAB_CLAN, Game.TAB_CONTROLS,
-							Game.TAB_EQUIPMENT, Game.TAB_FRIENDS, Game.TAB_IGNORE, Game.TAB_INVENTORY, Game.TAB_MAGIC,
-							Game.TAB_MUSIC, Game.TAB_NOTES, Game.TAB_OPTIONS, Game.TAB_PRAYER, Game.TAB_QUESTS,
-							Game.TAB_STATS, Game.TAB_SUMMONING};
+					final int[] tabs = {Game.TAB_ATTACK, Game.TAB_CLAN, Game.TAB_CONTROLS,
+					                    Game.TAB_EQUIPMENT, Game.TAB_FRIENDS, Game.TAB_INVENTORY, Game.TAB_MAGIC,
+					                    Game.TAB_MUSIC, Game.TAB_NOTES, Game.TAB_OPTIONS, Game.TAB_PRAYER,
+					                    Game.TAB_QUESTS,
+					                    Game.TAB_STATS, Game.TAB_SUMMONING};
 
 					game.openTab(tabs[random(0, tabs.length)]);
 					currentAntiban = 0;
@@ -1431,9 +1528,11 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 		 *         has been met; or <tt>null</tt> if no condition has been met.
 		 */
 		private String getAnyMet() {
-			for (Condition condition : conditions)
-				if (condition.isMet())
+			for (Condition condition : conditions) {
+				if (condition.isMet()) {
 					return condition.getMessage();
+				}
+			}
 			return null;
 		}
 	}
@@ -1482,7 +1581,9 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 		 *         explicitly denied any storage of configuration details.
 		 */
 		private String get(final String key, final String def) {
-			if (!initialize()) return def;
+			if (!initialize()) {
+				return def;
+			}
 			return preferences.get(key, def);
 		}
 
@@ -1495,7 +1596,9 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 		 * @param value The value to be associated with the specified key.
 		 */
 		private void put(final String key, final String value) {
-			if (!initialize()) return;
+			if (!initialize()) {
+				return;
+			}
 			preferences.put(key, value);
 		}
 
@@ -1507,11 +1610,13 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 		 *         otherwise <tt>false</tt>.
 		 */
 		private boolean initialize() {
-			if (preferences == null && !confirmStorage())
+			if (preferences == null && !confirmStorage()) {
 				return false;
+			}
 
-			if (preferences == null)
+			if (preferences == null) {
 				preferences = Preferences.userRoot().node(NODE_PATH_NAME);
+			}
 			return true;
 		}
 
@@ -1541,14 +1646,18 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 		 *         allowed by the user; otherwise <tt>false</tt>.
 		 */
 		private boolean confirmStorage() {
-			if (hasDeniedOnce) return false;
+			if (hasDeniedOnce) {
+				return false;
+			}
 
 			final Preferences defaultNode = Preferences.userRoot().node("");
-			if (Boolean.parseBoolean(defaultNode.get(KEY_ROOT_ALLOW_STORAGE, "false")))
+			if (Boolean.parseBoolean(defaultNode.get(KEY_ROOT_ALLOW_STORAGE, "false"))) {
 				return true;
+			}
 
 			final int storageAnswer = WindowUtil.showConfirmDialog("Do you give your permission to let the script " +
-					"store configuration data?\nThis is used to save your selected options for later usage.", WindowUtil.YES_NO_CANCEL);
+					                                                       "store configuration data?\nThis is used to save your selected options for later usage.",
+			                                                       WindowUtil.YES_NO_CANCEL);
 
 			if (storageAnswer == WindowUtil.YES_OPTION) {
 				defaultNode.put(KEY_ROOT_ALLOW_STORAGE, "true");
@@ -1656,7 +1765,9 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 					if (e.getStateChange() == java.awt.event.ItemEvent.SELECTED) {
 						final boolean selected = (modeComboBox.getSelectedIndex() != 0);
 						getNewGlovesCheckBox.setEnabled(selected);
-						if (!selected) getNewGlovesCheckBox.setSelected(selected);
+						if (!selected) {
+							getNewGlovesCheckBox.setSelected(selected);
+						}
 					}
 				}
 			});
@@ -1741,7 +1852,8 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 				}
 			});
 
-			saveMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
+			saveMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S,
+			                                                               java.awt.event.InputEvent.CTRL_MASK));
 			saveMenuItem.setText("Save");
 			saveMenuItem.setName("saveMenuItem");
 			fileMenu.add(saveMenuItem);
@@ -1777,7 +1889,8 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 			runMenu.setText("Run");
 			runMenu.setName("runMenu");
 
-			startMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.ALT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+			startMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S,
+			                                                                java.awt.event.InputEvent.ALT_MASK | java.awt.event.InputEvent.CTRL_MASK));
 			startMenuItem.setText("Start");
 			startMenuItem.setName("startMenuItem");
 			startMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -1809,112 +1922,198 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 			getContentPane().setLayout(layout);
 			layout.setHorizontalGroup(
 					layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-							.addGroup(layout.createSequentialGroup()
-									.addContainerGap()
-									.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-											.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-													.addComponent(generalSeparator, javax.swing.GroupLayout.Alignment.LEADING)
-													.addComponent(generalLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-											.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-													.addComponent(stopConditionsSeparator)
-													.addComponent(stopConditionsLabel))
-											.addGroup(layout.createSequentialGroup()
-													.addGap(10, 10, 10)
-													.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-															.addComponent(getNewGlovesCheckBox)
-															.addGroup(layout.createSequentialGroup()
-																	.addComponent(modeLabel)
-																	.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-																	.addComponent(modeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-											.addGroup(layout.createSequentialGroup()
-													.addGap(10, 10, 10)
-													.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-															.addGroup(layout.createSequentialGroup()
-																	.addComponent(maxPickpocketsLabel)
-																	.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-																	.addComponent(maxPickpocketsSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))
-															.addGroup(layout.createSequentialGroup()
-																	.addComponent(maximumRuntimeLabel)
-																	.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-																	.addComponent(maxHoursSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-																	.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-																	.addComponent(maxHoursLabel)
-																	.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-																	.addComponent(maxMinutesSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-																	.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-																	.addComponent(maxMinutesLabel)
-																	.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-																	.addComponent(maxSecondsSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-																	.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-																	.addComponent(maxSecondsLabel))
-															.addGroup(layout.createSequentialGroup()
-																	.addComponent(maxLevelsLabel)
-																	.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-																	.addComponent(maxLevelsSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-									.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-							.addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-									.addContainerGap(157, Short.MAX_VALUE)
-									.addComponent(saveButton)
-									.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-									.addComponent(startButton)
-									.addContainerGap())
-							.addGroup(layout.createSequentialGroup()
-									.addContainerGap()
-									.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-											.addGroup(layout.createSequentialGroup()
-													.addGap(10, 10, 10)
-													.addComponent(enableDebugCheckBox))
-											.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-													.addComponent(otherSeparator)
-													.addComponent(otherLabel)))
-									.addContainerGap(184, Short.MAX_VALUE))
-			);
+					      .addGroup(layout.createSequentialGroup()
+					                      .addContainerGap()
+					                      .addGroup(
+							                      layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+							                            .addGroup(layout.createParallelGroup(
+									                            javax.swing.GroupLayout.Alignment.TRAILING, false)
+							                                            .addComponent(generalSeparator,
+							                                                          javax.swing.GroupLayout.Alignment.LEADING)
+							                                            .addComponent(generalLabel,
+							                                                          javax.swing.GroupLayout.Alignment.LEADING,
+							                                                          javax.swing.GroupLayout.DEFAULT_SIZE,
+							                                                          javax.swing.GroupLayout.DEFAULT_SIZE,
+							                                                          Short.MAX_VALUE))
+							                            .addGroup(layout.createParallelGroup(
+									                            javax.swing.GroupLayout.Alignment.TRAILING, false)
+							                                            .addComponent(stopConditionsSeparator)
+							                                            .addComponent(stopConditionsLabel))
+							                            .addGroup(layout.createSequentialGroup()
+							                                            .addGap(10, 10, 10)
+							                                            .addGroup(layout.createParallelGroup(
+									                                            javax.swing.GroupLayout.Alignment.LEADING)
+							                                                            .addComponent(
+									                                                            getNewGlovesCheckBox)
+							                                                            .addGroup(
+									                                                            layout.createSequentialGroup()
+									                                                                  .addComponent(
+											                                                                  modeLabel)
+									                                                                  .addPreferredGap(
+											                                                                  javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+									                                                                  .addComponent(
+											                                                                  modeComboBox,
+											                                                                  javax.swing.GroupLayout.PREFERRED_SIZE,
+											                                                                  javax.swing.GroupLayout.DEFAULT_SIZE,
+											                                                                  javax.swing.GroupLayout.PREFERRED_SIZE))))
+							                            .addGroup(layout.createSequentialGroup()
+							                                            .addGap(10, 10, 10)
+							                                            .addGroup(layout.createParallelGroup(
+									                                            javax.swing.GroupLayout.Alignment.LEADING)
+							                                                            .addGroup(
+									                                                            layout.createSequentialGroup()
+									                                                                  .addComponent(
+											                                                                  maxPickpocketsLabel)
+									                                                                  .addPreferredGap(
+											                                                                  javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+									                                                                  .addComponent(
+											                                                                  maxPickpocketsSpinner,
+											                                                                  javax.swing.GroupLayout.PREFERRED_SIZE,
+											                                                                  60,
+											                                                                  javax.swing.GroupLayout.PREFERRED_SIZE))
+							                                                            .addGroup(
+									                                                            layout.createSequentialGroup()
+									                                                                  .addComponent(
+											                                                                  maximumRuntimeLabel)
+									                                                                  .addPreferredGap(
+											                                                                  javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+									                                                                  .addComponent(
+											                                                                  maxHoursSpinner,
+											                                                                  javax.swing.GroupLayout.PREFERRED_SIZE,
+											                                                                  39,
+											                                                                  javax.swing.GroupLayout.PREFERRED_SIZE)
+									                                                                  .addPreferredGap(
+											                                                                  javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+									                                                                  .addComponent(
+											                                                                  maxHoursLabel)
+									                                                                  .addPreferredGap(
+											                                                                  javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+									                                                                  .addComponent(
+											                                                                  maxMinutesSpinner,
+											                                                                  javax.swing.GroupLayout.PREFERRED_SIZE,
+											                                                                  39,
+											                                                                  javax.swing.GroupLayout.PREFERRED_SIZE)
+									                                                                  .addPreferredGap(
+											                                                                  javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+									                                                                  .addComponent(
+											                                                                  maxMinutesLabel)
+									                                                                  .addPreferredGap(
+											                                                                  javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+									                                                                  .addComponent(
+											                                                                  maxSecondsSpinner,
+											                                                                  javax.swing.GroupLayout.PREFERRED_SIZE,
+											                                                                  39,
+											                                                                  javax.swing.GroupLayout.PREFERRED_SIZE)
+									                                                                  .addPreferredGap(
+											                                                                  javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+									                                                                  .addComponent(
+											                                                                  maxSecondsLabel))
+							                                                            .addGroup(
+									                                                            layout.createSequentialGroup()
+									                                                                  .addComponent(
+											                                                                  maxLevelsLabel)
+									                                                                  .addPreferredGap(
+											                                                                  javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+									                                                                  .addComponent(
+											                                                                  maxLevelsSpinner,
+											                                                                  javax.swing.GroupLayout.PREFERRED_SIZE,
+											                                                                  39,
+											                                                                  javax.swing.GroupLayout.PREFERRED_SIZE)))))
+					                      .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+					      .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+					                                                                  .addContainerGap(157,
+					                                                                                   Short.MAX_VALUE)
+					                                                                  .addComponent(saveButton)
+					                                                                  .addPreferredGap(
+							                                                                  javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+					                                                                  .addComponent(startButton)
+					                                                                  .addContainerGap())
+					      .addGroup(layout.createSequentialGroup()
+					                      .addContainerGap()
+					                      .addGroup(
+							                      layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+							                            .addGroup(layout.createSequentialGroup()
+							                                            .addGap(10, 10, 10)
+							                                            .addComponent(enableDebugCheckBox))
+							                            .addGroup(layout.createParallelGroup(
+									                            javax.swing.GroupLayout.Alignment.TRAILING, false)
+							                                            .addComponent(otherSeparator)
+							                                            .addComponent(otherLabel)))
+					                      .addContainerGap(184, Short.MAX_VALUE))
+			                         );
 			layout.setVerticalGroup(
 					layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-							.addGroup(layout.createSequentialGroup()
-									.addContainerGap()
-									.addComponent(generalLabel)
-									.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-									.addComponent(generalSeparator, javax.swing.GroupLayout.PREFERRED_SIZE, 1, javax.swing.GroupLayout.PREFERRED_SIZE)
-									.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-									.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-											.addComponent(modeLabel)
-											.addComponent(modeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-									.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-									.addComponent(getNewGlovesCheckBox)
-									.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-									.addComponent(stopConditionsLabel)
-									.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-									.addComponent(stopConditionsSeparator, javax.swing.GroupLayout.PREFERRED_SIZE, 1, javax.swing.GroupLayout.PREFERRED_SIZE)
-									.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-									.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-											.addComponent(maximumRuntimeLabel)
-											.addComponent(maxHoursSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-											.addComponent(maxHoursLabel)
-											.addComponent(maxMinutesSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-											.addComponent(maxMinutesLabel)
-											.addComponent(maxSecondsSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-											.addComponent(maxSecondsLabel))
-									.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-									.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-											.addComponent(maxPickpocketsLabel)
-											.addComponent(maxPickpocketsSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-									.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-									.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-											.addComponent(maxLevelsLabel)
-											.addComponent(maxLevelsSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-									.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-									.addComponent(otherLabel)
-									.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-									.addComponent(otherSeparator, javax.swing.GroupLayout.PREFERRED_SIZE, 1, javax.swing.GroupLayout.PREFERRED_SIZE)
-									.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-									.addComponent(enableDebugCheckBox)
-									.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-									.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-											.addComponent(startButton)
-											.addComponent(saveButton))
-									.addContainerGap())
-			);
+					      .addGroup(layout.createSequentialGroup()
+					                      .addContainerGap()
+					                      .addComponent(generalLabel)
+					                      .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+					                      .addComponent(generalSeparator, javax.swing.GroupLayout.PREFERRED_SIZE, 1,
+					                                    javax.swing.GroupLayout.PREFERRED_SIZE)
+					                      .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+					                      .addGroup(
+							                      layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+							                            .addComponent(modeLabel)
+							                            .addComponent(modeComboBox,
+							                                          javax.swing.GroupLayout.PREFERRED_SIZE,
+							                                          javax.swing.GroupLayout.DEFAULT_SIZE,
+							                                          javax.swing.GroupLayout.PREFERRED_SIZE))
+					                      .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+					                      .addComponent(getNewGlovesCheckBox)
+					                      .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+					                      .addComponent(stopConditionsLabel)
+					                      .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+					                      .addComponent(stopConditionsSeparator, javax.swing.GroupLayout.PREFERRED_SIZE,
+					                                    1, javax.swing.GroupLayout.PREFERRED_SIZE)
+					                      .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+					                      .addGroup(
+							                      layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+							                            .addComponent(maximumRuntimeLabel)
+							                            .addComponent(maxHoursSpinner,
+							                                          javax.swing.GroupLayout.PREFERRED_SIZE,
+							                                          javax.swing.GroupLayout.DEFAULT_SIZE,
+							                                          javax.swing.GroupLayout.PREFERRED_SIZE)
+							                            .addComponent(maxHoursLabel)
+							                            .addComponent(maxMinutesSpinner,
+							                                          javax.swing.GroupLayout.PREFERRED_SIZE,
+							                                          javax.swing.GroupLayout.DEFAULT_SIZE,
+							                                          javax.swing.GroupLayout.PREFERRED_SIZE)
+							                            .addComponent(maxMinutesLabel)
+							                            .addComponent(maxSecondsSpinner,
+							                                          javax.swing.GroupLayout.PREFERRED_SIZE,
+							                                          javax.swing.GroupLayout.DEFAULT_SIZE,
+							                                          javax.swing.GroupLayout.PREFERRED_SIZE)
+							                            .addComponent(maxSecondsLabel))
+					                      .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+					                      .addGroup(
+							                      layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+							                            .addComponent(maxPickpocketsLabel)
+							                            .addComponent(maxPickpocketsSpinner,
+							                                          javax.swing.GroupLayout.PREFERRED_SIZE,
+							                                          javax.swing.GroupLayout.DEFAULT_SIZE,
+							                                          javax.swing.GroupLayout.PREFERRED_SIZE))
+					                      .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+					                      .addGroup(
+							                      layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+							                            .addComponent(maxLevelsLabel)
+							                            .addComponent(maxLevelsSpinner,
+							                                          javax.swing.GroupLayout.PREFERRED_SIZE,
+							                                          javax.swing.GroupLayout.DEFAULT_SIZE,
+							                                          javax.swing.GroupLayout.PREFERRED_SIZE))
+					                      .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+					                      .addComponent(otherLabel)
+					                      .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+					                      .addComponent(otherSeparator, javax.swing.GroupLayout.PREFERRED_SIZE, 1,
+					                                    javax.swing.GroupLayout.PREFERRED_SIZE)
+					                      .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+					                      .addComponent(enableDebugCheckBox)
+					                      .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED,
+					                                       javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+					                      .addGroup(
+							                      layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+							                            .addComponent(startButton)
+							                            .addComponent(saveButton))
+					                      .addContainerGap())
+			                       );
 
 			pack();
 		}
@@ -1931,16 +2130,18 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 				if (storedValue != null) {
 					for (Component component : components) {
 						if (entry.getKey().equals(component.getName())) {
-							if (component instanceof JComboBox)
+							if (component instanceof JComboBox) {
 								((JComboBox) component).setSelectedItem(storedValue);
-							else if (component instanceof JSpinner) {
+							} else if (component instanceof JSpinner) {
 								try {
 									((JSpinner) component).setValue(Integer.parseInt(storedValue));
 								} catch (NumberFormatException ignored) {
 								}
-							} else if (component instanceof JCheckBox)
+							} else if (component instanceof JCheckBox) {
 								((JCheckBox) component).setSelected(Boolean.valueOf(storedValue));
-							else throw new AssertionError(entry.getKey() + ": " + storedValue);
+							} else {
+								throw new AssertionError(entry.getKey() + ": " + storedValue);
+							}
 							break;
 						}
 					}
@@ -1974,7 +2175,9 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 		 * @throws IllegalStateException If the frame is still visible.
 		 */
 		private boolean shouldStart() throws IllegalStateException {
-			if (isVisible()) throw new IllegalStateException();
+			if (isVisible()) {
+				throw new IllegalStateException();
+			}
 			return shouldStart;
 		}
 
@@ -1985,8 +2188,9 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 		 *            defined action occurred.
 		 */
 		private void saveActionPerformed(java.awt.event.ActionEvent evt) {
-			for (final Map.Entry<String, String> entry : getOptions().entrySet())
+			for (final Map.Entry<String, String> entry : getOptions().entrySet()) {
 				configuration.put(entry.getKey(), entry.getValue());
+			}
 		}
 
 		/**
@@ -2120,8 +2324,9 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 			/* Read the maximum runtime as entered by the user. */
 			long maximumTime = 0;
 			final String[] maxLabels = {"maxHoursSpinner", "maxMinutesSpinner", "maxSecondsSpinner"};
-			for (int n = 0; n < maxLabels.length; n++)
+			for (int n = 0; n < maxLabels.length; n++) {
 				maximumTime += Integer.parseInt(args.get(maxLabels[n])) * 1000 * Math.pow(60, 2 - n);
+			}
 			this.maximumTime = maximumTime;
 
 			/* Read maximum pickpockets and levels. */
@@ -2129,9 +2334,11 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 			maximumLevels = Integer.valueOf(args.get("maxLevelsSpinner"));
 
 			/* Get if debug is enabled, and set log-level. */
-			if (isDebugEnabled = Boolean.valueOf(args.get("enableDebugCheckBox")))
+			if (isDebugEnabled = Boolean.valueOf(args.get("enableDebugCheckBox"))) {
 				log.setLevel(Level.FINE);
-			else log.setLevel(Level.CONFIG);
+			} else {
+				log.setLevel(Level.CONFIG);
+			}
 
 			/* Set other script options. */
 			mouse.setSpeed(5);
@@ -2150,19 +2357,25 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 			/* Print a message confirming the stop conditions, if any was set. */
 			if (isUsingMaximumTime || isUsingMaximumLevels || isUsingMaximumPickpockets) {
 				String printMessage = isUsingMaximumTime ? "run a maximum " + Timer.format(maximumTime) : "";
-				if (isUsingMaximumLevels) printMessage += ((printMessage.length() > 0) ? " or " : "") +
-						"gain " + maximumLevels + " levels";
-				if (isUsingMaximumPickpockets) printMessage += ((printMessage.length() > 0) ? " or " : "") +
-						"perform " + maximumPickpockets + (options.isBlackjacking ? " loots" : " pickpockets");
+				if (isUsingMaximumLevels) {
+					printMessage += ((printMessage.length() > 0) ? " or " : "") +
+							"gain " + maximumLevels + " levels";
+				}
+				if (isUsingMaximumPickpockets) {
+					printMessage += ((printMessage.length() > 0) ? " or " : "") +
+							"perform " + maximumPickpockets + (options.isBlackjacking ? " loots" : " pickpockets");
+				}
 				log.config("Will " + printMessage + " before stopping.");
 			}
 
 			/* Print information about blackjacking/banking. */
 			log.config((isBlackjacking ? "Blackjack" : "Pickpocket") +
-					" mode is enabled" + (isBanking ? " and will bank for new gloves." : "."));
+					           " mode is enabled" + (isBanking ? " and will bank for new gloves." : "."));
 
 			/* Show if debug mode was set to enabled. */
-			if (isDebugEnabled) log.config("Debug mode is enabled.");
+			if (isDebugEnabled) {
+				log.config("Debug mode is enabled.");
+			}
 		}
 	}
 
@@ -2269,9 +2482,11 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 
 			/* Declare the padding size and width for the experience progress-bar. */
 			final int paddingSize = 2, progressWidth = 100;
-			if (experienceProgressBar == null)
+			if (experienceProgressBar == null) {
 				experienceProgressBar = new Rectangle(startX + paddingSize,
-						startY + paddingSize, progressWidth, height - 2 * paddingSize - 1);
+				                                      startY + paddingSize, progressWidth,
+				                                      height - 2 * paddingSize - 1);
+			}
 
 			/* Draw the experience progress-bar outline on the black bar. */
 			graphics2d.setColor(Color.WHITE);
@@ -2279,14 +2494,17 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 
 			/* Determine percent to next level and select color to use for the content. */
 			final int percentToNextLevel = skills.getPercentToNextLevel(skill);
-			if (percentToNextLevel < 30) graphics2d.setColor(Color.RED);
-			else graphics2d.setColor((percentToNextLevel < 70) ? Color.YELLOW : Color.GREEN);
+			if (percentToNextLevel < 30) {
+				graphics2d.setColor(Color.RED);
+			} else {
+				graphics2d.setColor((percentToNextLevel < 70) ? Color.YELLOW : Color.GREEN);
+			}
 
 			/* Draw the content of the experience progress-bar. */
 			final int innerProgressWidth = (int) Math.round(((percentToNextLevel / 100D) * progressWidth));
 			graphics2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.50F));
 			graphics2d.fillRect(startX + paddingSize + 1, startY + paddingSize + 1,
-					innerProgressWidth, height - 2 * paddingSize - 2);
+			                    innerProgressWidth, height - 2 * paddingSize - 2);
 			graphics2d.setComposite(originalComposite);
 
 			/* The statistics to be printed right of the experience progress-bar. */
@@ -2354,7 +2572,8 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 			/* Show the previously calculated statistics on the black bar. */
 			graphics2d.setColor(Color.WHITE);
 			graphics2d.setFont(new Font("Consolas", Font.PLAIN, 10));
-			graphics2d.drawString(drawingString, startX + paddingSize + progressWidth + 7 + adjustmentX, startY + paddingSize + height / 2 + 1);
+			graphics2d.drawString(drawingString, startX + paddingSize + progressWidth + 7 + adjustmentX,
+			                      startY + paddingSize + height / 2 + 1);
 		}
 
 		/**
@@ -2363,7 +2582,9 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 		 * Does only print a message if the user is logged in.
 		 */
 		private void print() {
-			if (!actions.methods.isLoggedIn()) return;
+			if (!actions.methods.isLoggedIn()) {
+				return;
+			}
 
 			/* Get the information that is to be printed before finish. */
 			final long timeRunning = System.currentTimeMillis() - startingTime;
@@ -2376,8 +2597,11 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 					Timer.format(timeRunning) + ", performing " +
 					numberFormat.format(pickpocketCount) + " ";
 
-			if (options.isBlackjacking) print += (pickpocketCount == 1) ? "loot" : "loots";
-			else print += (pickpocketCount == 1) ? "pickpocket" : "pickpockets";
+			if (options.isBlackjacking) {
+				print += (pickpocketCount == 1) ? "loot" : "loots";
+			} else {
+				print += (pickpocketCount == 1) ? "pickpocket" : "pickpockets";
+			}
 			log(print + ".");
 		}
 
@@ -2389,7 +2613,9 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 		 *          the user presses the mouse.
 		 */
 		private void processMousePressed(final MouseEvent e) {
-			if (isHovering) isToggled = !isToggled;
+			if (isHovering) {
+				isToggled = !isToggled;
+			}
 		}
 
 		/**
@@ -2402,7 +2628,9 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 		private void processMouseMoved(final MouseEvent e) {
 			isHovering = (experienceProgressBar != null &&
 					experienceProgressBar.contains(e.getPoint()));
-			if (!isHovering) isToggled = false;
+			if (!isHovering) {
+				isToggled = false;
+			}
 		}
 	}
 
@@ -2503,8 +2731,9 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 				if (!isSuccessful) {
 					final File updateFile = new File(savePath + ".update");
 					if (updateFile.exists()) {
-						if (!updateFile.canWrite() || !updateFile.delete())
+						if (!updateFile.canWrite() || !updateFile.delete()) {
 							log.warning("Unable to delete: " + savePath + ".update");
+						}
 					}
 
 					log.warning("Failed when downloading the latest version.");
@@ -2514,8 +2743,9 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 			if (isSuccessful) {
 				final File oldFile = new File(savePath + ".java");
 				if (oldFile.exists()) {
-					if (!(isSuccessful = oldFile.canWrite() && oldFile.delete()))
+					if (!(isSuccessful = oldFile.canWrite() && oldFile.delete())) {
 						log.warning("Unable to delete: " + oldFile.getPath());
+					}
 				}
 
 				if (isSuccessful) {
@@ -2523,15 +2753,18 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 					if (isSuccessful = updateFile.renameTo(new File(savePath + ".java"))) {
 						log("The latest version has been downloaded successfully.");
 						log("Please recompile your scripts and restart the script.");
-					} else log.warning("Unable to rename: " + updateFile.getPath());
+					} else {
+						log.warning("Unable to rename: " + updateFile.getPath());
+					}
 				}
 			}
 
 			if (!isSuccessful) {
 				final File updateFile = new File(savePath + ".update");
 				if (updateFile.exists()) {
-					if (!updateFile.canWrite() || !updateFile.delete())
+					if (!updateFile.canWrite() || !updateFile.delete()) {
 						log.warning("Unable to delete: " + savePath + ".update");
+					}
 				}
 			}
 
@@ -2548,18 +2781,21 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 		private boolean check() {
 			String allowUpdates = configuration.get(Configuration.KEY_ALLOW_UPDATES, null);
 			if (allowUpdates == null) {
-				final int answerAllowUpdates = WindowUtil.showConfirmDialog("Do you give your permission to let the script " +
-						"check for updates?", WindowUtil.YES_NO_CANCEL);
+				final int answerAllowUpdates = WindowUtil.showConfirmDialog(
+						"Do you give your permission to let the script " +
+								"check for updates?", WindowUtil.YES_NO_CANCEL);
 
 				if (answerAllowUpdates == WindowUtil.YES_OPTION) {
 					configuration.put(Configuration.KEY_ALLOW_UPDATES, String.valueOf(true));
 					allowUpdates = String.valueOf(true);
-				} else if (answerAllowUpdates == WindowUtil.NO_OPTION)
+				} else if (answerAllowUpdates == WindowUtil.NO_OPTION) {
 					configuration.put(Configuration.KEY_ALLOW_UPDATES, String.valueOf(false));
+				}
 			}
 
-			if (!Boolean.parseBoolean(allowUpdates))
+			if (!Boolean.parseBoolean(allowUpdates)) {
 				return false;
+			}
 
 			log("Checking for available updates...");
 			final double latestVersion = getVersion();
@@ -2568,10 +2804,12 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 			} else if (latestVersion <= scriptManifest.version()) {
 				log("Script is fully up to date (version " + scriptManifest.version() + ").");
 			} else {
-				final int answerUpdate = WindowUtil.showConfirmDialog("A new version (v" + latestVersion + ") is available.\n" +
-						"Would you like to update now?", WindowUtil.YES_NO_CANCEL);
-				if (answerUpdate == WindowUtil.YES_OPTION)
+				final int answerUpdate = WindowUtil.showConfirmDialog(
+						"A new version (v" + latestVersion + ") is available.\n" +
+								"Would you like to update now?", WindowUtil.YES_NO_CANCEL);
+				if (answerUpdate == WindowUtil.YES_OPTION) {
 					return downloadUpdate();
+				}
 			}
 
 			return false;
@@ -2630,26 +2868,29 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 	private boolean isStartupActionsDone;
 
 	public void messageReceived(final MessageEvent e) {
-		if (e.getID() != MessageEvent.MESSAGE_SERVER)
+		if (e.getID() != MessageEvent.MESSAGE_SERVER) {
 			return;
+		}
 
 		final String message = e.getMessage();
 		if (message != null) {
-			if (message.contains("attempt to"))
+			if (message.contains("attempt to")) {
 				actions.hasThieved = true;
-			else if (message.contains("handkerchief"))
+			} else if (message.contains("handkerchief")) {
 				progress.pickpocketCount++;
-			else if (message.contains("smack"))
+			} else if (message.contains("smack")) {
 				progress.blackjackKnockCount++;
-			else if (message.contains("been stunned") || message.contains("glances")) {
+			} else if (message.contains("been stunned") || message.contains("glances")) {
 				if (options.isBlackjacking) {
 					progress.blackjackFailCount++;
 					actions.isForcingBlackjack = true;
 				} else {
 					progress.pickpocketFailCount++;
-					if (actions.stunnedTimer == null)
+					if (actions.stunnedTimer == null) {
 						actions.stunnedTimer = new Timer(random(4320, 4765));
-					else actions.stunnedTimer.setEndIn(random(4320, 4765));
+					} else {
+						actions.stunnedTimer.setEndIn(random(4320, 4765));
+					}
 				}
 			} else if (message.contains("worn out")) {
 				progress.glovesUsedCount++;
@@ -2661,38 +2902,48 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 	}
 
 	public void mousePressed(MouseEvent e) {
-		if (progress != null && actions.methods.isLoggedIn())
+		if (progress != null && actions.methods.isLoggedIn()) {
 			progress.processMousePressed(e);
+		}
 	}
 
 	public void mouseMoved(MouseEvent e) {
-		if (progress != null && actions.methods.isLoggedIn())
+		if (progress != null && actions.methods.isLoggedIn()) {
 			progress.processMouseMoved(e);
+		}
 	}
 
 	public void onRepaint(final Graphics render) {
 		if (options != null && actions.methods.isLoggedIn()) {
-			if (progress == null) progress = new Progress();
+			if (progress == null) {
+				progress = new Progress();
+			}
 			progress.paint(render);
 		}
 	}
 
 	@Override
 	public boolean onStart() {
-		if (new Update().check()) return false;
+		if (new Update().check()) {
+			return false;
+		}
 
 		final GraphicalInterface graphicalInterface = new GraphicalInterface();
 		WindowUtil.position(graphicalInterface);
 		graphicalInterface.setVisible(true);
 
-		while (graphicalInterface.isVisible()) sleep(1000);
+		while (graphicalInterface.isVisible()) {
+			sleep(1000);
+		}
 		boolean shouldStart = false;
 
 		try {
 			shouldStart = graphicalInterface.shouldStart();
 		} catch (IllegalStateException ignored) {
 		}
-		if (!shouldStart) return false;
+		if (!shouldStart) {
+			return false;
+		}
 
 		try {
 			options = new Options(graphicalInterface.getOptions());
@@ -2707,15 +2958,17 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 
 	@Override
 	public void onFinish() {
-		if (progress != null)
+		if (progress != null) {
 			progress.print();
+		}
 	}
 
 	public int loop() {
 
 		/* Make sure the player is logged in before continuing. */
-		if (!actions.methods.isLoggedIn())
+		if (!actions.methods.isLoggedIn()) {
 			return random(50, 100);
+		}
 
 		/* Perform some necessary startup-actions before continuing. */
 		if (!isStartupActionsDone) {
@@ -2725,9 +2978,9 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 			camera.setAngle(random(0, 360));
 			camera.setPitch(true);
 			if (options.isBlackjacking) {
-				if (inventory.contains(Actions.Values.ITEM_RUBBER_BLACKJACK))
+				if (inventory.contains(Actions.Values.ITEM_RUBBER_BLACKJACK)) {
 					inventory.getItem(Actions.Values.ITEM_RUBBER_BLACKJACK).doAction("Wield");
-				else if (!equipment.containsAll(Actions.Values.ITEM_RUBBER_BLACKJACK)) {
+				} else if (!equipment.containsAll(Actions.Values.ITEM_RUBBER_BLACKJACK)) {
 					log.warning("Character must have a rubber blackjack equipped before starting.");
 					return -1;  /* No need to logout. */
 				}
@@ -2746,13 +2999,14 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 		}
 
 		/* Initialize the current action if not set. */
-		if (currentAction == null && actionState == null)
+		if (currentAction == null && actionState == null) {
 			currentAction = actions.getNext();
+		}
 
 		/* If the current action is null, the script has failed. */
 		if (currentAction == null) {
 			log.severe("Script failed " + ((previousAction != null) ?
-					"when " + previousAction.getName().toLowerCase() : "unexpectedly") + ".");
+			                               "when " + previousAction.getName().toLowerCase() : "unexpectedly") + ".");
 			stopScript(true);
 		}
 
@@ -2760,7 +3014,7 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 		actionState = currentAction.doAction();
 		if (actionState != Action.State.PROGRESSING) {
 			log.fine(currentAction.getName() + " " +
-					actionState.toString().toLowerCase() + ".");
+					         actionState.toString().toLowerCase() + ".");
 
 			/* Clear the list of excluded npcs once we have made a successful pickpocket. */
 			if (currentAction.getId() == Actions.Values.ACTION_PICKPOCKET_TRAINER &&
