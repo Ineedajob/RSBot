@@ -82,8 +82,7 @@ public class GlobalConfiguration {
 			public static final String PROJECT = "http://code.google.com/p/rsbot-client";
 			public static final String SITE = "http://www.powerbot.org";
 			public static final String STATS = "http://stats.powerbot.org/sync/";
-			public static final String AD_LINK = UPDATER + "botad";
-			public static final String AD_IMG = UPDATER + "botad-img";
+			public static final String AD_INFO = UPDATER + "botad-info";
 		}
 
 		public static final String ROOT = "." + File.separator + "resources";
@@ -250,10 +249,6 @@ public class GlobalConfiguration {
 	private static final OperatingSystem CURRENT_OS;
 
 	public static boolean RUNNING_FROM_JAR = false;
-	
-	public static final boolean AD_LOAD = true;
-	public static final boolean AD_OPENWEB = false;
-	public static final int AD_EXPIRY = 1000 * 60 * 60 * 24;
 
 	static {
 		final URL resource = GlobalConfiguration.class.getClassLoader()
