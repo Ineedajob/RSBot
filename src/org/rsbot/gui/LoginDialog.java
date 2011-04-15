@@ -16,9 +16,6 @@ import java.awt.event.MouseEvent;
  */
 public class LoginDialog extends JDialog {
 
-	/**
-	 * Gui Dialog
-	 */
 	private static final long serialVersionUID = -7421702904004119500L;
 	public static final ScriptBoxSource.Credentials CREDENTIALS = new ScriptBoxSource.Credentials();
 	private JPanel masterPane, loginPane, infoPane;

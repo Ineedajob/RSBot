@@ -46,17 +46,17 @@ public class Game extends MethodProvider {
 	                                               0, // Logout
 	};
 	public static final int TAB_ATTACK = 0;
-	public static final int TAB_ACHIEVEMENTS = 1;
+	public static final int TAB_TASK = 1;
 	public static final int TAB_STATS = 2;
 	public static final int TAB_QUESTS = 3;
 	public static final int TAB_INVENTORY = 4;
 	public static final int TAB_EQUIPMENT = 5;
 	public static final int TAB_PRAYER = 6;
 	public static final int TAB_MAGIC = 7;
-	public static final int TAB_SUMMONING = 8;
+	public static final int TAB_SUMMONING = 8; //Untested
 	public static final int TAB_FRIENDS = 9;
-	public static final int TAB_IGNORE = 10;
-	public static final int TAB_CLAN = 11;
+	public static final int TAB_FRIENDS_CHAT = 10;
+	public static final int TAB_CLAN_CHAT = 11;
 	public static final int TAB_OPTIONS = 12;
 	public static final int TAB_CONTROLS = 13;
 	public static final int TAB_MUSIC = 14;
@@ -93,10 +93,10 @@ public class Game extends MethodProvider {
 	public static final int[] INTERFACE_OPTIONS = new int[]{230, 228};
 
 	public static final String[] TAB_NAMES = new String[]{"Combat Styles",
-	                                                      "Stats", "Quest List", "Achievements", "Inventory",
+	                                                      "Task System", "Stats", "Quest Journals", "Inventory",
 	                                                      "Worn Equipment", "Prayer List", "Magic Spellbook",
-	                                                      "Objectives",
-	                                                      "Friends List", "Ignore List", "Clan Chat", "Options",
+	                                                      "",
+	                                                      "Friends List", "Friends Chat", "Clan Chat", "Options",
 	                                                      "Emotes",
 	                                                      "Music Player", "Notes", "Exit"};
 
