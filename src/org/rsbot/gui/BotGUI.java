@@ -38,6 +38,7 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 	private static final Logger log = Logger.getLogger(BotGUI.class.getName());
 
 	private BotPanel panel;
+	private JScrollPane scrollableBotPanel;
 	private BotToolBar toolBar;
 	private BotMenuBar menuBar;
 	private JScrollPane textScroll;
@@ -411,9 +412,10 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 		textScroll.setBorder(null);
 		textScroll.setPreferredSize(new Dimension(PANEL_WIDTH, LOG_HEIGHT));
 		textScroll.setVisible(true);
+		scrollableBotPanel = new JScrollPane(panel);
 
 		add(toolBar, BorderLayout.NORTH);
-		add(panel, BorderLayout.CENTER);
+		add(scrollableBotPanel, BorderLayout.CENTER);
 		add(textScroll, BorderLayout.SOUTH);
 	}
 
