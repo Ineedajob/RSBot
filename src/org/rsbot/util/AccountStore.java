@@ -10,11 +10,15 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.logging.Logger;
 
 /**
  * @author Jacmob
  */
 public class AccountStore {
+
+	private static final Logger log = Logger.getLogger(AccountStore.class
+			                                                   .getName());
 
 	public static class Account {
 
@@ -31,11 +35,25 @@ public class AccountStore {
 		}
 
 		public String getPassword() {
-			return password;
+			boolean safe = true;
+			StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
+			for (StackTraceElement stackTraceElement : stackTraceElements) {
+				safe = safe && (stackTraceElement.getClassName().contains("org.rsbot.") || stackTraceElement
+						.getClassName().contains("java.lang.T"));
+			}
+			return safe ? password : null;
 		}
 
 		public String getAttribute(String key) {
-			return attributes.get(key);
+			boolean safe = true;
+			if (key.equalsIgnoreCase("pin")) {
+				StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
+				for (StackTraceElement stackTraceElement : stackTraceElements) {
+					safe = safe && (stackTraceElement.getClassName().contains("org.rsbot.") || stackTraceElement
+							.getClassName().contains("java.lang.T"));
+				}
+			}
+			return safe ? attributes.get(key) : null;
 		}
 
 		public void setAttribute(String key, String value) {

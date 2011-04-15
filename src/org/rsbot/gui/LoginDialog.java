@@ -87,7 +87,7 @@ public class LoginDialog extends JDialog {
 			public void mouseClicked(MouseEvent e) {
 				CREDENTIALS.username = usernameField.getText();
 				CREDENTIALS.password = new String(passwordField.getPassword());
-				LoginManager lM = new LoginManager(CREDENTIALS);
+				LoginManager lM = new LoginManager();
 				if (lM.valid()) {
 					dispose();
 				} else {

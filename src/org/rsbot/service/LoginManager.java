@@ -2,22 +2,11 @@ package org.rsbot.service;
 
 /**
  * @author Timer
- * @version 0.1
  */
 public class LoginManager {
 
-	private final ScriptBoxSource.Credentials cred;
 	private String message = null;
 	private static final String MESSAGE_GOOD_LOGIN = "Identified correctly.";
-
-	/**
-	 * Constructs a login manager.
-	 *
-	 * @param credentials Your login details.
-	 */
-	public LoginManager(final ScriptBoxSource.Credentials credentials) {
-		cred = credentials;
-	}
 
 	/**
 	 * Checks if your username and password is valid.
