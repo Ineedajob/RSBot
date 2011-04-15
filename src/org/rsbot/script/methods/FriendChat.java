@@ -46,7 +46,35 @@ public class FriendChat extends MethodProvider {
             methods.keyboard.sendText(channel, true);
             sleep(random(1550, 1800));
             if (isInChannel()) {
-                lastCachedChannel = channel;
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+     /**
+     * Joins the given channel.
+     * If we are already in a channel, it will leave it.
+     *
+     * @param channel The channel to join
+     * @return <tt>true</tt> if successful; otherwise <tt>false</tt>
+     */
+    public boolean joinLastChannel() {
+        methods.game.openTab(Game.TAB_FRIENDS_CHAT);
+        if (isInChannel()) {
+            if (!leave()) {
+                return false;
+            }
+        }
+        methods.interfaces.getComponent(INTERFACE_FRIEND_CHAT, INTERFACE_FRIEND_CHAT_JOIN_BUTTON).doClick();
+        sleep(random(500, 800));
+        if (methods.interfaces.get(INTERFACE_JOIN_FRIEND_CHAT).isValid()) {
+            String lastChatCompText = methods.interfaces.getComponent(INTERFACE_JOIN_FRIEND_CHAT, INTERFACE_JOIN_FRIEND_CHAT_LAST_CHANNEL).getText();
+            lastCachedChannel = lastChatCompText.substring(lastChatCompText.indexOf(": "));
+            methods.interfaces.getComponent(INTERFACE_JOIN_FRIEND_CHAT, INTERFACE_JOIN_FRIEND_CHAT_LAST_CHANNEL).doClick();
+            sleep(random(1550, 1800));
+            if (isInChannel()) {
                 return true;
             }
         }
