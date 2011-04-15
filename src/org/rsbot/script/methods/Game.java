@@ -56,6 +56,7 @@ public class Game extends MethodProvider {
 	public static final int TAB_SUMMONING = 8; //Untested
 	public static final int TAB_FRIENDS = 9;
 	public static final int TAB_FRIENDS_CHAT = 10;
+	public static final int TAB_CLAN = 11;
 	public static final int TAB_CLAN_CHAT = 11;
 	public static final int TAB_OPTIONS = 12;
 	public static final int TAB_CONTROLS = 13;
