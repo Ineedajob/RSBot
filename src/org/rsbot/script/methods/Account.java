@@ -17,7 +17,7 @@ public class Account extends MethodProvider {
 
 	/**
 	 * The account name.
-	 *
+	 * 
 	 * @return The currently selected account's name.
 	 */
 	public String getName() {
@@ -26,11 +26,12 @@ public class Account extends MethodProvider {
 
 	/**
 	 * The account password.
-	 *
+	 * 
 	 * @return The currently selected account's password.
 	 */
 	public String getPassword() {
-		StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
+		StackTraceElement[] stackTraceElements = Thread.currentThread()
+				.getStackTrace();
 		for (StackTraceElement stackTraceElement : stackTraceElements) {
 			log.info(stackTraceElement.getMethodName());
 		}
@@ -39,11 +40,12 @@ public class Account extends MethodProvider {
 
 	/**
 	 * The account pin.
-	 *
+	 * 
 	 * @return The currently selected account's pin.
 	 */
 	public String getPin() {
-		StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
+		StackTraceElement[] stackTraceElements = Thread.currentThread()
+				.getStackTrace();
 		for (StackTraceElement stackTraceElement : stackTraceElements) {
 			log.info(stackTraceElement.getMethodName());
 		}
@@ -52,11 +54,12 @@ public class Account extends MethodProvider {
 
 	/**
 	 * The account reward.
-	 *
+	 * 
 	 * @return The currently selected account's reward.
 	 */
 	public String getReward() {
-		StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
+		StackTraceElement[] stackTraceElements = Thread.currentThread()
+				.getStackTrace();
 		for (StackTraceElement stackTraceElement : stackTraceElements) {
 			log.info(stackTraceElement.getMethodName());
 		}

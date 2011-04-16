@@ -5,8 +5,8 @@ import org.rsbot.client.HashTable;
 import org.rsbot.client.Node;
 
 /**
- * For internal use to reference data stored in the engine's
- * Node-based structures.
+ * For internal use to reference data stored in the engine's Node-based
+ * structures.
  */
 public class Nodes extends MethodProvider {
 
@@ -15,8 +15,10 @@ public class Nodes extends MethodProvider {
 	}
 
 	/**
-	 * @param nc The node cache to check
-	 * @param id The id of the node
+	 * @param nc
+	 *            The node cache to check
+	 * @param id
+	 *            The id of the node
 	 * @return A <tt>Node</tt> object corresponding to the ID in the nodecache.
 	 */
 	public Node lookup(final HashTable nc, final long id) {
@@ -38,7 +40,8 @@ public class Nodes extends MethodProvider {
 	}
 
 	/**
-	 * @param id The id of the node
+	 * @param id
+	 *            The id of the node
 	 * @return A <tt>Node</tt> object corresponding to the ID in the loader.
 	 */
 	public Node lookup(final DefLoader loader, final long id) {

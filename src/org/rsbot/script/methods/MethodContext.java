@@ -6,7 +6,7 @@ import org.rsbot.script.internal.InputManager;
 
 /**
  * For internal use to link MethodProviders.
- *
+ * 
  * @author Jacmob
  */
 public class MethodContext {
@@ -119,7 +119,8 @@ public class MethodContext {
 	/**
 	 * The singleton of Calculations
 	 */
-	public final org.rsbot.script.methods.Calculations calc = new Calculations(this);
+	public final org.rsbot.script.methods.Calculations calc = new Calculations(
+			this);
 
 	/**
 	 * The singleton of Inventory
@@ -166,7 +167,7 @@ public class MethodContext {
 	 */
 	public final Prayer prayer = new Prayer(this);
 
-        /**
+	/**
 	 * The singleton of Prayer
 	 */
 	public final FriendChat friendChat = new FriendChat(this);

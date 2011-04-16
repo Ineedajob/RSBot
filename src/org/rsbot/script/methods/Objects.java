@@ -34,7 +34,7 @@ public class Objects extends MethodProvider {
 
 	/**
 	 * Returns all the <tt>RSObject</tt>s in the local region.
-	 *
+	 * 
 	 * @return An <tt>RSObject[]</tt> of all objects in the loaded region.
 	 */
 	public RSObject[] getAll() {
@@ -42,12 +42,13 @@ public class Objects extends MethodProvider {
 	}
 
 	/**
-	 * Returns all the <tt>RSObject</tt>s in the local region
-	 * accepted by the provided Filter.
-	 *
-	 * @param filter Filters out unwanted objects.
-	 * @return An <tt>RSObject[]</tt> of all the accepted objects
-	 *         in the loaded region.
+	 * Returns all the <tt>RSObject</tt>s in the local region accepted by the
+	 * provided Filter.
+	 * 
+	 * @param filter
+	 *            Filters out unwanted objects.
+	 * @return An <tt>RSObject[]</tt> of all the accepted objects in the loaded
+	 *         region.
 	 */
 	public RSObject[] getAll(final Filter<RSObject> filter) {
 		Set<RSObject> objects = new LinkedHashSet<RSObject>();
@@ -64,13 +65,14 @@ public class Objects extends MethodProvider {
 	}
 
 	/**
-	 * Returns the <tt>RSObject</tt> that is nearest out of all
-	 * objects that are accepted by the provided Filter.
-	 *
-	 * @param filter Filters out unwanted objects.
-	 * @return An <tt>RSObject</tt> representing the nearest object
-	 *         that was accepted by the filter; or null if there are no
-	 *         matching objects in the current region.
+	 * Returns the <tt>RSObject</tt> that is nearest out of all objects that are
+	 * accepted by the provided Filter.
+	 * 
+	 * @param filter
+	 *            Filters out unwanted objects.
+	 * @return An <tt>RSObject</tt> representing the nearest object that was
+	 *         accepted by the filter; or null if there are no matching objects
+	 *         in the current region.
 	 */
 	public RSObject getNearest(final Filter<RSObject> filter) {
 		RSObject cur = null;
@@ -80,8 +82,9 @@ public class Objects extends MethodProvider {
 				Set<RSObject> objs = getAtLocal(x, y, -1);
 				for (RSObject o : objs) {
 					if (filter.accept(o)) {
-						double distTmp = methods.calc.distanceBetween(methods.players.getMyPlayer().getLocation(),
-						                                              o.getLocation());
+						double distTmp = methods.calc.distanceBetween(
+								methods.players.getMyPlayer().getLocation(),
+								o.getLocation());
 						if (cur == null) {
 							dist = distTmp;
 							cur = o;
@@ -100,11 +103,12 @@ public class Objects extends MethodProvider {
 	/**
 	 * Returns the <tt>RSObject</tt> that is nearest, out of all of the
 	 * RSObjects with the provided ID(s).
-	 *
-	 * @param ids The ID(s) of the RSObject that you are searching.
-	 * @return An <tt>RSObject</tt> representing the nearest object
-	 *         with one of the provided IDs; or null if there are no matching
-	 *         objects in the current region.
+	 * 
+	 * @param ids
+	 *            The ID(s) of the RSObject that you are searching.
+	 * @return An <tt>RSObject</tt> representing the nearest object with one of
+	 *         the provided IDs; or null if there are no matching objects in the
+	 *         current region.
 	 */
 	public RSObject getNearest(final int... ids) {
 		return getNearest(new Filter<RSObject>() {
@@ -122,11 +126,12 @@ public class Objects extends MethodProvider {
 	/**
 	 * Returns the <tt>RSObject</tt> that is nearest, out of all of the
 	 * RSObjects with the provided name(s).
-	 *
-	 * @param names The name(s) of the RSObject that you are searching.
-	 * @return An <tt>RSObject</tt> representing the nearest object with
-	 *         one of the provided names; or null if there are no matching objects
-	 *         in the current region.
+	 * 
+	 * @param names
+	 *            The name(s) of the RSObject that you are searching.
+	 * @return An <tt>RSObject</tt> representing the nearest object with one of
+	 *         the provided names; or null if there are no matching objects in
+	 *         the current region.
 	 */
 	public RSObject getNearest(final String... names) {
 		return getNearest(new Filter<RSObject>() {
@@ -146,8 +151,9 @@ public class Objects extends MethodProvider {
 
 	/**
 	 * Returns the top <tt>RSObject</tt> on the specified tile.
-	 *
-	 * @param t The tile on which to search.
+	 * 
+	 * @param t
+	 *            The tile on which to search.
 	 * @return The top RSObject on the provided tile; or null if none found.
 	 */
 	public RSObject getTopAt(final RSTile t) {
@@ -155,13 +161,15 @@ public class Objects extends MethodProvider {
 	}
 
 	/**
-	 * Returns the top <tt>RSObject</tt> on the specified tile
-	 * matching types specified by the flags in the provided mask.
-	 *
-	 * @param t    The tile on which to search.
-	 * @param mask The type flags.
-	 * @return The top RSObject on the provided tile matching the
-	 *         specified flags; or null if none found.
+	 * Returns the top <tt>RSObject</tt> on the specified tile matching types
+	 * specified by the flags in the provided mask.
+	 * 
+	 * @param t
+	 *            The tile on which to search.
+	 * @param mask
+	 *            The type flags.
+	 * @return The top RSObject on the provided tile matching the specified
+	 *         flags; or null if none found.
 	 */
 	public RSObject getTopAt(final RSTile t, final int mask) {
 		RSObject[] objects = getAt(t, mask);
@@ -171,26 +179,32 @@ public class Objects extends MethodProvider {
 	/**
 	 * Returns the <tt>RSObject</tt>s which are on the specified <tt>RSTile</tt>
 	 * matching types specified by the flags in the provided mask.
-	 *
-	 * @param t    The tile on which to search.
-	 * @param mask The type flags.
+	 * 
+	 * @param t
+	 *            The tile on which to search.
+	 * @param mask
+	 *            The type flags.
 	 * @return An RSObject[] of the objects on the specified tile.
 	 */
 	public RSObject[] getAt(final RSTile t, final int mask) {
-		Set<RSObject> objects = getAtLocal(t.getX() - methods.client.getBaseX(), t.getY() - methods.client.getBaseY(),
-		                                   mask);
+		Set<RSObject> objects = getAtLocal(
+				t.getX() - methods.client.getBaseX(),
+				t.getY() - methods.client.getBaseY(), mask);
 		return objects.toArray(new RSObject[objects.size()]);
 	}
 
 	/**
-	 * Returns the <tt>RSObject</tt>s which are on the specified <tt>RSTile</tt>.
-	 *
-	 * @param t The tile on which to search.
+	 * Returns the <tt>RSObject</tt>s which are on the specified <tt>RSTile</tt>
+	 * .
+	 * 
+	 * @param t
+	 *            The tile on which to search.
 	 * @return An RSObject[] of the objects on the specified tile.
 	 */
 	public RSObject[] getAllAt(final RSTile t) {
-		Set<RSObject> objects = getAtLocal(t.getX() - methods.client.getBaseX(), t.getY() - methods.client.getBaseY(),
-		                                   -1);
+		Set<RSObject> objects = getAtLocal(
+				t.getX() - methods.client.getBaseX(),
+				t.getY() - methods.client.getBaseY(), -1);
 		return objects.toArray(new RSObject[objects.size()]);
 	}
 
@@ -214,12 +228,15 @@ public class Objects extends MethodProvider {
 
 				// Interactable (e.g. Trees)
 				if ((mask & TYPE_INTERACTABLE) != 0) {
-					for (RSAnimableNode node = rsGround.getRSAnimableList(); node != null; node = node.getNext()) {
+					for (RSAnimableNode node = rsGround.getRSAnimableList(); node != null; node = node
+							.getNext()) {
 						obj = node.getRSAnimable();
-						if (obj != null && obj instanceof org.rsbot.client.RSObject) {
+						if (obj != null
+								&& obj instanceof org.rsbot.client.RSObject) {
 							rsObj = (org.rsbot.client.RSObject) obj;
 							if (rsObj.getID() != -1) {
-								objects.add(new RSObject(methods, rsObj, RSObject.Type.INTERACTABLE, plane));
+								objects.add(new RSObject(methods, rsObj,
+										RSObject.Type.INTERACTABLE, plane));
 							}
 						}
 					}
@@ -231,11 +248,11 @@ public class Objects extends MethodProvider {
 					if (obj != null) {
 						rsObj = (org.rsbot.client.RSObject) obj;
 						if (rsObj.getID() != -1) {
-							objects.add(new RSObject(methods, rsObj, RSObject.Type.FLOOR_DECORATION, plane));
+							objects.add(new RSObject(methods, rsObj,
+									RSObject.Type.FLOOR_DECORATION, plane));
 						}
 					}
 				}
-
 
 				// Boundaries / Doors / Fences / Walls
 				if ((mask & TYPE_BOUNDARY) != 0) {
@@ -243,7 +260,8 @@ public class Objects extends MethodProvider {
 					if (obj != null) {
 						rsObj = (org.rsbot.client.RSObject) obj;
 						if (rsObj.getID() != -1) {
-							objects.add(new RSObject(methods, rsObj, RSObject.Type.BOUNDARY, plane));
+							objects.add(new RSObject(methods, rsObj,
+									RSObject.Type.BOUNDARY, plane));
 						}
 					}
 
@@ -251,7 +269,8 @@ public class Objects extends MethodProvider {
 					if (obj != null) {
 						rsObj = (org.rsbot.client.RSObject) obj;
 						if (rsObj.getID() != -1) {
-							objects.add(new RSObject(methods, rsObj, RSObject.Type.BOUNDARY, plane));
+							objects.add(new RSObject(methods, rsObj,
+									RSObject.Type.BOUNDARY, plane));
 						}
 					}
 				}
@@ -262,7 +281,8 @@ public class Objects extends MethodProvider {
 					if (obj != null) {
 						rsObj = (org.rsbot.client.RSObject) obj;
 						if (rsObj.getID() != -1) {
-							objects.add(new RSObject(methods, rsObj, RSObject.Type.WALL_DECORATION, plane));
+							objects.add(new RSObject(methods, rsObj,
+									RSObject.Type.WALL_DECORATION, plane));
 						}
 					}
 
@@ -270,7 +290,8 @@ public class Objects extends MethodProvider {
 					if (obj != null) {
 						rsObj = (org.rsbot.client.RSObject) obj;
 						if (rsObj.getID() != -1) {
-							objects.add(new RSObject(methods, rsObj, RSObject.Type.WALL_DECORATION, plane));
+							objects.add(new RSObject(methods, rsObj,
+									RSObject.Type.WALL_DECORATION, plane));
 						}
 					}
 				}

@@ -29,7 +29,7 @@ public class Equipment extends MethodProvider {
 
 	/**
 	 * Gets the equipment interface.
-	 *
+	 * 
 	 * @return the equipment interface
 	 */
 	public RSInterface getInterface() {
@@ -46,7 +46,7 @@ public class Equipment extends MethodProvider {
 
 	/**
 	 * Gets the equipment array.
-	 *
+	 * 
 	 * @return An array containing all equipped items
 	 */
 	public RSItem[] getItems() {
@@ -60,8 +60,9 @@ public class Equipment extends MethodProvider {
 
 	/**
 	 * Gets the cached equipment array (i.e. does not open the interface).
-	 *
-	 * @return The items equipped as seen when the equipment tab was last opened.
+	 * 
+	 * @return The items equipped as seen when the equipment tab was last
+	 *         opened.
 	 */
 	public RSItem[] getCachedItems() {
 		RSInterface equipment = methods.interfaces.get(INTERFACE_EQUIPMENT);
@@ -75,8 +76,9 @@ public class Equipment extends MethodProvider {
 
 	/**
 	 * Gets the equipment item at a given index.
-	 *
-	 * @param index The item index.
+	 * 
+	 * @param index
+	 *            The item index.
 	 * @return The equipped item.
 	 */
 	public RSItem getItem(int index) {
@@ -85,7 +87,7 @@ public class Equipment extends MethodProvider {
 
 	/**
 	 * Returns the number of items equipped excluding stack sizes.
-	 *
+	 * 
 	 * @return Amount of items currently equipped.
 	 */
 	public int getCount() {
@@ -93,10 +95,12 @@ public class Equipment extends MethodProvider {
 	}
 
 	/**
-	 * Returns the number of items matching a given ID equipped
-	 * excluding stack sizes.
-	 *
-	 * @param itemID The item ID to count. Same as the equipment/item id in the inventory.
+	 * Returns the number of items matching a given ID equipped excluding stack
+	 * sizes.
+	 * 
+	 * @param itemID
+	 *            The item ID to count. Same as the equipment/item id in the
+	 *            inventory.
 	 * @return Amount of specified item currently equipped.
 	 * @see #getItems()
 	 */
@@ -112,9 +116,12 @@ public class Equipment extends MethodProvider {
 
 	/**
 	 * Checks whether the player has all of the given items equipped.
-	 *
-	 * @param items The item ID to check for. Same as the equipment/item id in the inventory.
-	 * @return <tt>true</tt> if specified item is currently equipped; otherwise <tt>false</tt>.
+	 * 
+	 * @param items
+	 *            The item ID to check for. Same as the equipment/item id in the
+	 *            inventory.
+	 * @return <tt>true</tt> if specified item is currently equipped; otherwise
+	 *         <tt>false</tt>.
 	 * @see #getItems()
 	 */
 	public boolean containsAll(int... items) {
@@ -133,8 +140,9 @@ public class Equipment extends MethodProvider {
 
 	/**
 	 * Checks if the player has one (or more) of the given items equipped.
-	 *
-	 * @param items The IDs of items to check for.
+	 * 
+	 * @param items
+	 *            The IDs of items to check for.
 	 * @return <tt>true</tt> if the player has one (or more) of the given items
 	 *         equipped; otherwise <tt>false</tt>.
 	 */

@@ -20,7 +20,8 @@ import java.util.regex.Pattern;
  */
 public class Menu extends MethodProvider {
 
-	private static final Pattern HTML_TAG = Pattern.compile("(^[^<]+>|<[^>]+>|<[^>]+$)");
+	private static final Pattern HTML_TAG = Pattern
+			.compile("(^[^<]+>|<[^>]+>|<[^>]+$)");
 
 	private final Object menuCacheLock = new Object();
 
@@ -36,9 +37,11 @@ public class Menu extends MethodProvider {
 	/**
 	 * Clicks the menu option. Will left-click if the menu item is the first,
 	 * otherwise open menu and click the option.
-	 *
-	 * @param action The action (or action substring) to click.
-	 * @return <tt>true</tt> if the menu item was clicked; otherwise <tt>false</tt>.
+	 * 
+	 * @param action
+	 *            The action (or action substring) to click.
+	 * @return <tt>true</tt> if the menu item was clicked; otherwise
+	 *         <tt>false</tt>.
 	 */
 	public boolean doAction(String action) {
 		action = action.toLowerCase();
@@ -64,10 +67,11 @@ public class Menu extends MethodProvider {
 	}
 
 	/**
-	 * Checks whether or not a given action (or action substring) is present
-	 * in the menu.
-	 *
-	 * @param action The action or action substring.
+	 * Checks whether or not a given action (or action substring) is present in
+	 * the menu.
+	 * 
+	 * @param action
+	 *            The action or action substring.
 	 * @return <tt>true</tt> if present, otherwise <tt>false</tt>.
 	 */
 	public boolean contains(final String action) {
@@ -76,9 +80,11 @@ public class Menu extends MethodProvider {
 
 	/**
 	 * Determines if the item contains the desired action.
-	 *
-	 * @param item   The item to check.
-	 * @param action The item menu action to check.
+	 * 
+	 * @param item
+	 *            The item to check.
+	 * @param action
+	 *            The item menu action to check.
 	 * @return <tt>true</tt> if the item has the action; otherwise
 	 *         <tt>false</tt>.
 	 */
@@ -100,8 +106,9 @@ public class Menu extends MethodProvider {
 
 	/**
 	 * Left clicks at the given index.
-	 *
-	 * @param i The index of the item.
+	 * 
+	 * @param i
+	 *            The index of the item.
 	 * @return <tt>true</tt> if the mouse was clicked; otherwise <tt>false</tt>.
 	 */
 	public boolean clickIndex(final int i) {
@@ -113,12 +120,16 @@ public class Menu extends MethodProvider {
 			return false;
 		}
 		if (isCollapsed()) {
-			Queue<MenuGroupNode> groups = new Queue<MenuGroupNode>(methods.client.getCollapsedMenuItems());
+			Queue<MenuGroupNode> groups = new Queue<MenuGroupNode>(
+					methods.client.getCollapsedMenuItems());
 			int idx = 0, mainIdx = 0;
-			for (MenuGroupNode g = groups.getHead(); g != null; g = groups.getNext(), ++mainIdx) {
-				Queue<MenuItemNode> subItems = new Queue<MenuItemNode>(g.getItems());
+			for (MenuGroupNode g = groups.getHead(); g != null; g = groups
+					.getNext(), ++mainIdx) {
+				Queue<MenuItemNode> subItems = new Queue<MenuItemNode>(
+						g.getItems());
 				int subIdx = 0;
-				for (MenuItemNode item = subItems.getHead(); item != null; item = subItems.getNext(), ++subIdx) {
+				for (MenuItemNode item = subItems.getHead(); item != null; item = subItems
+						.getNext(), ++subIdx) {
 					if (idx++ == i) {
 						if (subItems.size() == 1) {
 							return clickMain(items, mainIdx);
@@ -146,7 +157,8 @@ public class Menu extends MethodProvider {
 		return false;
 	}
 
-	private boolean clickSub(final String[] items, final int mIdx, final int sIdx) {
+	private boolean clickSub(final String[] items, final int mIdx,
+			final int sIdx) {
 		Point menuLoc = getLocation();
 		int x = random(4, items[mIdx].length() * 4);
 		int y = 21 + 16 * mIdx + random(3, 12);
@@ -156,12 +168,14 @@ public class Menu extends MethodProvider {
 		if (isOpen()) {
 			Point subLoc = getSubMenuLocation();
 			x = random(4, items[sIdx].length() * 4);
-			methods.mouse.move(subLoc.x + x, methods.mouse.getLocation().y, 2, 0);
+			methods.mouse.move(subLoc.x + x, methods.mouse.getLocation().y, 2,
+					0);
 			sleep(random(125, 150));
 
 			if (isOpen()) {
 				y = 16 * sIdx + random(3, 12) + 21;
-				methods.mouse.move(methods.mouse.getLocation().x, subLoc.y + y, 0, 2);
+				methods.mouse.move(methods.mouse.getLocation().x, subLoc.y + y,
+						0, 2);
 				sleep(random(125, 150));
 				if (isOpen()) {
 					methods.mouse.click(true);
@@ -173,9 +187,9 @@ public class Menu extends MethodProvider {
 	}
 
 	/**
-	 * Returns an array of the first parts of each item in the
-	 * current menu context.
-	 *
+	 * Returns an array of the first parts of each item in the current menu
+	 * context.
+	 * 
 	 * @return The first half. "Walk here", "Trade with", "Follow".
 	 */
 	public String[] getActions() {
@@ -184,8 +198,9 @@ public class Menu extends MethodProvider {
 
 	/**
 	 * Returns the index in the menu for a given action. Starts at 0.
-	 *
-	 * @param action The action that you want the index of.
+	 * 
+	 * @param action
+	 *            The action that you want the index of.
 	 * @return The index of the given option in the context menu; otherwise -1.
 	 */
 	public int getIndex(String action) {
@@ -201,7 +216,7 @@ public class Menu extends MethodProvider {
 
 	/**
 	 * Returns an array of each item in the current menu context.
-	 *
+	 * 
 	 * @return First half + second half. As displayed in RuneScape.
 	 */
 	public String[] getItems() {
@@ -234,12 +249,13 @@ public class Menu extends MethodProvider {
 
 	/**
 	 * Returns the menu's location.
-	 *
+	 * 
 	 * @return The screen space point if the menu is open; otherwise null.
 	 */
 	public Point getLocation() {
 		if (isOpen()) {
-			return new Point(methods.client.getMenuX(), methods.client.getMenuY());
+			return new Point(methods.client.getMenuX(),
+					methods.client.getMenuY());
 		}
 		return null;
 	}
@@ -247,16 +263,23 @@ public class Menu extends MethodProvider {
 	private String[] getMenuItemPart(final boolean firstPart) {
 		LinkedList<String> itemsList = new LinkedList<String>();
 		if (isCollapsed()) {
-			Queue<MenuGroupNode> menu = new Queue<MenuGroupNode>(methods.client.getCollapsedMenuItems());
-			for (MenuGroupNode mgn = menu.getHead(); mgn != null; mgn = menu.getNext()) {
-				Queue<MenuItemNode> submenu = new Queue<MenuItemNode>(mgn.getItems());
-				for (MenuItemNode min = submenu.getHead(); min != null; min = submenu.getNext()) {
-					itemsList.add(firstPart ? min.getAction() : min.getOption());
+			Queue<MenuGroupNode> menu = new Queue<MenuGroupNode>(
+					methods.client.getCollapsedMenuItems());
+			for (MenuGroupNode mgn = menu.getHead(); mgn != null; mgn = menu
+					.getNext()) {
+				Queue<MenuItemNode> submenu = new Queue<MenuItemNode>(
+						mgn.getItems());
+				for (MenuItemNode min = submenu.getHead(); min != null; min = submenu
+						.getNext()) {
+					itemsList
+							.add(firstPart ? min.getAction() : min.getOption());
 				}
 			}
 		} else {
-			Deque<MenuItemNode> menu = new Deque<MenuItemNode>(methods.client.getMenuItems());
-			for (MenuItemNode min = menu.getHead(); min != null; min = menu.getNext()) {
+			Deque<MenuItemNode> menu = new Deque<MenuItemNode>(
+					methods.client.getMenuItems());
+			for (MenuItemNode min = menu.getHead(); min != null; min = menu
+					.getNext()) {
 				itemsList.add(firstPart ? min.getAction() : min.getOption());
 			}
 		}
@@ -276,9 +299,9 @@ public class Menu extends MethodProvider {
 	}
 
 	/**
-	 * Returns an array of the second parts of each item in the
-	 * current menu context.
-	 *
+	 * Returns an array of the second parts of each item in the current menu
+	 * context.
+	 * 
 	 * @return The second half. "<user name>".
 	 */
 	public String[] getOptions() {
@@ -287,7 +310,7 @@ public class Menu extends MethodProvider {
 
 	/**
 	 * Returns the menu's item count.
-	 *
+	 * 
 	 * @return The menu size.
 	 */
 	public int getSize() {
@@ -296,19 +319,21 @@ public class Menu extends MethodProvider {
 
 	/**
 	 * Returns the submenu's location.
-	 *
-	 * @return The screen space point of the submenu if the menu is collapsed; otherwise null.
+	 * 
+	 * @return The screen space point of the submenu if the menu is collapsed;
+	 *         otherwise null.
 	 */
 	public Point getSubMenuLocation() {
 		if (isCollapsed()) {
-			return new Point(methods.client.getSubMenuX() + 4, methods.client.getSubMenuY() + 4);
+			return new Point(methods.client.getSubMenuX() + 4,
+					methods.client.getSubMenuY() + 4);
 		}
 		return null;
 	}
 
 	/**
 	 * Checks whether or not the menu is collapsed.
-	 *
+	 * 
 	 * @return <tt>true</tt> if the menu is collapsed; otherwise <tt>false</tt>.
 	 */
 	public boolean isCollapsed() {
@@ -317,7 +342,7 @@ public class Menu extends MethodProvider {
 
 	/**
 	 * Checks whether or not the menu is open.
-	 *
+	 * 
 	 * @return <tt>true</tt> if the menu is open; otherwise <tt>false</tt>.
 	 */
 	public boolean isOpen() {
@@ -345,8 +370,9 @@ public class Menu extends MethodProvider {
 
 	/**
 	 * Strips HTML tags.
-	 *
-	 * @param input The string you want to parse.
+	 * 
+	 * @param input
+	 *            The string you want to parse.
 	 * @return The parsed {@code String}.
 	 */
 	private String stripFormatting(String input) {

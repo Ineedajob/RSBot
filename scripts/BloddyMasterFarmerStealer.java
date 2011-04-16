@@ -20,7 +20,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 @ScriptManifest(authors = "Bloddyharry", name = "Master Farmer Stealer", keywords = "Thieving", version = 2.4, description = "Made by BloddyHarry. Settings in GUI.")
-public class BloddyMasterFarmerStealer extends Script implements PaintListener, MessageListener {
+public class BloddyMasterFarmerStealer extends Script implements PaintListener,
+		MessageListener {
 
 	final ScriptManifest properties = getClass().getAnnotation(
 			ScriptManifest.class);
@@ -40,7 +41,7 @@ public class BloddyMasterFarmerStealer extends Script implements PaintListener, 
 	public int gainedLvls;
 	public boolean finishAt, finishWhenLevel;
 	private int startXP = 0;
-	public int[] seedID = {5304, 5296, 5300, 5295, 5303, 5302, 5100, 5323,
+	public int[] seedID = { 5304, 5296, 5300, 5295, 5303, 5302, 5100, 5323,
 			5299, 5301, 5298, 5320, 5321, 1161, 1965, 1969, 1967, 1895, 1893,
 			1891, 1971, 4293, 2142, 4291, 2140, 3228, 9980, 7223, 6297, 6293,
 			6295, 6299, 7521, 9988, 7228, 2878, 7568, 2343, 1861, 13433, 315,
@@ -55,13 +56,13 @@ public class BloddyMasterFarmerStealer extends Script implements PaintListener, 
 			5753, 5755, 5757, 5759, 5761, 2084, 2034, 2048, 2036, 2217, 2213,
 			2205, 2209, 2054, 2040, 2080, 2277, 2225, 2255, 2221, 2253, 2219,
 			2281, 2227, 2223, 2191, 2233, 2092, 2032, 2074, 2030, 2281, 2235,
-			2064, 2028, 2187, 2185, 2229};
-	public int[] junkSeedID = {5319, 5307, 5305, 5322, 5099, 5310, 5308, 5102,
+			2064, 2028, 2187, 2185, 2229 };
+	public int[] junkSeedID = { 5319, 5307, 5305, 5322, 5099, 5310, 5308, 5102,
 			5101, 5096, 5324, 5306, 5291, 5103, 5292, 5097, 5281, 5098, 5294,
-			5105, 5106, 5280, 5297, 5311, 5104, 5293, 5318, 5282, 5309};
+			5105, 5106, 5280, 5297, 5311, 5104, 5293, 5318, 5282, 5309 };
 	private int FOODID;
 	private int ANIMATIONID = 11974;
-	RSTile[] farmerToBank = {new RSTile(3081, 3250), new RSTile(3092, 3244)};
+	RSTile[] farmerToBank = { new RSTile(3081, 3250), new RSTile(3092, 3244) };
 	RSTile farmerTile = new RSTile(3081, 3250);
 	RSTile bankTile = new RSTile(3092, 3244);
 	String status = "";
@@ -72,7 +73,7 @@ public class BloddyMasterFarmerStealer extends Script implements PaintListener, 
 	public int failPickpocket = 0;
 	public int somethingID = 5295;
 	public long startTime = System.currentTimeMillis();
-	public int[] pickpocketing = {11942, 378};
+	public int[] pickpocketing = { 11942, 378 };
 	final private cameraHeight camHeight = new cameraHeight();
 	final private cameraRotate camRotate = new cameraRotate();
 	private boolean guiWait = true, guiExit;
@@ -173,8 +174,7 @@ public class BloddyMasterFarmerStealer extends Script implements PaintListener, 
 							12)
 							|| calc.distanceTo(walking.getDestination()) > 40) {
 						if (!walking.walkPathMM(farmerToBank)) {
-							walking.walkTo(walking
-									.randomize(bankTile, 2, 2));
+							walking.walkTo(walking.randomize(bankTile, 2, 2));
 							return random(1400, 1600);
 						}
 					}
@@ -244,9 +244,9 @@ public class BloddyMasterFarmerStealer extends Script implements PaintListener, 
 						} else if (calc.distanceTo(npcs
 								.getNearest("Master Farmer")) >= 6) {
 							status = "walking to Farmer";
-							walking.walkTo((walking.randomize(npcs
-									.getNearest("Master Farmer").getLocation(),
-									1, 1)));
+							walking.walkTo((walking.randomize(
+									npcs.getNearest("Master Farmer")
+											.getLocation(), 1, 1)));
 							return random(1500, 1700);
 						}
 					}
@@ -256,8 +256,9 @@ public class BloddyMasterFarmerStealer extends Script implements PaintListener, 
 					} else if (calc
 							.distanceTo(npcs.getNearest("Master Farmer")) >= 6) {
 						status = "walking to Farmer";
-						walking.walkTo((walking.randomize(npcs.getNearest(
-								"Master Farmer").getLocation(), 1, 1)));
+						walking.walkTo((walking.randomize(
+								npcs.getNearest("Master Farmer").getLocation(),
+								1, 1)));
 						return random(1600, 1700);
 					}
 				}
@@ -289,18 +290,23 @@ public class BloddyMasterFarmerStealer extends Script implements PaintListener, 
 
 	public int bank() {
 		status = "Banking";
-		if (bank.isOpen()) {
-			if (inventory.getCount() >= 1) {
-				bank.depositAll();
-				sleep(random(300, 400));
+		try {
+			if (bank.isOpen()) {
+				if (inventory.getCount() >= 1) {
+					bank.depositAll();
+					sleep(random(300, 400));
+				}
+				if (!withdraw10) {
+					bank.getItem(FOODID).doAction("Withdraw-5");
+					sleep(random(500, 600));
+				} else {
+					bank.getItem(FOODID).doAction("Withdraw-10");
+					sleep(random(500, 600));
+				}
 			}
-			if (!withdraw10) {
-				bank.getItem(FOODID).doAction("Withdraw-5");
-				sleep(random(500, 600));
-			} else {
-				bank.getItem(FOODID).doAction("Withdraw-10");
-				sleep(random(500, 600));
-			}
+		} catch (Exception e) {
+			log("Crash Prevented isbankopen=" + bank.isOpen());
+			return 10;
 		}
 		return 0;
 	}
@@ -522,14 +528,12 @@ public class BloddyMasterFarmerStealer extends Script implements PaintListener, 
 				g.draw3DRect(555, 210, 175, 250, true);
 
 				g.setColor(Color.WHITE);
-				int[] coords = new int[]{225, 240, 255, 270, 285, 300, 315,
-						330, 345, 360, 375, 390, 405, 420, 435, 450, 465, 480};
+				int[] coords = new int[] { 225, 240, 255, 270, 285, 300, 315,
+						330, 345, 360, 375, 390, 405, 420, 435, 450, 465, 480 };
 				g.setColor(Color.RED);
 				g.setFont(new Font("Segoe Print", Font.BOLD, 14));
 				g.drawString("Master Farmer Stealer", 561, coords[0]);
-				g
-						.drawString("Version: " + properties.version(), 561,
-								coords[1]);
+				g.drawString("Version: " + properties.version(), 561, coords[1]);
 				g.setFont(new Font("Lucida Calligraphy", Font.PLAIN, 12));
 				g.setColor(Color.LIGHT_GRAY);
 				g.drawString("Run Time: " + hours + ":" + minutes + ":"
@@ -550,13 +554,15 @@ public class BloddyMasterFarmerStealer extends Script implements PaintListener, 
 				g.setColor(Color.RED);
 				g.drawString("failed " + failPickpocket + " times", 561,
 						coords[10]);
-				g.drawString("XP To Next Level: "
-						+ skills.getExpToNextLevel(Skills.THIEVING), 561,
-						coords[12]);
+				g.drawString(
+						"XP To Next Level: "
+								+ skills.getExpToNextLevel(Skills.THIEVING),
+						561, coords[12]);
 				g.setColor(Color.LIGHT_GRAY);
-				g.drawString("% To Next Level: "
-						+ skills.getPercentToNextLevel(Skills.THIEVING), 561,
-						coords[13]);
+				g.drawString(
+						"% To Next Level: "
+								+ skills.getPercentToNextLevel(Skills.THIEVING),
+						561, coords[13]);
 				g.setColor(Color.RED);
 				g.drawString("Status: " + status, 561, coords[14]);
 				g.setColor(Color.LIGHT_GRAY);
@@ -667,8 +673,8 @@ public class BloddyMasterFarmerStealer extends Script implements PaintListener, 
 						camera.setPitch(random(20, 100));
 					}
 					try {
-						Thread.sleep(random(random(1000, 5000), random(11000,
-								17000)));
+						Thread.sleep(random(random(1000, 5000),
+								random(11000, 17000)));
 					} catch (Exception e) {
 					}
 				}
@@ -702,8 +708,8 @@ public class BloddyMasterFarmerStealer extends Script implements PaintListener, 
 						camera.setAngle(random(0, 360));
 					}
 					try {
-						Thread.sleep(random(random(1000, 5000), random(11000,
-								17000)));
+						Thread.sleep(random(random(1000, 5000),
+								random(11000, 17000)));
 					} catch (Exception e) {
 					}
 				}
@@ -851,8 +857,7 @@ public class BloddyMasterFarmerStealer extends Script implements PaintListener, 
 					panel1.setLayout(null);
 
 					// ---- label2 ----
-					label2
-							.setText("Start in the draynor bank with all your seeds \n");
+					label2.setText("Start in the draynor bank with all your seeds \n");
 					label2.setFont(new Font("Comic Sans MS", Font.PLAIN, 11));
 					panel1.add(label2);
 					label2.setBounds(new Rectangle(new Point(5, 5), label2
@@ -866,8 +871,7 @@ public class BloddyMasterFarmerStealer extends Script implements PaintListener, 
 							.getPreferredSize()));
 
 					// ---- label6 ----
-					label6
-							.setText("Also make sure you fill in the right food ID.");
+					label6.setText("Also make sure you fill in the right food ID.");
 					label6.setFont(new Font("Comic Sans MS", Font.PLAIN, 11));
 					panel1.add(label6);
 					label6.setBounds(new Rectangle(new Point(5, 45), label6
@@ -896,8 +900,8 @@ public class BloddyMasterFarmerStealer extends Script implements PaintListener, 
 					// ---- textField1 ----
 					textField1.setText("7946");
 					panel1.add(textField1);
-					textField1.setBounds(140, 100, 90, textField1
-							.getPreferredSize().height);
+					textField1.setBounds(140, 100, 90,
+							textField1.getPreferredSize().height);
 
 					// ---- label3 ----
 					label3.setText("*In RSBot client go to: view > inventory");
@@ -916,16 +920,16 @@ public class BloddyMasterFarmerStealer extends Script implements PaintListener, 
 							.getPreferredSize()));
 
 					// ---- comboBox1 ----
-					comboBox1.setModel(new DefaultComboBoxModel(new String[]{
-							"Withdraw-5", "Withdraw-10"}));
+					comboBox1.setModel(new DefaultComboBoxModel(new String[] {
+							"Withdraw-5", "Withdraw-10" }));
 					comboBox1.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent e) {
 							comboBox1ActionPerformed(e);
 						}
 					});
 					panel1.add(comboBox1);
-					comboBox1.setBounds(140, 80, 90, comboBox1
-							.getPreferredSize().height);
+					comboBox1.setBounds(140, 80, 90,
+							comboBox1.getPreferredSize().height);
 
 					{ // compute preferred size
 						Dimension preferredSize = new Dimension();
@@ -965,8 +969,8 @@ public class BloddyMasterFarmerStealer extends Script implements PaintListener, 
 					textField2.setText("0");
 					textField2.setEnabled(false);
 					panel2.add(textField2);
-					textField2.setBounds(140, 12, 40, textField2
-							.getPreferredSize().height);
+					textField2.setBounds(140, 12, 40,
+							textField2.getPreferredSize().height);
 
 					// ---- checkBox3 ----
 					checkBox3.setText("After:");
@@ -1004,8 +1008,8 @@ public class BloddyMasterFarmerStealer extends Script implements PaintListener, 
 					textField3.setEnabled(false);
 					textField3.setText("0");
 					panel2.add(textField3);
-					textField3.setBounds(50, 74, 30, textField3
-							.getPreferredSize().height);
+					textField3.setBounds(50, 74, 30,
+							textField3.getPreferredSize().height);
 
 					// ---- textField4 ----
 					textField4.setEnabled(false);
