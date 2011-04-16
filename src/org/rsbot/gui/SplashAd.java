@@ -33,7 +33,7 @@ public class SplashAd extends JDialog implements MouseListener {
 
 	private static final String CACHED_IMAGE = "advert.png";
 	private static final String CACHED_FORMAT = "png";
-	
+
 	private String link;
 	private String image;
 	private String text;
@@ -48,23 +48,25 @@ public class SplashAd extends JDialog implements MouseListener {
 		setUndecorated(true);
 		setTitle("Advertisement");
 		setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		
+
 		if (!sync()) {
 			dispose();
 			return;
 		}
-		
-		File file = new File(GlobalConfiguration.Paths.getCacheDirectory(), CACHED_IMAGE);
-		
+
+		File file = new File(GlobalConfiguration.Paths.getCacheDirectory(),
+				CACHED_IMAGE);
+
 		if (file.exists()) {
 			long cached = file.lastModified();
-			if (cached < updated || cached < new Date().getTime() - refresh * 1000) {
+			if (cached < updated
+					|| cached < new Date().getTime() - refresh * 1000) {
 				if (!file.delete()) {
 					file.deleteOnExit();
 				}
 			}
 		}
-		
+
 		if (!file.exists()) {
 			try {
 				BufferedImage img = ImageIO.read(new URL(image));
@@ -74,7 +76,7 @@ public class SplashAd extends JDialog implements MouseListener {
 			} catch (Exception ignored) {
 			}
 		}
-		
+
 		if (text != null && text.length() != 0)
 			log.info(text);
 
@@ -93,10 +95,12 @@ public class SplashAd extends JDialog implements MouseListener {
 
 	private boolean sync() {
 		HashMap<String, String> keys = new HashMap<String, String>(7);
-		
+
 		try {
-			URLConnection connection = new URL(GlobalConfiguration.Paths.URLs.AD_INFO).openConnection();
-			InputStreamReader stream = new InputStreamReader(connection.getInputStream());
+			URLConnection connection = new URL(
+					GlobalConfiguration.Paths.URLs.AD_INFO).openConnection();
+			InputStreamReader stream = new InputStreamReader(
+					connection.getInputStream());
 			BufferedReader reader = new BufferedReader(stream);
 			String line;
 			while ((line = reader.readLine()) != null) {
@@ -110,14 +114,16 @@ public class SplashAd extends JDialog implements MouseListener {
 				z = line.indexOf('=');
 				if (z == -1)
 					continue;
-				String key = line.substring(0, z).trim(), value = z == line.length() ? "" : line.substring(z + 1).trim();
+				String key = line.substring(0, z).trim(), value = z == line
+						.length() ? "" : line.substring(z + 1).trim();
 				keys.put(key, value);
 			}
 		} catch (Exception e) {
 			return false;
 		}
-		
-		if (keys.isEmpty() || !keys.containsKey("enabled") || !parseBool(keys.get("enabled")))
+
+		if (keys.isEmpty() || !keys.containsKey("enabled")
+				|| !parseBool(keys.get("enabled")))
 			return false;
 		if (!keys.containsKey("link"))
 			return false;
@@ -135,20 +141,22 @@ public class SplashAd extends JDialog implements MouseListener {
 			refresh = Integer.parseInt(keys.get("refresh"));
 		if (keys.containsKey("updated")) {
 			try {
-				SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmm");
+				SimpleDateFormat formatter = new SimpleDateFormat(
+						"yyyyMMddHHmm");
 				formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
 				updated = formatter.parse(keys.get("updated")).getTime();
 			} catch (ParseException e) {
 			}
 		}
-		
+
 		return true;
 	}
-	
+
 	private boolean parseBool(String mode) {
-		return mode.equals("1") || mode.equalsIgnoreCase("true") || mode.equalsIgnoreCase("yes");
+		return mode.equals("1") || mode.equalsIgnoreCase("true")
+				|| mode.equalsIgnoreCase("yes");
 	}
-	
+
 	public void display() {
 		setLocationRelativeTo(getOwner());
 		setVisible(true);
