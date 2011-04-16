@@ -44,7 +44,7 @@ public class LoginDialog extends JDialog {
 		textPane = new JTextPane();
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setResizable(false);
-		setMinimumSize(new Dimension(500, 250));
+		setMinimumSize(new Dimension(250, 200));
 		setAlwaysOnTop(true);
 		setLayout(new BorderLayout());
 		masterPane.setMaximumSize(new Dimension(200, 70));
@@ -81,8 +81,8 @@ public class LoginDialog extends JDialog {
 		loginPane.add(loginButton, new GridBagConstraints(1, 2, 1, 1, 0.0D, 0.0D, 10, 1, new Insets(0, 0, 0, 0), 0, 0));
 		masterPane.add(loginPane, BorderLayout.EAST);
 		loginButton.setFocusable(false);
-		infoPane.setMinimumSize(new Dimension(200, 100));
-		infoPane.setMaximumSize(new Dimension(300, 200));
+		infoPane.setMinimumSize(new Dimension(250, 100));
+		infoPane.setMaximumSize(new Dimension(250, 200));
 		infoPane.setPreferredSize(new Dimension(250, 100));
 		infoPane.setLayout(new GridBagLayout());
 		add(infoPane, BorderLayout.EAST);
