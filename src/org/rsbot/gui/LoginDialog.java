@@ -32,6 +32,9 @@ public class LoginDialog extends JDialog {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (final Exception ignored) {
 		}
+		setIconImage(GlobalConfiguration.getImage(
+				GlobalConfiguration.Paths.Resources.ICON,
+				GlobalConfiguration.Paths.ICON));
 		masterPane = new JPanel();
 		loginPane = new JPanel();
 		usernameLabel = new JLabel();
@@ -42,7 +45,7 @@ public class LoginDialog extends JDialog {
 		loginButton = new JButton();
 		infoPane = new JPanel();
 		textPane = new JTextPane();
-		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		setDefaultCloseOperation(JDialog.EXIT_ON_CLOSE);
 		setResizable(false);
 		setMinimumSize(new Dimension(250, 200));
 		setAlwaysOnTop(true);
@@ -72,9 +75,11 @@ public class LoginDialog extends JDialog {
 		passwordField.setColumns(12);
 		loginPane.add(passwordField,
 		              new GridBagConstraints(1, 1, 1, 1, 0.0D, 0.0D, 10, 1, new Insets(0, 0, 5, 0), 0, 0));
-		registerLabel.setText("Register");
+		registerLabel.setText("<html><u>Register</u></html>");
 		registerLabel.setHorizontalTextPosition(0);
 		registerLabel.setHorizontalAlignment(0);
+		registerLabel.setForeground(Color.blue);
+		registerLabel.setToolTipText("Click here to register an account!");
 		loginPane.add(registerLabel,
 		              new GridBagConstraints(0, 2, 1, 1, 0.0D, 0.0D, 10, 1, new Insets(0, 0, 0, 5), 0, 0));
 		loginButton.setText("Login");
@@ -86,7 +91,9 @@ public class LoginDialog extends JDialog {
 		infoPane.setPreferredSize(new Dimension(250, 100));
 		infoPane.setLayout(new GridBagLayout());
 		add(infoPane, BorderLayout.EAST);
-		textPane.setText("Please login to access the bot and decrypt your user accounts.");
+		textPane.setText("Please login with your forum account to access the bot and decrypt your user accounts.  " +
+				                 "The new encryption system uses your login to secure your accounts, you can trust your accounts in the " +
+				                 "panel again!");
 		textPane.setEditable(false);
 		textPane.setMargin(new Insets(5, 5, 5, 5));
 		textPane.setPreferredSize(new Dimension(230, 150));
