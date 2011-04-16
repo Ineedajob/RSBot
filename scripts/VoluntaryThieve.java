@@ -1432,12 +1432,10 @@ public final class VoluntaryThieve extends Script implements MouseInputListener,
 					}
 					break;
 				case TABS_SELECT_RANDOM:
-					final int[] tabs = {Game.TAB_ATTACK, Game.TAB_CLAN, Game.TAB_CONTROLS,
-					                    Game.TAB_EQUIPMENT, Game.TAB_FRIENDS, Game.TAB_INVENTORY, Game.TAB_MAGIC,
-					                    Game.TAB_MUSIC, Game.TAB_NOTES, Game.TAB_OPTIONS, Game.TAB_PRAYER,
-					                    Game.TAB_QUESTS,
-					                    Game.TAB_STATS, Game.TAB_SUMMONING};
-
+					final int[] tabs = {Game.TAB_ATTACK, Game.TAB_CLAN_CHAT, Game.TAB_CONTROLS,
+							Game.TAB_EQUIPMENT, Game.TAB_FRIENDS, Game.TAB_FRIENDS_CHAT, Game.TAB_INVENTORY, Game.TAB_MAGIC,
+							Game.TAB_MUSIC, Game.TAB_NOTES, Game.TAB_OPTIONS, Game.TAB_PRAYER, Game.TAB_QUESTS,
+							Game.TAB_STATS, Game.TAB_SUMMONING};
 					game.openTab(tabs[random(0, tabs.length)]);
 					currentAntiban = 0;
 					break;

@@ -711,8 +711,8 @@ public class VoltrexApeAtoll extends Script implements PaintListener {
 				case TABS_SELECT_RANDOM:
 					if (timer.isRunning()) break;
 					timer.setEndIn(random(755, 2345));
-					final int[] tabs = {game.TAB_ATTACK, game.TAB_CLAN, game.TAB_CONTROLS,
-							game.TAB_EQUIPMENT, game.TAB_FRIENDS, game.TAB_INVENTORY, game.TAB_MAGIC,
+					final int[] tabs = {game.TAB_ATTACK, game.TAB_CLAN_CHAT, game.TAB_CONTROLS,
+							game.TAB_EQUIPMENT, game.TAB_FRIENDS, game.TAB_FRIENDS_CHAT, game.TAB_INVENTORY, game.TAB_MAGIC,
 							game.TAB_MUSIC, game.TAB_NOTES, game.TAB_OPTIONS, game.TAB_PRAYER, game.TAB_QUESTS,
 							game.TAB_STATS, game.TAB_SUMMONING};
 
