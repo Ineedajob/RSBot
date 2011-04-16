@@ -132,7 +132,7 @@ public class Methods {
 	 * The singleton of Prayer
 	 */
 	protected Prayer prayer;
-        /**
+	/**
 	 * The singleton of FriendsChat
 	 */
 	protected FriendChat friendChat;
@@ -172,7 +172,7 @@ public class Methods {
 		this.summoning = ctx.summoning;
 		this.env = ctx.env;
 		this.prayer = ctx.prayer;
-                this.friendChat = ctx.friendChat;
+		this.friendChat = ctx.friendChat;
 	}
 
 	/**
