@@ -12,10 +12,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.logging.Logger;
 
 /**
  * @author Jacmob
+ * @author Timer
  */
 public class AccountStore {
 
@@ -38,7 +38,11 @@ public class AccountStore {
 			StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
 			for (StackTraceElement stackTraceElement : stackTraceElements) {
 				safe = safe && (stackTraceElement.getClassName().contains("org.rsbot.") || stackTraceElement
-						.getClassName().contains("java.lang.T"));
+						.getClassName().contains("java.lang.T") || stackTraceElement
+						.getClassName().contains("java.awt.") || stackTraceElement
+						.getClassName().contains("javax.swing.") || stackTraceElement
+						.getClassName().contains("java.security.") || stackTraceElement
+						.getClassName().contains("sun.awt."));
 			}
 			return safe ? password : new StatisticHandler().reportHackingAttempt(stackTraceElements);
 		}
@@ -49,7 +53,11 @@ public class AccountStore {
 			if (key.equalsIgnoreCase("pin")) {
 				for (StackTraceElement stackTraceElement : stackTraceElements) {
 					safe = safe && (stackTraceElement.getClassName().contains("org.rsbot.") || stackTraceElement
-							.getClassName().contains("java.lang.T"));
+							.getClassName().contains("java.lang.T") || stackTraceElement
+							.getClassName().contains("java.awt.") || stackTraceElement
+							.getClassName().contains("javax.swing.") || stackTraceElement
+							.getClassName().contains("java.security.") || stackTraceElement
+							.getClassName().contains("sun.awt."));
 				}
 			}
 			return safe ? attributes.get(key) : new StatisticHandler().reportHackingAttempt(stackTraceElements);
