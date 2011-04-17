@@ -30,4 +30,6 @@ Make sure JDK and other needed packages (e.g. make) are installed on your system
 
 To run RSBot, *double-click* on the compiled JAR file, `RSBot.jar`, or execute `java -jar RSBot.jar` in a terminal.
 
-### Legal note: the entire source code is freely available under the GPLv3 terms. Contrary to bogus and automated DMCA claims, no content is under the copyright of Jagex Ltd. The code is provided purely for educational purposes by the authors as freedom of expression.
+## Legal 
+
+The entire source code is freely available under the GPLv3 terms. Contrary to bogus and automated DMCA claims, no content is under the copyright of Jagex Ltd. The code is provided purely for educational purposes by the authors as freedom of expression.
