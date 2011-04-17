@@ -23,7 +23,7 @@ public class LogTextArea extends JList {
 	public static final int MAX_ENTRIES = 100;
 
 	public static final Rectangle BOTTOM_OF_WINDOW = new Rectangle(0,
-			Integer.MAX_VALUE, 0, 0);
+	                                                               Integer.MAX_VALUE, 0, 0);
 
 	private static final long serialVersionUID = 0;
 
@@ -52,7 +52,7 @@ public class LogTextArea extends JList {
 					"[%s] %-" + maxLen + "s %s %s",
 					dateFormat.format(record.getMillis()),
 					name.length() > maxLen ? name.substring(0,
-							maxLen - append.length())
+					                                        maxLen - append.length())
 							+ append : name, record.getMessage(),
 					StringUtil.throwableToString(record.getThrown()));
 		}
@@ -75,9 +75,8 @@ public class LogTextArea extends JList {
 
 	/**
 	 * Logs a new entry to be shown in the list. Thread safe.
-	 * 
-	 * @param logRecord
-	 *            The entry.
+	 *
+	 * @param logRecord The entry.
 	 */
 	public void log(LogRecord logRecord) {
 		logQueue.queue(new WrappedLogRecord(logRecord));
@@ -162,8 +161,8 @@ public class LogTextArea extends JList {
 		private final Color DARK_GREEN = new Color(0, 90, 0);
 
 		public Component getListCellRendererComponent(final JList list,
-				final Object value, final int index, final boolean isSelected,
-				final boolean cellHasFocus) {
+		                                              final Object value, final int index, final boolean isSelected,
+		                                              final boolean cellHasFocus) {
 			if (!(value instanceof WrappedLogRecord)) {
 				return new JLabel();
 			}
@@ -175,7 +174,7 @@ public class LogTextArea extends JList {
 			result.setComponentOrientation(list.getComponentOrientation());
 			result.setFont(list.getFont());
 			result.setBorder(cellHasFocus || isSelected ? SELECTED_BORDER
-					: EMPTY_BORDER);
+			                                            : EMPTY_BORDER);
 
 			result.setForeground(Color.DARK_GRAY);
 			result.setBackground(Color.WHITE);

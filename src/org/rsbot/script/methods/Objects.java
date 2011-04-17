@@ -34,7 +34,7 @@ public class Objects extends MethodProvider {
 
 	/**
 	 * Returns all the <tt>RSObject</tt>s in the local region.
-	 * 
+	 *
 	 * @return An <tt>RSObject[]</tt> of all objects in the loaded region.
 	 */
 	public RSObject[] getAll() {
@@ -44,9 +44,8 @@ public class Objects extends MethodProvider {
 	/**
 	 * Returns all the <tt>RSObject</tt>s in the local region accepted by the
 	 * provided Filter.
-	 * 
-	 * @param filter
-	 *            Filters out unwanted objects.
+	 *
+	 * @param filter Filters out unwanted objects.
 	 * @return An <tt>RSObject[]</tt> of all the accepted objects in the loaded
 	 *         region.
 	 */
@@ -67,9 +66,8 @@ public class Objects extends MethodProvider {
 	/**
 	 * Returns the <tt>RSObject</tt> that is nearest out of all objects that are
 	 * accepted by the provided Filter.
-	 * 
-	 * @param filter
-	 *            Filters out unwanted objects.
+	 *
+	 * @param filter Filters out unwanted objects.
 	 * @return An <tt>RSObject</tt> representing the nearest object that was
 	 *         accepted by the filter; or null if there are no matching objects
 	 *         in the current region.
@@ -103,9 +101,8 @@ public class Objects extends MethodProvider {
 	/**
 	 * Returns the <tt>RSObject</tt> that is nearest, out of all of the
 	 * RSObjects with the provided ID(s).
-	 * 
-	 * @param ids
-	 *            The ID(s) of the RSObject that you are searching.
+	 *
+	 * @param ids The ID(s) of the RSObject that you are searching.
 	 * @return An <tt>RSObject</tt> representing the nearest object with one of
 	 *         the provided IDs; or null if there are no matching objects in the
 	 *         current region.
@@ -126,9 +123,8 @@ public class Objects extends MethodProvider {
 	/**
 	 * Returns the <tt>RSObject</tt> that is nearest, out of all of the
 	 * RSObjects with the provided name(s).
-	 * 
-	 * @param names
-	 *            The name(s) of the RSObject that you are searching.
+	 *
+	 * @param names The name(s) of the RSObject that you are searching.
 	 * @return An <tt>RSObject</tt> representing the nearest object with one of
 	 *         the provided names; or null if there are no matching objects in
 	 *         the current region.
@@ -151,9 +147,8 @@ public class Objects extends MethodProvider {
 
 	/**
 	 * Returns the top <tt>RSObject</tt> on the specified tile.
-	 * 
-	 * @param t
-	 *            The tile on which to search.
+	 *
+	 * @param t The tile on which to search.
 	 * @return The top RSObject on the provided tile; or null if none found.
 	 */
 	public RSObject getTopAt(final RSTile t) {
@@ -163,11 +158,9 @@ public class Objects extends MethodProvider {
 	/**
 	 * Returns the top <tt>RSObject</tt> on the specified tile matching types
 	 * specified by the flags in the provided mask.
-	 * 
-	 * @param t
-	 *            The tile on which to search.
-	 * @param mask
-	 *            The type flags.
+	 *
+	 * @param t    The tile on which to search.
+	 * @param mask The type flags.
 	 * @return The top RSObject on the provided tile matching the specified
 	 *         flags; or null if none found.
 	 */
@@ -179,11 +172,9 @@ public class Objects extends MethodProvider {
 	/**
 	 * Returns the <tt>RSObject</tt>s which are on the specified <tt>RSTile</tt>
 	 * matching types specified by the flags in the provided mask.
-	 * 
-	 * @param t
-	 *            The tile on which to search.
-	 * @param mask
-	 *            The type flags.
+	 *
+	 * @param t    The tile on which to search.
+	 * @param mask The type flags.
 	 * @return An RSObject[] of the objects on the specified tile.
 	 */
 	public RSObject[] getAt(final RSTile t, final int mask) {
@@ -196,9 +187,8 @@ public class Objects extends MethodProvider {
 	/**
 	 * Returns the <tt>RSObject</tt>s which are on the specified <tt>RSTile</tt>
 	 * .
-	 * 
-	 * @param t
-	 *            The tile on which to search.
+	 *
+	 * @param t The tile on which to search.
 	 * @return An RSObject[] of the objects on the specified tile.
 	 */
 	public RSObject[] getAllAt(final RSTile t) {
@@ -236,7 +226,7 @@ public class Objects extends MethodProvider {
 							rsObj = (org.rsbot.client.RSObject) obj;
 							if (rsObj.getID() != -1) {
 								objects.add(new RSObject(methods, rsObj,
-										RSObject.Type.INTERACTABLE, plane));
+								                         RSObject.Type.INTERACTABLE, plane));
 							}
 						}
 					}
@@ -249,7 +239,7 @@ public class Objects extends MethodProvider {
 						rsObj = (org.rsbot.client.RSObject) obj;
 						if (rsObj.getID() != -1) {
 							objects.add(new RSObject(methods, rsObj,
-									RSObject.Type.FLOOR_DECORATION, plane));
+							                         RSObject.Type.FLOOR_DECORATION, plane));
 						}
 					}
 				}
@@ -261,7 +251,7 @@ public class Objects extends MethodProvider {
 						rsObj = (org.rsbot.client.RSObject) obj;
 						if (rsObj.getID() != -1) {
 							objects.add(new RSObject(methods, rsObj,
-									RSObject.Type.BOUNDARY, plane));
+							                         RSObject.Type.BOUNDARY, plane));
 						}
 					}
 
@@ -270,7 +260,7 @@ public class Objects extends MethodProvider {
 						rsObj = (org.rsbot.client.RSObject) obj;
 						if (rsObj.getID() != -1) {
 							objects.add(new RSObject(methods, rsObj,
-									RSObject.Type.BOUNDARY, plane));
+							                         RSObject.Type.BOUNDARY, plane));
 						}
 					}
 				}
@@ -282,7 +272,7 @@ public class Objects extends MethodProvider {
 						rsObj = (org.rsbot.client.RSObject) obj;
 						if (rsObj.getID() != -1) {
 							objects.add(new RSObject(methods, rsObj,
-									RSObject.Type.WALL_DECORATION, plane));
+							                         RSObject.Type.WALL_DECORATION, plane));
 						}
 					}
 
@@ -291,7 +281,7 @@ public class Objects extends MethodProvider {
 						rsObj = (org.rsbot.client.RSObject) obj;
 						if (rsObj.getID() != -1) {
 							objects.add(new RSObject(methods, rsObj,
-									RSObject.Type.WALL_DECORATION, plane));
+							                         RSObject.Type.WALL_DECORATION, plane));
 						}
 					}
 				}

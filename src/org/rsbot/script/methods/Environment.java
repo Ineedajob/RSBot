@@ -8,7 +8,7 @@ import java.awt.image.BufferedImage;
 
 /**
  * Bot environment related operations.
- * 
+ *
  * @author Jacmob
  */
 public class Environment extends MethodProvider {
@@ -29,9 +29,8 @@ public class Environment extends MethodProvider {
 	 * <code>setUserInput(Environment.INPUT_KEYBOARD);</code> <br />
 	 * Enable mouse & keyboard:
 	 * <code>setUserInput(Environment.INPUT_MOUSE | Environment.INPUT_KEYBOARD);</code>
-	 * 
-	 * @param mask
-	 *            flags indicating which types of input to allow
+	 *
+	 * @param mask flags indicating which types of input to allow
 	 */
 	public void setUserInput(int mask) {
 		methods.bot.getScriptHandler().updateInput(methods.bot, mask);
@@ -39,10 +38,9 @@ public class Environment extends MethodProvider {
 
 	/**
 	 * Takes and saves a screenshot.
-	 * 
-	 * @param hideUsername
-	 *            <tt>true</tt> to cover the player's username; otherwise
-	 *            <tt>false</tt>
+	 *
+	 * @param hideUsername <tt>true</tt> to cover the player's username; otherwise
+	 *                     <tt>false</tt>
 	 */
 	public void saveScreenshot(boolean hideUsername) {
 		ScreenshotUtil.saveScreenshot(methods.bot, hideUsername);
@@ -50,10 +48,9 @@ public class Environment extends MethodProvider {
 
 	/**
 	 * Takes a screenshot.
-	 * 
-	 * @param hideUsername
-	 *            <tt>true</tt> to cover the player's username; otherwise
-	 *            <tt>false</tt>
+	 *
+	 * @param hideUsername <tt>true</tt> to cover the player's username; otherwise
+	 *                     <tt>false</tt>
 	 * @return The screen capture image.
 	 */
 	public BufferedImage takeScreenshot(boolean hideUsername) {
@@ -62,16 +59,15 @@ public class Environment extends MethodProvider {
 
 	/**
 	 * Enables a random event solver.
-	 * 
-	 * @param name
-	 *            the anti-random's (manifest) name (case insensitive)
+	 *
+	 * @param name the anti-random's (manifest) name (case insensitive)
 	 * @return <tt>true</tt> if random was found and set to enabled; otherwise
 	 *         <tt>false</tt>
 	 */
 	public boolean enableRandom(String name) {
 		for (final Random random : methods.bot.getScriptHandler().getRandoms()) {
 			if (random.getClass().getAnnotation(ScriptManifest.class).name()
-					.toLowerCase().equals(name.toLowerCase())) {
+			          .toLowerCase().equals(name.toLowerCase())) {
 				if (random.isEnabled()) {
 					return true;
 				} else {
@@ -85,16 +81,15 @@ public class Environment extends MethodProvider {
 
 	/**
 	 * Disables a random event solver.
-	 * 
-	 * @param name
-	 *            the anti-random's (manifest) name (case insensitive)
+	 *
+	 * @param name the anti-random's (manifest) name (case insensitive)
 	 * @return <tt>true</tt> if random was found and set to disabled; otherwise
 	 *         <tt>false</tt>
 	 */
 	public boolean disableRandom(String name) {
 		for (final Random random : methods.bot.getScriptHandler().getRandoms()) {
 			if (random.getClass().getAnnotation(ScriptManifest.class).name()
-					.toLowerCase().equals(name.toLowerCase())) {
+			          .toLowerCase().equals(name.toLowerCase())) {
 				if (!random.isEnabled()) {
 					return true;
 				} else {

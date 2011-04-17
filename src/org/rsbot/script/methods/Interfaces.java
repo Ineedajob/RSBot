@@ -45,8 +45,7 @@ public class Interfaces extends MethodProvider {
 	}
 
 	/**
-	 * @param index
-	 *            The index of the interface.
+	 * @param index The index of the interface.
 	 * @return The <tt>RSInterface</tt> for the given index.
 	 */
 	public synchronized RSInterface get(final int index) {
@@ -78,10 +77,8 @@ public class Interfaces extends MethodProvider {
 	}
 
 	/**
-	 * @param index
-	 *            The parent interface index
-	 * @param childIndex
-	 *            The component index
+	 * @param index      The parent interface index
+	 * @param childIndex The component index
 	 * @return <tt>RSComponent</tt> for the given index and child index.
 	 */
 	public RSComponent getComponent(final int index, final int childIndex) {
@@ -89,8 +86,7 @@ public class Interfaces extends MethodProvider {
 	}
 
 	/**
-	 * @param id
-	 *            The packed interface index ((x << 16) | (y & 0xFFFF)).
+	 * @param id The packed interface index ((x << 16) | (y & 0xFFFF)).
 	 * @return <tt>RSComponent</tt> for the given interface id.
 	 */
 	public RSComponent getComponent(final int id) {
@@ -152,9 +148,8 @@ public class Interfaces extends MethodProvider {
 	/**
 	 * Performs the given action on this RSInterfaceChild if it is showing
 	 * (valid).
-	 * 
-	 * @param action
-	 *            The menu action to click.
+	 *
+	 * @param action The menu action to click.
 	 * @return <tt>true</tt> if the action was clicked; otherwise <tt>false</tt>
 	 *         .
 	 */
@@ -177,17 +172,15 @@ public class Interfaces extends MethodProvider {
 			return true;
 		}
 		methods.mouse.move(random(minX, minX + width),
-				random(minY, minY + height));
+		                   random(minY, minY + height));
 		return methods.menu.doAction(action);
 	}
 
 	/**
 	 * Clicks the dialogue option that contains the desired string.
-	 * 
-	 * @param inter
-	 *            The interface of the dialogue menu.
-	 * @param option
-	 *            The text we want to click.
+	 *
+	 * @param inter  The interface of the dialogue menu.
+	 * @param option The text we want to click.
 	 * @return <tt>true</tt> if the option was clicked; otherwise <tt>false</tt>
 	 *         .
 	 */
@@ -207,8 +200,7 @@ public class Interfaces extends MethodProvider {
 	}
 
 	/**
-	 * @param text
-	 *            The text to search each interface for.
+	 * @param text The text to search each interface for.
 	 * @return <tt>RSInterface</tt> array of the interfaces containing specified
 	 *         text.
 	 */
@@ -224,11 +216,9 @@ public class Interfaces extends MethodProvider {
 
 	/**
 	 * Scrolls to the component
-	 * 
-	 * @param component
-	 *            component to scroll to
-	 * @param scrollBarID
-	 *            scrollbar to scroll with
+	 *
+	 * @param component   component to scroll to
+	 * @param scrollBarID scrollbar to scroll with
 	 * @return true when scrolled successfully
 	 */
 	public boolean scrollTo(RSComponent component, int scrollBarID) {
@@ -239,11 +229,9 @@ public class Interfaces extends MethodProvider {
 
 	/**
 	 * Scrolls to the component
-	 * 
-	 * @param component
-	 *            component to scroll to
-	 * @param scrollBar
-	 *            scrollbar to scroll with
+	 *
+	 * @param component component to scroll to
+	 * @param scrollBar scrollbar to scroll with
 	 * @return true when scrolled successfully
 	 */
 	public boolean scrollTo(RSComponent component, RSComponent scrollBar) {
@@ -275,7 +263,7 @@ public class Interfaces extends MethodProvider {
 		// Check if the component is already visible
 		if ((component.getAbsoluteY() >= areaY)
 				&& (component.getAbsoluteY() <= areaY + areaHeight
-						- component.getRealHeight())) {
+				- component.getRealHeight())) {
 			return true;
 		}
 
@@ -305,7 +293,7 @@ public class Interfaces extends MethodProvider {
 		// Scroll to it if we missed it
 		while (component.getAbsoluteY() < areaY
 				|| component.getAbsoluteY() > (areaY + areaHeight - component
-						.getRealHeight())) {
+				.getRealHeight())) {
 			boolean scrollUp = component.getAbsoluteY() < areaY;
 			scrollBar.getComponent(scrollUp ? 4 : 5).doAction("");
 
@@ -315,7 +303,7 @@ public class Interfaces extends MethodProvider {
 		// Return whether or not the component is visible now.
 		return (component.getAbsoluteY() >= areaY)
 				&& (component.getAbsoluteY() <= areaY + areaHeight
-						- component.getRealHeight());
+				- component.getRealHeight());
 	}
 
 	/**
@@ -325,7 +313,7 @@ public class Interfaces extends MethodProvider {
 		final org.rsbot.client.RSInterface[][] inters = methods.client
 				.getRSInterfaceCache();
 		if ((inters != null) && (mainCache.length < inters.length)) { // enlarge
-																		// cache
+			// cache
 			mainCache = Arrays.copyOf(mainCache, inters.length);
 			for (int i = mainCache.length; i < mainCache.length; i++) {
 				final RSInterface tmp = sparseMap.get(i);
@@ -339,13 +327,10 @@ public class Interfaces extends MethodProvider {
 
 	/**
 	 * Waits for an interface to be closed/opened.
-	 * 
-	 * @param iface
-	 *            The interface to wait for.
-	 * @param valid
-	 *            True if open, false if close.
-	 * @param timer
-	 *            Milliseconds to wait for the interface to open/close.
+	 *
+	 * @param iface The interface to wait for.
+	 * @param valid True if open, false if close.
+	 * @param timer Milliseconds to wait for the interface to open/close.
 	 * @return <tt>true</tt> if the interface was successfully closed/opened.
 	 */
 	public boolean waitFor(RSInterface iface, boolean valid, int timer) {

@@ -26,7 +26,7 @@ public class Players extends MethodProvider {
 
 	/**
 	 * Returns an <tt>RSPlayer</tt> object representing the current player.
-	 * 
+	 *
 	 * @return An <tt>RSPlayer</tt> object representing the player.
 	 */
 	public RSPlayer getMyPlayer() {
@@ -35,7 +35,7 @@ public class Players extends MethodProvider {
 
 	/**
 	 * Returns an array of all valid <tt>RSPlayer</tt>s.
-	 * 
+	 *
 	 * @return All valid RSPlayers.
 	 */
 	public RSPlayer[] getAll() {
@@ -44,9 +44,8 @@ public class Players extends MethodProvider {
 
 	/**
 	 * Returns an array of all valid <tt>RSPlayer</tt>s.
-	 * 
-	 * @param filter
-	 *            Filters out unwanted matches.
+	 *
+	 * @param filter Filters out unwanted matches.
 	 * @return All valid RSPlayers.
 	 */
 	public RSPlayer[] getAll(final Filter<RSPlayer> filter) {
@@ -67,9 +66,8 @@ public class Players extends MethodProvider {
 	/**
 	 * Returns the <tt>RSPlayer</tt> that is nearest, out of all of the Players
 	 * accepted by the provided filter.
-	 * 
-	 * @param filter
-	 *            Filters unwanted matches.
+	 *
+	 * @param filter Filters unwanted matches.
 	 * @return An <tt>RSPlayer</tt> object representing the nearest player that
 	 *         was accepted by the provided Filter; or null if there are no
 	 *         matching players in the current region.
@@ -98,9 +96,8 @@ public class Players extends MethodProvider {
 	/**
 	 * Returns the <tt>RSPlayer</tt> that is nearest, out of all of the Players
 	 * with the provided name.
-	 * 
-	 * @param name
-	 *            The name of the <tt>RSPlayer</tt> that you are searching for.
+	 *
+	 * @param name The name of the <tt>RSPlayer</tt> that you are searching for.
 	 * @return An <tt>RSPlayer</tt> object representing the nearest player with
 	 *         the provided name; or null if there are no matching players in
 	 *         the current region.
@@ -116,10 +113,9 @@ public class Players extends MethodProvider {
 	/**
 	 * Returns the <tt>RSPlayer</tt> that is nearest, out of all of the Players
 	 * with the provided combat level.
-	 * 
-	 * @param level
-	 *            The combat level of the <tt>RSPlayer</tt> that you are
-	 *            searching for.
+	 *
+	 * @param level The combat level of the <tt>RSPlayer</tt> that you are
+	 *              searching for.
 	 * @return An <tt>RSPlayer</tt> object representing the nearest player with
 	 *         the provided combat level; or null if there are no matching
 	 *         players in the current region.

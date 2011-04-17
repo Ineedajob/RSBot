@@ -3,7 +3,7 @@ package org.rsbot.script.methods;
 /**
  * A class that provides methods that use data from the game client. For
  * internal use.
- * 
+ *
  * @author Jacmob
  */
 public abstract class MethodProvider {
@@ -16,11 +16,9 @@ public abstract class MethodProvider {
 
 	/**
 	 * Returns a linearly distributed pseudorandom integer.
-	 * 
-	 * @param min
-	 *            The inclusive lower bound.
-	 * @param max
-	 *            The exclusive upper bound.
+	 *
+	 * @param min The inclusive lower bound.
+	 * @param max The exclusive upper bound.
 	 * @return Random integer min <= n < max.
 	 */
 	public int random(int min, int max) {
@@ -30,13 +28,10 @@ public abstract class MethodProvider {
 	/**
 	 * Returns a normally distributed pseudorandom integer about a mean centered
 	 * between min and max with a provided standard deviation.
-	 * 
-	 * @param min
-	 *            The inclusive lower bound.
-	 * @param max
-	 *            The exclusive upper bound.
-	 * @param sd
-	 *            The standard deviation. A higher value will increase the
+	 *
+	 * @param min The inclusive lower bound.
+	 * @param max The exclusive upper bound.
+	 * @param sd  The standard deviation. A higher value will increase the
 	 *            probability of numbers further from the mean being returned.
 	 * @return Random integer min <= n < max from the normal distribution
 	 *         described by the parameters.
@@ -53,16 +48,12 @@ public abstract class MethodProvider {
 	/**
 	 * Returns a normally distributed pseudorandom integer with a provided
 	 * standard deviation about a provided mean.
-	 * 
-	 * @param min
-	 *            The inclusive lower bound.
-	 * @param max
-	 *            The exclusive upper bound.
-	 * @param mean
-	 *            The mean (>= min and < max).
-	 * @param sd
-	 *            The standard deviation. A higher value will increase the
-	 *            probability of numbers further from the mean being returned.
+	 *
+	 * @param min  The inclusive lower bound.
+	 * @param max  The exclusive upper bound.
+	 * @param mean The mean (>= min and < max).
+	 * @param sd   The standard deviation. A higher value will increase the
+	 *             probability of numbers further from the mean being returned.
 	 * @return Random integer min <= n < max from the normal distribution
 	 *         described by the parameters.
 	 */
@@ -76,11 +67,9 @@ public abstract class MethodProvider {
 
 	/**
 	 * Returns a linearly distributed pseudorandom <code>double</code>.
-	 * 
-	 * @param min
-	 *            The inclusive lower bound.
-	 * @param max
-	 *            The exclusive upper bound.
+	 *
+	 * @param min The inclusive lower bound.
+	 * @param max The exclusive upper bound.
 	 * @return Random min <= n < max.
 	 */
 	public double random(double min, double max) {
@@ -88,8 +77,7 @@ public abstract class MethodProvider {
 	}
 
 	/**
-	 * @param toSleep
-	 *            The time to sleep in milliseconds.
+	 * @param toSleep The time to sleep in milliseconds.
 	 */
 	public void sleep(int toSleep) {
 		try {

@@ -4,7 +4,7 @@ import org.rsbot.client.RSInterface;
 
 /**
  * For internal use to find GUI components.
- * 
+ *
  * @author Qauters
  */
 class GameGUI extends MethodProvider {
@@ -96,8 +96,7 @@ class GameGUI extends MethodProvider {
 	}
 
 	/**
-	 * @param id
-	 *            The ID of the tab.
+	 * @param id The ID of the tab.
 	 * @return The specified tab <tt>RSInterface</tt>; otherwise null.
 	 */
 	public synchronized RSInterface getTab(final int id) {

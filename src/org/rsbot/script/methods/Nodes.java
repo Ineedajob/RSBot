@@ -15,10 +15,8 @@ public class Nodes extends MethodProvider {
 	}
 
 	/**
-	 * @param nc
-	 *            The node cache to check
-	 * @param id
-	 *            The id of the node
+	 * @param nc The node cache to check
+	 * @param id The id of the node
 	 * @return A <tt>Node</tt> object corresponding to the ID in the nodecache.
 	 */
 	public Node lookup(final HashTable nc, final long id) {
@@ -40,8 +38,7 @@ public class Nodes extends MethodProvider {
 	}
 
 	/**
-	 * @param id
-	 *            The id of the node
+	 * @param id The id of the node
 	 * @return A <tt>Node</tt> object corresponding to the ID in the loader.
 	 */
 	public Node lookup(final DefLoader loader, final long id) {
