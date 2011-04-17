@@ -15,15 +15,14 @@ public class LoginDialog extends JDialog {
 
 	private static final long serialVersionUID = -7421702904004119500L;
 	public static final ScriptBoxSource.Credentials CREDENTIALS = new ScriptBoxSource.Credentials();
-	private JPanel masterPane, loginPane, infoPane;
-	private JTextField usernameField;
-	private JTextPane textPane;
-	private JLabel usernameLabel, passwordLabel, registerLabel;
-	private JPasswordField passwordField;
-	private JButton loginButton;
+	private final JPanel masterPane, loginPane, infoPane, subinfoPane;
+	private final JTextField usernameField;
+	private final JLabel usernameLabel, passwordLabel, registerLabel, infoLabel;
+	private final JPasswordField passwordField;
+	private final JButton loginButton;
 	private String displayMessage = "Please enter your login details.";
 
-	public LoginDialog(Frame parent) {
+	public LoginDialog(final Frame parent) {
 		super(parent, GlobalConfiguration.SITE_NAME + " Login");
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -33,15 +32,16 @@ public class LoginDialog extends JDialog {
 				GlobalConfiguration.Paths.Resources.ICON,
 				GlobalConfiguration.Paths.ICON));
 		masterPane = new JPanel();
+		infoPane = new JPanel();
+		subinfoPane = new JPanel();
 		loginPane = new JPanel();
 		usernameLabel = new JLabel();
 		usernameField = new JTextField();
 		passwordLabel = new JLabel();
+		infoLabel = new JLabel();
 		passwordField = new JPasswordField();
 		registerLabel = new JLabel();
 		loginButton = new JButton();
-		infoPane = new JPanel();
-		textPane = new JTextPane();
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
@@ -50,18 +50,28 @@ public class LoginDialog extends JDialog {
 			}
 		});
 		setResizable(false);
-		setMinimumSize(new Dimension(250, 200));
+		setMinimumSize(new Dimension(170, 140));
+		setMaximumSize(new Dimension(170, 140));
+		setPreferredSize(new Dimension(170, 140));
 		setAlwaysOnTop(true);
 		setLayout(new BorderLayout());
-		masterPane.setMaximumSize(new Dimension(200, 70));
-		masterPane.setMinimumSize(new Dimension(200, 70));
-		masterPane.setPreferredSize(new Dimension(200, 70));
+		masterPane.setMaximumSize(new Dimension(170, 80));
+		masterPane.setMinimumSize(new Dimension(170, 80));
+		masterPane.setPreferredSize(new Dimension(170, 80));
 		masterPane.setLayout(new BorderLayout());
-		add(masterPane, BorderLayout.WEST);
-		loginPane.setMaximumSize(new Dimension(170, 70));
-		loginPane.setMinimumSize(new Dimension(170, 70));
-		loginPane.setPreferredSize(new Dimension(170, 70));
+		add(masterPane, BorderLayout.NORTH);
+		loginPane.setMaximumSize(new Dimension(170, 78));
+		loginPane.setMinimumSize(new Dimension(170, 78));
+		loginPane.setPreferredSize(new Dimension(170, 78));
 		loginPane.setLayout(new GridBagLayout());
+		infoPane.setMinimumSize(new Dimension(170, 20));
+		infoPane.setMinimumSize(new Dimension(170, 20));
+		infoPane.setPreferredSize(new Dimension(170, 20));
+		infoPane.setLayout(new BorderLayout());
+		add(infoPane, BorderLayout.SOUTH);
+		subinfoPane.setMinimumSize(new Dimension(170, 12));
+		subinfoPane.setMaximumSize(new Dimension(170, 12));
+		subinfoPane.setPreferredSize(new Dimension(170, 12));
 		usernameLabel.setText("Username:");
 		usernameLabel.setLabelFor(usernameField);
 		usernameLabel.setHorizontalAlignment(11);
@@ -87,20 +97,13 @@ public class LoginDialog extends JDialog {
 		              new GridBagConstraints(0, 2, 1, 1, 0.0D, 0.0D, 10, 1, new Insets(0, 0, 0, 5), 0, 0));
 		loginButton.setText("Login");
 		loginPane.add(loginButton, new GridBagConstraints(1, 2, 1, 1, 0.0D, 0.0D, 10, 1, new Insets(0, 0, 0, 0), 0, 0));
-		masterPane.add(loginPane, BorderLayout.EAST);
+		masterPane.add(loginPane, BorderLayout.NORTH);
 		loginButton.setFocusable(false);
-		infoPane.setMinimumSize(new Dimension(250, 100));
-		infoPane.setMaximumSize(new Dimension(250, 200));
-		infoPane.setPreferredSize(new Dimension(250, 100));
-		infoPane.setLayout(new GridBagLayout());
-		add(infoPane, BorderLayout.EAST);
-		textPane.setText("Please login with your forum account to access the bot and decrypt your user accounts.  " +
-				                 "The new encryption system uses your login to secure your accounts, you can trust your accounts in the " +
-				                 "panel again!");
-		textPane.setEditable(false);
-		textPane.setMargin(new Insets(5, 5, 5, 5));
-		textPane.setPreferredSize(new Dimension(230, 150));
-		infoPane.add(textPane, new GridBagConstraints(0, 0, 1, 1, 0.0D, 0.0D, 10, 1, new Insets(0, 0, 5, 0), 0, 0));
+		subinfoPane.setLayout(new GridBagLayout());
+		infoLabel.setText("<html><u>Help</u></html>");
+		infoLabel.setToolTipText("Click here for help!");
+		subinfoPane.add(infoLabel, new GridBagConstraints(0, 2, 1, 1, 0.0D, 0.0D, 10, 1, new Insets(0, 0, 0, 5), 0, 0));
+		infoPane.add(subinfoPane, BorderLayout.NORTH);
 		loginButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -138,10 +141,26 @@ public class LoginDialog extends JDialog {
 			@Override
 			public void mouseReleased(MouseEvent e) {
 				try {
-					Process p = Runtime.getRuntime().exec("cmd /c start http://www.powerbot.org/vb/register.php");
+					Runtime.getRuntime().exec("cmd /c start http://www.powerbot.org/vb/register.php");
 				} catch (Exception f) {
 					f.printStackTrace();
 				}
+			}
+		});
+		infoLabel.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				setVisible(false);
+				JOptionPane.showMessageDialog(parent,
+				                              "You must enter your forum login to enable the bot\nand decrypt your " +
+						                              "user accounts.  The new system encrypts your accounts file\n" +
+						                              "using your login, thus making your accounts virtually\n" +
+						                              "un-hackable.  Soon, this information will also be used for\n" +
+						                              "script box upon release, please keep in mind if you enter " +
+						                              "your\ninformation wrong your account info will be cleared " +
+						                              "(until\nthe information is checked to the server).",
+				                              "Information", JOptionPane.OK_OPTION);
+				setVisible();
 			}
 		});
 		pack();
@@ -149,8 +168,8 @@ public class LoginDialog extends JDialog {
 
 	public void setVisible() {
 		setLocationRelativeTo(getOwner());
-		setAlwaysOnTop(true);
 		setVisible(true);
+		setAlwaysOnTop(true);
 		requestFocus();
 	}
 
