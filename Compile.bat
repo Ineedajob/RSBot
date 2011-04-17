@@ -14,7 +14,7 @@ CALL "%res%\FindJDK.bat"
 SET lstf=temp.txt
 SET imgdir=%res%\images
 SET manifest=%res%\Manifest.txt
-SET versionfile=version.txt
+SET versionfile=%res%\version.txt
 FOR /F %%G IN (%versionfile%) DO SET version=%%G
 SET scripts=scripts
 
@@ -39,7 +39,7 @@ IF EXIST "%lstf%" DEL /F /Q "%lstf%"
 COPY "%manifest%" "%lstf%"
 ECHO Specification-Version: "%version%" >> "%lstf%"
 ECHO Implementation-Version: "%version%" >> "%lstf%"
-jar cfm "%dist%" "%lstf%" -C "%out%" . %scripts%\*.class %res%\version.dat %imgdir%\* %res%\*.bat %res%\*.sh
+jar cfm "%dist%" "%lstf%" -C "%out%" . %scripts%\*.class %res%\version.txt %imgdir%\* %res%\*.bat %res%\*.sh
 DEL /F /Q "%lstf%"
 
 :end
