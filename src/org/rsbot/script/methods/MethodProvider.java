@@ -1,8 +1,8 @@
 package org.rsbot.script.methods;
 
 /**
- * A class that provides methods that use data from the game client.
- * For internal use.
+ * A class that provides methods that use data from the game client. For
+ * internal use.
  *
  * @author Jacmob
  */
@@ -26,8 +26,8 @@ public abstract class MethodProvider {
 	}
 
 	/**
-	 * Returns a normally distributed pseudorandom integer about a mean
-	 * centered between min and max with a provided standard deviation.
+	 * Returns a normally distributed pseudorandom integer about a mean centered
+	 * between min and max with a provided standard deviation.
 	 *
 	 * @param min The inclusive lower bound.
 	 * @param max The exclusive upper bound.
@@ -46,8 +46,8 @@ public abstract class MethodProvider {
 	}
 
 	/**
-	 * Returns a normally distributed pseudorandom integer with a
-	 * provided standard deviation about a provided mean.
+	 * Returns a normally distributed pseudorandom integer with a provided
+	 * standard deviation about a provided mean.
 	 *
 	 * @param min  The inclusive lower bound.
 	 * @param max  The exclusive upper bound.
@@ -83,7 +83,7 @@ public abstract class MethodProvider {
 		try {
 			long start = System.currentTimeMillis();
 			Thread.sleep(toSleep);
-			long now;    // Guarantee minimum sleep
+			long now; // Guarantee minimum sleep
 			while (start + toSleep > (now = System.currentTimeMillis())) {
 				Thread.sleep(start + toSleep - now);
 			}

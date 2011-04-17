@@ -1,8 +1,6 @@
 package org.rsbot.util;
 
-import java.awt.Color;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
+import java.awt.*;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
@@ -51,7 +49,7 @@ public class StringUtil {
 	 * Available colours: red, green, cyan, purple, white.
 	 *
 	 * @param render The Graphics object to be used.
-	 * @param row	The index where you want the text.
+	 * @param row    The index where you want the text.
 	 * @param text   The text you want to render. Colours can be set like [red].
 	 */
 	public static void drawLine(Graphics render, int row, String text) {
@@ -121,5 +119,6 @@ public class StringUtil {
 			throw new IllegalStateException(e);
 		}
 	}
+
 
 }

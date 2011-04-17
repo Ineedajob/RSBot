@@ -61,7 +61,8 @@ public class Equipment extends MethodProvider {
 	/**
 	 * Gets the cached equipment array (i.e. does not open the interface).
 	 *
-	 * @return The items equipped as seen when the equipment tab was last opened.
+	 * @return The items equipped as seen when the equipment tab was last
+	 *         opened.
 	 */
 	public RSItem[] getCachedItems() {
 		RSInterface equipment = methods.interfaces.get(INTERFACE_EQUIPMENT);
@@ -93,10 +94,11 @@ public class Equipment extends MethodProvider {
 	}
 
 	/**
-	 * Returns the number of items matching a given ID equipped
-	 * excluding stack sizes.
+	 * Returns the number of items matching a given ID equipped excluding stack
+	 * sizes.
 	 *
-	 * @param itemID The item ID to count. Same as the equipment/item id in the inventory.
+	 * @param itemID The item ID to count. Same as the equipment/item id in the
+	 *               inventory.
 	 * @return Amount of specified item currently equipped.
 	 * @see #getItems()
 	 */
@@ -113,8 +115,10 @@ public class Equipment extends MethodProvider {
 	/**
 	 * Checks whether the player has all of the given items equipped.
 	 *
-	 * @param items The item ID to check for. Same as the equipment/item id in the inventory.
-	 * @return <tt>true</tt> if specified item is currently equipped; otherwise <tt>false</tt>.
+	 * @param items The item ID to check for. Same as the equipment/item id in the
+	 *              inventory.
+	 * @return <tt>true</tt> if specified item is currently equipped; otherwise
+	 *         <tt>false</tt>.
 	 * @see #getItems()
 	 */
 	public boolean containsAll(int... items) {

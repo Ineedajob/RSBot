@@ -24,7 +24,6 @@ public class CloseAllInterface extends Random {
 			this.child = child;
 			this.text = text;
 		}
-
 	}
 
 	private final List<ComponentDef> components = new LinkedList<ComponentDef>();
@@ -47,6 +46,7 @@ public class CloseAllInterface extends Random {
 		addChild(667, 74); // Equipment Bonus
 		addChild(742, 14); // Graphic
 		addChild(917, 69); // Task List
+		addChild(1107, 174); // Clan Vexillum
 	}
 
 	private void addChild(int parent, int idx) {
@@ -68,8 +68,7 @@ public class CloseAllInterface extends Random {
 			for (ComponentDef c : components) {
 				RSComponent comp = interfaces.getComponent(c.parent, c.child);
 				if (comp.isValid()
-						&& !(c.text && (comp.getText() == null || comp
-						.getText().isEmpty()))) {
+						&& !(c.text && (comp.getText() == null || comp.getText().isEmpty()))) {
 					return true;
 				}
 			}
@@ -99,5 +98,4 @@ public class CloseAllInterface extends Random {
 
 		return -1;
 	}
-
 }

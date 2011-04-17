@@ -42,7 +42,8 @@ public class Canvas extends java.awt.Canvas {
 			}
 		}
 		try {
-			Thread.sleep(bot.disableRendering ? SLOW_GRAPHICS_DELAY : GRAPHICS_DELAY);
+			Thread.sleep(bot.disableRendering ? SLOW_GRAPHICS_DELAY
+			                                  : GRAPHICS_DELAY);
 		} catch (InterruptedException ignored) {
 		}
 		return bot.getBufferGraphics();
@@ -84,11 +85,15 @@ public class Canvas extends java.awt.Canvas {
 
 	public final void setFocused(boolean focused) {
 		if (focused && !this.focused) {
-			// null opposite; permanent gain, as expected when entire Applet regains focus
-			super.processEvent(new FocusEvent(this, FocusEvent.FOCUS_GAINED, false, null));
+			// null opposite; permanent gain, as expected when entire Applet
+			// regains focus
+			super.processEvent(new FocusEvent(this, FocusEvent.FOCUS_GAINED,
+			                                  false, null));
 		} else if (this.focused) {
-			// null opposite; temporary loss, as expected when entire Applet loses focus
-			super.processEvent(new FocusEvent(this, FocusEvent.FOCUS_LOST, true, null));
+			// null opposite; temporary loss, as expected when entire Applet
+			// loses focus
+			super.processEvent(new FocusEvent(this, FocusEvent.FOCUS_LOST,
+			                                  true, null));
 		}
 		this.focused = focused;
 	}
@@ -101,10 +106,13 @@ public class Canvas extends java.awt.Canvas {
 		// null as long as this canvas is not really displayed).
 		int[] pixels = new int[height * width];
 		DataBufferInt databufferint = new DataBufferInt(pixels, pixels.length);
-		DirectColorModel directcolormodel = new DirectColorModel(32, 0xff0000, 0xff00, 255);
+		DirectColorModel directcolormodel = new DirectColorModel(32, 0xff0000,
+		                                                         0xff00, 255);
 		WritableRaster writableraster = Raster.createWritableRaster(
-				directcolormodel.createCompatibleSampleModel(width, height), databufferint, null);
-		return new BufferedImage(directcolormodel, writableraster, false, new Hashtable());
+				directcolormodel.createCompatibleSampleModel(width, height),
+				databufferint, null);
+		return new BufferedImage(directcolormodel, writableraster, false,
+		                         new Hashtable());
 	}
 
 	@Override

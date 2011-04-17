@@ -276,8 +276,7 @@ public class LoginBot extends Random {
 						sleep(random(25, 100));
 					}
 				}
-				keyboard.sendText(AccountManager.getPassword(account.getName(),
-				                                             getClass()), false);
+				keyboard.sendText(AccountManager.getPassword(account.getName()), false);
 			}
 		}
 		return random(500, 2000);
@@ -348,8 +347,7 @@ public class LoginBot extends Random {
 	}
 
 	private boolean isPasswordFilled() {
-		String passWord = AccountManager.getPassword(account.getName(),
-		                                             getClass());
+		String passWord = AccountManager.getPassword(account.getName());
 		return interfaces.get(INTERFACE_LOGIN_SCREEN)
 		                 .getComponent(INTERFACE_PASSWORD).getText().toLowerCase()
 		                 .length() == (passWord == null ? 0 : passWord.length());

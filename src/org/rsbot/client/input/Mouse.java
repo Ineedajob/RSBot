@@ -3,7 +3,8 @@ package org.rsbot.client.input;
 import java.awt.*;
 import java.awt.event.*;
 
-public abstract class Mouse extends Focus implements MouseListener, MouseMotionListener, MouseWheelListener {
+public abstract class Mouse extends Focus implements MouseListener,
+                                                     MouseMotionListener, MouseWheelListener {
 
 	private int clientX;
 	private int clientY;

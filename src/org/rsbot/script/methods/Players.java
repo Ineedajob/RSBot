@@ -69,8 +69,8 @@ public class Players extends MethodProvider {
 	 *
 	 * @param filter Filters unwanted matches.
 	 * @return An <tt>RSPlayer</tt> object representing the nearest player that
-	 *         was accepted by the provided Filter; or null if there are no matching
-	 *         players in the current region.
+	 *         was accepted by the provided Filter; or null if there are no
+	 *         matching players in the current region.
 	 */
 	public RSPlayer getNearest(final Filter<RSPlayer> filter) {
 		int min = 20;
@@ -114,10 +114,11 @@ public class Players extends MethodProvider {
 	 * Returns the <tt>RSPlayer</tt> that is nearest, out of all of the Players
 	 * with the provided combat level.
 	 *
-	 * @param level The combat level of the <tt>RSPlayer</tt> that you are searching for.
+	 * @param level The combat level of the <tt>RSPlayer</tt> that you are
+	 *              searching for.
 	 * @return An <tt>RSPlayer</tt> object representing the nearest player with
-	 *         the provided combat level; or null if there are no matching players in
-	 *         the current region.
+	 *         the provided combat level; or null if there are no matching
+	 *         players in the current region.
 	 */
 	public RSPlayer getNearest(final int level) {
 		return getNearest(new Filter<RSPlayer>() {

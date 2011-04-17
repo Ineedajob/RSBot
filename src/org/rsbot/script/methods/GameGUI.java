@@ -37,7 +37,8 @@ class GameGUI extends MethodProvider {
 		checkGUI();
 
 		// Get GUI interface
-		final RSInterface[] gui = ind_GUI != -1 ? methods.client.getRSInterfaceCache()[ind_GUI] : null;
+		final RSInterface[] gui = ind_GUI != -1 ? methods.client
+				.getRSInterfaceCache()[ind_GUI] : null;
 		if (gui == null) {
 			return null;
 		}
@@ -45,8 +46,9 @@ class GameGUI extends MethodProvider {
 		// Check if we need to find a new compass index
 		if (ind_Compass == -1) {
 			for (int i = 0; i < gui.length; i++) {
-				if ((gui[i] != null) && (gui[i].getActions() != null) && (gui[i].getActions().length == 1) && gui[i].getActions()[0].equals(
-						"Face North")) {
+				if ((gui[i] != null) && (gui[i].getActions() != null)
+						&& (gui[i].getActions().length == 1)
+						&& gui[i].getActions()[0].equals("Face North")) {
 					ind_Compass = i;
 					break;
 				}
@@ -69,7 +71,8 @@ class GameGUI extends MethodProvider {
 		checkGUI();
 
 		// Get the GUI interface
-		final RSInterface[] gui = ind_GUI != -1 ? methods.client.getRSInterfaceCache()[ind_GUI] : null;
+		final RSInterface[] gui = ind_GUI != -1 ? methods.client
+				.getRSInterfaceCache()[ind_GUI] : null;
 		if (gui == null) {
 			return null;
 		}
@@ -106,7 +109,8 @@ class GameGUI extends MethodProvider {
 		checkGUI();
 
 		// Get GUI interface
-		final RSInterface[] gui = ind_GUI != -1 ? methods.client.getRSInterfaceCache()[ind_GUI] : null;
+		final RSInterface[] gui = ind_GUI != -1 ? methods.client
+				.getRSInterfaceCache()[ind_GUI] : null;
 		if (gui == null) {
 			return null;
 		}
@@ -114,8 +118,9 @@ class GameGUI extends MethodProvider {
 		// Check if we need to find a new tab index
 		if (ind_Tabs[id] == -1) {
 			for (int i = 0; i < gui.length; i++) {
-				if ((gui[i] != null) && (gui[i].getActions() != null) && (gui[i].getActions().length > 0) && gui[i].getActions()[0].equals(
-						Game.TAB_NAMES[id])) {
+				if ((gui[i] != null) && (gui[i].getActions() != null)
+						&& (gui[i].getActions().length > 0)
+						&& gui[i].getActions()[0].equals(Game.TAB_NAMES[id])) {
 					ind_Tabs[id] = i;
 					break;
 				}

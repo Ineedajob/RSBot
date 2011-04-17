@@ -8,9 +8,8 @@ import java.net.URL;
 /**
  * This class is used to fetch the stats of another player.
  * <p/>
- * Example:
- * Hiscores.Stats stats = hiscores.lookup("username");
- * int attack = stats.getCurrentLevel(Skills.ATTACK);
+ * Example: Hiscores.Stats stats = hiscores.lookup("username"); int attack =
+ * stats.getCurrentLevel(Skills.ATTACK);
  *
  * @author Aion
  * @version 0.2
@@ -28,7 +27,8 @@ public class Hiscores extends MethodProvider {
 	 * Collects data for a given player from the hiscore website.
 	 *
 	 * @param username The username
-	 * @return An instance of Hiscores.Stats; <code>null</code> if unable to fetch data.
+	 * @return An instance of Hiscores.Stats; <code>null</code> if unable to
+	 *         fetch data.
 	 */
 	public Stats lookup(String username) {
 		if (username != null && !username.isEmpty()) {
@@ -82,7 +82,8 @@ public class Hiscores extends MethodProvider {
 		 */
 		public int getExperience(int index) {
 			if (index < 0 || index >= exps.length - 1) {
-				throw new IllegalArgumentException("Illegal skill index: " + index);
+				throw new IllegalArgumentException("Illegal skill index: "
+						                                   + index);
 			}
 			return exps[index + 1];
 		}
@@ -95,7 +96,8 @@ public class Hiscores extends MethodProvider {
 		 */
 		public int getLevel(int index) {
 			if (index < 0 || index >= exps.length - 1) {
-				throw new IllegalArgumentException("Illegal skill index: " + index);
+				throw new IllegalArgumentException("Illegal skill index: "
+						                                   + index);
 			}
 			return lvls[index + 1];
 		}
@@ -108,7 +110,8 @@ public class Hiscores extends MethodProvider {
 		 */
 		public int getRank(int index) {
 			if (index < 0 || index >= exps.length - 1) {
-				throw new IllegalArgumentException("Illegal skill index: " + index);
+				throw new IllegalArgumentException("Illegal skill index: "
+						                                   + index);
 			}
 			return ranks[index + 1];
 		}

@@ -14,7 +14,6 @@ import org.rsbot.util.ScreenshotUtil;
 import org.rsbot.util.UpdateUtil;
 
 import javax.swing.*;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -39,6 +38,7 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 	private static final Logger log = Logger.getLogger(BotGUI.class.getName());
 
 	private BotPanel panel;
+	private JScrollPane scrollableBotPanel;
 	private BotToolBar toolBar;
 	private BotMenuBar menuBar;
 	private JScrollPane textScroll;
@@ -60,7 +60,8 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				JPopupMenu.setDefaultLightWeightPopupEnabled(false);
-				ToolTipManager.sharedInstance().setLightWeightPopupEnabled(false);
+				ToolTipManager.sharedInstance().setLightWeightPopupEnabled(
+						false);
 
 				if (showAds) {
 					new SplashAd(BotGUI.this).display();
@@ -124,8 +125,11 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 				if (current != null) {
 					try {
 						if (!SystemTray.isSupported()) {
-							JOptionPane.showMessageDialog(this, "System-Tray feature is not supported by your OS.",
-							                              "Error", JOptionPane.ERROR_MESSAGE);
+							JOptionPane
+									.showMessageDialog(
+											this,
+											"System-Tray feature is not supported by your OS.",
+											"Error", JOptionPane.ERROR_MESSAGE);
 							return;
 						}
 						this.setVisible(false);
@@ -138,7 +142,7 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 				Bot current = getCurrentBot();
 				if (current != null) {
 					ScreenshotUtil.saveScreenshot(current,
-							current.getMethodContext().game.isLoggedIn());
+					                              current.getMethodContext().game.isLoggedIn());
 				}
 			} else if (option.equals("Exit")) {
 				System.exit(0);
@@ -182,7 +186,7 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 					for (String key : BotMenuBar.DEBUG_MAP.keySet()) {
 						Class<?> el = BotMenuBar.DEBUG_MAP.get(key);
 						boolean wasSelected = menuBar.getCheckBox(key)
-								.isSelected();
+						                             .isSelected();
 						menuBar.getCheckBox(key).setSelected(selected);
 						if (selected) {
 							if (!wasSelected) {
@@ -212,9 +216,10 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 				openURL(GlobalConfiguration.Paths.URLs.PROJECT);
 			} else if (option.equals("About")) {
 				JOptionPane.showMessageDialog(this, new String[]{
-						"An open source bot,currently developed by Aut0r as " + '\n' + "Lead Developer and by his Team of Contributers.",
-						"Visit " + GlobalConfiguration.Paths.URLs.SITE + "/ for more information."},
-				                              "About", JOptionPane.INFORMATION_MESSAGE);
+						"An open source bot developed by the community.",
+						"Visit " + GlobalConfiguration.Paths.URLs.SITE
+								+ "/ for more information."}, "About",
+				                              JOptionPane.INFORMATION_MESSAGE);
 			}
 		} else if (menu.equals("Tab")) {
 			Bot curr = getCurrentBot();
@@ -227,11 +232,11 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 				toolBar.setScriptButton(BotToolBar.RUN_SCRIPT);
 				toolBar.setOverrideInput(false);
 				toolBar.setInputState(Environment.INPUT_KEYBOARD
-						| Environment.INPUT_MOUSE);
+						                      | Environment.INPUT_MOUSE);
 			} else {
 				setTitle(curr.getAccountName());
 				Map<Integer, Script> scriptMap = curr.getScriptHandler()
-						.getRunningScripts();
+				                                     .getRunningScripts();
 				if (scriptMap.size() > 0) {
 					if (scriptMap.values().iterator().next().isPaused()) {
 						toolBar.setScriptButton(BotToolBar.RESUME_SCRIPT);
@@ -334,11 +339,11 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 		if (AccountManager.getAccountNames().length == 0) {
 			JOptionPane
 					.showMessageDialog(this,
-							"No accounts found! Please create one before using the bot.");
+					                   "No accounts found! Please create one before using the bot.");
 			AccountManager.getInstance().showGUI();
 		} else if (bot.getMethodContext() == null) {
 			JOptionPane.showMessageDialog(this,
-					"The client is not currently loaded!");
+			                              "The client is not currently loaded!");
 		} else {
 			new ScriptSelector(this, bot).showGUI();
 		}
@@ -407,14 +412,15 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 		menuBar.setBot(null);
 		setJMenuBar(menuBar);
 		textScroll = new JScrollPane(TextAreaLogHandler.TEXT_AREA,
-				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		                             JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+		                             JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		textScroll.setBorder(null);
 		textScroll.setPreferredSize(new Dimension(PANEL_WIDTH, LOG_HEIGHT));
 		textScroll.setVisible(true);
+		scrollableBotPanel = new JScrollPane(panel);
 
 		add(toolBar, BorderLayout.NORTH);
-		add(panel, BorderLayout.CENTER);
+		add(scrollableBotPanel, BorderLayout.CENTER);
 		add(textScroll, BorderLayout.SOUTH);
 	}
 
@@ -431,7 +437,7 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 					menuBar.setOverrideInput(false);
 					String acct = bot.getAccountName();
 					toolBar.setTabLabel(bots.indexOf(bot) + 1,
-							acct == null ? "RuneScape" : acct);
+					                    acct == null ? "RuneScape" : acct);
 					toolBar.updateInputButton();
 					setTitle(acct);
 				}
@@ -483,27 +489,27 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 			if (os == GlobalConfiguration.OperatingSystem.MAC) {
 				Class<?> fileMgr = Class.forName("com.apple.eio.FileManager");
 				Method openURL = fileMgr.getDeclaredMethod("openURL",
-						new Class[] { String.class });
+				                                           new Class[]{String.class});
 				openURL.invoke(null, url);
 			} else if (os == GlobalConfiguration.OperatingSystem.WINDOWS) {
 				Runtime.getRuntime().exec(
 						"rundll32 url.dll,FileProtocolHandler " + url);
 			} else { // assume Unix or Linux
-				String[] browsers = { "firefox", "opera", "konqueror",
-						"epiphany", "mozilla", "netscape" };
+				String[] browsers = {"firefox", "opera", "konqueror",
+				                     "epiphany", "mozilla", "netscape"};
 				String browser = null;
 				for (int count = 0; (count < browsers.length)
 						&& (browser == null); count++) {
 					if (Runtime.getRuntime()
-							.exec(new String[] { "which", browsers[count] })
-							.waitFor() == 0) {
+					           .exec(new String[]{"which", browsers[count]})
+					           .waitFor() == 0) {
 						browser = browsers[count];
 					}
 				}
 				if (browser == null) {
 					throw new Exception("Could not find web browser");
 				} else {
-					Runtime.getRuntime().exec(new String[] { browser, url });
+					Runtime.getRuntime().exec(new String[]{browser, url});
 				}
 			}
 		} catch (Exception e) {

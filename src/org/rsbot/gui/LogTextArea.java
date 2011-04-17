@@ -1,6 +1,5 @@
 package org.rsbot.gui;
 
-
 import org.rsbot.log.LogFormatter;
 import org.rsbot.util.GlobalConfiguration;
 import org.rsbot.util.StringUtil;
@@ -16,7 +15,6 @@ import java.util.logging.Formatter;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
-
 /**
  * Non swing methods are thread safe.
  */
@@ -24,7 +22,8 @@ public class LogTextArea extends JList {
 
 	public static final int MAX_ENTRIES = 100;
 
-	public static final Rectangle BOTTOM_OF_WINDOW = new Rectangle(0, Integer.MAX_VALUE, 0, 0);
+	public static final Rectangle BOTTOM_OF_WINDOW = new Rectangle(0,
+	                                                               Integer.MAX_VALUE, 0, 0);
 
 	private static final long serialVersionUID = 0;
 
@@ -49,16 +48,17 @@ public class LogTextArea extends JList {
 			final int maxLen = 16;
 			final String append = "...";
 
-			return String.format("[%s] %-" + maxLen + "s %s %s", dateFormat
-					.format(record.getMillis()), name.length() > maxLen ? name
-					.substring(0, maxLen - append.length())
-					+ append : name, record.getMessage(), StringUtil
-					.throwableToString(record.getThrown()));
+			return String.format(
+					"[%s] %-" + maxLen + "s %s %s",
+					dateFormat.format(record.getMillis()),
+					name.length() > maxLen ? name.substring(0,
+					                                        maxLen - append.length())
+							+ append : name, record.getMessage(),
+					StringUtil.throwableToString(record.getThrown()));
 		}
 	};
 
 	private static final Formatter copyPasteFormatter = new LogFormatter(false);
-
 
 	public LogTextArea() {
 		setModel(model);
@@ -73,7 +73,6 @@ public class LogTextArea extends JList {
 		new Thread(logQueue, "LogGuiQueue").start();
 	}
 
-
 	/**
 	 * Logs a new entry to be shown in the list. Thread safe.
 	 *
@@ -86,15 +85,14 @@ public class LogTextArea extends JList {
 	private class LogAreaListModel extends AbstractListModel {
 		private static final long serialVersionUID = 0;
 
-		private List<WrappedLogRecord> records = new ArrayList<WrappedLogRecord>(LogTextArea.MAX_ENTRIES);
-
+		private List<WrappedLogRecord> records = new ArrayList<WrappedLogRecord>(
+				LogTextArea.MAX_ENTRIES);
 
 		public void addAllElements(List<WrappedLogRecord> obj) {
 			records.addAll(obj);
 			if (getSize() > LogTextArea.MAX_ENTRIES) {
 				records = records.subList(
-						(getSize() - LogTextArea.MAX_ENTRIES),
-						getSize());
+						(getSize() - LogTextArea.MAX_ENTRIES), getSize());
 
 				fireContentsChanged(this, 0, (getSize() - 1));
 			} else {
@@ -112,7 +110,6 @@ public class LogTextArea extends JList {
 
 	}
 
-
 	/**
 	 * Flushes every #FLUSH_RATE (miliseconds)
 	 */
@@ -122,7 +119,8 @@ public class LogTextArea extends JList {
 
 		private final Object lock = new Object();
 
-		private List<WrappedLogRecord> queue = new ArrayList<WrappedLogRecord>(100);
+		private List<WrappedLogRecord> queue = new ArrayList<WrappedLogRecord>(
+				100);
 
 		public void queue(final WrappedLogRecord record) {
 			synchronized (lock) {
@@ -154,7 +152,6 @@ public class LogTextArea extends JList {
 		}
 
 	}
-
 
 	private static class Renderer implements ListCellRenderer {
 
@@ -217,7 +214,6 @@ public class LogTextArea extends JList {
 
 	}
 
-
 	/**
 	 * Wrap the log records so we can control the copy paste text (via
 	 * #toString)
@@ -227,12 +223,10 @@ public class LogTextArea extends JList {
 		public final LogRecord record;
 		public final String formatted;
 
-
 		public WrappedLogRecord(final LogRecord record) {
 			this.record = record;
 			formatted = LogTextArea.formatter.format(record);
 		}
-
 
 		@Override
 		public String toString() {

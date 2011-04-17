@@ -5,8 +5,8 @@ import org.rsbot.client.HashTable;
 import org.rsbot.client.Node;
 
 /**
- * For internal use to reference data stored in the engine's
- * Node-based structures.
+ * For internal use to reference data stored in the engine's Node-based
+ * structures.
  */
 public class Nodes extends MethodProvider {
 

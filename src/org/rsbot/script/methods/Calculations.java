@@ -567,9 +567,9 @@ public class Calculations extends MethodProvider {
 					break;
 				}
 				/*
-									 * ^This can be simplified to: if (Math.abs(curr_x - destX) +
-									 * Math.abs(curr_y - destY) == 1) { foundPath = true; break; }
-									 */
+				 * ^This can be simplified to: if (Math.abs(curr_x - destX) +
+				 * Math.abs(curr_y - destY) == 1) { foundPath = true; break; }
+				 */
 			} else if ((curr_x == destX) && (curr_y == destY)) {
 				foundPath = true;
 			}

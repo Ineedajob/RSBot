@@ -13,7 +13,7 @@
 /*.patch
 /.settings
 /bin
+/out
 /lib/*.jar
 /scripts/*.class
 /temp.txt
-/*.iml

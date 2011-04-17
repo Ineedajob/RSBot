@@ -46,17 +46,18 @@ public class Game extends MethodProvider {
 	                                               0, // Logout
 	};
 	public static final int TAB_ATTACK = 0;
-	public static final int TAB_ACHIEVEMENTS = 1;
+	public static final int TAB_TASK = 1;
 	public static final int TAB_STATS = 2;
 	public static final int TAB_QUESTS = 3;
 	public static final int TAB_INVENTORY = 4;
 	public static final int TAB_EQUIPMENT = 5;
 	public static final int TAB_PRAYER = 6;
 	public static final int TAB_MAGIC = 7;
-	public static final int TAB_SUMMONING = 8;
+	public static final int TAB_SUMMONING = 8; // Untested
 	public static final int TAB_FRIENDS = 9;
-	public static final int TAB_IGNORE = 10;
+	public static final int TAB_FRIENDS_CHAT = 10;
 	public static final int TAB_CLAN = 11;
+	public static final int TAB_CLAN_CHAT = 11;
 	public static final int TAB_OPTIONS = 12;
 	public static final int TAB_CONTROLS = 13;
 	public static final int TAB_MUSIC = 14;
@@ -93,10 +94,9 @@ public class Game extends MethodProvider {
 	public static final int[] INTERFACE_OPTIONS = new int[]{230, 228};
 
 	public static final String[] TAB_NAMES = new String[]{"Combat Styles",
-	                                                      "Stats", "Quest List", "Achievements", "Inventory",
-	                                                      "Worn Equipment", "Prayer List", "Magic Spellbook",
-	                                                      "Objectives",
-	                                                      "Friends List", "Ignore List", "Clan Chat", "Options",
+	                                                      "Task System", "Stats", "Quest Journals", "Inventory",
+	                                                      "Worn Equipment", "Prayer List", "Magic Spellbook", "",
+	                                                      "Friends List", "Friends Chat", "Clan Chat", "Options",
 	                                                      "Emotes",
 	                                                      "Music Player", "Notes", "Exit"};
 
@@ -260,9 +260,9 @@ public class Game extends MethodProvider {
 	 */
 	public boolean open(final int tab, final boolean functionKey) {
 		/*
-				   * Only attempts by fn key if there is a valid hotkey available Returns
-				   * faster when the new tab has been selected
-				   */
+		 * Only attempts by fn key if there is a valid hotkey available Returns
+		 * faster when the new tab has been selected
+		 */
 		if (tab == getCurrentTab()) {
 			return true;
 		}
@@ -320,7 +320,6 @@ public class Game extends MethodProvider {
 		sleep(random(400, 600));
 		return tab == getCurrentTab();
 	}
-
 
 	/**
 	 * Closes the currently open tab if in resizable mode.
@@ -384,18 +383,19 @@ public class Game extends MethodProvider {
 		return methods.walking.getEnergy();
 	}
 
-
 	/**
-	 * Excludes Loginbot, BankPin, TeleotherCloser, CloseAllInterface, ImprovedRewardsBox
+	 * Excludes Loginbot, BankPin, TeleotherCloser, CloseAllInterface,
+	 * ImprovedRewardsBox
 	 *
 	 * @return True if player is in a random
 	 */
 	public Boolean inRandom() {
 		for (Random random : methods.bot.getScriptHandler().getRandoms()) {
-			if (random.getClass().equals(new LoginBot()) || random.getClass().equals(new BankPins())
-					|| random.getClass().equals(new TeleotherCloser()) || random.getClass().equals(
-					new CloseAllInterface()) ||
-					random.getClass().equals(new ImprovedRewardsBox())) {
+			if (random.getClass().equals(new LoginBot())
+					|| random.getClass().equals(new BankPins())
+					|| random.getClass().equals(new TeleotherCloser())
+					|| random.getClass().equals(new CloseAllInterface())
+					|| random.getClass().equals(new ImprovedRewardsBox())) {
 				continue;
 			} else {
 				if (random.activateCondition()) {
@@ -429,29 +429,31 @@ public class Game extends MethodProvider {
 	 * @param world the world to switch to, must be valid.
 	 */
 	public boolean switchWorld(int world) {
-		if (isLoggedIn()) {
-			logout(true);
-		}
-
-		if (getClientState() != INDEX_LOBBY_SCREEN) {
-			return false;
-		}
-
-		RSComponent worldSelect = methods.interfaces.getComponent(906, 196);
-		if (worldSelect.getBackgroundColor() != 2630) {
-			if (worldSelect.doClick()) {
-				for (int i = 0; worldSelect.getBackgroundColor() != 2630; i++) {
-					if (i == 10) {
-						return false;
-					}
-
-					sleep(random(100, 200));
+		methods.env.disableRandom("Login");
+		if (methods.game.isLoggedIn()) {
+			methods.game.logout(true);
+			for (int i = 0; i < 50; i++) {
+				sleep(100);
+				if (methods.interfaces.get(906).isValid()
+						&& getClientState() == INDEX_LOBBY_SCREEN) {
+					break;
 				}
 			}
 		}
 
+		if (!methods.interfaces.get(906).isValid()) {
+			methods.env.enableRandom("Login");
+			return false;
+		}
+		if (!methods.interfaces.get(910).isValid()) {
+			RSComponent worldSelect = methods.interfaces.getComponent(906, 189);
+			if (worldSelect.doClick()) {
+				sleep(1000);
+			}
+		}
+
 		RSComponent worldComp = null;
-		for (RSComponent comp : methods.interfaces.getComponent(910, 68)
+		for (RSComponent comp : methods.interfaces.getComponent(910, 69)
 		                                          .getComponents()) {
 			if (Integer.parseInt(comp.getText()) == world) {
 				worldComp = comp;
@@ -460,32 +462,29 @@ public class Game extends MethodProvider {
 		}
 
 		if (worldComp == null) {
+			methods.env.enableRandom("Login");
 			return false;
 		}
+		if (worldComp.isValid()) {
+			methods.interfaces.scrollTo(worldComp,
+			                            methods.interfaces.getComponent(910, 86));
 
-		for (int i = 0; !methods.interfaces.scrollTo(worldComp,
-		                                             (910 << 16) + 85); i++) {
-			if (i == 3) {
+			String players = methods.interfaces.getComponent(910, 71)
+			                                   .getComponents()[worldComp.getComponentIndex()].getText();
+			if (players.equals("0") || players.equals("OFFLINE")
+					|| players.equals("FULL")) {
+				methods.env.enableRandom("Login");
 				return false;
 			}
 
-			sleep(random(200, 400));
-		}
-
-		String players = methods.interfaces.getComponent(910, 70)
-		                                   .getComponents()[worldComp.getComponentIndex()].getText();
-		if (players.equals("0") || players.equals("OFFLINE")
-				|| players.equals("FULL")) {
-			return false;
-		}
-
-		if (methods.interfaces.getComponent(910, 76).getComponents()[worldComp
-				.getComponentIndex()].doClick()) {
-			if (methods.interfaces.getComponent(906, 154).doClick()) {
-				return true;
+			if (methods.interfaces.getComponent(910, 77).getComponents()[worldComp
+					.getComponentIndex()].doClick()) {
+				if (methods.interfaces.getComponent(906, 160).doClick()) {
+					methods.env.enableRandom("Login");
+					return true;
+				}
 			}
 		}
-
 		return false;
 	}
 

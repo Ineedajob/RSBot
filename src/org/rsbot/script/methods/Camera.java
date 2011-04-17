@@ -169,10 +169,10 @@ public class Camera extends MethodProvider {
 	}
 
 	/**
-	 * Set the camera to a certain percentage of the maximum pitch. Don't
-	 * rely on the return value too much - it should return whether the camera
-	 * was successfully set, but it isn't very accurate near the very extremes
-	 * of the height.
+	 * Set the camera to a certain percentage of the maximum pitch. Don't rely
+	 * on the return value too much - it should return whether the camera was
+	 * successfully set, but it isn't very accurate near the very extremes of
+	 * the height.
 	 * <p/>
 	 * <p/>
 	 * This also depends on the maximum camera angle in a region, as it changes
@@ -197,7 +197,8 @@ public class Camera extends MethodProvider {
 		} else if (curAlt < percent) {
 			methods.inputManager.pressKey((char) KeyEvent.VK_UP);
 			long start = System.currentTimeMillis();
-			while (curAlt < percent && System.currentTimeMillis() - start < random(50, 100)) {
+			while (curAlt < percent
+					&& System.currentTimeMillis() - start < random(50, 100)) {
 				if (lastAlt != curAlt) {
 					start = System.currentTimeMillis();
 				}
@@ -211,7 +212,8 @@ public class Camera extends MethodProvider {
 		} else {
 			methods.inputManager.pressKey((char) KeyEvent.VK_DOWN);
 			long start = System.currentTimeMillis();
-			while (curAlt > percent && System.currentTimeMillis() - start < random(50, 100)) {
+			while (curAlt > percent
+					&& System.currentTimeMillis() - start < random(50, 100)) {
 				if (lastAlt != curAlt) {
 					start = System.currentTimeMillis();
 				}
@@ -224,25 +226,25 @@ public class Camera extends MethodProvider {
 		}
 	}
 
-
 	/**
 	 * Moves the camera in a random direction for a given time.
 	 *
-	 * @param timeOut The maximum time in milliseconds to move
-	 *                the camera for.
+	 * @param timeOut The maximum time in milliseconds to move the camera for.
 	 */
 	public void moveRandomly(int timeOut) {
 		Timer timeToHold = new Timer(timeOut);
 		int lowestCamAltPossible = random(75, 100);
 		int vertical = random(0, 20) < 15 ? KeyEvent.VK_UP : KeyEvent.VK_DOWN;
-		int horizontal = random(0, 20) < 5 ? KeyEvent.VK_LEFT : KeyEvent.VK_RIGHT;
+		int horizontal = random(0, 20) < 5 ? KeyEvent.VK_LEFT
+		                                   : KeyEvent.VK_RIGHT;
 		if (random(0, 10) < 8) {
 			methods.inputManager.pressKey((char) vertical);
 		}
 		if (random(0, 10) < 8) {
 			methods.inputManager.pressKey((char) horizontal);
 		}
-		while (timeToHold.isRunning() && methods.client.getCamPosZ() >= lowestCamAltPossible) {
+		while (timeToHold.isRunning()
+				&& methods.client.getCamPosZ() >= lowestCamAltPossible) {
 			sleep(10);
 		}
 		methods.inputManager.releaseKey((char) vertical);
@@ -273,8 +275,8 @@ public class Camera extends MethodProvider {
 	/**
 	 * Rotates the camera to the specified cardinal direction.
 	 *
-	 * @param direction The char direction to turn the map. char options are
-	 *                  w,s,e,n and defaults to north if character is unrecognized.
+	 * @param direction The char direction to turn the map. char options are w,s,e,n
+	 *                  and defaults to north if character is unrecognized.
 	 */
 	public void setCompass(char direction) {
 		switch (direction) {
@@ -300,12 +302,13 @@ public class Camera extends MethodProvider {
 	 * Uses the compass component to set the camera to face north.
 	 */
 	public void setNorth() {
-		methods.interfaces.getComponent(methods.gui.getCompass().getID()).doClick();
+		methods.interfaces.getComponent(methods.gui.getCompass().getID())
+		                  .doClick();
 	}
 
 	/**
-	 * Returns the camera angle at which the camera would
-	 * be facing a certain character.
+	 * Returns the camera angle at which the camera would be facing a certain
+	 * character.
 	 *
 	 * @param n the RSCharacter
 	 * @return The angle
@@ -315,8 +318,8 @@ public class Camera extends MethodProvider {
 	}
 
 	/**
-	 * Returns the camera angle at which the camera would
-	 * be facing a certain object.
+	 * Returns the camera angle at which the camera would be facing a certain
+	 * object.
 	 *
 	 * @param o The RSObject
 	 * @return The angle
@@ -326,8 +329,8 @@ public class Camera extends MethodProvider {
 	}
 
 	/**
-	 * Returns the camera angle at which the camera would
-	 * be facing a certain tile.
+	 * Returns the camera angle at which the camera would be facing a certain
+	 * tile.
 	 *
 	 * @param t The target tile
 	 * @return The angle in degrees
@@ -338,8 +341,8 @@ public class Camera extends MethodProvider {
 	}
 
 	/**
-	 * Returns the angle between the current camera
-	 * angle and the given angle in degrees.
+	 * Returns the angle between the current camera angle and the given angle in
+	 * degrees.
 	 *
 	 * @param degrees The target angle.
 	 * @return The angle between the who angles in degrees.
@@ -357,8 +360,8 @@ public class Camera extends MethodProvider {
 	}
 
 	/**
-	 * Returns the current compass orientation in degrees,
-	 * with North at 0, increasing counter-clockwise to 360.
+	 * Returns the current compass orientation in degrees, with North at 0,
+	 * increasing counter-clockwise to 360.
 	 *
 	 * @return The current camera angle in degrees.
 	 */
@@ -369,8 +372,8 @@ public class Camera extends MethodProvider {
 	}
 
 	/**
-	 * Returns the current percentage of the maximum pitch
-	 * of the camera in an open area.
+	 * Returns the current percentage of the maximum pitch of the camera in an
+	 * open area.
 	 *
 	 * @return The current camera altitude percentage.
 	 */

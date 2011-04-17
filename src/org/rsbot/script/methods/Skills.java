@@ -222,12 +222,14 @@ public class Skills extends MethodProvider {
 	 * Moves the mouse over a given component in the stats tab.
 	 *
 	 * @param component The component index.
-	 * @return <tt>true</tt> if the mouse was moved over the given component index.
+	 * @return <tt>true</tt> if the mouse was moved over the given component
+	 *         index.
 	 */
 	public boolean doHover(int component) {
 		methods.game.openTab(Game.TAB_STATS);
 		sleep(random(10, 100));
-		return methods.interfaces.getComponent(INTERFACE_TAB_STATS, component).doHover();
+		return methods.interfaces.getComponent(INTERFACE_TAB_STATS, component)
+		                         .doHover();
 	}
 
 }

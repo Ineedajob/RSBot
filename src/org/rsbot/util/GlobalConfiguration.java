@@ -79,7 +79,7 @@ public class GlobalConfiguration {
 			public static final String UPDATE = UPDATER + "modscript";
 			public static final String WEB = UPDATER + "webwalker";
 			public static final String VERSION = UPDATER + "version";
-			public static final String PROJECT = "http://code.google.com/p/rsbot-client";
+			public static final String PROJECT = "https://github.com/RSBot/RSBot";
 			public static final String SITE = "http://www.powerbot.org";
 			public static final String STATS = "http://stats.powerbot.org/sync/";
 			public static final String AD_INFO = UPDATER + "botad-info";
@@ -244,11 +244,13 @@ public class GlobalConfiguration {
 
 	public static final String NAME_LOWERCASE = NAME.toLowerCase();
 
-	public static final String SITE_NAME = "Powerbot";
+	public static final String SITE_NAME = "powerbot";
 
 	private static final OperatingSystem CURRENT_OS;
 
 	public static boolean RUNNING_FROM_JAR = false;
+
+	public static final boolean SCRIPT_DRM = false;
 
 	static {
 		final URL resource = GlobalConfiguration.class.getClassLoader()

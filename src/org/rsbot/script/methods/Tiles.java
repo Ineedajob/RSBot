@@ -27,8 +27,8 @@ public class Tiles extends MethodProvider {
 	 * @return <tt>true</tt> if no exceptions were thrown; otherwise
 	 *         <tt>false</tt>.
 	 */
-	public boolean doAction(final RSTile tile, final double xd, final double yd, final int h,
-	                        final String action) {
+	public boolean doAction(final RSTile tile, final double xd,
+	                        final double yd, final int h, final String action) {
 		Point location = methods.calc.tileToScreen(tile, xd, yd, h);
 		if (location.x != -1 && location.y != -1) {
 			methods.mouse.move(location, 3, 3);
@@ -137,4 +137,17 @@ public class Tiles extends MethodProvider {
 		}
 		return close;
 	}
+
+	/**
+	 * Checks if the tile "t" is closer to the player than the tile "tt"
+	 *
+	 * @param t  First tile.
+	 * @param tt Second tile.
+	 * @return True if the first tile is closer to the player than the second
+	 *         tile, otherwise false.
+	 */
+	public boolean isCloser(RSTile t, RSTile tt) {
+		return methods.calc.distanceTo(t) < methods.calc.distanceTo(tt);
+	}
+
 }

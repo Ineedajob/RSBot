@@ -106,13 +106,15 @@ public class Prayer extends MethodProvider {
 	 *
 	 * @param prayer   The prayer to activate.
 	 * @param activate <tt>true</tt> to activate; <tt>false</tt> to deactivate.
-	 * @return <tt>true</tt> if the interface was clicked; otherwise <tt>false</tt>.
+	 * @return <tt>true</tt> if the interface was clicked; otherwise
+	 *         <tt>false</tt>.
 	 */
 	public boolean setPrayer(final Book prayer, final boolean activate) {
 		if (isPrayerOn(prayer) == activate) {
 			return false;
 		}
-		RSComponent pray = methods.interfaces.getComponent(271, 7).getComponent(prayer.getIndex());
+		RSComponent pray = methods.interfaces.getComponent(271, 7)
+		                                     .getComponent(prayer.getIndex());
 		// Check that the background color == activate, otherwise click
 		return (pray.getBackgroundColor() == -1) == activate
 				&& pray.doAction(activate ? "Activate" : "Deactivate");
@@ -127,7 +129,8 @@ public class Prayer extends MethodProvider {
 	 *         <tt>false</tt>.
 	 */
 	public boolean setQuickPrayer(final boolean activate) {
-		return methods.interfaces.getComponent(749, 2).doAction(activate ? "on" : "off");
+		return methods.interfaces.getComponent(749, 2).doAction(
+				activate ? "on" : "off");
 	}
 
 	/**
@@ -147,6 +150,27 @@ public class Prayer extends MethodProvider {
 			}
 		}
 		return selected.toArray(new RSComponent[selected.size()]);
+	}
+
+	/**
+	 * Gets the remaining prayer points.
+	 *
+	 * @return The number of prayer points left.
+	 */
+	public int getPrayerLeft() {
+		return Integer.parseInt(methods.interfaces.getComponent(
+				methods.game.INTERFACE_PRAYER_ORB, 4).getText());
+	}
+
+	/**
+	 * Gets the percentage of prayer points left based on the players current
+	 * prayer level.
+	 *
+	 * @return The percentage of prayer points left.
+	 */
+	public int getPrayerPercentLeft() {
+		return (100 * getPrayerLeft())
+				/ methods.skills.getCurrentLevel(Skills.PRAYER);
 	}
 
 }

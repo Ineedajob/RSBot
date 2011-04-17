@@ -342,9 +342,14 @@ public class Combat extends MethodProvider {
 	 */
 	public boolean isDead(final RSNPC npc) {
 		// getHPPercent() can return 0 when the Npc has a sliver of health left
-		// getAnimation() confirms a death animation is playing (to prevent false positives)
-		// getInteracting() confirms because it will no longer interact if dead/dying
-		return npc == null || !npc.isValid() || (npc.getHPPercent() == 0 && npc.getAnimation() != -1 && npc.getInteracting() == null);
+		// getAnimation() confirms a death animation is playing (to prevent
+		// false positives)
+		// getInteracting() confirms because it will no longer interact if
+		// dead/dying
+		return npc == null
+				|| !npc.isValid()
+				|| (npc.getHPPercent() == 0 && npc.getAnimation() != -1 && npc
+				.getInteracting() == null);
 	}
 
 }

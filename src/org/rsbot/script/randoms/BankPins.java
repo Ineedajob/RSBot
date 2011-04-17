@@ -43,8 +43,7 @@ public class BankPins extends Random {
 			interfaces.getComponent(14, 33).doClick();
 			sleep(300);
 		} else {
-			String pin = AccountManager.getPin(account.getName(), this
-					.getClass());
+			String pin = AccountManager.getPin(account.getName());
 			if ((pin == null) || (pin.length() != 4)) {
 				log.severe("You must add a bank pin to your account.");
 				stopScript(false);

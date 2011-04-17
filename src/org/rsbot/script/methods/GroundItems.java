@@ -47,7 +47,8 @@ public class GroundItems extends MethodProvider {
 	/**
 	 * Returns all ground items within the provided range.
 	 *
-	 * @param range The range (max distance in all directions) in which to check items for.
+	 * @param range The range (max distance in all directions) in which to check
+	 *              items for.
 	 * @return <tt>RSGroundItem</tt> array containing all of the items in range.
 	 */
 	public RSGroundItem[] getAll(int range) {
@@ -57,7 +58,8 @@ public class GroundItems extends MethodProvider {
 	/**
 	 * Returns all matching ground items within the provided range.
 	 *
-	 * @param range  The range (max distance in all directions) in which to check items for.
+	 * @param range  The range (max distance in all directions) in which to check
+	 *               items for.
 	 * @param filter Filters out unwanted matches.
 	 * @return <tt>RSGroundItem</tt> array containing all of the items in range.
 	 */
@@ -84,7 +86,8 @@ public class GroundItems extends MethodProvider {
 	 * Returns the nearest ground item that is accepted by the provided Filter.
 	 *
 	 * @param filter Filters out unwanted matches.
-	 * @return The nearest item that is accepted by the provided Filter; or null.
+	 * @return The nearest item that is accepted by the provided Filter; or
+	 *         null.
 	 */
 	public RSGroundItem getNearest(Filter<RSGroundItem> filter) {
 		int dist = 9999999;
@@ -97,7 +100,8 @@ public class GroundItems extends MethodProvider {
 			for (int y = minY; y <= maxY; y++) {
 				RSGroundItem[] items = getAllAt(x, y);
 				for (RSGroundItem item : items) {
-					if (filter.accept(item) && methods.calc.distanceTo(item.getLocation()) < dist) {
+					if (filter.accept(item)
+							&& methods.calc.distanceTo(item.getLocation()) < dist) {
 						dist = methods.calc.distanceTo(item.getLocation());
 						itm = item;
 					}
@@ -108,11 +112,13 @@ public class GroundItems extends MethodProvider {
 	}
 
 	/**
-	 * Returns the nearest item on the ground with an ID that matches any of the IDs provided.
+	 * Returns the nearest item on the ground with an ID that matches any of the
+	 * IDs provided.
 	 *
 	 * @param ids The IDs to look for.
 	 * @return RSItemTile of the nearest item with the an ID that matches any in
-	 *         the array of IDs provided; or null if no matching ground items were found.
+	 *         the array of IDs provided; or null if no matching ground items
+	 *         were found.
 	 */
 	public RSGroundItem getNearest(final int... ids) {
 		return getNearest(new Filter<RSGroundItem>() {
@@ -144,15 +150,19 @@ public class GroundItems extends MethodProvider {
 		HashTable itemNC = methods.client.getRSItemHashTable();
 		int id = x | y << 14 | methods.client.getPlane() << 28;
 
-		org.rsbot.client.NodeListCache itemNLC = (org.rsbot.client.NodeListCache) methods.nodes.lookup(itemNC, id);
+		org.rsbot.client.NodeListCache itemNLC = (org.rsbot.client.NodeListCache) methods.nodes
+				.lookup(itemNC, id);
 
 		if (itemNLC == null) {
 			return new RSGroundItem[0];
 		}
 
-		Deque<org.rsbot.client.RSItem> itemNL = new Deque<org.rsbot.client.RSItem>(itemNLC.getNodeList());
-		for (org.rsbot.client.RSItem item = itemNL.getHead(); item != null; item = itemNL.getNext()) {
-			list.add(new RSGroundItem(methods, new RSTile(x, y), new RSItem(methods, item)));
+		Deque<org.rsbot.client.RSItem> itemNL = new Deque<org.rsbot.client.RSItem>(
+				itemNLC.getNodeList());
+		for (org.rsbot.client.RSItem item = itemNL.getHead(); item != null; item = itemNL
+				.getNext()) {
+			list.add(new RSGroundItem(methods, new RSTile(x, y), new RSItem(
+					methods, item)));
 		}
 
 		return list.toArray(new RSGroundItem[list.size()]);

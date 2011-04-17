@@ -16,12 +16,11 @@ public class Mouse extends MethodProvider {
 	}
 
 	/**
-	 * Author - Enfilade
-	 * Moves the mouse a random distance between 1 and maxDistance from the
-	 * current position of the mouse by generating a random vector and then
-	 * multiplying it by a random number between 1 and maxDistance. The maximum
-	 * distance is cut short if the mouse would go off screen in the direction
-	 * it chose.
+	 * Author - Enfilade Moves the mouse a random distance between 1 and
+	 * maxDistance from the current position of the mouse by generating a random
+	 * vector and then multiplying it by a random number between 1 and
+	 * maxDistance. The maximum distance is cut short if the mouse would go off
+	 * screen in the direction it chose.
 	 *
 	 * @param maxDistance The maximum distance the cursor will move (exclusive)
 	 */
@@ -30,12 +29,11 @@ public class Mouse extends MethodProvider {
 	}
 
 	/**
-	 * Author - Enfilade
-	 * Moves the mouse a random distance between minDistance and maxDistance from
-	 * the current position of the mouse
-	 * by generating random vector and then multiplying it by a random number
-	 * between minDistance and maxDistance. The maximum distance is cut short
-	 * if the mouse would go off screen in the direction it chose.
+	 * Author - Enfilade Moves the mouse a random distance between minDistance
+	 * and maxDistance from the current position of the mouse by generating
+	 * random vector and then multiplying it by a random number between
+	 * minDistance and maxDistance. The maximum distance is cut short if the
+	 * mouse would go off screen in the direction it chose.
 	 *
 	 * @param minDistance The minimum distance the cursor will move
 	 * @param maxDistance The maximum distance the cursor will move (exclusive)
@@ -56,19 +54,30 @@ public class Mouse extends MethodProvider {
 		Point p = getLocation();
 		/* Calculate the x coordinate if the mouse moved the maximum distance */
 		int maxX = (int) Math.round(xvec * distance + p.x);
-		/* If the maximum x is offscreen, subtract that distance/xvec from the
-				 * maximum distance so the maximum distance will give a valid X coordinate*/
-		distance -= Math.abs((maxX - Math.max(0, Math.min(methods.game.getWidth(), maxX))) / xvec);
+		/*
+		 * If the maximum x is offscreen, subtract that distance/xvec from the
+		 * maximum distance so the maximum distance will give a valid X
+		 * coordinate
+		 */
+		distance -= Math.abs((maxX - Math.max(0,
+		                                      Math.min(methods.game.getWidth(), maxX)))
+				                     / xvec);
 		/* Do the same thing with the Y coordinate */
 		int maxY = (int) Math.round(yvec * distance + p.y);
-		distance -= Math.abs((maxY - Math.max(0, Math.min(methods.game.getHeight(), maxY))) / yvec);
-		/* If the maximum distance in the generated direction is too small,
-				 * don't move the mouse at all*/
+		distance -= Math.abs((maxY - Math.max(0,
+		                                      Math.min(methods.game.getHeight(), maxY)))
+				                     / yvec);
+		/*
+		 * If the maximum distance in the generated direction is too small,
+		 * don't move the mouse at all
+		 */
 		if (distance < minDistance) {
 			return;
 		}
-		/* With the calculated maximum distance, pick a random distance to move
-				 * the mouse between maxDistance and the calculated maximum distance */
+		/*
+		 * With the calculated maximum distance, pick a random distance to move
+		 * the mouse between maxDistance and the calculated maximum distance
+		 */
 		distance = random(minDistance, (int) distance);
 		/* Generate the point to move the mouse to and move it there */
 		move((int) (xvec * distance) + p.x, (int) (yvec * distance) + p.y);
@@ -120,7 +129,6 @@ public class Mouse extends MethodProvider {
 		drag(p.x, p.y);
 	}
 
-
 	/**
 	 * Clicks the mouse at its current location.
 	 *
@@ -130,7 +138,8 @@ public class Mouse extends MethodProvider {
 		click(leftClick, MouseHandler.DEFAULT_MAX_MOVE_AFTER);
 	}
 
-	public synchronized void click(final boolean leftClick, final int moveAfterDist) {
+	public synchronized void click(final boolean leftClick,
+	                               final int moveAfterDist) {
 		methods.inputManager.clickMouse(leftClick);
 		if (moveAfterDist > 0) {
 			sleep(random(50, 350));
@@ -161,7 +170,8 @@ public class Mouse extends MethodProvider {
 	 * @param leftClick <tt>true</tt> to left-click, <tt>false</tt>to right-click.
 	 * @see #move(int, int, int, int)
 	 */
-	public synchronized void click(final int x, final int y, final int randX, final int randY, final boolean leftClick) {
+	public synchronized void click(final int x, final int y, final int randX,
+	                               final int randY, final boolean leftClick) {
 		move(x, y, randX, randY);
 		sleep(random(50, 350));
 		click(leftClick, MouseHandler.DEFAULT_MAX_MOVE_AFTER);
@@ -179,8 +189,8 @@ public class Mouse extends MethodProvider {
 	 * @param moveAfterDist The maximum distance in pixels to move on both axes shortly
 	 *                      after moving to the destination.
 	 */
-	public synchronized void click(final int x, final int y, final int randX, final int randY, final boolean leftClick,
-	                               final int moveAfterDist) {
+	public synchronized void click(final int x, final int y, final int randX,
+	                               final int randY, final boolean leftClick, final int moveAfterDist) {
 		move(x, y, randX, randY);
 		sleep(random(50, 350));
 		click(leftClick, moveAfterDist);
@@ -196,7 +206,8 @@ public class Mouse extends MethodProvider {
 		click(p.x, p.y, leftClick);
 	}
 
-	public void click(final Point p, final int x, final int y, final boolean leftClick) {
+	public void click(final Point p, final int x, final int y,
+	                  final boolean leftClick) {
 		click(p.x, p.y, x, y, leftClick);
 	}
 
@@ -211,7 +222,8 @@ public class Mouse extends MethodProvider {
 	 * @param moveAfterDist The maximum distance in pixels to move on both axes shortly
 	 *                      after moving to the destination.
 	 */
-	public void click(final Point p, final int x, final int y, final boolean leftClick, final int moveAfterDist) {
+	public void click(final Point p, final int x, final int y,
+	                  final boolean leftClick, final int moveAfterDist) {
 		click(p.x, p.y, x, y, leftClick, moveAfterDist);
 	}
 
@@ -220,10 +232,10 @@ public class Mouse extends MethodProvider {
 	 */
 	public void clickSlightly() {
 		Point p = new Point(
-				(int) (getLocation().getX() + (Math.random() * 50 > 25 ?
-				                               1 : -1) * (30 + Math.random() * 90)),
-				(int) (getLocation().getY() + (Math.random() * 50 > 25 ?
-				                               1 : -1) * (30 + Math.random() * 90)));
+				(int) (getLocation().getX() + (Math.random() * 50 > 25 ? 1 : -1)
+						* (30 + Math.random() * 90)), (int) (getLocation()
+						.getY() + (Math.random() * 50 > 25 ? 1 : -1)
+						* (30 + Math.random() * 90)));
 		if (p.getX() < 1 || p.getY() < 1 || p.getX() > 761 || p.getY() > 499) {
 			clickSlightly();
 			return;
@@ -244,7 +256,8 @@ public class Mouse extends MethodProvider {
 	/**
 	 * Changes the mouse speed
 	 *
-	 * @param speed The speed to move the mouse at. 4-10 is advised, 1 being the fastest.
+	 * @param speed The speed to move the mouse at. 4-10 is advised, 1 being the
+	 *              fastest.
 	 * @see #getSpeed()
 	 */
 	public void setSpeed(final int speed) {
@@ -294,13 +307,14 @@ public class Mouse extends MethodProvider {
 	 * @param randY y-axis randomness (added to y).
 	 * @see #move(int, int, int, int, int, int)
 	 */
-	public void move(final int speed, final int x, final int y, final int randX, final int randY) {
+	public void move(final int speed, final int x, final int y,
+	                 final int randX, final int randY) {
 		move(speed, x, y, randX, randY, 0);
 	}
 
 	/**
-	 * Moves the mouse to the specified point at a certain speed,
-	 * then moves a random distance up to <code>afterOffset</code>.
+	 * Moves the mouse to the specified point at a certain speed, then moves a
+	 * random distance up to <code>afterOffset</code>.
 	 *
 	 * @param speed       The lower, the faster.
 	 * @param x           The x destination.
@@ -310,8 +324,8 @@ public class Mouse extends MethodProvider {
 	 * @param afterOffset The maximum distance in pixels to move on both axes shortly
 	 *                    after moving to the destination.
 	 */
-	public synchronized void move(final int speed, final int x, final int y, final int randX, final int randY,
-	                              final int afterOffset) {
+	public synchronized void move(final int speed, final int x, final int y,
+	                              final int randX, final int randY, final int afterOffset) {
 		if (x != -1 || y != -1) {
 			methods.inputManager.moveMouse(speed, x, y, randX, randY);
 			if (afterOffset > 0) {
@@ -354,7 +368,8 @@ public class Mouse extends MethodProvider {
 	/**
 	 * @see #move(int, int, int, int, int, int)
 	 */
-	public void move(final Point p, final int randX, final int randY, final int afterOffset) {
+	public void move(final Point p, final int randX, final int randY,
+	                 final int afterOffset) {
 		move(getSpeed(), p.x, p.y, randX, randY, afterOffset);
 	}
 
@@ -408,11 +423,9 @@ public class Mouse extends MethodProvider {
 	 */
 	public void moveSlightly() {
 		Point p = new Point(
-				(int) (getLocation().getX() + (Math.random() * 50 > 25 ? 1
-				                                                       : -1)
-						* (30 + Math.random() * 90)),
-				(int) (getLocation().getY() + (Math.random() * 50 > 25 ? 1
-				                                                       : -1)
+				(int) (getLocation().getX() + (Math.random() * 50 > 25 ? 1 : -1)
+						* (30 + Math.random() * 90)), (int) (getLocation()
+						.getY() + (Math.random() * 50 > 25 ? 1 : -1)
 						* (30 + Math.random() * 90)));
 		if (p.getX() < 1 || p.getY() < 1 || p.getX() > 761 || p.getY() > 499) {
 			moveSlightly();
@@ -423,7 +436,8 @@ public class Mouse extends MethodProvider {
 
 	/**
 	 * @param maxDistance The maximum distance outwards.
-	 * @return A random x value between the current client location and the max distance outwards.
+	 * @return A random x value between the current client location and the max
+	 *         distance outwards.
 	 */
 	public int getRandomX(final int maxDistance) {
 		Point p = getLocation();
@@ -434,13 +448,16 @@ public class Mouse extends MethodProvider {
 			return p.x - random(0, p.x < maxDistance ? p.x : maxDistance);
 		} else {
 			int dist = methods.game.getWidth() - p.x;
-			return p.x + random(1, dist < maxDistance && dist > 0 ? dist : maxDistance);
+			return p.x
+					+ random(1, dist < maxDistance && dist > 0 ? dist
+					                                           : maxDistance);
 		}
 	}
 
 	/**
 	 * @param maxDistance The maximum distance outwards.
-	 * @return A random y value between the current client location and the max distance outwards.
+	 * @return A random y value between the current client location and the max
+	 *         distance outwards.
 	 */
 	public int getRandomY(final int maxDistance) {
 		Point p = getLocation();
@@ -451,7 +468,9 @@ public class Mouse extends MethodProvider {
 			return p.y - random(0, p.y < maxDistance ? p.y : maxDistance);
 		} else {
 			int dist = methods.game.getHeight() - p.y;
-			return p.y + random(1, dist < maxDistance && dist > 0 ? dist : maxDistance);
+			return p.y
+					+ random(1, dist < maxDistance && dist > 0 ? dist
+					                                           : maxDistance);
 		}
 	}
 

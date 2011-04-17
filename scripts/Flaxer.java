@@ -129,7 +129,6 @@ public class Flaxer extends Script implements PaintListener {
 		return random(100, 200);
 	}
 
-	@Override
 	public void onRepaint(Graphics render) {
 		if (startTime == 0) {
 			return;
