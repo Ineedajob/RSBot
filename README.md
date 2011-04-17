@@ -1,18 +1,31 @@
-RSBot - An open source automation package for the popular MMORPG, Runescape
+# RSBot
 
+An open source automation package for the popular MMORPG, Runescape.
 
-Dependencies
-------------
+Download the latest source code with:
 
-Java Developer Kit
+    git clone git://github.com/RSBot/RSBot.git
 
+## Dependencies
 
-Compiling - Windows
------------------
+ * [Java Development Kit](http://www.oracle.com/technetwork/java/javase/index-137561.html)
 
-RSBot uses JDK to compile.  This can simply be executed by using the Compile.bat provided.
+## RSBot on Windows
 
-Running - Windows
------------------
+### Compiling
 
-RSBot requires java to run, and can be started by simply opening the jar file named RSBot.jar.
+Make sure JDK is installed, then execute the `Compile.bat` file by *double-clicking* on it.
+
+### Running
+
+Java is required to run RSBot. You can run the client by *double-clicking* the JAR file named `RSBot.jar`.
+
+## RSBot on Linux
+
+### Compiling
+
+Make sure JDK and other needed packages (e.g. make) are installed on your system. Execute `make all` in a terminal to compile RSBot.
+
+### Running
+
+To run RSBot, *double-click* on the compiled JAR file, `RSBot.jar`, or execute `java -jar RSBot.jar` in a terminal.
