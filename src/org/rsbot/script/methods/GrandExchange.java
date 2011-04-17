@@ -139,12 +139,13 @@ public class GrandExchange extends MethodProvider {
 			str = stripFormatting(str);
 			str = str.substring(str.indexOf(58) + 2, str.length());
 			str = str.replace(",", "");
+			str.trim();
 			if (!str.endsWith("%")) {
-				if (!str.endsWith("k") && !str.endsWith("m")) {
+				if (!str.endsWith("k") && !str.endsWith("m") && !str.endsWith("b")) {
 					return Double.parseDouble(str);
 				}
 				return Double.parseDouble(str.substring(0, str.length() - 1))
-						* (str.endsWith("m") ? 1000000 : 1000);
+						* (str.endsWith("b") ? 1000000000 : str.endsWith("m") ? 1000000 : 1000);
 			}
 			int k = str.startsWith("+") ? 1 : -1;
 			str = str.substring(1);
