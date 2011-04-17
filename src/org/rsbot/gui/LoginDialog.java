@@ -10,6 +10,7 @@ import java.awt.event.*;
 
 /**
  * @author Timer
+ * @author Aut0r
  */
 public class LoginDialog extends JDialog {
 
