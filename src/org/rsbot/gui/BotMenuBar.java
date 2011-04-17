@@ -51,16 +51,16 @@ public class BotMenuBar extends JMenuBar {
 		// Other
 		DEBUG_MAP.put("Log Messages", MessageLogger.class);
 
-		TITLES = new String[]{"File", "Edit", "View", "Help"};
-		ELEMENTS = new String[][]{
-				{"New Bot", "Close Bot", "-", "Run Script", "Stop Script",
-				 "Pause Script", "-", "Snap to Tray", "Save Screenshot",
-				 "-", "Exit"},
-				{"Accounts", "-", "ToggleF Force Input", "ToggleF Less CPU",
-				 "-", "ToggleF Disable Anti-Randoms",
-				 "ToggleF Disable Auto Login", "-",
-				 "ToggleF Disable Advertisments"}, constructDebugs(),
-				{"Site", "Project", "About"}};
+		TITLES = new String[] { "File", "Edit", "View", "Help" };
+		ELEMENTS = new String[][] {
+				{ "New Bot", "Close Bot", "-", "Run Script", "Stop Script",
+						"Pause Script", "-", "Snap to Tray", "Save Screenshot",
+						"-", "Exit" },
+				{ "Accounts", "-", "ToggleF Force Input", "ToggleF Less CPU",
+						"-", "ToggleF Disable Anti-Randoms",
+						"ToggleF Disable Auto Login", "-",
+						"ToggleF Disable Advertisments" }, constructDebugs(),
+				{ "Site", "Project", "About" } };
 	}
 
 	private static String[] constructDebugs() {
@@ -134,7 +134,7 @@ public class BotMenuBar extends JMenuBar {
 				item.setEnabled(false);
 			}
 			disable("All Debugging", "Force Input", "Less CPU",
-			        "Disable Anti-Randoms", "Disable Auto Login");
+					"Disable Anti-Randoms", "Disable Auto Login");
 		} else {
 			commandMenuItem.get("Close Bot").setEnabled(true);
 			commandMenuItem.get("Run Script").setEnabled(true);
@@ -221,8 +221,8 @@ public class BotMenuBar extends JMenuBar {
 	public void saveProps() {
 		Properties props = new Properties();
 		props.setProperty("Advertisments",
-		                  getValue(commandCheckMap.get("Disable Advertisments")
-		                                          .isSelected()));
+				getValue(commandCheckMap.get("Disable Advertisments")
+						.isSelected()));
 		/*
 		 * props.setProperty("GameState",
 		 * getValue(commandCheckMap.get("Game State").isSelected()));
@@ -266,10 +266,10 @@ public class BotMenuBar extends JMenuBar {
 		try {
 			props.store(
 					new FileOutputStream(GlobalConfiguration.Paths
-							                     .getHomeDirectory()
-							                     + File.separator
-							                     + "Settings"
-							                     + File.separator + "menuBar.properties"),
+							.getHomeDirectory()
+							+ File.separator
+							+ "Settings"
+							+ File.separator + "menuBar.properties"),
 					"Menubar properties");
 		} catch (IOException e) {
 		}
@@ -280,15 +280,15 @@ public class BotMenuBar extends JMenuBar {
 	public void loadProps() {
 		Properties props = new Properties();
 		File f = new File(GlobalConfiguration.Paths.getHomeDirectory()
-				                  + File.separator + "Settings" + File.separator
-				                  + "menuBar.properties");
+				+ File.separator + "Settings" + File.separator
+				+ "menuBar.properties");
 		if (f.exists()) {
 			try {
 				props.load(new FileInputStream(GlobalConfiguration.Paths
-						                               .getHomeDirectory()
-						                               + File.separator
-						                               + "Settings"
-						                               + File.separator + "menuBar.properties"));
+						.getHomeDirectory()
+						+ File.separator
+						+ "Settings"
+						+ File.separator + "menuBar.properties"));
 			} catch (IOException e) {
 			}
 			if (props.getProperty("Advertisments").contains("true")) {
