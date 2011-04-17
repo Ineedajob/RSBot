@@ -34,7 +34,6 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 	private static final ScriptSource SRC_SOURCES;
 	private static final ScriptSource SRC_PRECOMPILED;
 	private static final ScriptSource SRC_BUNDLED;
-	private static final ScriptSource SRC_DRM;
 
 	static {
 		SRC_SOURCES = new FileScriptSource(new File(
@@ -48,7 +47,6 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 			SRC_BUNDLED = new FileScriptSource(new File("." + File.separator
 					                                            + GlobalConfiguration.Paths.SCRIPTS_NAME_SRC));
 		}
-		SRC_DRM = new ScriptBoxSource(LoginDialog.CREDENTIALS);
 	}
 
 	private final Bot bot;
@@ -85,7 +83,6 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 
 	private void load() {
 		scripts.clear();
-		scripts.addAll(SRC_DRM.list());
 		scripts.addAll(SRC_BUNDLED.list());
 		scripts.addAll(SRC_PRECOMPILED.list());
 		scripts.addAll(SRC_SOURCES.list());
@@ -186,9 +183,6 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 		connect.setEnabled(GlobalConfiguration.SCRIPT_DRM ? true : false);
 
 		if (connect.isEnabled()) {
-			final Frame loginFrame = new Frame();
-			final LoginDialog loginDialog = new LoginDialog(loginFrame);
-			connected = !loginDialog.getCredentials().username.equals("");
 			ActionListener listenConnect = new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					if (connected) {
@@ -200,7 +194,6 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 						connect.repaint();
 						connected = false;
 					} else {
-						loginDialog.setVisible();
 						connect.setIcon(new ImageIcon(
 								GlobalConfiguration
 										.getImage(

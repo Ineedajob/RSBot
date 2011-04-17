@@ -45,6 +45,7 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 	private BotHome home;
 	private List<Bot> bots = new ArrayList<Bot>();
 	private boolean showAds = true;
+	private String serviceKey;
 
 	public BotGUI() {
 		init();
@@ -109,6 +110,15 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 				Bot current = getCurrentBot();
 				if (current != null) {
 					showScriptSelector(current);
+				}
+			} else if (option.equals("Service Key")) {
+				serviceKey = (String) JOptionPane.showInputDialog(this, null, option,JOptionPane.QUESTION_MESSAGE, null, null, serviceKey);
+				if (serviceKey == null || serviceKey.length() == 0) {
+					log.info("Services have been disabled");
+				} else if (serviceKey.length() != 40) {
+					log.warning("Invalid service key");
+				} else {
+					log.info("Services have been linked to {0}");
 				}
 			} else if (option.equals("Stop Script")) {
 				Bot current = getCurrentBot();
@@ -271,6 +281,10 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 		}
 	}
 
+	public String getServiceKey() {
+		return serviceKey;
+	}
+	
 	public BotPanel getPanel() {
 		return panel;
 	}
