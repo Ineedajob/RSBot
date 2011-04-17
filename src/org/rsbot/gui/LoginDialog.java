@@ -6,10 +6,7 @@ import org.rsbot.util.GlobalConfiguration;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 
 /**
  * @author Timer
@@ -45,7 +42,13 @@ public class LoginDialog extends JDialog {
 		loginButton = new JButton();
 		infoPane = new JPanel();
 		textPane = new JTextPane();
-		setDefaultCloseOperation(JDialog.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent e) {
+				dispose();
+				System.exit(0);
+			}
+		});
 		setResizable(false);
 		setMinimumSize(new Dimension(250, 200));
 		setAlwaysOnTop(true);
@@ -114,8 +117,21 @@ public class LoginDialog extends JDialog {
 				}
 			}
 		});
-		passwordField.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+		passwordField.addKeyListener(new KeyAdapter() {
+			public void keyReleased(KeyEvent e) {
+				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+					CREDENTIALS.username = usernameField.getText();
+					CREDENTIALS.password = new String(passwordField.getPassword());
+					LoginManager lM = new LoginManager();
+					if (lM.valid()) {
+						dispose();
+					} else {
+						CREDENTIALS.username = "";
+						passwordField.setText("");
+						CREDENTIALS.password = "";
+						displayMessage = lM.message();
+					}
+				}
 			}
 		});
 		registerLabel.addMouseListener(new MouseAdapter() {
