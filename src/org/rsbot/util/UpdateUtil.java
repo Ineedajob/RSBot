@@ -104,7 +104,7 @@ public class UpdateUtil {
 			} catch (IOException ioe) {
 			}
 		}
-		UpdateUtil.log.info("Unable to download lateset version information.");
+		UpdateUtil.log.info("Unable to download latest version information.");
 		return -1;
 	}
 
