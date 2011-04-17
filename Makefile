@@ -7,8 +7,8 @@ BINDIR=bin
 LSTF=temp.txt
 IMGDIR=$(RES)/images
 MANIFEST=$(RES)/Manifest.txt
-VERSIONFILE=$(RES)/version.txt
-VERSION=`cat $(VERSIONFILE)`
+VERSIONFILE=version.txt
+VERSION=`cat $(RES)/$(VERSIONFILE)`
 SCRIPTS=scripts
 DIST=RSBot.jar
 
@@ -21,7 +21,7 @@ all: Bot Scripts
 	@echo "Implementation-Version: \"$(VERSION)\"" >> $(LSTF)
 	@if [ -e $(DIST) ]; then rm -fv $(DIST); fi
 	jar cfm $(DIST) $(LSTF) -C $(BINDIR) . $(SCRIPTS)/*.class $(IMGDIR)/* $(RES)/*.bat $(RES)/*.sh $(RES)/version.txt
-	@rm -fv $(LSTF)
+	@rm -f $(LSTF)
 
 Bot:
 	@if [ ! -d $(BINDIR) ]; then mkdir $(BINDIR); fi
