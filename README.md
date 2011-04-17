@@ -6,29 +6,29 @@ Download the latest source code with:
 
     git clone git://github.com/RSBot/RSBot.git
 
+Subversion is also supported:
+
+    svn checkout http://svn.github.com/RSBot/RSBot.git
+
 ## Dependencies
 
- * [Java Development Kit](http://www.oracle.com/technetwork/java/javase/index-137561.html)
-
-## RSBot on Windows
+ * [Java Development Kit](http://www.oracle.com/technetwork/java/javase/downloads/)
 
 ### Compiling
 
-Make sure JDK is installed, then execute the `Compile.bat` file by *double-clicking* on it.
+Make sure JDK is installed, then execute the `Compile.bat` file by *double clicking* it.
 
 ### Running
 
-Java is required to run RSBot. You can run the client by *double-clicking* the JAR file named `RSBot.jar`.
-
-## RSBot on Linux
+Java is required to run RSBot. You can run the client by *double clicking* the JAR file named `RSBot.jar`.
 
 ### Compiling
 
-Make sure JDK and other needed packages (e.g. make) are installed on your system. Execute `make all` in a terminal to compile RSBot.
+Make sure JDK and other needed packages (e.g. `make`) are installed on your system. Execute `make all` in a terminal to compile RSBot.
 
 ### Running
 
-To run RSBot, *double-click* on the compiled JAR file, `RSBot.jar`, or execute `java -jar RSBot.jar` in a terminal.
+To run RSBot, *double click* on the compiled JAR file, `RSBot.jar`, or execute `java -jar RSBot.jar` in terminal.
 
 ## Legal 
 
