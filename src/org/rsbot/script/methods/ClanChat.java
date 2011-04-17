@@ -1,7 +1,8 @@
 package org.rsbot.script.methods;
 
-import java.util.ArrayList;
 import org.rsbot.script.wrappers.RSComponent;
+
+import java.util.ArrayList;
 
 /**
  * Clan chat related operations.

@@ -168,7 +168,7 @@ public class MethodContext {
 	public final Prayer prayer = new Prayer(this);
 
 	/**
-	 * The singleton of Prayer
+	 * The singleton of FriendsChat
 	 */
 	public final FriendChat friendChat = new FriendChat(this);
 
