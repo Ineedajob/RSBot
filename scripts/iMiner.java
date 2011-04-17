@@ -1,5 +1,5 @@
 /*
- * Copyright © 2011 TehGamer 
+ * Copyright (c) 2011 TehGamer 
  */
 import java.awt.Color;
 import java.awt.Container;
