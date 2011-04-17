@@ -112,7 +112,8 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 					showScriptSelector(current);
 				}
 			} else if (option.equals("Service Key")) {
-				serviceKey = (String) JOptionPane.showInputDialog(this, null, option,JOptionPane.QUESTION_MESSAGE, null, null, serviceKey);
+				serviceKey = (String) JOptionPane.showInputDialog(this, null, option, JOptionPane.QUESTION_MESSAGE,
+				                                                  null, null, serviceKey);
 				if (serviceKey == null || serviceKey.length() == 0) {
 					log.info("Services have been disabled");
 				} else if (serviceKey.length() != 40) {
@@ -284,7 +285,7 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 	public String getServiceKey() {
 		return serviceKey;
 	}
-	
+
 	public BotPanel getPanel() {
 		return panel;
 	}

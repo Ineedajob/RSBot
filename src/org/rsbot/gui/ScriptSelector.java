@@ -4,7 +4,10 @@ import org.rsbot.bot.Bot;
 import org.rsbot.script.Script;
 import org.rsbot.script.internal.ScriptHandler;
 import org.rsbot.script.internal.event.ScriptListener;
-import org.rsbot.service.*;
+import org.rsbot.service.FileScriptSource;
+import org.rsbot.service.ScriptDefinition;
+import org.rsbot.service.ScriptSource;
+import org.rsbot.service.ServiceException;
 import org.rsbot.util.GlobalConfiguration;
 
 import javax.swing.*;

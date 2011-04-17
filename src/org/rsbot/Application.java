@@ -6,7 +6,6 @@ import org.rsbot.log.LogOutputStream;
 import org.rsbot.log.SystemConsoleHandler;
 import org.rsbot.util.Extractor;
 
-import javax.swing.*;
 import java.awt.*;
 import java.io.PrintStream;
 import java.util.logging.Level;

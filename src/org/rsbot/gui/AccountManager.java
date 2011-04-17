@@ -11,12 +11,7 @@ import javax.swing.table.TableColumnModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.security.MessageDigest;
@@ -36,12 +31,15 @@ public class AccountManager extends JDialog implements ActionListener {
 	private static final String FILE_NAME = GlobalConfiguration.Paths.getAccountsFile();
 
 	private static final String[] RANDOM_REWARDS = {"Cash", "Runes", "Coal",
-			"Essence", "Ore", "Bars", "Gems", "Herbs", "Seeds", "Charms",
-			"Surprise", "Emote", "Costume", "Attack", "Defence", "Strength",
-			"Constitution", "Range", "Prayer", "Magic", "Cooking", "Woodcutting",
-			"Fletching", "Fishing", "Firemaking", "Crafting", "Smithing", "Mining",
-			"Herblore", "Agility", "Thieving", "Slayer", "Farming", "Runecrafting",
-			"Hunter", "Construction", "Summoning", "Dungeoneering"};
+	                                                "Essence", "Ore", "Bars", "Gems", "Herbs", "Seeds", "Charms",
+	                                                "Surprise", "Emote", "Costume", "Attack", "Defence", "Strength",
+	                                                "Constitution", "Range", "Prayer", "Magic", "Cooking",
+	                                                "Woodcutting",
+	                                                "Fletching", "Fishing", "Firemaking", "Crafting", "Smithing",
+	                                                "Mining",
+	                                                "Herblore", "Agility", "Thieving", "Slayer", "Farming",
+	                                                "Runecrafting",
+	                                                "Hunter", "Construction", "Summoning", "Dungeoneering"};
 
 	private static final String[] VALID_KEYS = {"password", "pin", "reward", "member", "take_breaks"};
 
@@ -118,18 +116,22 @@ public class AccountManager extends JDialog implements ActionListener {
 					if (str == null || str.isEmpty()) {
 						return null;
 					}
-					if (getColumnClass(column) == Boolean.class)
+					if (getColumnClass(column) == Boolean.class) {
 						return Boolean.parseBoolean(str);
-					else if (getColumnClass(column) == Integer.class)
+					} else if (getColumnClass(column) == Integer.class) {
 						return Integer.parseInt(str);
-					else return str;
+					} else {
+						return str;
+					}
 				}
 			}
 			return null;
 		}
 
 		public String getColumnName(int column) {
-			if (column == 0) return "Username";
+			if (column == 0) {
+				return "Username";
+			}
 			String str = VALID_KEYS[column - 1];
 			StringBuilder b = new StringBuilder();
 			boolean space = true;
@@ -144,10 +146,12 @@ public class AccountManager extends JDialog implements ActionListener {
 		}
 
 		public Class getColumnClass(int column) {
-			if (getColumnName(column).equals("Member"))
+			if (getColumnName(column).equals("Member")) {
 				return Boolean.class;
-			if (getColumnName(column).equals("Take Breaks"))
+			}
+			if (getColumnName(column).equals("Take Breaks")) {
 				return Boolean.class;
+			}
 			return Object.class;
 		}
 
@@ -157,7 +161,9 @@ public class AccountManager extends JDialog implements ActionListener {
 
 		public void setValueAt(Object value, int row, int column) {
 			Map<String, String> acc = accounts.get(userForRow(row));
-			if (acc == null) return;
+			if (acc == null) {
+				return;
+			}
 			acc.put(getColumnName(column).toLowerCase().replace(' ', '_'), String.valueOf(value));
 			fireTableCellUpdated(row, column);
 		}
@@ -167,8 +173,9 @@ public class AccountManager extends JDialog implements ActionListener {
 			for (int k = 0; it.hasNext() && k < row; k++) {
 				it.next();
 			}
-			if (it.hasNext())
+			if (it.hasNext()) {
 				return it.next();
+			}
 			return null;
 		}
 
@@ -189,8 +196,11 @@ public class AccountManager extends JDialog implements ActionListener {
 				dispose();
 			} else if (label.equals("Add")) {
 				String str = JOptionPane.showInputDialog(getParent(),
-						"Enter the account username.", "New Account", JOptionPane.QUESTION_MESSAGE);
-				if (str == null || str.isEmpty()) return;
+				                                         "Enter the account username.", "New Account",
+				                                         JOptionPane.QUESTION_MESSAGE);
+				if (str == null || str.isEmpty()) {
+					return;
+				}
 				accounts.put(str, new TreeMap<String, String>());
 				accounts.get(str).put("reward", RANDOM_REWARDS[0]);
 				int row = table.getRowCount();
@@ -245,18 +255,18 @@ public class AccountManager extends JDialog implements ActionListener {
 
 		newButton.setText("Add");
 		bar.add(newButton, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
-				GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-				new Insets(0, 0, 5, 5), 0, 0));
+		                                          GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+		                                          new Insets(0, 0, 5, 5), 0, 0));
 
 		removeButton.setText("Remove");
 		bar.add(removeButton, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0,
-				GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-				new Insets(0, 0, 5, 5), 0, 0));
+		                                             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+		                                             new Insets(0, 0, 5, 5), 0, 0));
 
 		doneButton.setText("Done");
 		bar.add(doneButton, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0,
-				GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-				new Insets(0, 0, 5, 0), 0, 0));
+		                                           GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+		                                           new Insets(0, 0, 5, 0), 0, 0));
 
 		newButton.addActionListener(this);
 		doneButton.addActionListener(this);
@@ -279,7 +289,7 @@ public class AccountManager extends JDialog implements ActionListener {
 	 * Encipher/decipher a string using a SHA1 hash of key.
 	 *
 	 * @param start The input String
-	 * @param en	true to encrypt; false to decipher.
+	 * @param en    true to encrypt; false to decipher.
 	 * @return The ciphered String.
 	 */
 	private static String cipher(final String start, final boolean en) {
@@ -429,9 +439,11 @@ public class AccountManager extends JDialog implements ActionListener {
 	 * @return true if the object is supported, false if it isn't
 	 */
 	private static boolean isValidKey(final String key) {
-		for (String check : VALID_KEYS)
-			if (key.equalsIgnoreCase(check))
+		for (String check : VALID_KEYS) {
+			if (key.equalsIgnoreCase(check)) {
 				return true;
+			}
+		}
 		return false;
 	}
 

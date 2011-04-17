@@ -392,17 +392,20 @@ public class GlobalConfiguration {
 		BufferedReader reader = null;
 		try {
 			is = new InputStreamReader(RUNNING_FROM_JAR ? GlobalConfiguration.class
-					.getClassLoader().getResourceAsStream(Paths.Resources.VERSION) : new FileInputStream(Paths.Resources.VERSION));				
+					.getClassLoader().getResourceAsStream(Paths.Resources.VERSION) :
+			                           new FileInputStream(Paths.Resources.VERSION));
 			reader = new BufferedReader(is);
 			String s = reader.readLine().trim();
 			return Integer.parseInt(s);
 		} catch (Exception e) {
 		} finally {
 			try {
-				if (is != null)
+				if (is != null) {
 					is.close();
-				if (reader != null)
+				}
+				if (reader != null) {
 					reader.close();
+				}
 			} catch (IOException ioe) {
 			}
 		}

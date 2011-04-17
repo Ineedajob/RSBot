@@ -122,10 +122,12 @@ public class SplashAd extends JDialog implements MouseListener {
 			return false;
 		} finally {
 			try {
-				if (stream != null)
+				if (stream != null) {
 					stream.close();
-				if (reader != null)
+				}
+				if (reader != null) {
 					reader.close();
+				}
 			} catch (IOException e) {
 			}
 		}
