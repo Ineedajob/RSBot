@@ -1,5 +1,5 @@
 # 0 to disable, 1 to enable
-enabled = 1
+enabled = 0
 
 # advertiser web address
 link = http://links.powerbot.org/botad
@@ -17,4 +17,4 @@ popup = 1
 refresh = 86400
 
 # last update (in yyyyMMddHHmm UTC), forces refresh if this is more recent than cache date
-updated = 201104151220
+updated = 201104170740
