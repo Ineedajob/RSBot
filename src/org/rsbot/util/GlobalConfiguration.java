@@ -77,7 +77,7 @@ public class GlobalConfiguration {
 			public static final String DOWNLOAD = UPDATER + "update";
 			public static final String UPDATE = UPDATER + "modscript";
 			public static final String WEB = UPDATER + "webwalker";
-			public static final String VERSION = UPDATER + "version.txt";
+			public static final String VERSION = UPDATER + "version";
 			public static final String PROJECT = UPDATER + "git-project";
 			public static final String SITE = "http://www.powerbot.org";
 			public static final String STATS = "http://stats.powerbot.org/sync/";
