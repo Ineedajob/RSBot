@@ -92,11 +92,13 @@ public class SplashAd extends JDialog implements MouseListener {
 
 	private boolean sync() {
 		HashMap<String, String> keys = new HashMap<String, String>(7);
+		InputStreamReader stream = null;
+		BufferedReader reader = null;
 
 		try {
 			URLConnection connection = new URL(GlobalConfiguration.Paths.URLs.AD_INFO).openConnection();
-			InputStreamReader stream = new InputStreamReader(connection.getInputStream());
-			BufferedReader reader = new BufferedReader(stream);
+			stream = new InputStreamReader(connection.getInputStream());
+			reader = new BufferedReader(stream);
 			String line;
 			while ((line = reader.readLine()) != null) {
 				line = line.trim();
@@ -118,6 +120,14 @@ public class SplashAd extends JDialog implements MouseListener {
 			}
 		} catch (Exception e) {
 			return false;
+		} finally {
+			try {
+				if (stream != null)
+					stream.close();
+				if (reader != null)
+					reader.close();
+			} catch (IOException e) {
+			}
 		}
 
 		if (keys.isEmpty() || !keys.containsKey("enabled") || !parseBool(keys.get("enabled"))) {
