@@ -318,7 +318,7 @@ public class InputManager {
 	}
 
 	public void sendKeys(final String text, final boolean pressEnter) {
-		sendKeys(text, pressEnter, 100, 200);
+		sendKeys(text, pressEnter, 50, 100);
 	}
 
 	public void sendKeys(final String text, final boolean pressEnter, final int delay) {
