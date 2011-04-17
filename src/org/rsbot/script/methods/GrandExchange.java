@@ -1,6 +1,8 @@
 package org.rsbot.script.methods;
 
 import org.rsbot.script.wrappers.GEItemInfo;
+import org.rsbot.script.wrappers.RSInterface;
+import org.rsbot.script.wrappers.RSItem;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -10,15 +12,28 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Obtains information on tradeable items from the Grand Exchange website.
- *
- * @author Aion
+ * Obtains information on tradeable items from the Grand Exchange website and
+ * Grand Exchange ingame interaction.
+ * 
+ * @author Aion, Boolean
  */
 @SuppressWarnings("deprecation")
 public class GrandExchange extends MethodProvider {
 
 	private static final String HOST = "http://services.runescape.com";
 	private static final String GET = "/m=itemdb_rs/viewitem.ws?obj=";
+
+	public static final int INTERFACE_GRAND_EXCHANGE_WINDOW = 105;
+	public static final int INTERFACE_GRAND_EXCHANGE_SELL_INVENTORY = 107;
+	public static final int INTERFACE_BUY_SEARCH_BOX = 389;
+	public static final int[] GRAND_EXCHANGE_SELL_BUTTON = { 29, 45, 61, 77,
+			93, 109 };
+	public static final int[] GRAND_EXCHANGE_BUY_BUTTON = { 30, 46, 62, 78, 94,
+			110 };
+	public static final int[] GRAND_EXCHANGE_OFFER_BOXES = { 19, 35, 51, 67,
+			83, 99 };
+
+	public static final int[] GRAND_EXCHANGE_CLERK = { 6528, 6529 };
 
 	private static final Pattern PATTERN = Pattern
 			.compile("(?i)<td><img src=\".+obj_sprite\\.gif\\?id=(\\d+)\" alt=\"(.+)\"");
@@ -28,9 +43,33 @@ public class GrandExchange extends MethodProvider {
 	}
 
 	/**
+	 * Checks if Grand Exchange is open.
+	 * 
+	 * @return True if it's open, otherwise false.
+	 */
+	public boolean isOpen() {
+		return methods.interfaces.get(INTERFACE_GRAND_EXCHANGE_WINDOW)
+				.isValid();
+	}
+
+	/**
+	 * Opens Grand Exchange window.
+	 * 
+	 * @return True if it's open, otherwise false.
+	 */
+	public boolean open() {
+		if (!methods.interfaces.get(INTERFACE_GRAND_EXCHANGE_WINDOW).isValid()) {
+			methods.npcs.getNearest(GRAND_EXCHANGE_CLERK).doAction("Exchange");
+		}
+		return methods.interfaces.get(INTERFACE_GRAND_EXCHANGE_WINDOW)
+				.isValid();
+	}
+
+	/**
 	 * Gets the name of the given item ID. Should not be used.
-	 *
-	 * @param itemID The item ID to look for.
+	 * 
+	 * @param itemID
+	 *            The item ID to look for.
 	 * @return The name of the given item ID or an empty String if unavailable.
 	 * @see GrandExchange#lookup(int)
 	 */
@@ -44,8 +83,9 @@ public class GrandExchange extends MethodProvider {
 
 	/**
 	 * Gets the ID of the given item name. Should not be used.
-	 *
-	 * @param itemName The name of the item to look for.
+	 * 
+	 * @param itemName
+	 *            The name of the item to look for.
 	 * @return The ID of the given item name or -1 if unavailable.
 	 * @see GrandExchange#lookup(java.lang.String)
 	 */
@@ -59,8 +99,9 @@ public class GrandExchange extends MethodProvider {
 
 	/**
 	 * Collects data for a given item ID from the Grand Exchange website.
-	 *
-	 * @param itemID The item ID.
+	 * 
+	 * @param itemID
+	 *            The item ID.
 	 * @return An instance of GrandExchange.GEItem; <code>null</code> if unable
 	 *         to fetch data.
 	 */
@@ -101,16 +142,17 @@ public class GrandExchange extends MethodProvider {
 
 	/**
 	 * Collects data for a given item name from the Grand Exchange website.
-	 *
-	 * @param itemName The name of the item.
+	 * 
+	 * @param itemName
+	 *            The name of the item.
 	 * @return An instance of GrandExchange.GEItem; <code>null</code> if unable
 	 *         to fetch data.
 	 */
 	public GEItem lookup(final String itemName) {
 		try {
 			URL url = new URL(GrandExchange.HOST
-					                  + "/m=itemdb_rs/results.ws?query=" + itemName
-					                  + "&price=all&members=");
+					+ "/m=itemdb_rs/results.ws?query=" + itemName
+					+ "&price=all&members=");
 			BufferedReader br = new BufferedReader(new InputStreamReader(
 					url.openStream()));
 			String input;
@@ -163,7 +205,7 @@ public class GrandExchange extends MethodProvider {
 
 	/**
 	 * Provides access to GEItem Information.
-	 *
+	 * 
 	 * @author Jacmob, Aut0r
 	 */
 	public static class GEItem {
@@ -191,7 +233,7 @@ public class GrandExchange extends MethodProvider {
 
 		/**
 		 * Gets the change in price for the last 30 days of this item.
-		 *
+		 * 
 		 * @return The change in price for the last 30 days of this item.
 		 */
 		public double getChange30Days() {
@@ -200,7 +242,7 @@ public class GrandExchange extends MethodProvider {
 
 		/**
 		 * Gets the change in price for the last 90 days of this item.
-		 *
+		 * 
 		 * @return The change in price for the last 90 days of this item.
 		 */
 		public double getChange90Days() {
@@ -209,7 +251,7 @@ public class GrandExchange extends MethodProvider {
 
 		/**
 		 * Gets the change in price for the last 180 days of this item.
-		 *
+		 * 
 		 * @return The change in price for the last 180 days of this item.
 		 */
 		public double getChange180Days() {
@@ -218,7 +260,7 @@ public class GrandExchange extends MethodProvider {
 
 		/**
 		 * Gets the ID of this item.
-		 *
+		 * 
 		 * @return The ID of this item.
 		 */
 		public int getID() {
@@ -227,7 +269,7 @@ public class GrandExchange extends MethodProvider {
 
 		/**
 		 * Gets the market price of this item.
-		 *
+		 * 
 		 * @return The market price of this item.
 		 */
 		public int getGuidePrice() {
@@ -236,7 +278,7 @@ public class GrandExchange extends MethodProvider {
 
 		/**
 		 * Gets the name of this item.
-		 *
+		 * 
 		 * @return The name of this item.
 		 */
 		public String getName() {
@@ -245,7 +287,7 @@ public class GrandExchange extends MethodProvider {
 
 		/**
 		 * Gets the description of this item.
-		 *
+		 * 
 		 * @return The description of this item.
 		 */
 		public String getDescription() {
