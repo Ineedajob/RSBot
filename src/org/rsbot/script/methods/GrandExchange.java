@@ -10,30 +10,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Obtains information on tradeable items from the Grand Exchange website and
- * Grand Exchange ingame interaction.
- *
- * @author Aion, Boolean
- */
+ * Obtains information on tradeable items from the Grand Exchange website and * Grand Exchange ingame interaction. *
+ * @author Aion, Boolean */
 @SuppressWarnings("deprecation")
 public class GrandExchange extends MethodProvider {
 
 	private static final String HOST = "http://services.runescape.com";
 	private static final String GET = "/m=itemdb_rs/viewitem.ws?obj=";
 
-	public static final int INTERFACE_GRAND_EXCHANGE_WINDOW = 105;
-	public static final int INTERFACE_GRAND_EXCHANGE_SELL_INVENTORY = 107;
-	public static final int INTERFACE_BUY_SEARCH_BOX = 389;
-	public static final int[] GRAND_EXCHANGE_SELL_BUTTON = {29, 45, 61, 77,
-	                                                        93, 109};
-	public static final int[] GRAND_EXCHANGE_BUY_BUTTON = {30, 46, 62, 78, 94,
-	                                                       110};
-	public static final int[] GRAND_EXCHANGE_OFFER_BOXES = {19, 35, 51, 67,
-	                                                        83, 99};
-
-	public static final int[] GRAND_EXCHANGE_CLERK = {6528, 6529};
-
-	private static final Pattern PATTERN = Pattern
+	public static final int INTERFACE_GRAND_EXCHANGE_WINDOW = 105;	public static final int INTERFACE_GRAND_EXCHANGE_SELL_INVENTORY = 107;	public static final int INTERFACE_BUY_SEARCH_BOX = 389;	public static final int[] GRAND_EXCHANGE_SELL_BUTTON = {29, 45, 61, 77,	                                                        93, 109};	public static final int[] GRAND_EXCHANGE_BUY_BUTTON = {30, 46, 62, 78, 94,	                                                       110};	public static final int[] GRAND_EXCHANGE_OFFER_BOXES = {19, 35, 51, 67,	                                                        83, 99};	public static final int[] GRAND_EXCHANGE_CLERK = {6528, 6529};	private static final Pattern PATTERN = Pattern
 			.compile("(?i)<td><img src=\".+obj_sprite\\.gif\\?id=(\\d+)\" alt=\"(.+)\"");
 
 	GrandExchange() {
@@ -41,30 +26,7 @@ public class GrandExchange extends MethodProvider {
 	}
 
 	/**
-	 * Checks if Grand Exchange is open.
-	 *
-	 * @return True if it's open, otherwise false.
-	 */
-	public boolean isOpen() {
-		return methods.interfaces.get(INTERFACE_GRAND_EXCHANGE_WINDOW)
-		                         .isValid();
-	}
-
-	/**
-	 * Opens Grand Exchange window.
-	 *
-	 * @return True if it's open, otherwise false.
-	 */
-	public boolean open() {
-		if (!methods.interfaces.get(INTERFACE_GRAND_EXCHANGE_WINDOW).isValid()) {
-			methods.npcs.getNearest(GRAND_EXCHANGE_CLERK).doAction("Exchange");
-		}
-		return methods.interfaces.get(INTERFACE_GRAND_EXCHANGE_WINDOW)
-		                         .isValid();
-	}
-
-	/**
-	 * Gets the name of the given item ID. Should not be used.
+	 * Checks if Grand Exchange is open.	 *	 * @return True if it's open, otherwise false.	 */	public boolean isOpen() {		return methods.interfaces.get(INTERFACE_GRAND_EXCHANGE_WINDOW)		                         .isValid();	}	/**	 * Opens Grand Exchange window.	 *	 * @return True if it's open, otherwise false.	 */	public boolean open() {		if (!methods.interfaces.get(INTERFACE_GRAND_EXCHANGE_WINDOW).isValid()) {			methods.npcs.getNearest(GRAND_EXCHANGE_CLERK).doAction("Exchange");		}		return methods.interfaces.get(INTERFACE_GRAND_EXCHANGE_WINDOW)		                         .isValid();	}	/**	 * Gets the name of the given item ID. Should not be used.
 	 *
 	 * @param itemID The item ID to look for.
 	 * @return The name of the given item ID or an empty String if unavailable.
@@ -175,7 +137,7 @@ public class GrandExchange extends MethodProvider {
 			str = stripFormatting(str);
 			str = str.substring(str.indexOf(58) + 2, str.length());
 			str = str.replace(",", "");
-			str.trim();
+			str = str.trim();
 			if (!str.endsWith("%")) {
 				if (!str.endsWith("k") && !str.endsWith("m") && !str.endsWith("b")) {
 					return Double.parseDouble(str);

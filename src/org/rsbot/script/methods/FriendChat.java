@@ -17,7 +17,7 @@ public class FriendChat extends MethodProvider {
 	}
 
 	private static final Pattern HTML_TAG = Pattern.compile("(^[^<]+>|<[^>]+>|<[^>]+$)");
-	public static final int INTERFACE_FRIEND_CHAT = 1110;
+	public static final int INTERFACE_FRIEND_CHAT = 1109;
 	public static final int INTERFACE_FRIEND_CHAT_CHECK = 16;
 	public static final int INTERFACE_FRIEND_CHAT_JOIN_BUTTON = 30;
 	public static final int INTERFACE_FRIEND_CHAT_CHANNEL_INFO = 1;
