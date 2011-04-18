@@ -1,7 +1,5 @@
 package org.rsbot.script.methods;
 
-import org.rsbot.event.events.MessageEvent;
-import org.rsbot.event.listeners.MessageListener;
 import org.rsbot.script.wrappers.RSInterface;
 import org.rsbot.script.wrappers.RSPlayer;
 
@@ -12,7 +10,7 @@ import java.util.logging.Logger;
  *
  * @author Timer
  */
-public class Trade extends MethodProvider implements MessageListener {
+public class Trade extends MethodProvider {
 	private static final Logger log = Logger.getLogger(Trade.class.getName());
 
 	public static final int INTERFACE_TRADE_MAIN = 335;
@@ -29,8 +27,6 @@ public class Trade extends MethodProvider implements MessageListener {
 	public static final int TRADE_TYPE_MAIN = 0;
 	public static final int TRADE_TYPE_SECONDARY = 1;
 	public static final int TRADE_TYPE_NONE = 2;
-
-	private String lastMessage;
 
 	Trade(MethodContext ctx) {
 		super(ctx);
@@ -139,13 +135,11 @@ public class Trade extends MethodProvider implements MessageListener {
 	 */
 	public boolean acceptTrade() {
 		if (inTradeMain()) {
-			methods.interfaces.get(INTERFACE_TRADE_MAIN).getComponent(INTERFACE_TRADE_MAIN_ACCEPT).doAction(
+			return methods.interfaces.get(INTERFACE_TRADE_MAIN).getComponent(INTERFACE_TRADE_MAIN_ACCEPT).doAction(
 					"Accept");
-			return lastMessage.contains("accept");
 		} else if (inTradeSecond()) {
-			methods.interfaces.get(INTERFACE_TRADE_SECOND).getComponent(INTERFACE_TRADE_SECOND_ACCEPT).doAction(
+			return methods.interfaces.get(INTERFACE_TRADE_SECOND).getComponent(INTERFACE_TRADE_SECOND_ACCEPT).doAction(
 					"Accept");
-			return lastMessage.contains("accept");
 		} else {
 			return false;
 		}
@@ -158,13 +152,11 @@ public class Trade extends MethodProvider implements MessageListener {
 	 */
 	public boolean declineTrade() {
 		if (inTradeMain()) {
-			methods.interfaces.get(INTERFACE_TRADE_MAIN).getComponent(INTERFACE_TRADE_MAIN_DECLINE).doAction(
+			return methods.interfaces.get(INTERFACE_TRADE_MAIN).getComponent(INTERFACE_TRADE_MAIN_DECLINE).doAction(
 					"Decline");
-			return lastMessage.contains("declined");
 		} else if (inTradeSecond()) {
-			methods.interfaces.get(INTERFACE_TRADE_SECOND).getComponent(INTERFACE_TRADE_SECOND_DECLINE).doAction(
-					"Decline");
-			return lastMessage.contains("declined");
+			return methods.interfaces.get(INTERFACE_TRADE_SECOND).getComponent(INTERFACE_TRADE_SECOND_DECLINE)
+			                         .doAction("Decline");
 		} else {
 			return false;
 		}
@@ -216,8 +208,4 @@ public class Trade extends MethodProvider implements MessageListener {
 		return isTradingWith().equals(name);
 	}
 
-	// A rather crude way to find out if trade was accepted or declined.
-	public void messageReceived(MessageEvent e) {
-		lastMessage = e.getMessage().toLowerCase();
-	}
 }
