@@ -139,7 +139,7 @@ public class GrandExchange extends MethodProvider {
 			str = stripFormatting(str);
 			str = str.substring(str.indexOf(58) + 2, str.length());
 			str = str.replace(",", "");
-			str.trim();
+			str = str.trim();
 			if (!str.endsWith("%")) {
 				if (!str.endsWith("k") && !str.endsWith("m") && !str.endsWith("b")) {
 					return Double.parseDouble(str);
