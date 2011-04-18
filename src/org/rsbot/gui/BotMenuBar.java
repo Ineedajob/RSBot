@@ -222,7 +222,7 @@ public class BotMenuBar extends JMenuBar {
 	public void saveProps() {
 		Properties props = new Properties();
 		props.setProperty("Advertisements",
-		                  getValue(commandCheckMap.get("Disable Advertisments")
+		                  getValue(commandCheckMap.get("Disable Advertisements")
 		                                          .isSelected()));
 		props.setProperty("ExitMessages",
 		                  getValue(commandCheckMap.get("Disable Exit Confirmation")
