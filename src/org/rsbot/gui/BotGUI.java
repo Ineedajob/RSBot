@@ -401,8 +401,9 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 		addWindowListener(new WindowAdapter() {
 
 			public void windowClosing(WindowEvent e) {
-				dispose();
-				cleanExit();
+				if (cleanExit()) {
+					dispose();
+				}
 			}
 		});
 
@@ -533,12 +534,15 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 		}
 	}
 
-	private void cleanExit() {
+	private boolean cleanExit() {
 		int result = JOptionPane.showConfirmDialog(this,
 				"Are you sure you want to exit?", "Exit",
 				JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 		if (result == JOptionPane.OK_OPTION) {
 			System.exit(0);
+			return true;
+		} else {
+			return false;
 		}
 	}
 
