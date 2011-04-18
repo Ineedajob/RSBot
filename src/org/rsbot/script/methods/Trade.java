@@ -1,5 +1,7 @@
 package org.rsbot.script.methods;
 
+import org.rsbot.event.events.MessageEvent;
+import org.rsbot.event.listeners.MessageListener;
 import org.rsbot.script.wrappers.RSInterface;
 import org.rsbot.script.wrappers.RSPlayer;
 
@@ -10,11 +12,13 @@ import java.util.logging.Logger;
  *
  * @author Timer
  */
-public class Trade extends MethodProvider {
+public class Trade extends MethodProvider implements MessageListener{
 	private static final Logger log = Logger.getLogger(Trade.class.getName());
 
 	public static final int INTERFACE_TRADE_MAIN = 335;
 	public static final int INTERFACE_TRADE_SECOND = 334;
+    public static final int INTERFACE_TRADE_MAIN_NAME = 15;
+	public static final int INTERFACE_TRADE_SECOND_NAME = 54;
 	public static final int INTERFACE_TRADE_MAIN_OUR = 30;
 	public static final int INTERFACE_TRADE_MAIN_THEIR = 33;
 	public static final int INTERFACE_TRADE_MAIN_ACCEPT = 17;
@@ -25,6 +29,8 @@ public class Trade extends MethodProvider {
 	public static final int TRADE_TYPE_MAIN = 0;
 	public static final int TRADE_TYPE_SECONDARY = 1;
 	public static final int TRADE_TYPE_NONE = 2;
+
+    private String lastMessage;
 
 	Trade(MethodContext ctx) {
 		super(ctx);
@@ -79,8 +85,7 @@ public class Trade extends MethodProvider {
 				return false;
 			}
 		} else {
-			//TODO check if we're trading with the correct person.
-			return false;
+			return isTradingWith(playerName);
 		}
 	}
 
@@ -113,8 +118,7 @@ public class Trade extends MethodProvider {
 				return false;
 			}
 		} else {
-			//TODO check if we're trading with the correct person.
-			return false;
+			return isTradingWith(targetPlayer.getName());
 		}
 	}
 
@@ -135,13 +139,13 @@ public class Trade extends MethodProvider {
 	 */
 	public boolean acceptTrade() {
 		if (inTradeMain()) {
-			return methods.interfaces.get(INTERFACE_TRADE_MAIN).getComponent(INTERFACE_TRADE_MAIN_ACCEPT).doAction(
+			methods.interfaces.get(INTERFACE_TRADE_MAIN).getComponent(INTERFACE_TRADE_MAIN_ACCEPT).doAction(
 					"Accept");
-			//TODO verify.
+			return lastMessage.contains("accept");
 		} else if (inTradeSecond()) {
-			return methods.interfaces.get(INTERFACE_TRADE_SECOND).getComponent(INTERFACE_TRADE_SECOND_ACCEPT).doAction(
+			methods.interfaces.get(INTERFACE_TRADE_SECOND).getComponent(INTERFACE_TRADE_SECOND_ACCEPT).doAction(
 					"Accept");
-			//TODO verify.
+			return lastMessage.contains("accept");
 		} else {
 			return false;
 		}
@@ -154,13 +158,13 @@ public class Trade extends MethodProvider {
 	 */
 	public boolean declineTrade() {
 		if (inTradeMain()) {
-			return methods.interfaces.get(INTERFACE_TRADE_MAIN).getComponent(INTERFACE_TRADE_MAIN_DECLINE).doAction(
+			methods.interfaces.get(INTERFACE_TRADE_MAIN).getComponent(INTERFACE_TRADE_MAIN_DECLINE).doAction(
 					"Decline");
-			//TODO verify.
+            return lastMessage.contains("declined");
 		} else if (inTradeSecond()) {
-			return methods.interfaces.get(INTERFACE_TRADE_SECOND).getComponent(INTERFACE_TRADE_SECOND_DECLINE).doAction(
+			methods.interfaces.get(INTERFACE_TRADE_SECOND).getComponent(INTERFACE_TRADE_SECOND_DECLINE).doAction(
 					"Decline");
-			//TODO verify.
+			return lastMessage.contains("declined");
 		} else {
 			return false;
 		}
@@ -197,4 +201,23 @@ public class Trade extends MethodProvider {
 		}
 		return false;
 	}
+
+    private String isTradingWith(){
+        if(inTradeMain()){
+            String name = methods.interfaces.getComponent(INTERFACE_TRADE_MAIN, INTERFACE_TRADE_MAIN_NAME).getText();
+            return name.substring(name.indexOf(": ") + 2);
+        }else if(inTradeSecond()){
+            return methods.interfaces.getComponent(INTERFACE_TRADE_SECOND, INTERFACE_TRADE_SECOND_NAME).getText();
+        }
+        return null;
+    }
+
+    private boolean isTradingWith(String name){
+        return isTradingWith().equals(name);
+    }
+
+    // A rather crude way to find out if trade was accepted or declined.
+    public void messageReceived(MessageEvent e) {
+        lastMessage = e.getMessage().toLowerCase();
+    }
 }
