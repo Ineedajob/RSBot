@@ -2,16 +2,11 @@ package org.rsbot.bot;
 
 import org.rsbot.util.GlobalConfiguration;
 
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
-import java.io.ByteArrayOutputStream;
 
 /**
  * @author Timer
@@ -39,8 +34,9 @@ class WebLoader {
 			di.readFully(buffer);
 			di.close();
 			buffer = ungzip(buffer);
-			if (buffer.length == 0)
+			if (buffer.length == 0) {
 				log.warning("Could not retrieve web matrix");
+			}
 			if (!file.exists()) {
 				file.createNewFile();
 			}
@@ -62,21 +58,24 @@ class WebLoader {
 	 * Ungzips a binary buffer if it is gzipped.
 	 */
 	private byte[] ungzip(byte[] data) {
-		if (data.length < 2)
+		if (data.length < 2) {
 			return data;
-		
+		}
+
 		int header = (data[0] | data[1] << 8) ^ 0xffff0000;
-		if (header != GZIPInputStream.GZIP_MAGIC)
+		if (header != GZIPInputStream.GZIP_MAGIC) {
 			return data;
+		}
 
 		try {
 			ByteArrayInputStream b = new ByteArrayInputStream(data);
 			GZIPInputStream gzin = new GZIPInputStream(b);
 			ByteArrayOutputStream out = new ByteArrayOutputStream(data.length);
-			for (int c = gzin.read(); c != -1; c = gzin.read())
+			for (int c = gzin.read(); c != -1; c = gzin.read()) {
 				out.write(c);
+			}
 			return out.toByteArray();
-		} catch (IOException e){
+		} catch (IOException e) {
 			e.printStackTrace();
 			return data;
 		}

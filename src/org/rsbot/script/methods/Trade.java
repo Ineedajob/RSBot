@@ -12,12 +12,12 @@ import java.util.logging.Logger;
  *
  * @author Timer
  */
-public class Trade extends MethodProvider implements MessageListener{
+public class Trade extends MethodProvider implements MessageListener {
 	private static final Logger log = Logger.getLogger(Trade.class.getName());
 
 	public static final int INTERFACE_TRADE_MAIN = 335;
 	public static final int INTERFACE_TRADE_SECOND = 334;
-    public static final int INTERFACE_TRADE_MAIN_NAME = 15;
+	public static final int INTERFACE_TRADE_MAIN_NAME = 15;
 	public static final int INTERFACE_TRADE_SECOND_NAME = 54;
 	public static final int INTERFACE_TRADE_MAIN_OUR = 30;
 	public static final int INTERFACE_TRADE_MAIN_THEIR = 33;
@@ -30,7 +30,7 @@ public class Trade extends MethodProvider implements MessageListener{
 	public static final int TRADE_TYPE_SECONDARY = 1;
 	public static final int TRADE_TYPE_NONE = 2;
 
-    private String lastMessage;
+	private String lastMessage;
 
 	Trade(MethodContext ctx) {
 		super(ctx);
@@ -160,7 +160,7 @@ public class Trade extends MethodProvider implements MessageListener{
 		if (inTradeMain()) {
 			methods.interfaces.get(INTERFACE_TRADE_MAIN).getComponent(INTERFACE_TRADE_MAIN_DECLINE).doAction(
 					"Decline");
-            return lastMessage.contains("declined");
+			return lastMessage.contains("declined");
 		} else if (inTradeSecond()) {
 			methods.interfaces.get(INTERFACE_TRADE_SECOND).getComponent(INTERFACE_TRADE_SECOND_DECLINE).doAction(
 					"Decline");
@@ -202,22 +202,22 @@ public class Trade extends MethodProvider implements MessageListener{
 		return false;
 	}
 
-    private String isTradingWith(){
-        if(inTradeMain()){
-            String name = methods.interfaces.getComponent(INTERFACE_TRADE_MAIN, INTERFACE_TRADE_MAIN_NAME).getText();
-            return name.substring(name.indexOf(": ") + 2);
-        }else if(inTradeSecond()){
-            return methods.interfaces.getComponent(INTERFACE_TRADE_SECOND, INTERFACE_TRADE_SECOND_NAME).getText();
-        }
-        return null;
-    }
+	private String isTradingWith() {
+		if (inTradeMain()) {
+			String name = methods.interfaces.getComponent(INTERFACE_TRADE_MAIN, INTERFACE_TRADE_MAIN_NAME).getText();
+			return name.substring(name.indexOf(": ") + 2);
+		} else if (inTradeSecond()) {
+			return methods.interfaces.getComponent(INTERFACE_TRADE_SECOND, INTERFACE_TRADE_SECOND_NAME).getText();
+		}
+		return null;
+	}
 
-    private boolean isTradingWith(String name){
-        return isTradingWith().equals(name);
-    }
+	private boolean isTradingWith(String name) {
+		return isTradingWith().equals(name);
+	}
 
-    // A rather crude way to find out if trade was accepted or declined.
-    public void messageReceived(MessageEvent e) {
-        lastMessage = e.getMessage().toLowerCase();
-    }
+	// A rather crude way to find out if trade was accepted or declined.
+	public void messageReceived(MessageEvent e) {
+		lastMessage = e.getMessage().toLowerCase();
+	}
 }

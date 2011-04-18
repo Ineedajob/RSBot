@@ -84,10 +84,10 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 	public void setTitle(String title) {
 		if (title != null) {
 			super.setTitle(title + " - " + GlobalConfiguration.NAME + " v"
-					+ ((float) GlobalConfiguration.getVersion() / 100));
+					               + ((float) GlobalConfiguration.getVersion() / 100));
 		} else {
 			super.setTitle(GlobalConfiguration.NAME + " v"
-					+ ((float) GlobalConfiguration.getVersion() / 100));
+					               + ((float) GlobalConfiguration.getVersion() / 100));
 		}
 	}
 
@@ -121,8 +121,8 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 				}
 			} else if (option.equals("Service Key")) {
 				serviceKey = (String) JOptionPane.showInputDialog(this, null,
-						option, JOptionPane.QUESTION_MESSAGE, null, null,
-						serviceKey);
+				                                                  option, JOptionPane.QUESTION_MESSAGE, null, null,
+				                                                  serviceKey);
 				if (serviceKey == null || serviceKey.length() == 0) {
 					log.info("Services have been disabled");
 				} else if (serviceKey.length() != 40) {
@@ -174,7 +174,7 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 			} else if (option.equals("Disable Advertisements")) {
 				showAds = ((JCheckBoxMenuItem) evt.getSource()).isSelected();
 			} else if (option.equals("Disable Exit Confirmation")) {
-					disableConfirmationMessages = ((JCheckBoxMenuItem) evt.getSource()).isSelected();
+				disableConfirmationMessages = ((JCheckBoxMenuItem) evt.getSource()).isSelected();
 			} else {
 				Bot current = getCurrentBot();
 				if (current != null) {
@@ -208,7 +208,7 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 					for (String key : BotMenuBar.DEBUG_MAP.keySet()) {
 						Class<?> el = BotMenuBar.DEBUG_MAP.get(key);
 						boolean wasSelected = menuBar.getCheckBox(key)
-								.isSelected();
+						                             .isSelected();
 						menuBar.getCheckBox(key).setSelected(selected);
 						if (selected) {
 							if (!wasSelected) {
@@ -237,11 +237,11 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 			} else if (option.equals("Project")) {
 				openURL(GlobalConfiguration.Paths.URLs.PROJECT);
 			} else if (option.equals("About")) {
-				JOptionPane.showMessageDialog(this, new String[] {
+				JOptionPane.showMessageDialog(this, new String[]{
 						"An open source bot developed by the community.",
 						"Visit " + GlobalConfiguration.Paths.URLs.SITE
-								+ "/ for more information." }, "About",
-						JOptionPane.INFORMATION_MESSAGE);
+								+ "/ for more information."}, "About",
+				                              JOptionPane.INFORMATION_MESSAGE);
 			}
 		} else if (menu.equals("Tab")) {
 			Bot curr = getCurrentBot();
@@ -254,11 +254,11 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 				toolBar.setScriptButton(BotToolBar.RUN_SCRIPT);
 				toolBar.setOverrideInput(false);
 				toolBar.setInputState(Environment.INPUT_KEYBOARD
-						| Environment.INPUT_MOUSE);
+						                      | Environment.INPUT_MOUSE);
 			} else {
 				setTitle(curr.getAccountName());
 				Map<Integer, Script> scriptMap = curr.getScriptHandler()
-						.getRunningScripts();
+				                                     .getRunningScripts();
 				if (scriptMap.size() > 0) {
 					if (scriptMap.values().iterator().next().isPaused()) {
 						toolBar.setScriptButton(BotToolBar.RESUME_SCRIPT);
@@ -365,11 +365,11 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 		if (AccountManager.getAccountNames().length == 0) {
 			JOptionPane
 					.showMessageDialog(this,
-							"No accounts found! Please create one before using the bot.");
+					                   "No accounts found! Please create one before using the bot.");
 			AccountManager.getInstance().showGUI();
 		} else if (bot.getMethodContext() == null) {
 			JOptionPane.showMessageDialog(this,
-					"The client is not currently loaded!");
+			                              "The client is not currently loaded!");
 		} else {
 			new ScriptSelector(this, bot).showGUI();
 		}
@@ -384,9 +384,9 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 			ScriptManifest prop = s.getClass().getAnnotation(
 					ScriptManifest.class);
 			int result = JOptionPane.showConfirmDialog(this,
-					"Would you like to stop the script " + prop.name() + "?",
-					"Script", JOptionPane.OK_CANCEL_OPTION,
-					JOptionPane.QUESTION_MESSAGE);
+			                                           "Would you like to stop the script " + prop.name() + "?",
+			                                           "Script", JOptionPane.OK_CANCEL_OPTION,
+			                                           JOptionPane.QUESTION_MESSAGE);
 
 			if (result == JOptionPane.OK_OPTION) {
 				sh.stopScript(id);
@@ -439,8 +439,8 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 		menuBar.setBot(null);
 		setJMenuBar(menuBar);
 		textScroll = new JScrollPane(TextAreaLogHandler.TEXT_AREA,
-				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		                             JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+		                             JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		textScroll.setBorder(null);
 		textScroll.setPreferredSize(new Dimension(PANEL_WIDTH, LOG_HEIGHT));
 		textScroll.setVisible(true);
@@ -464,7 +464,7 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 					menuBar.setOverrideInput(false);
 					String acct = bot.getAccountName();
 					toolBar.setTabLabel(bots.indexOf(bot) + 1,
-							acct == null ? "RuneScape" : acct);
+					                    acct == null ? "RuneScape" : acct);
 					toolBar.updateInputButton();
 					setTitle(acct);
 				}
@@ -516,28 +516,28 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 			if (os == GlobalConfiguration.OperatingSystem.MAC) {
 				Class<?> fileMgr = Class.forName("com.apple.eio.FileManager");
 				Method openURL = fileMgr.getDeclaredMethod("openURL",
-						new Class[] { String.class });
+				                                           new Class[]{String.class});
 				openURL.invoke(null, url);
 			} else if (os == GlobalConfiguration.OperatingSystem.WINDOWS) {
 				Runtime.getRuntime().exec(
 						"rundll32 url.dll,FileProtocolHandler " + url);
 			} else { // assume Unix or Linux
-				String[] browsers = { "firefox", "opera", "konqueror",
-						"epiphany", "mozilla", "netscape", "google-chrome",
-						"chromium-browser" };
+				String[] browsers = {"firefox", "opera", "konqueror",
+				                     "epiphany", "mozilla", "netscape", "google-chrome",
+				                     "chromium-browser"};
 				String browser = null;
 				for (int count = 0; (count < browsers.length)
 						&& (browser == null); count++) {
 					if (Runtime.getRuntime().exec(
-							new String[] { "which", browsers[count] })
-							.waitFor() == 0) {
+							new String[]{"which", browsers[count]})
+					           .waitFor() == 0) {
 						browser = browsers[count];
 					}
 				}
 				if (browser == null) {
 					throw new Exception("Could not find web browser");
 				} else {
-					Runtime.getRuntime().exec(new String[] { browser, url });
+					Runtime.getRuntime().exec(new String[]{browser, url});
 				}
 			}
 		} catch (Exception e) {
@@ -548,8 +548,8 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 	private boolean confirmRemoveBot() {
 		if (!disableConfirmationMessages) {
 			int result = JOptionPane.showConfirmDialog(this,
-					"Are you sure you want to close this bot?", "Close Bot",
-					JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+			                                           "Are you sure you want to close this bot?", "Close Bot",
+			                                           JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 			return (result == JOptionPane.OK_OPTION);
 		} else {
 			return true;
@@ -568,7 +568,7 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 				System.exit(0);
 			}
 			int result = JOptionPane.showConfirmDialog(this, message, "Exit",
-					JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+			                                           JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 			if (result == JOptionPane.OK_OPTION) {
 				System.exit(0);
 				return true;
