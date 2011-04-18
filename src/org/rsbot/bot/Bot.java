@@ -80,7 +80,7 @@ public class Bot {
 			}
 		});
 		sh = new ScriptHandler(this);
-		bh = new BreakHandler();
+		bh = new BreakHandler(this);
 		backBuffer = new BufferedImage(size.width, size.height,
 		                               BufferedImage.TYPE_INT_RGB);
 		image = new BufferedImage(size.width, size.height,

@@ -1,5 +1,7 @@
 package org.rsbot.script.internal;
 
+import org.rsbot.bot.Bot;
+
 import java.util.Random;
 
 public class BreakHandler {
@@ -9,14 +11,35 @@ public class BreakHandler {
 	private long nextBreak;
 	private long breakEnd;
 	private int ticks = 0;
+	private Bot bot;
+	private boolean checked = false;
+	private boolean result = false;
+
+	public BreakHandler(Bot bot) {
+		this.bot = bot;
+	}
 
 	public boolean isBreaking() {
 		return ticks > 50 && nextBreak > 0 && nextBreak < System.currentTimeMillis()
-				&& breakEnd > System.currentTimeMillis();
+				&& breakEnd > System.currentTimeMillis() && can();
+	}
+
+	private boolean can() {
+		if (checked) {
+			return result;
+		} else {
+			checked = true;
+			result = bot.getScriptHandler().onBreak();
+			return result;
+		}
 	}
 
 	public void tick() {
 		++ticks;
+		if (checked) {
+			checked = false;
+			bot.getScriptHandler().onBreakResume();
+		}
 		if (nextBreak < 0 || nextBreak - System.currentTimeMillis() < -30000) {
 			ticks = 0;
 			int offset = random(20, 120) * 60000;
