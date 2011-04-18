@@ -303,7 +303,7 @@ public class BotMenuBar extends JMenuBar {
 			}
 			if (props.getProperty("confirmation messages").contains("true")) {
 				commandCheckMap.get("Disable confirmation messages").setSelected(true);
-				disableConfirmationMessages = false;
+				disableConfirmationMessages = true;
 			}
 			/*
 			 * if (props.getProperty("GameState").contains("true")) {

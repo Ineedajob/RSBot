@@ -556,7 +556,7 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 		}
 	}
 
-	private boolean cleanExit() {
+	public boolean cleanExit() {
 		if (!disableConfirmationMessages) {
 			String message = "";
 			if (bots.size() == 1) {
