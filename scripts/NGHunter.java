@@ -1,23 +1,19 @@
-import java.awt.Point;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import javax.swing.JOptionPane;
-
 import org.rsbot.script.Script;
 import org.rsbot.script.ScriptManifest;
 import org.rsbot.script.methods.Game;
 import org.rsbot.script.methods.Objects;
 import org.rsbot.script.methods.Skills;
-import org.rsbot.script.wrappers.RSComponent;
-import org.rsbot.script.wrappers.RSGroundItem;
-import org.rsbot.script.wrappers.RSItem;
-import org.rsbot.script.wrappers.RSObject;
-import org.rsbot.script.wrappers.RSTile;
+import org.rsbot.script.wrappers.*;
 
-@ScriptManifest(name = "NGHunter", authors = "Rakura", keywords = "Hunter", version = 1.0, description = "crim swifts, trop wags, <grey,red> chins")
+import javax.swing.*;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+@ScriptManifest(name = "NGHunter", authors = "Rakura", keywords = "Hunter", version = 1.0,
+                description = "crim swifts, trop wags, <grey,red> chins")
 public class NGHunter extends Script {
 
 	private enum TileType {
@@ -33,7 +29,6 @@ public class NGHunter extends Script {
 			super(x, y);
 		}
 
-		@Override
 		public int compareTo(HunterTile other) {
 			return calc.distanceTo(this) - calc.distanceTo(other);
 		}
@@ -78,10 +73,10 @@ public class NGHunter extends Script {
 				wait = SNARE_WAIT;
 				failed = SNARE_FAILED;
 				caught = level >= 19 ? TROPICAL_WAGTAIL_CAUGHT
-						: CRIMSON_SWIFT_CAUGHT;
+				                     : CRIMSON_SWIFT_CAUGHT;
 				int selection = JOptionPane.showConfirmDialog(null,
-						"Bury bones?", "NGHunter", JOptionPane.YES_NO_OPTION,
-						JOptionPane.QUESTION_MESSAGE);
+				                                              "Bury bones?", "NGHunter", JOptionPane.YES_NO_OPTION,
+				                                              JOptionPane.QUESTION_MESSAGE);
 				bury = selection == JOptionPane.YES_OPTION;
 			}
 		}
@@ -101,8 +96,9 @@ public class NGHunter extends Script {
 	@Override
 	public boolean onStart() {
 
-		if (!walking.isRunEnabled())
+		if (!walking.isRunEnabled()) {
 			walking.setRun(true);
+		}
 
 		int startLevel = skills.getCurrentLevel(Skills.HUNTER);
 		consts = new Constants(startLevel);
@@ -173,7 +169,7 @@ public class NGHunter extends Script {
 
 	private void cleanInventory() {
 		RSItem[] meatNBones = inventory.getItems(Constants.BIRD_MEAT,
-				Constants.BONES);
+		                                         Constants.BONES);
 		List<RSItem> items = new ArrayList<RSItem>(Arrays.asList(meatNBones));
 		Collections.shuffle(items);
 		for (RSItem item : items) {
@@ -192,8 +188,9 @@ public class NGHunter extends Script {
 	@Override
 	public int loop() {
 		if (consts.level < 53) {
-			if (waiting || needCleaning())
+			if (waiting || needCleaning()) {
 				cleanInventory();
+			}
 		}
 		return loopAction();
 	}
@@ -205,29 +202,29 @@ public class NGHunter extends Script {
 		if (currentTile != null) {
 			boolean success;
 			switch (currentTile.type) {
-			case FALLEN:
-				success = reset(currentTile);
-				break;
-			case CAUGHT:
-			case FAILED:
-				success = collect(currentTile);
-				if (success) {
-					success = setup(currentTile);
-				}
-				break;
-			case EMPTY:
-				if (inventory.containsOneOf(consts.trap)) {
-					success = setup(currentTile);
-				} else {
-					myTiles.remove(currentTile);
-					nTraps--;
-					success = true;
-				}
-				break;
-			default:
-				// never happens. this is just to satisfy the compiler that
-				// 'success' is initialized
-				success = false;
+				case FALLEN:
+					success = reset(currentTile);
+					break;
+				case CAUGHT:
+				case FAILED:
+					success = collect(currentTile);
+					if (success) {
+						success = setup(currentTile);
+					}
+					break;
+				case EMPTY:
+					if (inventory.containsOneOf(consts.trap)) {
+						success = setup(currentTile);
+					} else {
+						myTiles.remove(currentTile);
+						nTraps--;
+						success = true;
+					}
+					break;
+				default:
+					// never happens. this is just to satisfy the compiler that
+					// 'success' is initialized
+					success = false;
 			}
 			if (success) {
 				phailCount = 0;
@@ -237,8 +234,9 @@ public class NGHunter extends Script {
 		} // else if (!waiting) {
 		// throw new AssertionError();
 		// }
-		if (phailCount > 10)
+		if (phailCount > 10) {
 			stopScript();
+		}
 		return 0;
 	}
 
@@ -272,8 +270,9 @@ public class NGHunter extends Script {
 					waiting = false;
 					tile.type = TileType.FALLEN;
 					tile.associated = gritem;
-					if (tile != exclude)
+					if (tile != exclude) {
 						return tile;
+					}
 				}
 			}
 		}
@@ -285,15 +284,17 @@ public class NGHunter extends Script {
 					waiting = false;
 					tile.type = TileType.CAUGHT;
 					tile.associated = rsobj;
-					if (tile != exclude)
+					if (tile != exclude) {
 						return tile;
+					}
 				}
 				if (id == consts.failed) {
 					waiting = false;
 					tile.type = TileType.FAILED;
 					tile.associated = rsobj;
-					if (tile != exclude)
+					if (tile != exclude) {
 						return tile;
+					}
 				}
 				if (id == consts.wait) {
 					waitingTraps++;
@@ -309,8 +310,9 @@ public class NGHunter extends Script {
 				waiting = false;
 				tile.type = TileType.EMPTY;
 				tile.associated = null;
-				if (tile != exclude)
+				if (tile != exclude) {
 					return tile;
+				}
 			}
 		}
 		return null;
@@ -325,8 +327,9 @@ public class NGHunter extends Script {
 		for (int x = minX; x <= maxX; x++) {
 			for (int y = minY; y <= maxY; y++) {
 				HunterTile t = new HunterTile(x, y);
-				if (isFree(t))
+				if (isFree(t)) {
 					available.add(t);
+				}
 			}
 		}
 		return getNearest(originalTile, available);
@@ -336,8 +339,9 @@ public class NGHunter extends Script {
 		for (RSObject obj : objects.getAllAt(tile)) {
 			RSObject.Type objType = obj.getType();
 			if (objType == RSObject.Type.INTERACTABLE
-					|| objType == RSObject.Type.BOUNDARY)
+					|| objType == RSObject.Type.BOUNDARY) {
 				return false;
+			}
 		}
 		return true;
 	}
@@ -375,14 +379,16 @@ public class NGHunter extends Script {
 	private boolean trapUp(HunterTile tile) {
 		if (waitForAnim(3000)) {
 			HunterTile nextTile = nextTile(tile);
-			if (nextTile != null)
+			if (nextTile != null) {
 				hoverTile(nextTile);
+			}
 			while (!getMyPlayer().isIdle()) {
 				sleep(100);
 			}
 			// player shifts
-			if (nextTile != null)
+			if (nextTile != null) {
 				hoverTile(nextTile);
+			}
 			if (trapIsHere(tile)) {
 				tile.isOurTrap = true;
 				tile.type = TileType.UP;
@@ -397,8 +403,9 @@ public class NGHunter extends Script {
 		trap.doClick();
 		if (waitForAnim(3000)) {
 			while (trapIsHere(tile)) {
-				if (getMyPlayer().isIdle())
+				if (getMyPlayer().isIdle()) {
 					break;
+				}
 				sleep(100);
 			}
 			if (!trapIsHere(tile)) {
@@ -437,8 +444,9 @@ public class NGHunter extends Script {
 		atTile(tile);
 		waitForMove(3000);
 		while (!onTile(tile)) {
-			if (getMyPlayer().isIdle())
+			if (getMyPlayer().isIdle()) {
 				break;
+			}
 			moveToInventoryItem(consts.trap);
 			sleep(100);
 		}
@@ -459,12 +467,14 @@ public class NGHunter extends Script {
 	}
 
 	private boolean moveToInventoryItem(int itemID) {
-		if (game.getCurrentTab() != Game.TAB_INVENTORY)
+		if (game.getCurrentTab() != Game.TAB_INVENTORY) {
 			game.openTab(Game.TAB_INVENTORY);
+		}
 		RSItem item = inventory.getItem(itemID);
 		RSComponent wrappedComp = item.getComponent();
-		if (wrappedComp == null)
+		if (wrappedComp == null) {
 			return false;
+		}
 		wrappedComp.doHover();
 		return true;
 	}
@@ -472,8 +482,9 @@ public class NGHunter extends Script {
 	private boolean waitForAnim(int maxMillis) {
 		long start = System.currentTimeMillis();
 		while (System.currentTimeMillis() - start < maxMillis) {
-			if (getMyPlayer().getAnimation() != -1)
+			if (getMyPlayer().getAnimation() != -1) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -481,8 +492,9 @@ public class NGHunter extends Script {
 	private boolean waitForMove(int maxMillis) {
 		long start = System.currentTimeMillis();
 		while (System.currentTimeMillis() - start < maxMillis) {
-			if (getMyPlayer().isMoving())
+			if (getMyPlayer().isMoving()) {
 				return true;
+			}
 		}
 		return false;
 	}

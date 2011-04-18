@@ -24,6 +24,7 @@ public class Trade extends MethodProvider {
 
 	public static final int TRADE_TYPE_MAIN = 0;
 	public static final int TRADE_TYPE_SECONDARY = 1;
+	public static final int TRADE_TYPE_NONE = 2;
 
 	Trade(MethodContext ctx) {
 		super(ctx);
@@ -183,6 +184,11 @@ public class Trade extends MethodProvider {
 					break;
 				case TRADE_TYPE_SECONDARY:
 					if (inTradeSecond()) {
+						return true;
+					}
+					break;
+				case TRADE_TYPE_NONE:
+					if (!inTrade()) {
 						return true;
 					}
 					break;
