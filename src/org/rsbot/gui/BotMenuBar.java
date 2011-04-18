@@ -57,6 +57,7 @@ public class BotMenuBar extends JMenuBar {
 				 "Pause Script", "-", "Snap to Tray", "Save Screenshot",
 				 "-", "Exit"},
 				{"Accounts", "-", "ToggleF Force Input", "ToggleF Less CPU",
+				 "ToggleF Disable confirmation messages",
 				 "-", "ToggleF Disable Anti-Randoms",
 				 "ToggleF Disable Auto Login", "-",
 				 "ToggleF Disable Advertisments"}, constructDebugs(),
@@ -223,6 +224,9 @@ public class BotMenuBar extends JMenuBar {
 		props.setProperty("Advertisments",
 		                  getValue(commandCheckMap.get("Disable Advertisments")
 		                                          .isSelected()));
+		props.setProperty("confirmation messages",
+                getValue(commandCheckMap.get("Disable confirmation messages")
+                                        .isSelected()));
 		/*
 		 * props.setProperty("GameState",
 		 * getValue(commandCheckMap.get("Game State").isSelected()));
@@ -276,6 +280,8 @@ public class BotMenuBar extends JMenuBar {
 	}
 
 	public boolean showAds = true;
+	public boolean disableConfirmationMessages = true;
+	
 
 	public void loadProps() {
 		Properties props = new Properties();
@@ -294,6 +300,10 @@ public class BotMenuBar extends JMenuBar {
 			if (props.getProperty("Advertisments").contains("true")) {
 				commandCheckMap.get("Disable Advertisments").setSelected(true);
 				showAds = false;
+			}
+			if (props.getProperty("confirmation messages").contains("true")) {
+				commandCheckMap.get("Disable confirmation messages").setSelected(true);
+				disableConfirmationMessages = true;
 			}
 			/*
 			 * if (props.getProperty("GameState").contains("true")) {
