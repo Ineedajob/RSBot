@@ -1,0 +1,223 @@
+package org.rsbot.script.methods;
+
+import org.rsbot.event.events.MessageEvent;
+import org.rsbot.event.listeners.MessageListener;
+import org.rsbot.script.wrappers.RSInterface;
+import org.rsbot.script.wrappers.RSPlayer;
+
+import java.util.logging.Logger;
+
+/**
+ * Trade handling.
+ *
+ * @author Timer
+ */
+public class Trade extends MethodProvider implements MessageListener{
+	private static final Logger log = Logger.getLogger(Trade.class.getName());
+
+	public static final int INTERFACE_TRADE_MAIN = 335;
+	public static final int INTERFACE_TRADE_SECOND = 334;
+    public static final int INTERFACE_TRADE_MAIN_NAME = 15;
+	public static final int INTERFACE_TRADE_SECOND_NAME = 54;
+	public static final int INTERFACE_TRADE_MAIN_OUR = 30;
+	public static final int INTERFACE_TRADE_MAIN_THEIR = 33;
+	public static final int INTERFACE_TRADE_MAIN_ACCEPT = 17;
+	public static final int INTERFACE_TRADE_MAIN_DECLINE = 19;
+	public static final int INTERFACE_TRADE_SECOND_ACCEPT = 36;
+	public static final int INTERFACE_TRADE_SECOND_DECLINE = 37;
+
+	public static final int TRADE_TYPE_MAIN = 0;
+	public static final int TRADE_TYPE_SECONDARY = 1;
+	public static final int TRADE_TYPE_NONE = 2;
+
+    private String lastMessage;
+
+	Trade(MethodContext ctx) {
+		super(ctx);
+	}
+
+	/**
+	 * Are we in the first stage of a trade?
+	 *
+	 * @return <tt>true</tt> if in first stage.
+	 */
+	public boolean inTradeMain() {
+		RSInterface tradeInterface = methods.interfaces.get(INTERFACE_TRADE_MAIN);
+		return tradeInterface != null && tradeInterface.isValid();
+	}
+
+	/**
+	 * Are we in the second stage of a trade?
+	 *
+	 * @return <tt>true</tt> if in second stage.
+	 */
+	public boolean inTradeSecond() {
+		RSInterface tradeInterface = methods.interfaces.get(INTERFACE_TRADE_SECOND);
+		return tradeInterface != null && tradeInterface.isValid();
+	}
+
+	/**
+	 * Checks if you're in a trade.
+	 *
+	 * @return <tt>true</tt> if you're trading; otherwise <tt>false</tt>.
+	 */
+	public boolean inTrade() {
+		return inTradeMain() || inTradeSecond();
+	}
+
+	/**
+	 * Trades a player.
+	 *
+	 * @param playerName The player's name.
+	 * @param tradeWait  Timeout to wait for the trade.
+	 * @return <tt>true</tt> if traded.
+	 */
+	public boolean tradePlayer(final String playerName, final int tradeWait) {
+		if (!inTrade()) {
+			RSPlayer targetPlayer = methods.players.getNearest(playerName);
+			if (targetPlayer != null) {
+				if (targetPlayer.doAction("Trade with " + targetPlayer.getName())) {
+					return waitForTrade(TRADE_TYPE_MAIN, tradeWait);
+				} else {
+					return false;
+				}
+			} else {
+				return false;
+			}
+		} else {
+			return isTradingWith(playerName);
+		}
+	}
+
+	/**
+	 * Trades a player.
+	 *
+	 * @param playerName The player's name.
+	 * @return <tt>true</tt> if traded.
+	 */
+	public boolean tradePlayer(final String playerName) {
+		return tradePlayer(playerName, 15000);
+	}
+
+	/**
+	 * Trades a player.
+	 *
+	 * @param targetPlayer The player you wish to trade.
+	 * @param tradeWait    The time out for the trade.
+	 * @return <tt>true</tt> if traded.
+	 */
+	public boolean tradePlayer(final RSPlayer targetPlayer, final int tradeWait) {
+		if (!inTrade()) {
+			if (targetPlayer != null) {
+				if (targetPlayer.doAction("Trade with " + targetPlayer.getName())) {
+					return waitForTrade(TRADE_TYPE_MAIN, tradeWait);
+				} else {
+					return false;
+				}
+			} else {
+				return false;
+			}
+		} else {
+			return isTradingWith(targetPlayer.getName());
+		}
+	}
+
+	/**
+	 * Trades a player.
+	 *
+	 * @param targetPlayer The desired player.
+	 * @return <tt>true</tt> if traded.
+	 */
+	public boolean tradePlayer(final RSPlayer targetPlayer) {
+		return tradePlayer(targetPlayer, 15000);
+	}
+
+	/**
+	 * Accepts a trade
+	 *
+	 * @return <tt>true</tt> on accept.
+	 */
+	public boolean acceptTrade() {
+		if (inTradeMain()) {
+			methods.interfaces.get(INTERFACE_TRADE_MAIN).getComponent(INTERFACE_TRADE_MAIN_ACCEPT).doAction(
+					"Accept");
+			return lastMessage.contains("accept");
+		} else if (inTradeSecond()) {
+			methods.interfaces.get(INTERFACE_TRADE_SECOND).getComponent(INTERFACE_TRADE_SECOND_ACCEPT).doAction(
+					"Accept");
+			return lastMessage.contains("accept");
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * Declines a trade
+	 *
+	 * @return <tt>true</tt> on decline
+	 */
+	public boolean declineTrade() {
+		if (inTradeMain()) {
+			methods.interfaces.get(INTERFACE_TRADE_MAIN).getComponent(INTERFACE_TRADE_MAIN_DECLINE).doAction(
+					"Decline");
+            return lastMessage.contains("declined");
+		} else if (inTradeSecond()) {
+			methods.interfaces.get(INTERFACE_TRADE_SECOND).getComponent(INTERFACE_TRADE_SECOND_DECLINE).doAction(
+					"Decline");
+			return lastMessage.contains("declined");
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * Waits for trade type to be true.
+	 *
+	 * @param tradeType The trade type.
+	 * @param timeOut   Time out of waiting.
+	 * @return <tt>true</tt> if true, otherwise false.
+	 */
+	public boolean waitForTrade(final int tradeType, final long timeOut) {
+		long timeCounter = System.currentTimeMillis() + timeOut;
+		while (timeCounter - System.currentTimeMillis() > 0) {
+			switch (tradeType) {
+				case TRADE_TYPE_MAIN:
+					if (inTradeMain()) {
+						return true;
+					}
+					break;
+				case TRADE_TYPE_SECONDARY:
+					if (inTradeSecond()) {
+						return true;
+					}
+					break;
+				case TRADE_TYPE_NONE:
+					if (!inTrade()) {
+						return true;
+					}
+					break;
+			}
+			sleep(5);
+		}
+		return false;
+	}
+
+    private String isTradingWith(){
+        if(inTradeMain()){
+            String name = methods.interfaces.getComponent(INTERFACE_TRADE_MAIN, INTERFACE_TRADE_MAIN_NAME).getText();
+            return name.substring(name.indexOf(": ") + 2);
+        }else if(inTradeSecond()){
+            return methods.interfaces.getComponent(INTERFACE_TRADE_SECOND, INTERFACE_TRADE_SECOND_NAME).getText();
+        }
+        return null;
+    }
+
+    private boolean isTradingWith(String name){
+        return isTradingWith().equals(name);
+    }
+
+    // A rather crude way to find out if trade was accepted or declined.
+    public void messageReceived(MessageEvent e) {
+        lastMessage = e.getMessage().toLowerCase();
+    }
+}
