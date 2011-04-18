@@ -154,7 +154,7 @@ public class FriendChat extends MethodProvider {
 	 */
 	public String getChannelName() {
 		try {
-			methods.game.openTab(Game.TAB_CLAN_CHAT);
+			methods.game.openTab(Game.TAB_FRIENDS_CHAT);
 			String name = stripFormatting(methods.interfaces.getComponent(
 					INTERFACE_FRIEND_CHAT, INTERFACE_FRIEND_CHAT_CHANNEL_INFO).getText());
 			return name.substring(name.indexOf("Talking in: " + 12));
@@ -170,7 +170,7 @@ public class FriendChat extends MethodProvider {
 	 */
 	public String getChannelOwner() {
 		try {
-			methods.game.openTab(Game.TAB_CLAN_CHAT);
+			methods.game.openTab(Game.TAB_FRIENDS_CHAT);
 			if (getChannelName() != null) {
 				lastCachedChannel = getChannelName();
 			}
