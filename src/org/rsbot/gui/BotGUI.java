@@ -513,7 +513,8 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 						"rundll32 url.dll,FileProtocolHandler " + url);
 			} else { // assume Unix or Linux
 				String[] browsers = { "firefox", "opera", "konqueror",
-						"epiphany", "mozilla", "netscape" };
+						"epiphany", "mozilla", "netscape", "google-chrome",
+						"chromium-browser" };
 				String browser = null;
 				for (int count = 0; (count < browsers.length)
 						&& (browser == null); count++) {
@@ -535,8 +536,17 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 	}
 
 	private boolean cleanExit() {
-		int result = JOptionPane.showConfirmDialog(this,
-				"Are you sure you want to exit?", "Exit",
+		log.info(Integer.toString(bots.size()));
+		String message = "";
+		if (bots.size() == 1) {
+			message = "You have a bot open. Are you sure you want to exit?";
+		} else if (bots.size() > 1) {
+			message = "You have " + Integer.toString(bots.size())
+					+ " bots open. Are you sure you want to exit?";
+		} else {
+			System.exit(0);
+		}
+		int result = JOptionPane.showConfirmDialog(this, message, "Exit",
 				JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 		if (result == JOptionPane.OK_OPTION) {
 			System.exit(0);
