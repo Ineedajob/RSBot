@@ -45,7 +45,7 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 	private BotHome home;
 	private List<Bot> bots = new ArrayList<Bot>();
 	private boolean showAds = true;
-	private boolean disableConfirmationMessages = true;
+	private boolean disableConfirmationMessages = false;
 	private String serviceKey;
 
 	public BotGUI() {
@@ -171,9 +171,9 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 			menuBar.saveProps();
 			if (option.equals("Accounts")) {
 				AccountManager.getInstance().showGUI();
-			} else if (option.equals("Disable Advertisments")) {
+			} else if (option.equals("Disable Advertisements")) {
 				showAds = ((JCheckBoxMenuItem) evt.getSource()).isSelected();
-			} else if (option.equals("Disable confirmation messages")) {
+			} else if (option.equals("Disable Exit Confirmation")) {
 					disableConfirmationMessages = ((JCheckBoxMenuItem) evt.getSource()).isSelected();
 			} else {
 				Bot current = getCurrentBot();
