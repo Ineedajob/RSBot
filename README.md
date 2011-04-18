@@ -5,6 +5,10 @@ RSBot is an immensely popular and successful bot for a Java MMORPG. The program 
 Download the latest source code with:
 
     git clone git://github.com/RSBot/RSBot.git
+	
+Keep your source up to date with:
+
+    git pull origin master
 
 Subversion is also supported:
 

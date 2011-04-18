@@ -136,6 +136,10 @@ public class Methods {
 	 * The singleton of FriendsChat
 	 */
 	protected FriendChat friendChat;
+	/**
+	 * The singleton of Trade
+	 */
+	protected Trade trade;
 
 
 	/**
@@ -173,6 +177,7 @@ public class Methods {
 		this.env = ctx.env;
 		this.prayer = ctx.prayer;
 		this.friendChat = ctx.friendChat;
+		this.trade = ctx.trade;
 	}
 
 	/**

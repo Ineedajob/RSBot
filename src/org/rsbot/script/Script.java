@@ -52,6 +52,24 @@ public abstract class Script extends Methods implements EventListener, Runnable 
 	}
 
 	/**
+	 * Called when a break is initiated, before the logout.
+	 * Override it to implement in your script.
+	 *
+	 * @return <tt>true</tt> if a break can be initiated.
+	 */
+	public boolean onBreakStart() {
+		return true;
+	}
+
+	/**
+	 * Called when a break is initiated, before the logout.
+	 * Override it to implement in your script.
+	 */
+	public void onBreakFinish() {
+
+	}
+
+	/**
 	 * The main loop. Called if you return true from onStart, then continuously until
 	 * a negative integer is returned or the script stopped externally. When this script
 	 * is paused this method will not be called until the script is resumed. Avoid causing
