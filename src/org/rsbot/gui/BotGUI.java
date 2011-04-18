@@ -45,6 +45,7 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 	private BotHome home;
 	private List<Bot> bots = new ArrayList<Bot>();
 	private boolean showAds = true;
+	private boolean disableConfirmationMessages = true;
 	private String serviceKey;
 
 	public BotGUI() {
@@ -57,6 +58,9 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 		menuBar.loadProps();
 		if (!menuBar.showAds) {
 			showAds = false;
+		}
+		if (!menuBar.disableConfirmationMessages) {
+			disableConfirmationMessages = false;
 		}
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
@@ -99,13 +103,17 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 			option = action.substring(z + 1);
 		}
 		if (menu.equals("Close")) {
-			int idx = Integer.parseInt(option);
-			removeBot(bots.get(idx - 1));
+			if (confirmRemoveBot()) {
+				int idx = Integer.parseInt(option);
+				removeBot(bots.get(idx - 1));
+			}
 		} else if (menu.equals("File")) {
 			if (option.equals("New Bot")) {
 				addBot();
 			} else if (option.equals("Close Bot")) {
-				removeBot(getCurrentBot());
+				if (confirmRemoveBot()) {
+					removeBot(getCurrentBot());
+				}
 			} else if (option.equals("Run Script")) {
 				Bot current = getCurrentBot();
 				if (current != null) {
@@ -165,6 +173,8 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 				AccountManager.getInstance().showGUI();
 			} else if (option.equals("Disable Advertisments")) {
 				showAds = ((JCheckBoxMenuItem) evt.getSource()).isSelected();
+			} else if (option.equals("Disable confirmation messages")) {
+					disableConfirmationMessages = ((JCheckBoxMenuItem) evt.getSource()).isSelected();
 			} else {
 				Bot current = getCurrentBot();
 				if (current != null) {
@@ -535,24 +545,39 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 		}
 	}
 
-	private boolean cleanExit() {
-		log.info(Integer.toString(bots.size()));
-		String message = "";
-		if (bots.size() == 1) {
-			message = "You have a bot open. Are you sure you want to exit?";
-		} else if (bots.size() > 1) {
-			message = "You have " + Integer.toString(bots.size())
-					+ " bots open. Are you sure you want to exit?";
+	private boolean confirmRemoveBot() {
+		if (!disableConfirmationMessages) {
+			int result = JOptionPane.showConfirmDialog(this,
+					"Are you sure you want to close this bot?", "Close Bot",
+					JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+			return (result == JOptionPane.OK_OPTION);
 		} else {
-			System.exit(0);
+			return true;
 		}
-		int result = JOptionPane.showConfirmDialog(this, message, "Exit",
-				JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
-		if (result == JOptionPane.OK_OPTION) {
+	}
+
+	private boolean cleanExit() {
+		if (!disableConfirmationMessages) {
+			String message = "";
+			if (bots.size() == 1) {
+				message = "You have a bot open. Are you sure you want to exit?";
+			} else if (bots.size() > 1) {
+				message = "You have " + Integer.toString(bots.size())
+						+ " bots open. Are you sure you want to exit?";
+			} else {
+				System.exit(0);
+			}
+			int result = JOptionPane.showConfirmDialog(this, message, "Exit",
+					JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+			if (result == JOptionPane.OK_OPTION) {
+				System.exit(0);
+				return true;
+			} else {
+				return false;
+			}
+		} else {
 			System.exit(0);
 			return true;
-		} else {
-			return false;
 		}
 	}
 
