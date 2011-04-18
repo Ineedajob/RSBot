@@ -179,8 +179,8 @@ public class Combat extends MethodProvider {
 	 * @return The current wilderness level otherwise, 0.
 	 */
 	public int getWildernessLevel() {
-		return methods.interfaces.get(381).getComponent(1).isValid() ? Integer
-				.parseInt(methods.interfaces.get(381).getComponent(1).getText()
+		return methods.interfaces.get(381).getComponent(2).isValid() ? Integer
+				.parseInt(methods.interfaces.get(381).getComponent(2).getText()
 				                            .replace("Level: ", "").trim()) : 0;
 	}
 
