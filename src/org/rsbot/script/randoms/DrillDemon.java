@@ -2,9 +2,7 @@ package org.rsbot.script.randoms;
 
 import org.rsbot.script.Random;
 import org.rsbot.script.ScriptManifest;
-import org.rsbot.script.wrappers.RSNPC;
-import org.rsbot.script.wrappers.RSObject;
-import org.rsbot.script.wrappers.RSTile;
+import org.rsbot.script.wrappers.*;
 
 @ScriptManifest(authors = {"Keilgo"}, name = "DrillDemon", version = 0.2)
 public class DrillDemon extends Random {
@@ -27,7 +25,7 @@ public class DrillDemon extends Random {
 		camera.setCompass('N');
 
 		if (getMyPlayer().isMoving() || (getMyPlayer().getAnimation() != -1)) {
-			return random(1200, 1500);
+			return random(1900,2400);
 		}
 
 		final RSNPC demon = npcs.getNearest(demonID);
@@ -300,7 +298,7 @@ public class DrillDemon extends Random {
 			}
 		}
 
-		if (!myClickContinue()) {
+		if (!myClickContinue() && getMyPlayer().getAnimation() == -1) {
 			demon.doAction("Talk-to");
 		}
 

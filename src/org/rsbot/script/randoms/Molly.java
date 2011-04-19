@@ -70,7 +70,7 @@ public class Molly extends Random {
 		}
 		controlPanel = objects.getNearest(Molly.CONTROL_PANEL_ID);
 		while (getMyPlayer().isMoving() || (getMyPlayer().getAnimation() != -1)) {
-			sleep(random(800, 1300));
+			return (random(800, 1300));
 		}
 		if (interfaces.canContinue()) {
 			interfaces.clickContinue();
@@ -139,7 +139,7 @@ public class Molly extends Random {
 			} else {
 				molly.doAction("Talk");
 				talkedToMolly = true;
-				sleep(random(800, 1200));
+				return(random(1000,2000));
 			}
 		} else {
 			if (npcs.getNearest("Molly") != null) {

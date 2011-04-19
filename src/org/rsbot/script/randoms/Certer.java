@@ -2,10 +2,7 @@ package org.rsbot.script.randoms;
 
 import org.rsbot.script.Random;
 import org.rsbot.script.ScriptManifest;
-import org.rsbot.script.wrappers.RSComponent;
-import org.rsbot.script.wrappers.RSNPC;
-import org.rsbot.script.wrappers.RSObject;
-import org.rsbot.script.wrappers.RSTile;
+import org.rsbot.script.wrappers.*;
 
 /*
  * Certer Random event solver
@@ -29,16 +26,16 @@ public class Certer extends Random {
 		return game.isLoggedIn() && objects.getNearest(bookPiles) != null;
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public int loop() {
 		if (!activateCondition() && readyToLeave) {
 			readyToLeave = false;
 			failCount = 0;
-			log("I think we've solved the certer");
 			return -1;
 		}
-
+		if (getMyPlayer().getAnimation() != -1 || getMyPlayer().isMoving()) {
+			return random(500,1000);
+		}
 		if (interfaces.getComponent(241, 4).containsText("Ahem, ")) {
 			readyToLeave = false;
 		}
@@ -54,14 +51,12 @@ public class Certer extends Random {
 			final RSObject portal = objects.getNearest(PORTAL_ID);
 			if (portal != null) {
 				final RSTile portalLocation = portal.getLocation();
-				if (calc.distanceTo(portal) < 4) {
+				if (portal.isOnScreen()) {
 					portal.doAction("Enter");
 					return random(3000, 4000);
 				} else {
-					walking.walkTileMM(walking.randomize(new RSTile(
-							portalLocation.getX() - 1, portalLocation.getY()),
-					                                     1, 1));
-					return random(6000, 8000);
+					walking.walkTileMM(new RSTile(portalLocation.getX() - 1, portalLocation.getY()).randomize(1,1));
+					return random(1500,2000);
 				}
 			}
 		}
@@ -91,27 +86,25 @@ public class Certer extends Random {
 				                                    .getComponents()[j];
 				if (iface.containsText(itemName)) {
 					iface.doClick();
-					return random(3000, 5000);
+					return random(1000,1200);
 				}
 			}
 		}
 
 		if (interfaces.canContinue()) {
 			interfaces.clickContinue();
-			return random(3000, 4000);
+			return random(1000,1200);
 		}
 
 		final RSNPC certer = npcs.getNearest("Niles", "Miles", "Giles");
 		if (certer != null) {
 			if (calc.distanceTo(certer) < 4) {
 				certer.doAction("Talk-to");
-				return random(4000, 5000);
+				return random(2500,3000);
 			} else {
 				final RSTile certerLocation = certer.getLocation();
-				walking.walkTileMM(walking.randomize(
-						new RSTile(certerLocation.getX() + 2, certerLocation
-								.getY()), 1, 1));
-				return random(6000, 8000);
+				walking.walkTileMM(new RSTile(certerLocation.getX() + 2, certerLocation.getY()).randomize(1, 1));
+				return random(3000,3500);
 			}
 		}
 
@@ -120,6 +113,6 @@ public class Certer extends Random {
 			stopScript(false);
 			return -1;
 		}
-		return random(1000, 2000);
+		return random(400,600);
 	}
 }

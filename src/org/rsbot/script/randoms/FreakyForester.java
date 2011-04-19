@@ -191,12 +191,13 @@ public class FreakyForester extends Random implements MessageListener {
 			done = searchText(241, "Thank you")
 					|| interfaces.getComponent(242, 4).containsText("leave");
 		}
-
+		/*
 		if (inventory.contains(6179)) {
 			phe = new short[]{};
 			inventory.getItem(6179).doAction("Drop");
 			return random(500, 900);
 		}
+		*/
 		if (unequip && (inventory.getCount(false) != 28)) {
 			if (game.getCurrentTab() != Game.TAB_EQUIPMENT) {
 				game.openTab(Game.TAB_EQUIPMENT);

@@ -313,8 +313,10 @@ public class GraveDigger extends Random {
 				game.logout(false);
 				return -1;
 			}
-
+			//Teleport Ani - 8939
+			if (getMyPlayer().getAnimation() == -1) {
 			leo.doAction("Talk-to");
+			}
 		}
 		return random(1400, 1800);
 	}
