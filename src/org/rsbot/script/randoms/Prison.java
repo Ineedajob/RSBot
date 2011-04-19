@@ -13,10 +13,10 @@ import org.rsbot.script.wrappers.*;
  * Updated by Iscream(Apr 15, 2010)
  * Updated by Iscream(Apr 23, 2010)
  * Updated by NoEffex(Nov 25, 2010 to convert to model checking)
- * Updated by WhiteBear(Apr 16, 2011 to ignore unreachable balloons)
  */
-@ScriptManifest(authors = {"Iscream"}, name = "PrisonPete", version = 1.6)
+@ScriptManifest(authors = {"Iscream"}, name = "PrisonPete", version = 1.5)
 public class Prison extends Random {
+
 	private static final int PRISON_MATE = 3118, LEVER_ID = 10817,
 			DOOR_KEY = 6966;
 
@@ -422,6 +422,7 @@ public class Prison extends Random {
 					if (gate != null) {
 						gate.doAction("Open");
 					}
+					// tiles.doAction(new RSTile(2085, 4459), 1, 0, 30, "Open");
 					return random(500, 600);
 				}
 				return random(200, 400);
@@ -477,8 +478,7 @@ public class Prison extends Random {
 			balloonToPop = npcs.getNearest(new Filter<RSNPC>() {
 				@Override
 				public boolean accept(RSNPC n) {
-					return filter.accept(n.getModel())
-							&& calc.canReach(n.getLocation(), false);
+					return filter.accept(n.getModel());
 				}
 			});
 			if (balloonToPop != null) {
@@ -487,4 +487,5 @@ public class Prison extends Random {
 		}
 		return false;
 	}
+
 }
