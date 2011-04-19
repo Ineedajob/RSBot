@@ -96,7 +96,7 @@ public class ScapeRuneIsland extends Random {
 					return random(500, 1000);
 				} else {
 					if (portal.doAction("Enter")) {
-						return random(6000,7000);
+						return random(6000, 7000);
 					}
 					return random(500, 1000);
 				}

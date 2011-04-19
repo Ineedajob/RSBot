@@ -2,7 +2,7 @@ package org.rsbot.script.randoms;
 
 import org.rsbot.script.Random;
 import org.rsbot.script.ScriptManifest;
-import org.rsbot.script.wrappers.*;
+import org.rsbot.script.wrappers.RSNPC;
 
 
 //Checked 4/7/10

@@ -3,7 +3,8 @@ package org.rsbot.script.randoms;
 import org.rsbot.script.Random;
 import org.rsbot.script.ScriptManifest;
 import org.rsbot.script.methods.Objects;
-import org.rsbot.script.wrappers.*;
+import org.rsbot.script.wrappers.RSObject;
+import org.rsbot.script.wrappers.RSTile;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -152,7 +153,7 @@ public class Maze extends Random {
 		if (getMyPlayer().getLocation().equals(new RSTile(2911, 4576))) {
 			if (getMyPlayer().getAnimation() == -1) {
 				tiles.doAction(new RSTile(2912, 4576), "Touch");
-				return random(5000,6000);
+				return random(5000, 6000);
 			}
 		}
 		if (usePath.equals("None")) {

@@ -3,7 +3,8 @@ package org.rsbot.script.randoms;
 import org.rsbot.script.Random;
 import org.rsbot.script.ScriptManifest;
 import org.rsbot.script.util.Filter;
-import org.rsbot.script.wrappers.*;
+import org.rsbot.script.wrappers.RSComponent;
+import org.rsbot.script.wrappers.RSNPC;
 
 /**
  * Updated by Iscream Feb 22,10 Updated by Parameter Jan 1, 11

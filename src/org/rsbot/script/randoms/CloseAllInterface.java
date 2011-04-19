@@ -1,11 +1,11 @@
 package org.rsbot.script.randoms;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import org.rsbot.script.Random;
 import org.rsbot.script.ScriptManifest;
-import org.rsbot.script.wrappers.*;
+import org.rsbot.script.wrappers.RSComponent;
+
+import java.util.LinkedList;
+import java.util.List;
 
 
 /**
@@ -48,6 +48,7 @@ public class CloseAllInterface extends Random {
 		addChild(667, 74); // Equipment Bonus
 		addChild(742, 14); // Graphic
 		addChild(917, 69); // Task List
+		addChild(1107, 174); // Clan Vexillum
 	}
 
 	private void addChild(int parent, int idx) {

@@ -2,7 +2,8 @@ package org.rsbot.script.randoms;
 
 import org.rsbot.script.Random;
 import org.rsbot.script.ScriptManifest;
-import org.rsbot.script.wrappers.*;
+import org.rsbot.script.wrappers.RSObject;
+import org.rsbot.script.wrappers.RSTile;
 
 /**
  * Updated by Arbiter 9/22/10: Replaced tile clicking with model clicking. :)

@@ -139,7 +139,7 @@ public class Molly extends Random {
 			} else {
 				molly.doAction("Talk");
 				talkedToMolly = true;
-				return(random(1000,2000));
+				return (random(1000, 2000));
 			}
 		} else {
 			if (npcs.getNearest("Molly") != null) {

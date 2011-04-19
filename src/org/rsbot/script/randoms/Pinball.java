@@ -1,12 +1,12 @@
 package org.rsbot.script.randoms;
 
-import java.awt.Point;
-
 import org.rsbot.script.Random;
 import org.rsbot.script.ScriptManifest;
 import org.rsbot.script.wrappers.RSComponent;
 import org.rsbot.script.wrappers.RSModel;
 import org.rsbot.script.wrappers.RSObject;
+
+import java.awt.*;
 
 
 @ScriptManifest(authors = {"Iscream", "Aelin", "LM3", "IceCandle", "Taha"}, name = "Pinball", version = 2.7)
@@ -17,11 +17,11 @@ public class Pinball extends Random {
 	private static final int[] OBJ_ACTIVATE = {15000, 15002, 15004, 15006, 15007, 15008};
 
 	private static final int INTERFACE_PINBALL = 263;
-	
+
 	public boolean activateCondition() {
 		return game.isLoggedIn() && objects.getNearest(OBJ_ACTIVATE) != null;
 	}
-	
+
 	private int getScore() {
 		RSComponent score = interfaces.get(INTERFACE_PINBALL).getComponent(1);
 		try {
@@ -30,13 +30,13 @@ public class Pinball extends Random {
 			return 10;
 		}
 	}
-	
+
 	public int loop() {
 		if (!activateCondition()) {
 			return -1;
 		}
 		if (getMyPlayer().isMoving() || getMyPlayer().getAnimation() != -1) {
-			return random(300,500);
+			return random(300, 500);
 		}
 		if (getScore() >= 10) {
 			int OBJ_EXIT = 15010;
@@ -45,7 +45,7 @@ public class Pinball extends Random {
 				if (calc.tileOnScreen(exit.getLocation()) && exit.doAction("Exit")) {
 					sleep(random(2000, 2200));
 					exit.doAction("Exit");
-					return random(2000,2100);
+					return random(2000, 2100);
 				} else {
 					camera.setCompass('s');
 					walking.walkTileOnScreen(exit.getLocation());
@@ -68,14 +68,14 @@ public class Pinball extends Random {
 				if (getScore() > before) {
 					return random(50, 100);
 				}
-				sleep(100,200);
+				sleep(100, 200);
 			}
 		}
-		return random(50,100);
+		return random(50, 100);
 	}
 
 	private void doClick(RSObject pillar) {
-		RSModel model =  pillar.getModel();
+		RSModel model = pillar.getModel();
 		if (model != null) {
 			Point central = model.getCentralPoint();
 			mouse.click(central.x, central.y, 4, 4, true);
@@ -88,6 +88,6 @@ public class Pinball extends Random {
 			return;
 		}
 	}
-	
-	
+
+
 }

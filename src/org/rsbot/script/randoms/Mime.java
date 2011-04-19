@@ -2,7 +2,8 @@ package org.rsbot.script.randoms;
 
 import org.rsbot.script.Random;
 import org.rsbot.script.ScriptManifest;
-import org.rsbot.script.wrappers.*;
+import org.rsbot.script.wrappers.RSNPC;
+import org.rsbot.script.wrappers.RSTile;
 
 @ScriptManifest(authors = {"PwnZ", "Taha", "Zenzie"}, name = "Mime", version = 1.3)
 public class Mime extends Random {

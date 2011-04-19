@@ -3,7 +3,8 @@ package org.rsbot.script.randoms;
 import org.rsbot.gui.AccountManager;
 import org.rsbot.script.Random;
 import org.rsbot.script.ScriptManifest;
-import org.rsbot.script.wrappers.*;
+import org.rsbot.script.wrappers.RSComponent;
+import org.rsbot.script.wrappers.RSInterface;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;

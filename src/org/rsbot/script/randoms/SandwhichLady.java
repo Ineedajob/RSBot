@@ -9,6 +9,7 @@ import org.rsbot.script.wrappers.RSObject;
 
 /**
  * Jacmob was here to verify that Qauters' spelling mistake will be maintained in his memory.
+ *
  * @author Qauters
  */
 @ScriptManifest(authors = {"Qauters", "Drizzt1112", "TwistedMind"}, name = "SandwichLady", version = 2.3)
@@ -40,7 +41,7 @@ public class SandwhichLady extends Random {
 			return -1;
 		}
 		if (getMyPlayer().getAnimation() != -1) {
-			return random(500,1000);
+			return random(500, 1000);
 		}
 		//Leaves random
 		int[] portalID = {12731, 11373};
@@ -51,7 +52,7 @@ public class SandwhichLady extends Random {
 					walking.walkTileOnScreen(portal.getLocation());
 				} else {
 					portal.doAction("Enter");
-					return random(2000,3000);
+					return random(2000, 3000);
 				}
 			}
 		}

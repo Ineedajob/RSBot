@@ -4,7 +4,9 @@ import org.rsbot.event.events.MessageEvent;
 import org.rsbot.event.listeners.MessageListener;
 import org.rsbot.script.Random;
 import org.rsbot.script.ScriptManifest;
-import org.rsbot.script.wrappers.*;
+import org.rsbot.script.wrappers.RSObject;
+import org.rsbot.script.wrappers.RSTile;
+
 import java.awt.*;
 
 /**

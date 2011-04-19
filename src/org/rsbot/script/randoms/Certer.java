@@ -2,7 +2,10 @@ package org.rsbot.script.randoms;
 
 import org.rsbot.script.Random;
 import org.rsbot.script.ScriptManifest;
-import org.rsbot.script.wrappers.*;
+import org.rsbot.script.wrappers.RSComponent;
+import org.rsbot.script.wrappers.RSNPC;
+import org.rsbot.script.wrappers.RSObject;
+import org.rsbot.script.wrappers.RSTile;
 
 /*
  * Certer Random event solver
@@ -34,7 +37,7 @@ public class Certer extends Random {
 			return -1;
 		}
 		if (getMyPlayer().getAnimation() != -1 || getMyPlayer().isMoving()) {
-			return random(500,1000);
+			return random(500, 1000);
 		}
 		if (interfaces.getComponent(241, 4).containsText("Ahem, ")) {
 			readyToLeave = false;
@@ -55,8 +58,8 @@ public class Certer extends Random {
 					portal.doAction("Enter");
 					return random(3000, 4000);
 				} else {
-					walking.walkTileMM(new RSTile(portalLocation.getX() - 1, portalLocation.getY()).randomize(1,1));
-					return random(1500,2000);
+					walking.walkTileMM(new RSTile(portalLocation.getX() - 1, portalLocation.getY()).randomize(1, 1));
+					return random(1500, 2000);
 				}
 			}
 		}
@@ -86,25 +89,25 @@ public class Certer extends Random {
 				                                    .getComponents()[j];
 				if (iface.containsText(itemName)) {
 					iface.doClick();
-					return random(1000,1200);
+					return random(1000, 1200);
 				}
 			}
 		}
 
 		if (interfaces.canContinue()) {
 			interfaces.clickContinue();
-			return random(1000,1200);
+			return random(1000, 1200);
 		}
 
 		final RSNPC certer = npcs.getNearest("Niles", "Miles", "Giles");
 		if (certer != null) {
 			if (calc.distanceTo(certer) < 4) {
 				certer.doAction("Talk-to");
-				return random(2500,3000);
+				return random(2500, 3000);
 			} else {
 				final RSTile certerLocation = certer.getLocation();
 				walking.walkTileMM(new RSTile(certerLocation.getX() + 2, certerLocation.getY()).randomize(1, 1));
-				return random(3000,3500);
+				return random(3000, 3500);
 			}
 		}
 
@@ -113,6 +116,6 @@ public class Certer extends Random {
 			stopScript(false);
 			return -1;
 		}
-		return random(400,600);
+		return random(400, 600);
 	}
 }
