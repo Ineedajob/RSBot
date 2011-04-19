@@ -128,7 +128,6 @@ public class Chickens extends Script implements PaintListener {
 		return random(900, 1100);
 	}
 
-	@Override
 	public void onRepaint(Graphics render) {
 		int y = 365, z = 356, w = 196, x = 201;
 		final Graphics2D g = (Graphics2D) render;
@@ -202,7 +201,6 @@ public class Chickens extends Script implements PaintListener {
 
 	private RSGroundItem pickup() {
 		return groundItems.getNearest(new Filter<RSGroundItem>() {
-			@Override
 			public boolean accept(RSGroundItem g) {
 				return g.getItem().getID() == 314
 						&& area.contains(g.getLocation());
@@ -214,7 +212,6 @@ public class Chickens extends Script implements PaintListener {
 		RSNPC interacting = interactingNPC();
 		return interacting != null ? interacting : npcs
 				.getNearest(new Filter<RSNPC>() {
-					@Override
 					public boolean accept(RSNPC npc) {
 						return npc.getName().equals("Chicken")
 								&& npc.getHPPercent() > 0 && !npc.isInCombat()
@@ -225,7 +222,6 @@ public class Chickens extends Script implements PaintListener {
 
 	private RSNPC interactingNPC() {
 		return npcs.getNearest(new Filter<RSNPC>() {
-			@Override
 			public boolean accept(RSNPC n) {
 				return n.getInteracting() != null
 						&& n.getInteracting().equals(players.getMyPlayer())

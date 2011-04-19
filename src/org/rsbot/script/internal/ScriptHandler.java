@@ -118,6 +118,21 @@ public class ScriptHandler {
 		}
 	}
 
+	public boolean onBreak(int id) {
+		Script script = scripts.get(id);
+		if (script != null) {
+			return script.onBreakStart();
+		}
+		return false;
+	}
+
+	public void onBreakConclude(int id) {
+		Script script = scripts.get(id);
+		if (script != null) {
+			script.onBreakFinish();
+		}
+	}
+
 	public void runScript(Script script) {
 		script.init(bot.getMethodContext());
 		for (ScriptListener l : listeners) {
@@ -142,6 +157,38 @@ public class ScriptHandler {
 			if (script != null && script.isRunning()) {
 				if (scriptThreads.get(i) == curThread) {
 					stopScript(i);
+				}
+			}
+		}
+		if (curThread == null) {
+			throw new ThreadDeath();
+		}
+	}
+
+	public boolean onBreak() {
+		Thread curThread = Thread.currentThread();
+		for (int i = 0; i < scripts.size(); i++) {
+			Script script = scripts.get(i);
+			if (script != null && script.isRunning()) {
+				if (scriptThreads.get(i) == curThread) {
+					return onBreak(i);
+				}
+			}
+		}
+		if (curThread == null) {
+			throw new ThreadDeath();
+		}
+		return false;
+	}
+
+	public void onBreakResume() {
+		Thread curThread = Thread.currentThread();
+		for (int i = 0; i < scripts.size(); i++) {
+			Script script = scripts.get(i);
+			if (script != null && script.isRunning()) {
+				if (scriptThreads.get(i) == curThread) {
+					onBreakConclude(i);
+					return;
 				}
 			}
 		}

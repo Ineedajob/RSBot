@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 /**
  * Clan chat related operations.
- * 
+ *
  * @author Debauchery
  */
 public class ClanChat extends MethodProvider {
@@ -32,14 +32,14 @@ public class ClanChat extends MethodProvider {
 
 	/**
 	 * Gets the owner of the channel.
-	 * 
+	 *
 	 * @return The owner of the channel or null if unavailable
 	 */
 	public String getChannelOwner() {
 		String temp = null;
 		if (isInformationOpen()) {
 			temp = methods.interfaces.getComponent(INTERFACE_CLAN_CHAT_INFO,
-					INTERFACE_CLAN_CHAT_INFO_CHANNEL_OWNER).getText();
+			                                       INTERFACE_CLAN_CHAT_INFO_CHANNEL_OWNER).getText();
 		} else {
 			if (methods.game.getCurrentTab() != Game.TAB_CLAN_CHAT) {
 				methods.game.openTab(Game.TAB_CLAN_CHAT);
@@ -47,10 +47,8 @@ public class ClanChat extends MethodProvider {
 			if (methods.game.getCurrentTab() == Game.TAB_CLAN_CHAT) {
 				if (openInformation()) {
 					if (isInformationOpen()) {
-						temp = methods.interfaces.getComponent(
-								INTERFACE_CLAN_CHAT_INFO,
-								INTERFACE_CLAN_CHAT_INFO_CHANNEL_OWNER)
-								.getText();
+						temp = methods.interfaces.getComponent(INTERFACE_CLAN_CHAT_INFO,
+						                                       INTERFACE_CLAN_CHAT_INFO_CHANNEL_OWNER).getText();
 					}
 				}
 			}
@@ -63,14 +61,14 @@ public class ClanChat extends MethodProvider {
 
 	/**
 	 * Gets the name of the channel.
-	 * 
+	 *
 	 * @return The name of the channel or null if none
 	 */
 	public String getChannelName() {
 		String temp = null;
 		if (isInformationOpen()) {
 			temp = methods.interfaces.getComponent(INTERFACE_CLAN_CHAT_INFO,
-					INTERFACE_CLAN_CHAT_INFO_CHANNEL_NAME).getText();
+			                                       INTERFACE_CLAN_CHAT_INFO_CHANNEL_NAME).getText();
 		} else {
 			if (methods.game.getCurrentTab() != Game.TAB_CLAN_CHAT) {
 				methods.game.openTab(Game.TAB_CLAN_CHAT);
@@ -78,10 +76,8 @@ public class ClanChat extends MethodProvider {
 			if (methods.game.getCurrentTab() == Game.TAB_CLAN_CHAT) {
 				if (openInformation()) {
 					if (isInformationOpen()) {
-						temp = methods.interfaces.getComponent(
-								INTERFACE_CLAN_CHAT_INFO,
-								INTERFACE_CLAN_CHAT_INFO_CHANNEL_NAME)
-								.getText();
+						temp = methods.interfaces.getComponent(INTERFACE_CLAN_CHAT_INFO,
+						                                       INTERFACE_CLAN_CHAT_INFO_CHANNEL_NAME).getText();
 					}
 				}
 			}
@@ -94,7 +90,7 @@ public class ClanChat extends MethodProvider {
 
 	/**
 	 * Gets the users in the channel.
-	 * 
+	 *
 	 * @return The users in the channel or null if unavailable
 	 */
 	public String[] getChannelUsers() {
@@ -104,11 +100,9 @@ public class ClanChat extends MethodProvider {
 			methods.game.openTab(Game.TAB_CLAN_CHAT);
 		}
 		if (methods.game.getCurrentTab() == Game.TAB_CLAN_CHAT) {
-			if (methods.interfaces.getComponent(INTERFACE_CLAN_CHAT,
-					INTERFACE_CLAN_CHAT_USERS_LIST) != null) {
-				for (RSComponent comp : methods.interfaces.getComponent(
-						INTERFACE_CLAN_CHAT, INTERFACE_CLAN_CHAT_USERS_LIST)
-						.getComponents()) {
+			if (methods.interfaces.getComponent(INTERFACE_CLAN_CHAT, INTERFACE_CLAN_CHAT_USERS_LIST) != null) {
+				for (RSComponent comp : methods.interfaces.getComponent(INTERFACE_CLAN_CHAT,
+				                                                        INTERFACE_CLAN_CHAT_USERS_LIST).getComponents()) {
 					if (comp.getText() != null) {
 						tempList.add(comp.getText().trim());
 					} else {
@@ -123,7 +117,7 @@ public class ClanChat extends MethodProvider {
 
 	/**
 	 * Returns whether or not we're in a channel.
-	 * 
+	 *
 	 * @return <tt>true</tt> if in a channel; otherwise <tt>false</tt>
 	 */
 	public boolean isInChannel() {
@@ -131,8 +125,8 @@ public class ClanChat extends MethodProvider {
 			methods.game.openTab(Game.TAB_CLAN_CHAT);
 		}
 		if (methods.game.getCurrentTab() == Game.TAB_CLAN_CHAT) {
-			return methods.interfaces.getComponent(INTERFACE_CLAN_CHAT,
-					INTERFACE_CLAN_CHAT_CHECK).containsText("If you");
+			return methods.interfaces.getComponent(INTERFACE_CLAN_CHAT, INTERFACE_CLAN_CHAT_CHECK).containsText(
+					"If you");
 
 		} else {
 			return false;
@@ -141,7 +135,7 @@ public class ClanChat extends MethodProvider {
 
 	/**
 	 * Opens clan information interface.
-	 * 
+	 *
 	 * @return <tt>true</tt> if open/has been opened; otherwise <tt>false</tt>
 	 */
 	public boolean openInformation() {
@@ -152,7 +146,7 @@ public class ClanChat extends MethodProvider {
 			if (methods.game.getCurrentTab() == Game.TAB_CLAN_CHAT) {
 				if (isInChannel()) {
 					methods.interfaces.getComponent(INTERFACE_CLAN_CHAT_INFO,
-							INTERFACE_CLAN_CHAT_INFO_BUTTON).doClick();
+					                                INTERFACE_CLAN_CHAT_INFO_BUTTON).doClick();
 				} else {
 					return false;
 				}
@@ -163,20 +157,19 @@ public class ClanChat extends MethodProvider {
 
 	/**
 	 * Closes clan information interface.
-	 * 
+	 *
 	 * @return <tt>true</tt> if closed/has been closed; otherwise <tt>false</tt>
 	 */
 	public boolean closeInformation() {
 		if (isInformationOpen()) {
-			methods.interfaces.getComponent(INTERFACE_CLAN_CHAT_INFO,
-					INTERFACE_CLAN_CHAT_INFO_CLOSE_BUTTON).doClick();
+			methods.interfaces.getComponent(INTERFACE_CLAN_CHAT_INFO, INTERFACE_CLAN_CHAT_INFO_CLOSE_BUTTON).doClick();
 		}
 		return !isInformationOpen();
 	}
 
 	/**
 	 * Checks to see if the information interface is open/valid.
-	 * 
+	 *
 	 * @return <tt>true</tt> if open; otherwise <tt>false</tt>
 	 */
 	public boolean isInformationOpen() {
@@ -185,7 +178,7 @@ public class ClanChat extends MethodProvider {
 
 	/**
 	 * Opens clan Settings interface.
-	 * 
+	 *
 	 * @return <tt>true</tt> if open/has been opened; otherwise <tt>false</tt>
 	 */
 	public boolean openSettings() {
@@ -195,9 +188,8 @@ public class ClanChat extends MethodProvider {
 			}
 			if (methods.game.getCurrentTab() == Game.TAB_CLAN_CHAT) {
 				if (isInChannel()) {
-					methods.interfaces.getComponent(
-							INTERFACE_CLAN_CHAT_SETTINGS,
-							INTERFACE_CLAN_CHAT_SETTINGS_BUTTON).doClick();
+					methods.interfaces.getComponent(INTERFACE_CLAN_CHAT_SETTINGS,
+					                                INTERFACE_CLAN_CHAT_SETTINGS_BUTTON).doClick();
 				} else {
 					return false;
 				}
@@ -208,20 +200,20 @@ public class ClanChat extends MethodProvider {
 
 	/**
 	 * Closes clan Settings interface.
-	 * 
+	 *
 	 * @return <tt>true</tt> if closed/has been closed; otherwise <tt>false</tt>
 	 */
 	public boolean closeSettings() {
 		if (isSettingsOpen()) {
 			methods.interfaces.getComponent(INTERFACE_CLAN_CHAT_SETTINGS,
-					INTERFACE_CLAN_CHAT_SETTINGS_CLOSE_BUTTON).doClick();
+			                                INTERFACE_CLAN_CHAT_SETTINGS_CLOSE_BUTTON).doClick();
 		}
 		return !isSettingsOpen();
 	}
 
 	/**
 	 * Checks to see if the Settings interface is open/valid.
-	 * 
+	 *
 	 * @return <tt>true</tt> if open; otherwise <tt>false</tt>
 	 */
 	public boolean isSettingsOpen() {

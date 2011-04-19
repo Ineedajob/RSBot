@@ -79,20 +79,33 @@ public class UpdateUtil {
 
 	}
 
-	private int getLatestVersion() {
+	public static int getLatestVersion() {
+		InputStream is = null;
+		InputStreamReader isr = null;
+		BufferedReader reader = null;
 		try {
-			InputStream is = new URL(GlobalConfiguration.Paths.URLs.VERSION).openConnection().getInputStream();
-
-			int off = 0;
-			byte[] b = new byte[2];
-			while ((off += is.read(b, off, 2 - off)) != 2) {
+			is = new URL(GlobalConfiguration.Paths.URLs.VERSION).openConnection().getInputStream();
+			isr = new InputStreamReader(is);
+			reader = new BufferedReader(isr);
+			String s = reader.readLine().trim();
+			return Integer.parseInt(s);
+		} catch (Exception e) {
+		} finally {
+			try {
+				if (is != null) {
+					is.close();
+				}
+				if (isr != null) {
+					isr.close();
+				}
+				if (reader != null) {
+					reader.close();
+				}
+			} catch (IOException ioe) {
 			}
-
-			return ((0xFF & b[0]) << 8) + (0xFF & b[1]);
-		} catch (final IOException e) {
-			UpdateUtil.log.info("Unable to download latest version information");
-			return -1;
 		}
+		UpdateUtil.log.info("Unable to download latest version information.");
+		return -1;
 	}
 
 	private void updateBot() {

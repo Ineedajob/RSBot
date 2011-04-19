@@ -2,16 +2,18 @@ package org.rsbot.bot;
 
 import org.rsbot.util.GlobalConfiguration;
 
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
+import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.logging.Logger;
+import java.util.zip.GZIPInputStream;
 
 /**
  * @author Timer
+ * @author Paris
  */
 class WebLoader {
+	private final Logger log = Logger.getLogger(WebLoader.class.getName());
 
 	public boolean load() {
 		try {
@@ -31,6 +33,10 @@ class WebLoader {
 			byte[] buffer = new byte[uc.getContentLength()];
 			di.readFully(buffer);
 			di.close();
+			buffer = ungzip(buffer);
+			if (buffer.length == 0) {
+				log.warning("Could not retrieve web matrix");
+			}
 			if (!file.exists()) {
 				file.createNewFile();
 			}
@@ -48,4 +54,30 @@ class WebLoader {
 		}
 	}
 
+	/*
+	 * Ungzips a binary buffer if it is gzipped.
+	 */
+	private byte[] ungzip(byte[] data) {
+		if (data.length < 2) {
+			return data;
+		}
+
+		int header = (data[0] | data[1] << 8) ^ 0xffff0000;
+		if (header != GZIPInputStream.GZIP_MAGIC) {
+			return data;
+		}
+
+		try {
+			ByteArrayInputStream b = new ByteArrayInputStream(data);
+			GZIPInputStream gzin = new GZIPInputStream(b);
+			ByteArrayOutputStream out = new ByteArrayOutputStream(data.length);
+			for (int c = gzin.read(); c != -1; c = gzin.read()) {
+				out.write(c);
+			}
+			return out.toByteArray();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return data;
+		}
+	}
 }

@@ -4,14 +4,14 @@ import org.rsbot.script.wrappers.*;
 
 /**
  * Magic tab and spell related operations.
- * 
+ *
  * @author Jacmob, Aut0r, Timer
  */
 public class Magic extends MethodProvider {
 
 	/**
 	 * Provides Magic Book(s) Information.
-	 * 
+	 *
 	 * @author Jacmob
 	 */
 	public static enum Book {
@@ -189,7 +189,7 @@ public class Magic extends MethodProvider {
 
 	/**
 	 * Checks whether or not a spell is selected.
-	 * 
+	 *
 	 * @return <tt>true</tt> if a spell is selected; otherwise <tt>false</tt>.
 	 */
 	public boolean isSpellSelected() {
@@ -198,7 +198,7 @@ public class Magic extends MethodProvider {
 
 	/**
 	 * Determines whether a spell is currently set to autocast.
-	 * 
+	 *
 	 * @return <tt>true</tt> if autocasting; otherwise <tt>false</tt>.
 	 */
 	public boolean isAutoCasting() {
@@ -209,9 +209,8 @@ public class Magic extends MethodProvider {
 	 * Clicks a specified spell, opens magic tab if not open and uses interface
 	 * of the spell to click it, so it works if the spells are layout in any
 	 * sway.
-	 * 
-	 * @param spell
-	 *            The spell to cast.
+	 *
+	 * @param spell The spell to cast.
 	 * @return <tt>true</tt> if the spell was clicked; otherwise <tt>false</tt>.
 	 */
 	public boolean castSpell(final int spell) {
@@ -239,9 +238,8 @@ public class Magic extends MethodProvider {
 	 * Hovers a specified spell, opens magic tab if not open and uses interface
 	 * of the spell to hover it, so it works if the spells are layout in any
 	 * sway.
-	 * 
-	 * @param spell
-	 *            The spell to hover.
+	 *
+	 * @param spell The spell to hover.
 	 * @return <tt>true</tt> if the spell was clicked; otherwise <tt>false</tt>.
 	 */
 	public boolean hoverSpell(final int spell) {
@@ -267,9 +265,8 @@ public class Magic extends MethodProvider {
 
 	/**
 	 * Auto-casts a spell via the magic tab.
-	 * 
-	 * @param spell
-	 *            The spell to auto-cast.
+	 *
+	 * @param spell The spell to auto-cast.
 	 * @return <tt>true</tt> if the "Auto-cast" interface option was clicked;
 	 *         otherwise <tt>false</tt>.
 	 */
@@ -290,7 +287,7 @@ public class Magic extends MethodProvider {
 
 	/**
 	 * Gets the open magic book interface.
-	 * 
+	 *
 	 * @return The current magic RSInterface.
 	 */
 	public RSInterface getInterface() {
@@ -310,24 +307,23 @@ public class Magic extends MethodProvider {
 
 	/**
 	 * Gets the current spell book.
-	 * 
+	 *
 	 * @return The Book enum of your current spell book.
 	 */
 	public Book getCurrentSpellBook() {
 		return methods.interfaces.get(Book.MODERN.getInterfaceID()).isValid() ? Book.MODERN
-				: methods.interfaces.get(Book.ANCIENT.getInterfaceID())
-						.isValid() ? Book.ANCIENT : methods.interfaces.get(
-						Book.LUNAR.getInterfaceID()).isValid() ? Book.LUNAR
-						: Book.NULL;
+		                                                                      :
+		       methods.interfaces.get(Book.ANCIENT.getInterfaceID())
+		                         .isValid() ? Book.ANCIENT : methods.interfaces.get(
+				       Book.LUNAR.getInterfaceID()).isValid() ? Book.LUNAR
+		                                                      : Book.NULL;
 	}
 
 	/**
 	 * Casts a spell on a Player/NPC/Object/Ground Item.
-	 * 
-	 * @param entity
-	 *            A Character or Animable.
-	 * @param spell
-	 *            The spell to cast.
+	 *
+	 * @param entity A Character or Animable.
+	 * @param spell  The spell to cast.
 	 * @return <tt>true</tt> if casted; otherwise <tt>false</tt>.
 	 */
 	public boolean castSpellOn(final Object entity, final int spell) {

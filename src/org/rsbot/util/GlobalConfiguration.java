@@ -69,17 +69,16 @@ public class GlobalConfiguration {
 			public static final String ICON_SCRIPT_SRC = Resources.ROOT_IMG
 					+ "/script_src.png";
 
-			public static final String VERSION = Resources.ROOT
-					+ "/version.dat";
+			public static final String VERSION = Resources.ROOT + "/version.txt";
 		}
 
 		public static class URLs {
 			public static final String UPDATER = "http://links.powerbot.org/";
 			public static final String DOWNLOAD = UPDATER + "update";
 			public static final String UPDATE = UPDATER + "modscript";
-			public static final String WEB = UPDATER + "webwalker";
-			public static final String VERSION = UPDATER + "version";
-			public static final String PROJECT = "https://github.com/RSBot/RSBot";
+			public static final String WEB = UPDATER + "webwalker.gz";
+			public static final String VERSION = UPDATER + "version.txt";
+			public static final String PROJECT = UPDATER + "git-project";
 			public static final String SITE = "http://www.powerbot.org";
 			public static final String STATS = "http://stats.powerbot.org/sync/";
 			public static final String AD_INFO = UPDATER + "botad-info";
@@ -135,9 +134,6 @@ public class GlobalConfiguration {
 				+ File.separator + "script_pre.png";
 		public static final String ICON_SCRIPT_SRC = Paths.ROOT_IMG
 				+ File.separator + "script_src.png";
-
-		public static final String VERSION = Paths.ROOT + File.separator
-				+ "version.dat";
 
 		public static final String SCRIPTS_NAME_SRC = "scripts";
 		public static final String SCRIPTS_NAME_OUT = "Scripts";
@@ -392,20 +388,26 @@ public class GlobalConfiguration {
 	}
 
 	public static int getVersion() {
+		InputStreamReader is = null;
+		BufferedReader reader = null;
 		try {
-			InputStream is = RUNNING_FROM_JAR ? GlobalConfiguration.class
-					.getClassLoader().getResourceAsStream(
-							Paths.Resources.VERSION) : new FileInputStream(
-					Paths.VERSION);
-
-			int off = 0;
-			byte[] b = new byte[2];
-			while ((off += is.read(b, off, 2 - off)) != 2) {
-			}
-
-			return ((0xFF & b[0]) << 8) + (0xFF & b[1]);
+			is = new InputStreamReader(RUNNING_FROM_JAR ? GlobalConfiguration.class
+					.getClassLoader().getResourceAsStream(Paths.Resources.VERSION) :
+			                           new FileInputStream(Paths.Resources.VERSION));
+			reader = new BufferedReader(is);
+			String s = reader.readLine().trim();
+			return Integer.parseInt(s);
 		} catch (Exception e) {
-			e.printStackTrace();
+		} finally {
+			try {
+				if (is != null) {
+					is.close();
+				}
+				if (reader != null) {
+					reader.close();
+				}
+			} catch (IOException ioe) {
+			}
 		}
 		return -1;
 	}

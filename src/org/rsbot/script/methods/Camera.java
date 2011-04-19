@@ -18,9 +18,8 @@ public class Camera extends MethodProvider {
 
 	/**
 	 * Turns to an RSCharacter (RSNPC or RSPlayer).
-	 * 
-	 * @param c
-	 *            The RSCharacter to turn to.
+	 *
+	 * @param c The RSCharacter to turn to.
 	 * @deprecated
 	 */
 	public void turnToCharacter(RSCharacter c) {
@@ -30,9 +29,8 @@ public class Camera extends MethodProvider {
 
 	/**
 	 * Turns to a RSCharacter (RSNPC or RSPlayer).
-	 * 
-	 * @param c
-	 *            The RSCharacter to turn to.
+	 *
+	 * @param c The RSCharacter to turn to.
 	 */
 	public void turnTo(final RSCharacter c) {
 		int angle = getCharacterAngle(c);
@@ -41,11 +39,9 @@ public class Camera extends MethodProvider {
 
 	/**
 	 * Turns to within a few degrees of an RSCharacter (RSNPC or RSPlayer).
-	 * 
-	 * @param c
-	 *            The RSCharacter to turn to.
-	 * @param dev
-	 *            The maximum difference in the angle.
+	 *
+	 * @param c   The RSCharacter to turn to.
+	 * @param dev The maximum difference in the angle.
 	 * @deprecated
 	 */
 	public void turnToCharacter(RSCharacter c, int dev) {
@@ -56,11 +52,9 @@ public class Camera extends MethodProvider {
 
 	/**
 	 * Turns to within a few degrees of an RSCharacter (RSNPC or RSPlayer).
-	 * 
-	 * @param c
-	 *            The RSCharacter to turn to.
-	 * @param dev
-	 *            The maximum difference in the angle.
+	 *
+	 * @param c   The RSCharacter to turn to.
+	 * @param dev The maximum difference in the angle.
 	 */
 	public void turnTo(final RSCharacter c, final int dev) {
 		int angle = getCharacterAngle(c);
@@ -70,9 +64,8 @@ public class Camera extends MethodProvider {
 
 	/**
 	 * Turns to an RSObject
-	 * 
-	 * @param o
-	 *            The RSObject to turn to.
+	 *
+	 * @param o The RSObject to turn to.
 	 * @deprecated
 	 */
 	public void turnToObject(RSObject o) {
@@ -82,9 +75,8 @@ public class Camera extends MethodProvider {
 
 	/**
 	 * Turns to an RSObject.
-	 * 
-	 * @param o
-	 *            The RSObject to turn to.
+	 *
+	 * @param o The RSObject to turn to.
 	 */
 	public void turnTo(final RSObject o) {
 		int angle = getObjectAngle(o);
@@ -93,11 +85,9 @@ public class Camera extends MethodProvider {
 
 	/**
 	 * Turns to within a few degrees of an RSObject.
-	 * 
-	 * @param o
-	 *            The RSObject to turn to.
-	 * @param dev
-	 *            The maximum difference in the turn angle.
+	 *
+	 * @param o   The RSObject to turn to.
+	 * @param dev The maximum difference in the turn angle.
 	 * @deprecated
 	 */
 	public void turnToObject(RSObject o, int dev) {
@@ -108,11 +98,9 @@ public class Camera extends MethodProvider {
 
 	/**
 	 * Turns to within a few degrees of an RSObject.
-	 * 
-	 * @param o
-	 *            The RSObject to turn to.
-	 * @param dev
-	 *            The maximum difference in the turn angle.
+	 *
+	 * @param o   The RSObject to turn to.
+	 * @param dev The maximum difference in the turn angle.
 	 */
 	public void turnTo(final RSObject o, final int dev) {
 		int angle = getObjectAngle(o);
@@ -122,9 +110,8 @@ public class Camera extends MethodProvider {
 
 	/**
 	 * Turns to a specific RSTile.
-	 * 
-	 * @param tile
-	 *            Tile to turn to.
+	 *
+	 * @param tile Tile to turn to.
 	 * @deprecated
 	 */
 	public void turnToTile(RSTile tile) {
@@ -134,9 +121,8 @@ public class Camera extends MethodProvider {
 
 	/**
 	 * Turns to a specific RSTile.
-	 * 
-	 * @param tile
-	 *            Tile to turn to.
+	 *
+	 * @param tile Tile to turn to.
 	 */
 	public void turnTo(final RSTile tile) {
 		int angle = getTileAngle(tile);
@@ -145,11 +131,9 @@ public class Camera extends MethodProvider {
 
 	/**
 	 * Turns within a few degrees to a specific RSTile.
-	 * 
-	 * @param tile
-	 *            Tile to turn to.
-	 * @param dev
-	 *            Maximum deviation from the angle to the tile.
+	 *
+	 * @param tile Tile to turn to.
+	 * @param dev  Maximum deviation from the angle to the tile.
 	 * @deprecated
 	 */
 	public void turnToTile(RSTile tile, int dev) {
@@ -160,11 +144,9 @@ public class Camera extends MethodProvider {
 
 	/**
 	 * Turns within a few degrees to a specific RSTile.
-	 * 
-	 * @param tile
-	 *            Tile to turn to.
-	 * @param dev
-	 *            Maximum deviation from the angle to the tile.
+	 *
+	 * @param tile Tile to turn to.
+	 * @param dev  Maximum deviation from the angle to the tile.
 	 */
 	public void turnTo(final RSTile tile, final int dev) {
 		int angle = getTileAngle(tile);
@@ -174,9 +156,8 @@ public class Camera extends MethodProvider {
 
 	/**
 	 * Sets the altitude to max or minimum.
-	 * 
-	 * @param up
-	 *            True to go up. False to go down.
+	 *
+	 * @param up True to go up. False to go down.
 	 * @return <tt>true</tt> if the altitude was changed.
 	 */
 	public boolean setPitch(boolean up) {
@@ -204,9 +185,8 @@ public class Camera extends MethodProvider {
 	 * <p/>
 	 * Mess around a little to find the altitude percentage you like. In later
 	 * versions, there will be easier-to-work-with methods regarding altitude.
-	 * 
-	 * @param percent
-	 *            The percentage of the maximum pitch to set the camera to.
+	 *
+	 * @param percent The percentage of the maximum pitch to set the camera to.
 	 * @return true if the camera was successfully moved; otherwise false.
 	 */
 	public boolean setPitch(int percent) {
@@ -248,16 +228,15 @@ public class Camera extends MethodProvider {
 
 	/**
 	 * Moves the camera in a random direction for a given time.
-	 * 
-	 * @param timeOut
-	 *            The maximum time in milliseconds to move the camera for.
+	 *
+	 * @param timeOut The maximum time in milliseconds to move the camera for.
 	 */
 	public void moveRandomly(int timeOut) {
 		Timer timeToHold = new Timer(timeOut);
 		int lowestCamAltPossible = random(75, 100);
 		int vertical = random(0, 20) < 15 ? KeyEvent.VK_UP : KeyEvent.VK_DOWN;
 		int horizontal = random(0, 20) < 5 ? KeyEvent.VK_LEFT
-				: KeyEvent.VK_RIGHT;
+		                                   : KeyEvent.VK_RIGHT;
 		if (random(0, 10) < 8) {
 			methods.inputManager.pressKey((char) vertical);
 		}
@@ -274,9 +253,8 @@ public class Camera extends MethodProvider {
 
 	/**
 	 * Rotates the camera to a specific angle in the closest direction.
-	 * 
-	 * @param degrees
-	 *            The angle to rotate to.
+	 *
+	 * @param degrees The angle to rotate to.
 	 */
 	public void setAngle(int degrees) {
 		if (getAngleTo(degrees) > 5) {
@@ -296,28 +274,27 @@ public class Camera extends MethodProvider {
 
 	/**
 	 * Rotates the camera to the specified cardinal direction.
-	 * 
-	 * @param direction
-	 *            The char direction to turn the map. char options are w,s,e,n
-	 *            and defaults to north if character is unrecognized.
+	 *
+	 * @param direction The char direction to turn the map. char options are w,s,e,n
+	 *                  and defaults to north if character is unrecognized.
 	 */
 	public void setCompass(char direction) {
 		switch (direction) {
-		case 'n':
-			setAngle(359);
-			break;
-		case 'w':
-			setAngle(89);
-			break;
-		case 's':
-			setAngle(179);
-			break;
-		case 'e':
-			setAngle(269);
-			break;
-		default:
-			setAngle(359);
-			break;
+			case 'n':
+				setAngle(359);
+				break;
+			case 'w':
+				setAngle(89);
+				break;
+			case 's':
+				setAngle(179);
+				break;
+			case 'e':
+				setAngle(269);
+				break;
+			default:
+				setAngle(359);
+				break;
 		}
 	}
 
@@ -326,15 +303,14 @@ public class Camera extends MethodProvider {
 	 */
 	public void setNorth() {
 		methods.interfaces.getComponent(methods.gui.getCompass().getID())
-				.doClick();
+		                  .doClick();
 	}
 
 	/**
 	 * Returns the camera angle at which the camera would be facing a certain
 	 * character.
-	 * 
-	 * @param n
-	 *            the RSCharacter
+	 *
+	 * @param n the RSCharacter
 	 * @return The angle
 	 */
 	public int getCharacterAngle(RSCharacter n) {
@@ -344,9 +320,8 @@ public class Camera extends MethodProvider {
 	/**
 	 * Returns the camera angle at which the camera would be facing a certain
 	 * object.
-	 * 
-	 * @param o
-	 *            The RSObject
+	 *
+	 * @param o The RSObject
 	 * @return The angle
 	 */
 	public int getObjectAngle(RSObject o) {
@@ -356,9 +331,8 @@ public class Camera extends MethodProvider {
 	/**
 	 * Returns the camera angle at which the camera would be facing a certain
 	 * tile.
-	 * 
-	 * @param t
-	 *            The target tile
+	 *
+	 * @param t The target tile
 	 * @return The angle in degrees
 	 */
 	public int getTileAngle(RSTile t) {
@@ -369,9 +343,8 @@ public class Camera extends MethodProvider {
 	/**
 	 * Returns the angle between the current camera angle and the given angle in
 	 * degrees.
-	 * 
-	 * @param degrees
-	 *            The target angle.
+	 *
+	 * @param degrees The target angle.
 	 * @return The angle between the who angles in degrees.
 	 */
 	public int getAngleTo(int degrees) {
@@ -389,7 +362,7 @@ public class Camera extends MethodProvider {
 	/**
 	 * Returns the current compass orientation in degrees, with North at 0,
 	 * increasing counter-clockwise to 360.
-	 * 
+	 *
 	 * @return The current camera angle in degrees.
 	 */
 	public int getAngle() {
@@ -401,7 +374,7 @@ public class Camera extends MethodProvider {
 	/**
 	 * Returns the current percentage of the maximum pitch of the camera in an
 	 * open area.
-	 * 
+	 *
 	 * @return The current camera altitude percentage.
 	 */
 	public int getPitch() {
@@ -410,7 +383,7 @@ public class Camera extends MethodProvider {
 
 	/**
 	 * Returns the current x position of the camera.
-	 * 
+	 *
 	 * @return The x position.
 	 */
 	public int getX() {
@@ -419,7 +392,7 @@ public class Camera extends MethodProvider {
 
 	/**
 	 * Returns the current y position of the camera.
-	 * 
+	 *
 	 * @return The y position.
 	 */
 	public int getY() {
@@ -428,7 +401,7 @@ public class Camera extends MethodProvider {
 
 	/**
 	 * Returns the current z position of the camera.
-	 * 
+	 *
 	 * @return The z position.
 	 */
 	public int getZ() {

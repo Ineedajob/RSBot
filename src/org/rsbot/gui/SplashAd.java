@@ -16,11 +16,8 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.TimeZone;
+import java.util.*;
 import java.util.Timer;
-import java.util.TimerTask;
 import java.util.logging.Logger;
 
 /**
@@ -54,13 +51,11 @@ public class SplashAd extends JDialog implements MouseListener {
 			return;
 		}
 
-		File file = new File(GlobalConfiguration.Paths.getCacheDirectory(),
-				CACHED_IMAGE);
+		File file = new File(GlobalConfiguration.Paths.getCacheDirectory(), CACHED_IMAGE);
 
 		if (file.exists()) {
 			long cached = file.lastModified();
-			if (cached < updated
-					|| cached < new Date().getTime() - refresh * 1000) {
+			if (cached < updated || cached < new Date().getTime() - refresh * 1000) {
 				if (!file.delete()) {
 					file.deleteOnExit();
 				}
@@ -71,14 +66,16 @@ public class SplashAd extends JDialog implements MouseListener {
 			try {
 				BufferedImage img = ImageIO.read(new URL(image));
 				ImageIO.write(img, CACHED_FORMAT, file);
-				if (popup)
+				if (popup) {
 					BotGUI.openURL(link);
+				}
 			} catch (Exception ignored) {
 			}
 		}
 
-		if (text != null && text.length() != 0)
+		if (text != null && text.length() != 0) {
 			log.info(text);
+		}
 
 		try {
 			BufferedImage img = ImageIO.read(file);
@@ -95,54 +92,71 @@ public class SplashAd extends JDialog implements MouseListener {
 
 	private boolean sync() {
 		HashMap<String, String> keys = new HashMap<String, String>(7);
+		InputStreamReader stream = null;
+		BufferedReader reader = null;
 
 		try {
-			URLConnection connection = new URL(
-					GlobalConfiguration.Paths.URLs.AD_INFO).openConnection();
-			InputStreamReader stream = new InputStreamReader(
-					connection.getInputStream());
-			BufferedReader reader = new BufferedReader(stream);
+			URLConnection connection = new URL(GlobalConfiguration.Paths.URLs.AD_INFO).openConnection();
+			stream = new InputStreamReader(connection.getInputStream());
+			reader = new BufferedReader(stream);
 			String line;
 			while ((line = reader.readLine()) != null) {
 				line = line.trim();
-				if (line.startsWith("#"))
+				if (line.startsWith("#")) {
 					continue;
+				}
 				int z;
 				z = line.indexOf('#');
-				if (z != -1)
+				if (z != -1) {
 					line = line.substring(0, z);
+				}
 				z = line.indexOf('=');
-				if (z == -1)
+				if (z == -1) {
 					continue;
-				String key = line.substring(0, z).trim(), value = z == line
-						.length() ? "" : line.substring(z + 1).trim();
+				}
+				String key = line.substring(0, z).trim(), value =
+						z == line.length() ? "" : line.substring(z + 1).trim();
 				keys.put(key, value);
 			}
 		} catch (Exception e) {
 			return false;
+		} finally {
+			try {
+				if (stream != null) {
+					stream.close();
+				}
+				if (reader != null) {
+					reader.close();
+				}
+			} catch (IOException e) {
+			}
 		}
 
-		if (keys.isEmpty() || !keys.containsKey("enabled")
-				|| !parseBool(keys.get("enabled")))
+		if (keys.isEmpty() || !keys.containsKey("enabled") || !parseBool(keys.get("enabled"))) {
 			return false;
-		if (!keys.containsKey("link"))
+		}
+		if (!keys.containsKey("link")) {
 			return false;
-		else
+		} else {
 			link = keys.get("link");
-		if (!keys.containsKey("image"))
+		}
+		if (!keys.containsKey("image")) {
 			return false;
-		else
+		} else {
 			image = keys.get("image");
-		if (keys.containsKey("text"))
+		}
+		if (keys.containsKey("text")) {
 			text = keys.get("text");
-		if (keys.containsKey("popup"))
+		}
+		if (keys.containsKey("popup")) {
 			popup = parseBool(keys.get("popup"));
-		if (keys.containsKey("refresh"))
+		}
+		if (keys.containsKey("refresh")) {
 			refresh = Integer.parseInt(keys.get("refresh"));
+		}
 		if (keys.containsKey("updated")) {
 			try {
-				SimpleDateFormat formatter = new SimpleDateFormat(
-						"yyyyMMddHHmm");
+				SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmm");
 				formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
 				updated = formatter.parse(keys.get("updated")).getTime();
 			} catch (ParseException e) {
@@ -153,8 +167,7 @@ public class SplashAd extends JDialog implements MouseListener {
 	}
 
 	private boolean parseBool(String mode) {
-		return mode.equals("1") || mode.equalsIgnoreCase("true")
-				|| mode.equalsIgnoreCase("yes");
+		return mode.equals("1") || mode.equalsIgnoreCase("true") || mode.equalsIgnoreCase("yes");
 	}
 
 	public void display() {

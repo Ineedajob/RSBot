@@ -27,7 +27,7 @@ public class GroundItems extends MethodProvider {
 
 	/**
 	 * Returns all ground items in the loaded area.
-	 * 
+	 *
 	 * @return All ground items in the loaded area.
 	 */
 	public RSGroundItem[] getAll() {
@@ -36,9 +36,8 @@ public class GroundItems extends MethodProvider {
 
 	/**
 	 * Returns all matching ground items in the loaded area.
-	 * 
-	 * @param filter
-	 *            Filters out unwanted matches.
+	 *
+	 * @param filter Filters out unwanted matches.
 	 * @return All ground items
 	 */
 	public RSGroundItem[] getAll(Filter<RSGroundItem> filter) {
@@ -47,10 +46,9 @@ public class GroundItems extends MethodProvider {
 
 	/**
 	 * Returns all ground items within the provided range.
-	 * 
-	 * @param range
-	 *            The range (max distance in all directions) in which to check
-	 *            items for.
+	 *
+	 * @param range The range (max distance in all directions) in which to check
+	 *              items for.
 	 * @return <tt>RSGroundItem</tt> array containing all of the items in range.
 	 */
 	public RSGroundItem[] getAll(int range) {
@@ -59,12 +57,10 @@ public class GroundItems extends MethodProvider {
 
 	/**
 	 * Returns all matching ground items within the provided range.
-	 * 
-	 * @param range
-	 *            The range (max distance in all directions) in which to check
-	 *            items for.
-	 * @param filter
-	 *            Filters out unwanted matches.
+	 *
+	 * @param range  The range (max distance in all directions) in which to check
+	 *               items for.
+	 * @param filter Filters out unwanted matches.
 	 * @return <tt>RSGroundItem</tt> array containing all of the items in range.
 	 */
 	public RSGroundItem[] getAll(int range, Filter<RSGroundItem> filter) {
@@ -88,9 +84,8 @@ public class GroundItems extends MethodProvider {
 
 	/**
 	 * Returns the nearest ground item that is accepted by the provided Filter.
-	 * 
-	 * @param filter
-	 *            Filters out unwanted matches.
+	 *
+	 * @param filter Filters out unwanted matches.
 	 * @return The nearest item that is accepted by the provided Filter; or
 	 *         null.
 	 */
@@ -119,9 +114,8 @@ public class GroundItems extends MethodProvider {
 	/**
 	 * Returns the nearest item on the ground with an ID that matches any of the
 	 * IDs provided.
-	 * 
-	 * @param ids
-	 *            The IDs to look for.
+	 *
+	 * @param ids The IDs to look for.
 	 * @return RSItemTile of the nearest item with the an ID that matches any in
 	 *         the array of IDs provided; or null if no matching ground items
 	 *         were found.
@@ -142,11 +136,9 @@ public class GroundItems extends MethodProvider {
 
 	/**
 	 * Returns all the ground items at a tile on the current plane.
-	 * 
-	 * @param x
-	 *            The x position of the tile in the world.
-	 * @param y
-	 *            The y position of the tile in the world.
+	 *
+	 * @param x The x position of the tile in the world.
+	 * @param y The y position of the tile in the world.
 	 * @return An array of the ground items on the specified tile.
 	 */
 	public RSGroundItem[] getAllAt(int x, int y) {
@@ -178,9 +170,8 @@ public class GroundItems extends MethodProvider {
 
 	/**
 	 * Returns all the ground items at a tile on the current plane.
-	 * 
-	 * @param t
-	 *            The tile.
+	 *
+	 * @param t The tile.
 	 * @return An array of the ground items on the specified tile.
 	 */
 	public RSGroundItem[] getAllAt(RSTile t) {

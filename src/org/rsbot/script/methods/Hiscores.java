@@ -10,7 +10,7 @@ import java.net.URL;
  * <p/>
  * Example: Hiscores.Stats stats = hiscores.lookup("username"); int attack =
  * stats.getCurrentLevel(Skills.ATTACK);
- * 
+ *
  * @author Aion
  * @version 0.2
  */
@@ -25,9 +25,8 @@ public class Hiscores extends MethodProvider {
 
 	/**
 	 * Collects data for a given player from the hiscore website.
-	 * 
-	 * @param username
-	 *            The username
+	 *
+	 * @param username The username
 	 * @return An instance of Hiscores.Stats; <code>null</code> if unable to
 	 *         fetch data.
 	 */
@@ -57,7 +56,7 @@ public class Hiscores extends MethodProvider {
 
 	/**
 	 * Provides access to High Scores Information.
-	 * 
+	 *
 	 * @author Jacmob, Aut0r
 	 */
 	public static class Stats {
@@ -77,52 +76,49 @@ public class Hiscores extends MethodProvider {
 
 		/**
 		 * Gets the experience of a given skill
-		 * 
-		 * @param index
-		 *            The index of the skill
+		 *
+		 * @param index The index of the skill
 		 * @return The experience or -1
 		 */
 		public int getExperience(int index) {
 			if (index < 0 || index >= exps.length - 1) {
 				throw new IllegalArgumentException("Illegal skill index: "
-						+ index);
+						                                   + index);
 			}
 			return exps[index + 1];
 		}
 
 		/**
 		 * Gets the level of a given skill
-		 * 
-		 * @param index
-		 *            The index of the skill
+		 *
+		 * @param index The index of the skill
 		 * @return The level or -1
 		 */
 		public int getLevel(int index) {
 			if (index < 0 || index >= exps.length - 1) {
 				throw new IllegalArgumentException("Illegal skill index: "
-						+ index);
+						                                   + index);
 			}
 			return lvls[index + 1];
 		}
 
 		/**
 		 * Gets the rank of a given skill
-		 * 
-		 * @param index
-		 *            The index of the skill
+		 *
+		 * @param index The index of the skill
 		 * @return The rank or -1
 		 */
 		public int getRank(int index) {
 			if (index < 0 || index >= exps.length - 1) {
 				throw new IllegalArgumentException("Illegal skill index: "
-						+ index);
+						                                   + index);
 			}
 			return ranks[index + 1];
 		}
 
 		/**
 		 * Gets the overall experience
-		 * 
+		 *
 		 * @return The overall experience or -1
 		 */
 		public int getOverallExp() {
@@ -131,7 +127,7 @@ public class Hiscores extends MethodProvider {
 
 		/**
 		 * Gets the overall level (also known as total level)
-		 * 
+		 *
 		 * @return The overall level or -1
 		 */
 		public int getOverallLevel() {
@@ -140,7 +136,7 @@ public class Hiscores extends MethodProvider {
 
 		/**
 		 * Gets the overall rank
-		 * 
+		 *
 		 * @return The overall rank or -1
 		 */
 		public int getOverallRank() {
@@ -149,7 +145,7 @@ public class Hiscores extends MethodProvider {
 
 		/**
 		 * Gets the username of this instance
-		 * 
+		 *
 		 * @return The username
 		 */
 		public String getUsername() {

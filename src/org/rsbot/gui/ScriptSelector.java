@@ -4,7 +4,10 @@ import org.rsbot.bot.Bot;
 import org.rsbot.script.Script;
 import org.rsbot.script.internal.ScriptHandler;
 import org.rsbot.script.internal.event.ScriptListener;
-import org.rsbot.service.*;
+import org.rsbot.service.FileScriptSource;
+import org.rsbot.service.ScriptDefinition;
+import org.rsbot.service.ScriptSource;
+import org.rsbot.service.ServiceException;
 import org.rsbot.util.GlobalConfiguration;
 
 import javax.swing.*;
@@ -28,13 +31,12 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 
 	private static final long serialVersionUID = 5475451138208522511L;
 
-	private static final String[] COLUMN_NAMES = new String[] { "", "Name",
-			"Version", "Author", "Description" };
+	private static final String[] COLUMN_NAMES = new String[]{"", "Name",
+	                                                          "Version", "Author", "Description"};
 
 	private static final ScriptSource SRC_SOURCES;
 	private static final ScriptSource SRC_PRECOMPILED;
 	private static final ScriptSource SRC_BUNDLED;
-	private static final ScriptSource SRC_DRM;
 
 	static {
 		SRC_SOURCES = new FileScriptSource(new File(
@@ -46,9 +48,8 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 					GlobalConfiguration.Paths.getScriptsExtractedCache()));
 		} else {
 			SRC_BUNDLED = new FileScriptSource(new File("." + File.separator
-					+ GlobalConfiguration.Paths.SCRIPTS_NAME_SRC));
+					                                            + GlobalConfiguration.Paths.SCRIPTS_NAME_SRC));
 		}
-		SRC_DRM = new ScriptBoxSource(LoginDialog.CREDENTIALS);
 	}
 
 	private final Bot bot;
@@ -85,7 +86,6 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 
 	private void load() {
 		scripts.clear();
-		scripts.addAll(SRC_DRM.list());
 		scripts.addAll(SRC_BUNDLED.list());
 		scripts.addAll(SRC_PRECOMPILED.list());
 		scripts.addAll(SRC_SOURCES.list());
@@ -102,7 +102,7 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 			@Override
 			public void windowClosing(final WindowEvent e) {
 				bot.getScriptHandler()
-						.removeScriptListener(ScriptSelector.this);
+				   .removeScriptListener(ScriptSelector.this);
 				dispose();
 			}
 		});
@@ -170,7 +170,7 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 		submit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				ScriptDefinition def = model.getDefinition(table
-						.getSelectedRow());
+						                                           .getSelectedRow());
 				try {
 					bot.setAccount((String) accounts.getSelectedItem());
 					bot.getScriptHandler().runScript(def.source.load(def));
@@ -186,9 +186,6 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 		connect.setEnabled(GlobalConfiguration.SCRIPT_DRM ? true : false);
 
 		if (connect.isEnabled()) {
-			final Frame loginFrame = new Frame();
-			final LoginDialog loginDialog = new LoginDialog(loginFrame);
-			connected = !loginDialog.getCredentials().username.equals("");
 			ActionListener listenConnect = new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					if (connected) {
@@ -200,7 +197,6 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 						connect.repaint();
 						connected = false;
 					} else {
-						loginDialog.setVisible();
 						connect.setIcon(new ImageIcon(
 								GlobalConfiguration
 										.getImage(
@@ -230,8 +226,8 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 		JPanel center = new JPanel();
 		center.setLayout(new BorderLayout());
 		JScrollPane pane = new JScrollPane(table,
-				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		                                   JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+		                                   JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		center.add(pane, BorderLayout.CENTER);
 
 		add(center, BorderLayout.CENTER);

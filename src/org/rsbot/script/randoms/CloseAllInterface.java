@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Closes interfaces that scripts may open by mistake.
  */
-@ScriptManifest(authors = { "Jacmob", "HeyyamaN", "Pervy Shuya" }, name = "InterfaceCloser", version = 1.9)
+@ScriptManifest(authors = {"Jacmob", "HeyyamaN", "Pervy Shuya"}, name = "InterfaceCloser", version = 1.9)
 public class CloseAllInterface extends Random {
 
 	static class ComponentDef {
@@ -68,8 +68,7 @@ public class CloseAllInterface extends Random {
 			for (ComponentDef c : components) {
 				RSComponent comp = interfaces.getComponent(c.parent, c.child);
 				if (comp.isValid()
-						&& !(c.text && (comp.getText() == null || comp
-								.getText().isEmpty()))) {
+						&& !(c.text && (comp.getText() == null || comp.getText().isEmpty()))) {
 					return true;
 				}
 			}

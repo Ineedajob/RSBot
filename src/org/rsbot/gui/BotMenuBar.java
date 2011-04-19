@@ -51,16 +51,17 @@ public class BotMenuBar extends JMenuBar {
 		// Other
 		DEBUG_MAP.put("Log Messages", MessageLogger.class);
 
-		TITLES = new String[] { "File", "Edit", "View", "Help" };
-		ELEMENTS = new String[][] {
-				{ "New Bot", "Close Bot", "-", "Run Script", "Stop Script",
-						"Pause Script", "-", "Snap to Tray", "Save Screenshot",
-						"-", "Exit" },
-				{ "Accounts", "-", "ToggleF Force Input", "ToggleF Less CPU",
-						"-", "ToggleF Disable Anti-Randoms",
-						"ToggleF Disable Auto Login", "-",
-						"ToggleF Disable Advertisments" }, constructDebugs(),
-				{ "Site", "Project", "About" } };
+		TITLES = new String[]{"File", "Edit", "View", "Help"};
+		ELEMENTS = new String[][]{
+				{"New Bot", "Close Bot", "-", "Service Key", "-", "Run Script", "Stop Script",
+				 "Pause Script", "-", "Snap to Tray", "Save Screenshot",
+				 "-", "Exit"},
+				{"Accounts", "-", "ToggleF Force Input", "ToggleF Less CPU",
+				 "ToggleF Disable Exit Confirmation",
+				 "-", "ToggleF Disable Anti-Randoms",
+				 "ToggleF Disable Auto Login", "-",
+				 "ToggleF Disable Advertisements"}, constructDebugs(),
+				{"Site", "Project", "About"}};
 	}
 
 	private static String[] constructDebugs() {
@@ -134,7 +135,7 @@ public class BotMenuBar extends JMenuBar {
 				item.setEnabled(false);
 			}
 			disable("All Debugging", "Force Input", "Less CPU",
-					"Disable Anti-Randoms", "Disable Auto Login");
+			        "Disable Anti-Randoms", "Disable Auto Login");
 		} else {
 			commandMenuItem.get("Close Bot").setEnabled(true);
 			commandMenuItem.get("Run Script").setEnabled(true);
@@ -220,122 +221,50 @@ public class BotMenuBar extends JMenuBar {
 
 	public void saveProps() {
 		Properties props = new Properties();
-		props.setProperty("Advertisments",
-				getValue(commandCheckMap.get("Disable Advertisments")
-						.isSelected()));
-		/*
-		 * props.setProperty("GameState",
-		 * getValue(commandCheckMap.get("Game State").isSelected()));
-		 * props.setProperty("CurrentTab",
-		 * getValue(commandCheckMap.get("Current Tab").isSelected()));
-		 * props.setProperty("Camera", getValue(commandCheckMap.get("Camera")
-		 * .isSelected())); props.setProperty("Animation",
-		 * getValue(commandCheckMap .get("Animation").isSelected()));
-		 * props.setProperty("FloorHeight",
-		 * getValue(commandCheckMap.get("Floor Height").isSelected()));
-		 * props.setProperty("PlayerPosition",
-		 * getValue(commandCheckMap.get("Player Position").isSelected()));
-		 * props.setProperty("MousePosition",
-		 * getValue(commandCheckMap.get("Mouse Position").isSelected()));
-		 * props.setProperty( "UserInputAllowed",
-		 * getValue(commandCheckMap.get("User Input Allowed").isSelected()));
-		 * props.setProperty("MenuActions",
-		 * getValue(commandCheckMap.get("Menu Actions").isSelected()));
-		 * props.setProperty("Menu", getValue(commandCheckMap.get("Menu")
-		 * .isSelected())); props.setProperty("FPS",
-		 * getValue(commandCheckMap.get("FPS") .isSelected()));
-		 * props.setProperty("Players", getValue(commandCheckMap.get("Players")
-		 * .isSelected())); props.setProperty("NPCs",
-		 * getValue(commandCheckMap.get("NPCs") .isSelected()));
-		 * props.setProperty("Objects", getValue(commandCheckMap.get("Objects")
-		 * .isSelected())); props.setProperty("Models",
-		 * getValue(commandCheckMap.get("Models") .isSelected()));
-		 * props.setProperty("Mouse", getValue(commandCheckMap.get("Mouse")
-		 * .isSelected())); props.setProperty("Inventory",
-		 * getValue(commandCheckMap .get("Inventory").isSelected()));
-		 * props.setProperty("GroundItems",
-		 * getValue(commandCheckMap.get("Ground Items").isSelected()));
-		 * props.setProperty("CalcTest",
-		 * getValue(commandCheckMap.get("Calc Test") .isSelected()));
-		 * props.setProperty("Settings",
-		 * getValue(commandCheckMap.get("Settings") .isSelected()));
-		 * props.setProperty("Web", getValue(commandCheckMap.get("Web")
-		 * .isSelected())); props.setProperty("LogMessages",
-		 * getValue(commandCheckMap.get("Log Messages").isSelected()));
-		 */
+		props.setProperty("Advertisements",
+		                  getValue(commandCheckMap.get("Disable Advertisements")
+		                                          .isSelected()));
+		props.setProperty("ExitMessages",
+		                  getValue(commandCheckMap.get("Disable Exit Confirmation")
+		                                          .isSelected()));
 		try {
 			props.store(
 					new FileOutputStream(GlobalConfiguration.Paths
-							.getHomeDirectory()
-							+ File.separator
-							+ "Settings"
-							+ File.separator + "menuBar.properties"),
+							                     .getHomeDirectory()
+							                     + File.separator
+							                     + "Settings"
+							                     + File.separator + "menuBar.properties"),
 					"Menubar properties");
 		} catch (IOException e) {
 		}
 	}
 
 	public boolean showAds = true;
+	public boolean disableConfirmationMessages = false;
+
 
 	public void loadProps() {
 		Properties props = new Properties();
 		File f = new File(GlobalConfiguration.Paths.getHomeDirectory()
-				+ File.separator + "Settings" + File.separator
-				+ "menuBar.properties");
+				                  + File.separator + "Settings" + File.separator
+				                  + "menuBar.properties");
 		if (f.exists()) {
 			try {
 				props.load(new FileInputStream(GlobalConfiguration.Paths
-						.getHomeDirectory()
-						+ File.separator
-						+ "Settings"
-						+ File.separator + "menuBar.properties"));
+						                               .getHomeDirectory()
+						                               + File.separator
+						                               + "Settings"
+						                               + File.separator + "menuBar.properties"));
 			} catch (IOException e) {
 			}
-			if (props.getProperty("Advertisments").contains("true")) {
-				commandCheckMap.get("Disable Advertisments").setSelected(true);
+			if (props.contains("Advertisements") && props.getProperty("Advertisements").contains("true")) {
+				commandCheckMap.get("Disable Advertisements").setSelected(true);
 				showAds = false;
 			}
-			/*
-			 * if (props.getProperty("GameState").contains("true")) {
-			 * enable("Game State", true); } if
-			 * (props.getProperty("CurrentTab").contains("true")) {
-			 * enable("Current Tab", true); } if
-			 * (props.getProperty("Camera").contains("true")) { enable("Camera",
-			 * true); } if (props.getProperty("Animation").contains("true")) {
-			 * enable("Animation", true); } if
-			 * (props.getProperty("FloorHeight").contains("true")) {
-			 * enable("Floor Height", true); } if
-			 * (props.getProperty("PlayerPosition").contains("true")) {
-			 * enable("Player Position", true); } if
-			 * (props.getProperty("MousePosition").contains("true")) {
-			 * enable("Mouse Position", true); } if
-			 * (props.getProperty("UserInputAllowed").contains("true")) {
-			 * enable("User Input Allowed", true); } if
-			 * (props.getProperty("MenuActions").contains("true")) {
-			 * enable("Menu Actions", true); } if
-			 * (props.getProperty("Menu").contains("true")) { enable("Menu",
-			 * true); } if (props.getProperty("FPS").contains("true")) {
-			 * enable("FPS", true); } if
-			 * (props.getProperty("Players").contains("true")) {
-			 * enable("Players", true); } if
-			 * (props.getProperty("NPCs").contains("true")) { enable("NPCs",
-			 * true); } if (props.getProperty("Objects").contains("true")) {
-			 * enable("Objects", true); } if
-			 * (props.getProperty("Models").contains("true")) { enable("Models",
-			 * true); } if (props.getProperty("Mouse").contains("true")) {
-			 * enable("Mouse", true); } if
-			 * (props.getProperty("Inventory").contains("true")) {
-			 * enable("Inventory", true); } if
-			 * (props.getProperty("GroundItems").contains("true")) {
-			 * enable("Ground Items", true); } if
-			 * (props.getProperty("CalcTest").contains("true")) {
-			 * enable("Calc Test", true); } if
-			 * (props.getProperty("Settings").contains("true")) {
-			 * enable("Settings", true); } if
-			 * (props.getProperty("Web").contains("true")) { enable("Web",
-			 * true); } if (props.getProperty("LogMessages").contains("true")) {
-			 * enable("Log Messages", true); }
-			 */
+			if (props.contains("ExitMessages") && props.getProperty("ExitMessages").contains("true")) {
+				commandCheckMap.get("Disable Exit Confirmation").setSelected(true);
+				disableConfirmationMessages = true;
+			}
 		}
 	}
 }

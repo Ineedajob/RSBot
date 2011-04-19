@@ -2,20 +2,12 @@ package org.rsbot;
 
 import org.rsbot.bot.Bot;
 import org.rsbot.gui.BotGUI;
-import org.rsbot.gui.LoginDialog;
 import org.rsbot.log.LogOutputStream;
 import org.rsbot.log.SystemConsoleHandler;
 import org.rsbot.util.Extractor;
-import org.rsbot.util.GlobalConfiguration;
 
-import javax.swing.*;
 import java.awt.*;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.io.PrintStream;
-import java.io.Writer;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -27,18 +19,6 @@ public class Application {
 	public static void main(final String[] args) throws Exception {
 		bootstrap();
 		new Extractor(args).run();
-		final Frame loginFrame = new Frame();
-		final LoginDialog loginDialog = new LoginDialog(loginFrame);
-		loginDialog.setVisible();
-		while (loginDialog.isVisible()) {
-			Thread.sleep(50);
-		}
-		if (loginDialog.getCredentials().username.equals("")) {
-			JOptionPane.showMessageDialog(null,
-					"You must enter your powerbot forum login to use the bot.",
-					"Information", JOptionPane.OK_OPTION);
-			return;
-		}
 		gui = new BotGUI();
 		gui.setVisible(true);
 		gui.addBot();
@@ -48,9 +28,8 @@ public class Application {
 	/**
 	 * Returns the Bot for any object loaded in its client. For internal use
 	 * only (not useful for script writers).
-	 * 
-	 * @param o
-	 *            Any object from within the client.
+	 *
+	 * @param o Any object from within the client.
 	 * @return The Bot for the client.
 	 */
 	public static Bot getBot(Object o) {
@@ -60,7 +39,7 @@ public class Application {
 	/**
 	 * Returns the size of the panel that clients should be drawn into. For
 	 * internal use.
-	 * 
+	 *
 	 * @return The client panel size.
 	 */
 	public static Dimension getPanelSize() {
@@ -77,13 +56,13 @@ public class Application {
 
 			public void uncaughtException(final Thread t, final Throwable e) {
 				log.logp(Level.SEVERE, "EXCEPTION", "",
-						"Unhandled exception in thread " + t.getName() + ": ",
-						e);
+				         "Unhandled exception in thread " + t.getName() + ": ",
+				         e);
 			}
 		});
 
 		System.setErr(new PrintStream(new LogOutputStream(Logger
-				.getLogger("STDERR"), Level.SEVERE), true));
+				                                                  .getLogger("STDERR"), Level.SEVERE), true));
 	}
 
 	// private static void stats() {
