@@ -56,7 +56,7 @@ public class BloddyMasterFarmerStealer extends Script implements PaintListener,
 			5753, 5755, 5757, 5759, 5761, 2084, 2034, 2048, 2036, 2217, 2213,
 			2205, 2209, 2054, 2040, 2080, 2277, 2225, 2255, 2221, 2253, 2219,
 			2281, 2227, 2223, 2191, 2233, 2092, 2032, 2074, 2030, 2281, 2235,
-			2064, 2028, 2187, 2185, 2229 };
+			2064, 2028, 2187, 2185, 2229, 15526 };
 	public int[] junkSeedID = { 5319, 5307, 5305, 5322, 5099, 5310, 5308, 5102,
 			5101, 5096, 5324, 5306, 5291, 5103, 5292, 5097, 5281, 5098, 5294,
 			5105, 5106, 5280, 5297, 5311, 5104, 5293, 5318, 5282, 5309 };
@@ -79,6 +79,7 @@ public class BloddyMasterFarmerStealer extends Script implements PaintListener,
 	private boolean guiWait = true, guiExit;
 	BloddyMasterFarmerGUI gui;
 
+    @Override
 	public boolean onStart() {
 		try {
 			final URL cursorURL = new URL("http://i48.tinypic.com/313623n.png");
@@ -107,6 +108,7 @@ public class BloddyMasterFarmerStealer extends Script implements PaintListener,
 		return !guiExit;
 	}
 
+    @Override
 	public void onFinish() {
 		mouse.moveOffScreen();
 		camHeight.isActive = false;
