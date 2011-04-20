@@ -23,8 +23,8 @@ import org.rsbot.script.wrappers.RSInterface;
 import org.rsbot.script.wrappers.RSItem;
 
 /*     Updates by Era
- * Implemented simple fix for strange rocks, will bank them now.
- * Implemented advanced fix for strange rocks, script will now destory them.
+ * Implented simple fix for strange rocks, will bank them now.
+ * Implented advanced fix for strange rocks, script will now destory them.
  * Minor fixes.
  */
 @ScriptManifest(authors = "Bloddyharry", name = "Master Farmer Stealer", keywords = "Thieving", version = 2.5, description = "Made by BloddyHarry, settings in GUI.")
@@ -210,6 +210,8 @@ public class BloddyMasterFarmerStealer extends Script implements PaintListener,
 						}
 					}
 				} else if (atBank()) {
+                                        strangeRock();
+                                        sleep(500, 800);
 					openBank();
 					bank();
 				}
