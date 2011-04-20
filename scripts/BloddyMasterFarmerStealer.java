@@ -268,7 +268,6 @@ public class BloddyMasterFarmerStealer extends Script implements PaintListener,
 			checkFail();
 			checkEat();
 			checkInventoryFull();
-                        strangeRock();
 			if (failed) {
 				stunned();
 			}
