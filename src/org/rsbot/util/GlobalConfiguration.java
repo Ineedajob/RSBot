@@ -193,7 +193,7 @@ public class GlobalConfiguration {
 	public static final String SITE_NAME = "powerbot";
 	private static final OperatingSystem CURRENT_OS;
 	public static boolean RUNNING_FROM_JAR = false;
-	public static final boolean SCRIPT_DRM = false;
+	public static final boolean SCRIPT_DRM = true;
 
 	static {
 		final URL resource = GlobalConfiguration.class.getClassLoader().getResource(Paths.Resources.VERSION);

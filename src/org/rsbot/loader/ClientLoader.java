@@ -100,7 +100,6 @@ public class ClientLoader {
 					classes.put(name, script.process(name, jar.getInputStream(entry)));
 				}
 			}
-
 		} else {
 			log.info("Downloading client: " + target);
 			JarFile loader = getJar(target, true);

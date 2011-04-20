@@ -4,11 +4,14 @@ import org.rsbot.script.Script;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
- * @author Jacmob
+ * @author Timer
  */
 public class ScriptBoxSource implements ScriptSource {
+
+	private final Logger log = Logger.getLogger(getClass().getSimpleName());
 
 	public static class Credentials {
 		public String key;

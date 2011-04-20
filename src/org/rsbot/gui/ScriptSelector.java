@@ -84,7 +84,9 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 
 	private void load() {
 		scripts.clear();
-		scripts.addAll(SRC_DRM.list());
+		if (connected) {
+			scripts.addAll(SRC_DRM.list());
+		}
 		scripts.addAll(SRC_BUNDLED.list());
 		scripts.addAll(SRC_PRECOMPILED.list());
 		scripts.addAll(SRC_SOURCES.list());
@@ -95,17 +97,14 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 	private void init() {
 		setLayout(new BorderLayout());
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-
 		bot.getScriptHandler().addScriptListener(ScriptSelector.this);
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(final WindowEvent e) {
-				bot.getScriptHandler()
-				   .removeScriptListener(ScriptSelector.this);
+				bot.getScriptHandler().removeScriptListener(ScriptSelector.this);
 				dispose();
 			}
 		});
-
 		table = new JTable(model) {
 			@Override
 			public String getToolTipText(MouseEvent e) {
@@ -137,11 +136,9 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		table.getSelectionModel().addListSelectionListener(new TableSelectionListener());
 		setColumnWidths(table, 30, 175, 50, 100);
-
 		JToolBar toolBar = new JToolBar();
 		toolBar.setMargin(new Insets(1, 1, 1, 1));
 		toolBar.setFloatable(false);
-
 		search = new JTextField();
 		search.addFocusListener(new FocusAdapter() {
 			@Override
@@ -169,17 +166,14 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 				try {
 					bot.setAccount((String) accounts.getSelectedItem());
 					bot.getScriptHandler().runScript(def.source.load(def));
-					bot.getScriptHandler().removeScriptListener(
-							ScriptSelector.this);
+					bot.getScriptHandler().removeScriptListener(ScriptSelector.this);
 					dispose();
 				} catch (ServiceException e) {
 					e.printStackTrace();
 				}
 			}
 		});
-
 		connect.setEnabled(GlobalConfiguration.SCRIPT_DRM ? true : false);
-
 		if (connect.isEnabled()) {
 			ActionListener listenConnect = new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -190,22 +184,20 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 						connect.repaint();
 						connected = false;
 					} else {
-						connect.setIcon(new ImageIcon(GlobalConfiguration.getImage(
-								GlobalConfiguration.Paths.Resources.ICON_CONNECT,
-								GlobalConfiguration.Paths.ICON_CONNECT)));
+						connect.setIcon(new ImageIcon(
+								GlobalConfiguration.getImage(GlobalConfiguration.Paths.Resources.ICON_CONNECT,
+								                             GlobalConfiguration.Paths.ICON_CONNECT)));
 						connect.repaint();
+						load();
 						connected = true;
 					}
 				}
 			};
-
 			connect.addActionListener(listenConnect);
 		}
-
 		accounts = new JComboBox(AccountManager.getAccountNames());
 		accounts.setMinimumSize(new Dimension(200, 20));
 		accounts.setPreferredSize(new Dimension(200, 20));
-
 		toolBar.add(search);
 		toolBar.add(Box.createHorizontalStrut(5));
 		toolBar.add(accounts);
@@ -213,16 +205,13 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 		toolBar.add(connect);
 		toolBar.add(Box.createHorizontalStrut(5));
 		toolBar.add(submit);
-
 		JPanel center = new JPanel();
 		center.setLayout(new BorderLayout());
 		JScrollPane pane = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 		                                   JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		center.add(pane, BorderLayout.CENTER);
-
 		add(center, BorderLayout.CENTER);
 		add(toolBar, BorderLayout.SOUTH);
-
 		setSize(750, 400);
 		setMinimumSize(getSize());
 		setLocationRelativeTo(getParent());
@@ -246,47 +235,36 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 	}
 
 	public void scriptResumed(ScriptHandler handler, Script script) {
-
 	}
 
 	public void scriptPaused(ScriptHandler handler, Script script) {
-
 	}
 
 	public void inputChanged(Bot bot, int mask) {
-
 	}
 
 	private class TableSelectionListener implements ListSelectionListener {
-
 		public void valueChanged(ListSelectionEvent evt) {
 			if (!evt.getValueIsAdjusting()) {
 				submit.setEnabled(table.getSelectedRow() != -1);
 			}
 		}
-
 	}
 
 	private static class ScriptTableModel extends AbstractTableModel {
-
 		private static final long serialVersionUID = 1L;
-
 		public static final ImageIcon ICON_SCRIPT_SRC = new ImageIcon(
 				GlobalConfiguration.getImage(GlobalConfiguration.Paths.Resources.ICON_SCRIPT_SRC,
 				                             GlobalConfiguration.Paths.ICON_SCRIPT_SRC));
-
 		public static final ImageIcon ICON_SCRIPT_PRE = new ImageIcon(
 				GlobalConfiguration.getImage(GlobalConfiguration.Paths.Resources.ICON_SCRIPT_PRE,
 				                             GlobalConfiguration.Paths.ICON_SCRIPT_PRE));
-
 		public static final ImageIcon ICON_SCRIPT_DRM = new ImageIcon(
 				GlobalConfiguration.getImage(GlobalConfiguration.Paths.Resources.ICON_SCRIPT_DRM,
 				                             GlobalConfiguration.Paths.ICON_SCRIPT_DRM));
-
 		public static final ImageIcon ICON_SCRIPT_BDL = new ImageIcon(
 				GlobalConfiguration.getImage(GlobalConfiguration.Paths.Resources.ICON_SCRIPT_BDL,
 				                             GlobalConfiguration.Paths.ICON_SCRIPT_BDL));
-
 		private final List<ScriptDefinition> scripts;
 		private final List<ScriptDefinition> matches;
 
@@ -376,7 +354,5 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 		public String getColumnName(int col) {
 			return COLUMN_NAMES[col];
 		}
-
 	}
-
 }
