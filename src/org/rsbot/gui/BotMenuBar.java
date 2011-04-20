@@ -57,10 +57,9 @@ public class BotMenuBar extends JMenuBar {
 				 "Pause Script", "-", "Snap to Tray", "Save Screenshot",
 				 "-", "Exit"},
 				{"Accounts", "-", "ToggleF Force Input", "ToggleF Less CPU",
-				 "ToggleF Disable Exit Confirmation",
 				 "-", "ToggleF Disable Anti-Randoms",
 				 "ToggleF Disable Auto Login", "-",
-				 "ToggleF Disable Advertisements"}, constructDebugs(),
+				 "ToggleF Disable Advertisements", "ToggleF Disable Exit Confirmation"}, constructDebugs(),
 				{"Site", "Project", "About"}};
 	}
 
