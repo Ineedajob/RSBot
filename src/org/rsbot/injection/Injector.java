@@ -20,6 +20,7 @@ import java.util.logging.Logger;
 /**
  * @author Timer
  * @author Method
+ * @author Jacmob
  * @author Aut0r
  * @author Qauters
  */
@@ -39,7 +40,6 @@ public class Injector {
 				.EASTER_MATRIX));
 		File hackData = new File(GlobalConfiguration.Paths.getHackCache());
 		if (hackData.exists() && hackData.canRead()) {
-			log.info("Welcome to Easter Mode!");
 			FileInputStream fis = new FileInputStream(hackData);
 			DataInputStream dis = new DataInputStream(fis);
 			BufferedReader br = new BufferedReader(new InputStreamReader(dis));
@@ -103,7 +103,6 @@ public class Injector {
 						}
 					}
 					if (handle != null) {
-						log.info("Successfully injected!  To enable Easter mode Edit > Easter");
 						InstructionFactory fac = new InstructionFactory(cg, cg.getConstantPool());
 						InstructionList il = mg.getInstructionList();
 						InstructionList nil = new InstructionList();
@@ -114,7 +113,6 @@ public class Injector {
 						mg.setMaxStack();
 						mg.update();
 						cg.replaceMethod(method, mg.getMethod());
-						log.info("Credits: Method, Aut0r, Timer.");
 						break;
 					}
 				}
