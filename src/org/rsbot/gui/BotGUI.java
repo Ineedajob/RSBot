@@ -47,7 +47,7 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 	private BotHome home;
 	private List<Bot> bots = new ArrayList<Bot>();
 	private boolean showAds = true;
-	private boolean disableConfirmationMessages = false;
+	private boolean disableConfirmations = false;
 	private static ScriptDeliveryNetwork sdn = ScriptDeliveryNetwork.getInstance();
 
 	public BotGUI() {
@@ -61,8 +61,8 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 		if (!menuBar.showAds) {
 			showAds = false;
 		}
-		if (!menuBar.disableConfirmationMessages) {
-			disableConfirmationMessages = false;
+		if (!menuBar.disableConfirmations) {
+			disableConfirmations = false;
 		}
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
@@ -167,8 +167,8 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 				Injector.easterMode = ((JCheckBoxMenuItem) evt.getSource()).isSelected();
 			} else if (option.equals("Disable Advertisements")) {
 				showAds = ((JCheckBoxMenuItem) evt.getSource()).isSelected();
-			} else if (option.equals("Disable Exit Confirmation")) {
-				disableConfirmationMessages = ((JCheckBoxMenuItem) evt.getSource()).isSelected();
+			} else if (option.equals("Disable Confirmations")) {
+				disableConfirmations = ((JCheckBoxMenuItem) evt.getSource()).isSelected();
 			} else {
 				Bot current = getCurrentBot();
 				if (current != null) {
@@ -536,7 +536,7 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 	}
 
 	private boolean confirmRemoveBot() {
-		if (!disableConfirmationMessages) {
+		if (!disableConfirmations) {
 			int result = JOptionPane.showConfirmDialog(this, "Are you sure you want to close this bot?", "Close Bot",
 					JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 			return (result == JOptionPane.OK_OPTION);
@@ -546,27 +546,28 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 	}
 
 	public boolean cleanExit() {
-		if (!disableConfirmationMessages) {
-			String message = "";
-			if (bots.size() == 1) {
-				message = "You have a bot open. Are you sure you want to exit?";
-			} else if (bots.size() > 1) {
-				message = "You have " + Integer.toString(bots.size()) + " bots open. Are you sure you want to exit?";
-			} else {
-				System.exit(0);
+		if (!disableConfirmations) {
+			disableConfirmations = true;
+			for (Bot bot : bots) {
+				if (bot.getAccountName() != null) {
+					disableConfirmations = true;
+					break;
+				}
 			}
-			int result = JOptionPane.showConfirmDialog(this, message, "Exit", JOptionPane.OK_CANCEL_OPTION,
-					JOptionPane.QUESTION_MESSAGE);
-			if (result == JOptionPane.OK_OPTION) {
-				System.exit(0);
-				return true;
-			} else {
-				return false;
-			}
-		} else {
-			System.exit(0);
-			return true;
 		}
+		
+		boolean doExit = true;
+		if (!disableConfirmations) {
+			final String message = "Are you sure you want to exit?";
+			int result = JOptionPane.showConfirmDialog(this, message, "Exit",
+					JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+			if (result != JOptionPane.OK_OPTION)
+				doExit = false;
+		}
+		
+		if (doExit)
+			System.exit(0);
+		
+		return doExit;
 	}
-
 }
