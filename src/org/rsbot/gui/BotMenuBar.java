@@ -54,12 +54,12 @@ public class BotMenuBar extends JMenuBar {
 		TITLES = new String[]{"File", "Edit", "View", "Help"};
 		ELEMENTS = new String[][]{
 				{"New Bot", "Close Bot", "-", "Service Key", "-", "Run Script", "Stop Script",
-				 "Pause Script", "-", "Snap to Tray", "Save Screenshot",
-				 "-", "Exit"},
+						"Pause Script", "-", "Snap to Tray", "Save Screenshot",
+						"-", "Exit"},
 				{"Accounts", "-", "ToggleF Force Input", "ToggleF Less CPU",
-				 "-", "ToggleF Disable Anti-Randoms",
-				 "ToggleF Disable Auto Login", "-",
-				 "ToggleF Disable Advertisements", "ToggleF Disable Exit Confirmation"}, constructDebugs(),
+						"-", "ToggleF Disable Anti-Randoms",
+						"ToggleF Disable Auto Login", "-",
+						"ToggleF Disable Advertisements", "ToggleF Disable Exit Confirmation", "ToggleF Easter"}, constructDebugs(),
 				{"Site", "Project", "About"}};
 	}
 
@@ -134,7 +134,7 @@ public class BotMenuBar extends JMenuBar {
 				item.setEnabled(false);
 			}
 			disable("All Debugging", "Force Input", "Less CPU",
-			        "Disable Anti-Randoms", "Disable Auto Login");
+					"Disable Anti-Randoms", "Disable Auto Login");
 		} else {
 			commandMenuItem.get("Close Bot").setEnabled(true);
 			commandMenuItem.get("Run Script").setEnabled(true);
@@ -221,18 +221,18 @@ public class BotMenuBar extends JMenuBar {
 	public void saveProps() {
 		Properties props = new Properties();
 		props.setProperty("Advertisements",
-		                  getValue(commandCheckMap.get("Disable Advertisements")
-		                                          .isSelected()));
+				getValue(commandCheckMap.get("Disable Advertisements")
+						.isSelected()));
 		props.setProperty("ExitMessages",
-		                  getValue(commandCheckMap.get("Disable Exit Confirmation")
-		                                          .isSelected()));
+				getValue(commandCheckMap.get("Disable Exit Confirmation")
+						.isSelected()));
 		try {
 			props.store(
 					new FileOutputStream(GlobalConfiguration.Paths
-							                     .getHomeDirectory()
-							                     + File.separator
-							                     + "Settings"
-							                     + File.separator + "menuBar.properties"),
+							.getHomeDirectory()
+							+ File.separator
+							+ "Settings"
+							+ File.separator + "menuBar.properties"),
 					"Menubar properties");
 		} catch (IOException e) {
 		}
@@ -245,15 +245,15 @@ public class BotMenuBar extends JMenuBar {
 	public void loadProps() {
 		Properties props = new Properties();
 		File f = new File(GlobalConfiguration.Paths.getHomeDirectory()
-				                  + File.separator + "Settings" + File.separator
-				                  + "menuBar.properties");
+				+ File.separator + "Settings" + File.separator
+				+ "menuBar.properties");
 		if (f.exists()) {
 			try {
 				props.load(new FileInputStream(GlobalConfiguration.Paths
-						                               .getHomeDirectory()
-						                               + File.separator
-						                               + "Settings"
-						                               + File.separator + "menuBar.properties"));
+						.getHomeDirectory()
+						+ File.separator
+						+ "Settings"
+						+ File.separator + "menuBar.properties"));
 			} catch (IOException e) {
 			}
 			if (props.contains("Advertisements") && props.getProperty("Advertisements").contains("true")) {
