@@ -14,7 +14,17 @@ DIST=RSBot.jar
 
 .PHONY: all Bot Scripts mostlyclean clean
 
-all: Bot Scripts
+all: Bot Scripts Jar endclean
+	@echo "Build successful"
+
+Bot:
+	@if [ ! -d $(BINDIR) ]; then mkdir $(BINDIR); fi
+	$(CC) $(CFLAGS) -d $(BINDIR) `find $(SRC) -name *.java`
+
+Scripts: mostlyclean
+	$(CC) $(CFLAGS) -cp $(BINDIR) $(SCRIPTS)/*.java
+	
+Jar:
 	@rm -fv $(LSTF)
 	@cp $(MANIFEST) $(LSTF)
 	@echo "Specification-Version: \"$(VERSION)\"" >> $(LSTF)
@@ -23,15 +33,12 @@ all: Bot Scripts
 	jar cfm $(DIST) $(LSTF) -C $(BINDIR) . $(VERSIONFILE) $(SCRIPTS)/*.class $(IMGDIR)/* $(RES)/*.bat $(RES)/*.sh
 	@rm -f $(LSTF)
 
-Bot:
-	@if [ ! -d $(BINDIR) ]; then mkdir $(BINDIR); fi
-	$(CC) $(CFLAGS) -d $(BINDIR) `find $(SRC) -name *.java`
-
-Scripts: mostlyclean
-	$(CC) $(CFLAGS) -cp $(BINDIR) $(SCRIPTS)/*.java
-
 mostlyclean:
 	@rm -f $(SCRIPTS)/*.class
+	
+endclean:
+	@rm -f $(SCRIPTS)/*.class
+	@rm -rf $(BINDIR)
 
 clean: mostlyclean
 	@rm -fv $(DIST)
