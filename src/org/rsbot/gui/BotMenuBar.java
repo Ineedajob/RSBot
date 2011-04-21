@@ -224,7 +224,7 @@ public class BotMenuBar extends JMenuBar {
 				getValue(commandCheckMap.get("Disable Advertisements")
 						.isSelected()));
 		props.setProperty("ExitMessages",
-				getValue(commandCheckMap.get("Disable Exit Confirmation")
+				getValue(commandCheckMap.get("Disable Confirmations")
 						.isSelected()));
 		try {
 			props.store(
@@ -261,7 +261,7 @@ public class BotMenuBar extends JMenuBar {
 				showAds = false;
 			}
 			if (props.contains("ExitMessages") && props.getProperty("ExitMessages").contains("true")) {
-				commandCheckMap.get("Disable Exit Confirmation").setSelected(true);
+				commandCheckMap.get("Disable Confirmations").setSelected(true);
 				disableConfirmations = true;
 			}
 		}
