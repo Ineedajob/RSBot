@@ -50,7 +50,7 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 	private static ScriptBoxSource.Credentials serviceKey = new ScriptBoxSource.Credentials();
 
 	static {
-		serviceKey.key = "abcdefghijklmnopqrstuvwxyz12341234567890";
+		serviceKey.key = "";
 	}
 
 	public BotGUI() {
