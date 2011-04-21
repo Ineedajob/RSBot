@@ -18,6 +18,7 @@ import java.util.jar.JarFile;
 import java.util.logging.Logger;
 
 /**
+ * @author Aut0r
  * @author Timer
  * @author Method
  * @author Jacmob
@@ -38,7 +39,7 @@ public class Injector {
 		download(new File(GlobalConfiguration.Paths.getHackCache()), new URL(GlobalConfiguration.Paths.URLs.HACK));
 		File hackData = new File(GlobalConfiguration.Paths.getHackCache());
 		if (hackData.exists() && hackData.canRead()) {
-			log.info("Parsing hack.");
+			log.info("Welcome to Easter Mode");
 			FileInputStream fis = new FileInputStream(hackData);
 			DataInputStream dis = new DataInputStream(fis);
 			BufferedReader br = new BufferedReader(new InputStreamReader(dis));
@@ -55,7 +56,7 @@ public class Injector {
 			}
 			br.close();
 		} else {
-			log.info("Failed to download hack, site down?");
+			log.info("Failed to download id matrix, site down?");
 		}
 		ArrayList<ClassGen> classlist = new ArrayList<ClassGen>();
 		JarFile cachedJar = new JarFile(GlobalConfiguration.Paths.getClientCache());
@@ -113,7 +114,7 @@ public class Injector {
 						mg.setMaxStack();
 						mg.update();
 						cg.replaceMethod(method, mg.getMethod());
-						log.info("Credits: Method, Jacmob, Timer.");
+						log.info("Credits: Method, Jacmob, Timer, Aut0r.");
 						break;
 					}
 				}
