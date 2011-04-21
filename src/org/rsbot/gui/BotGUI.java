@@ -30,6 +30,7 @@ import java.util.logging.Logger;
 
 /**
  * @author Jacmob
+ * @author Aut0r
  */
 public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 
@@ -51,7 +52,7 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 	private static ScriptBoxSource.Credentials serviceKey = new ScriptBoxSource.Credentials();
 
 	static {
-		serviceKey.key = "";
+		serviceKey.key = "1234567890123456789012345678901234567890";
 	}
 
 	public BotGUI() {

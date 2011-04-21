@@ -20,7 +20,7 @@ import java.util.logging.Logger;
 /**
  * @author Timer
  * @author Method
- * @author Jacmob
+ * @author Aut0r
  * @author Qauters
  */
 public class Injector {
@@ -103,7 +103,7 @@ public class Injector {
 						}
 					}
 					if (handle != null) {
-						log.info("Injected getId() into objects... let's hope this isn't detected.");
+						log.info("Successfully injected!  To enable Easter mode Edit > Easter");
 						InstructionFactory fac = new InstructionFactory(cg, cg.getConstantPool());
 						InstructionList il = mg.getInstructionList();
 						InstructionList nil = new InstructionList();
@@ -114,7 +114,7 @@ public class Injector {
 						mg.setMaxStack();
 						mg.update();
 						cg.replaceMethod(method, mg.getMethod());
-						log.info("Credits: Method, Jacmob, Timer.");
+						log.info("Credits: Method, Aut0r, Timer.");
 						break;
 					}
 				}
