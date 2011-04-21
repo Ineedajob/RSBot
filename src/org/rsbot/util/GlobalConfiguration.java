@@ -60,7 +60,7 @@ public class GlobalConfiguration {
 			public static final String VERSION = UPDATER + "version.txt";
 			public static final String PROJECT = UPDATER + "git-project";
 			public static final String SITE = "http://www.powerbot.org";
-			public static final String STATS = "http://stats.powerbot.org/sync/";
+			//public static final String STATS = "http://stats.powerbot.org/sync/";
 			public static final String AD_INFO = UPDATER + "botad-info";
 		}
 
