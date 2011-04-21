@@ -21,7 +21,7 @@ public class SystemUpdate extends Random {
 	public boolean activateCondition() {
 		if (game.isLoggedIn()
 				&& interfaces.getComponent(754, 5).getText()
-				             .startsWith("<col=ffff00>System update in")
+				.startsWith("<col=ffff00>System update in")
 				&& !getMyPlayer().isInCombat()) {
 			check();
 		}
@@ -56,13 +56,13 @@ public class SystemUpdate extends Random {
 
 	private int getMinutes() {
 		return Integer.parseInt(interfaces.getComponent(754, 5).getText()
-		                                  .substring(29).trim().split(":")[0]);
+				.substring(29).trim().split(":")[0]);
 	}
 
 	@SuppressWarnings("unused")
 	private int getSeconds() {
 		return Integer.parseInt(interfaces.getComponent(754, 5).getText()
-		                                  .substring(29).trim().split(":")[1]);
+				.substring(29).trim().split(":")[1]);
 	}
 
 }

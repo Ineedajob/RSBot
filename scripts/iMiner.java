@@ -1,34 +1,6 @@
 /*
  * Copyright (c) 2011 TehGamer 
  */
-import java.awt.Color;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Insets;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.SystemColor;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.ArrayList;
-import javax.imageio.ImageIO;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextPane;
 
 import org.rsbot.event.events.ServerMessageEvent;
 import org.rsbot.event.listeners.PaintListener;
@@ -40,8 +12,21 @@ import org.rsbot.script.wrappers.RSArea;
 import org.rsbot.script.wrappers.RSObject;
 import org.rsbot.script.wrappers.RSTile;
 
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.ArrayList;
+
 @SuppressWarnings("deprecation")
-@ScriptManifest(authors = { "TehGamer" }, keywords = "Mining", name = "iMiner", version = 2.3, description = "Ultimate Iron Miner!")
+@ScriptManifest(authors = {"TehGamer"}, keywords = "Mining", name = "iMiner", version = 2.3, description = "Ultimate Iron Miner!")
 public class iMiner extends Script implements PaintListener,
 		ServerMessageListener {
 
@@ -56,11 +41,11 @@ public class iMiner extends Script implements PaintListener,
 	public int mined;
 	public int gained;
 	public int[] RockID;
-	public int[] NonDropIDs = { 1265, 1267, 1269, 1296, 1273, 1271, 1275,
-			15259, 15532, 15533 };
-	public int[] PickIDs = { 1265, 1267, 1269, 1296, 1273, 1271, 1275, 15259 };
-	public int[] BankBoothID = { 11402, 2213, 2215 };
-	public int[] BankBoxID = { 36788 };
+	public int[] NonDropIDs = {1265, 1267, 1269, 1296, 1273, 1271, 1275,
+			15259, 15532, 15533};
+	public int[] PickIDs = {1265, 1267, 1269, 1296, 1273, 1271, 1275, 15259};
+	public int[] BankBoothID = {11402, 2213, 2215};
+	public int[] BankBoxID = {36788};
 	public String Location;
 	public String Mode;
 	public RSTile[] toBank;
@@ -154,38 +139,38 @@ public class iMiner extends Script implements PaintListener,
 		if (Location.equals("East Varrock")) {
 			Bank = new RSArea(new RSTile(3250, 3420), new RSTile(3257, 3423));
 			Mine = new RSArea(new RSTile(3283, 3366), new RSTile(3289, 3373));
-			RockID = new int[] { 11956, 11954, 11955 };
-			toMine = new RSTile[] { new RSTile(3253, 3421),
+			RockID = new int[]{11956, 11954, 11955};
+			toMine = new RSTile[]{new RSTile(3253, 3421),
 					new RSTile(3254, 3428), new RSTile(3264, 3428),
 					new RSTile(3277, 3428), new RSTile(3285, 3426),
 					new RSTile(3288, 3417), new RSTile(3291, 3409),
 					new RSTile(3292, 3401), new RSTile(3291, 3391),
 					new RSTile(3292, 3383), new RSTile(3292, 3377),
-					new RSTile(3287, 3373), new RSTile(3285, 3370) };
+					new RSTile(3287, 3373), new RSTile(3285, 3370)};
 			toBank = walking.reversePath(toMine);
 		}
 		if (Location.equals("West Varrock")) {
 			Bank = new RSArea(new RSTile(3182, 3433), new RSTile(3189, 3446));
 			Mine = new RSArea(new RSTile(3173, 3364), new RSTile(3178, 3370));
-			RockID = new int[] { 11956, 11955 };
-			toMine = new RSTile[] { new RSTile(3183, 3436),
+			RockID = new int[]{11956, 11955};
+			toMine = new RSTile[]{new RSTile(3183, 3436),
 					new RSTile(3184, 3430), new RSTile(3176, 3428),
 					new RSTile(3172, 3426), new RSTile(3172, 3419),
 					new RSTile(3172, 3414), new RSTile(3172, 3407),
 					new RSTile(3172, 3398), new RSTile(3176, 3392),
 					new RSTile(3178, 3383), new RSTile(3183, 3375),
-					new RSTile(3179, 3368), new RSTile(3175, 3367) };
+					new RSTile(3179, 3368), new RSTile(3175, 3367)};
 			toBank = walking.reversePath(toMine);
 		}
 		if (Location.equals("Rimmington")) {
 			Bank = new RSArea(new RSTile(3045, 3268), new RSTile(3049, 3234));
 			Mine = new RSArea(new RSTile(2966, 3235), new RSTile(2973, 3244));
-			RockID = new int[] { 9717, 9718, 9719 };
-			toMine = new RSTile[] { new RSTile(3046, 3236),
+			RockID = new int[]{9717, 9718, 9719};
+			toMine = new RSTile[]{new RSTile(3046, 3236),
 					new RSTile(3035, 3236), new RSTile(3026, 3242),
 					new RSTile(3014, 3242), new RSTile(3001, 3238),
 					new RSTile(2990, 3232), new RSTile(2979, 3234),
-					new RSTile(2971, 3240) };
+					new RSTile(2971, 3240)};
 
 			toBank = walking.reversePath(toMine);
 		}
@@ -193,29 +178,29 @@ public class iMiner extends Script implements PaintListener,
 			camera.setPitch(random(2007, 3007));
 			Bank = new RSArea(new RSTile(2609, 3090), new RSTile(2613, 3096));
 			Mine = new RSArea(new RSTile(2622, 3147), new RSTile(2627, 3153));
-			RockID = new int[] { 37308, 37309 };
-			toMine = new RSTile[] { new RSTile(2611, 3093),
+			RockID = new int[]{37308, 37309};
+			toMine = new RSTile[]{new RSTile(2611, 3093),
 					new RSTile(2613, 3103), new RSTile(2619, 3113),
 					new RSTile(2625, 3122), new RSTile(2623, 3133),
-					new RSTile(2623, 3143), new RSTile(2624, 3148) };
+					new RSTile(2623, 3143), new RSTile(2624, 3148)};
 
 			toBank = walking.reversePath(toMine);
 		}
 		if (Location.equals("Yanille (South)")) {
 			Bank = new RSArea(new RSTile(2612, 3092), new RSTile(2613, 3096));
 			Mine = new RSArea(new RSTile(2625, 3138), new RSTile(2629, 3144));
-			RockID = new int[] { 37308, 37309 };
-			toMine = new RSTile[] { new RSTile(2611, 3093),
+			RockID = new int[]{37308, 37309};
+			toMine = new RSTile[]{new RSTile(2611, 3093),
 					new RSTile(2613, 3103), new RSTile(2619, 3113),
 					new RSTile(2625, 3122), new RSTile(2623, 3133),
-					new RSTile(2626, 3140) };
+					new RSTile(2626, 3140)};
 
 			toBank = walking.reversePath(toMine);
 		}
 		if (Location.equals("World Wide")) {
 			// TODO Get all iron rock id's
-			RockID = new int[] { 37307, 37308, 37309, 11954, 11955, 11956,
-					9717, 9718, 9719, 5773, 5774, 5775, 2092, 2093 };
+			RockID = new int[]{37307, 37308, 37309, 11954, 11955, 11956,
+					9717, 9718, 9719, 5773, 5774, 5775, 2092, 2093};
 		}
 		BotTime.reset();
 		return !guiExit;
@@ -245,106 +230,106 @@ public class iMiner extends Script implements PaintListener,
 		if (getMyPlayer().getAnimation() == -1)
 			lastclicked = null;
 		switch (getState()) {
-		case WhileMining:
-			status = "Checking";
-			if (Antideadrock() && getMyPlayer().getAnimation() != -1) {
-				status = "Dead rock detected";
-				Mine();
-			}
-			break;
-		case Mine:
-			Rock = objects.getNearest(RockID);
-			if (Rock != null && MineLocation()
-					&& getMyPlayer().getAnimation() == -1) {
-				Mine();
-			}
-			break;
-		case Drop:
-			mouse.setSpeed(random(8, 9));
-			inventory.dropAllExcept(NonDropIDs);
-			break;
-		case Banking:
-			BankBooth = objects.getNearest(BankBoothID);
-			mouse.setSpeed(random(8, 9));
-			if (BankBooth == null)
-				;
-			if (Bank.contains(getMyPlayer().getLocation())
-					&& inventory.isFull() && !BankBooth.isOnScreen()
-					&& BankBooth != null)
-				BoothAngle();
-			if (!bank.isOpen() && BankBooth != null) {
+			case WhileMining:
+				status = "Checking";
+				if (Antideadrock() && getMyPlayer().getAnimation() != -1) {
+					status = "Dead rock detected";
+					Mine();
+				}
+				break;
+			case Mine:
+				Rock = objects.getNearest(RockID);
+				if (Rock != null && MineLocation()
+						&& getMyPlayer().getAnimation() == -1) {
+					Mine();
+				}
+				break;
+			case Drop:
+				mouse.setSpeed(random(8, 9));
+				inventory.dropAllExcept(NonDropIDs);
+				break;
+			case Banking:
+				BankBooth = objects.getNearest(BankBoothID);
+				mouse.setSpeed(random(8, 9));
 				if (BankBooth == null)
 					;
-				status = "Banking";
-				BankBooth.doAction("use-quickly");
-				sleep(random(1500, 1700));
-				if (!bank.isOpen())
-					sleep(random(1000, 1500));
-			} else {
-				if (bank.isOpen()) {
-					bank.depositAllExcept(PickIDs);
-					bank.depositAllExcept(PickIDs);
-					bank.depositAllExcept(PickIDs);
-				} else {
-					if (bank.isOpen() && inventory.getCount() <= 1)
+				if (Bank.contains(getMyPlayer().getLocation())
+						&& inventory.isFull() && !BankBooth.isOnScreen()
+						&& BankBooth != null)
+					BoothAngle();
+				if (!bank.isOpen() && BankBooth != null) {
+					if (BankBooth == null)
 						;
-					bank.close();
-				}
-			}
-			break;
-		case BoxBank:
-			RSObject BankBox = objects.getNearest(BankBoxID);
-			mouse.setSpeed(random(8, 9));
-			if (BankBox == null)
-				;
-			if (Bank.contains(getMyPlayer().getLocation())
-					&& inventory.isFull() && !BankBox.isOnScreen()
-					&& BankBox != null)
-				BoxAngle();
-			if (!bank.isDepositOpen() && BankBox != null) {
-				if (BankBox == null)
-					;
-				status = "Banking";
-				bank.openDepositBox();
-				sleep(random(1500, 1700));
-				if (!bank.isDepositOpen())
-					sleep(random(1000, 1500));
-			} else {
-				if (bank.isDepositOpen()) {
-					bank.depositAllExcept(PickIDs);
-					bank.depositAllExcept(PickIDs);
+					status = "Banking";
+					BankBooth.doAction("use-quickly");
+					sleep(random(1500, 1700));
+					if (!bank.isOpen())
+						sleep(random(1000, 1500));
 				} else {
-					if (bank.isDepositOpen() && bank.getBoxCount() <= 1) {
+					if (bank.isOpen()) {
+						bank.depositAllExcept(PickIDs);
+						bank.depositAllExcept(PickIDs);
+						bank.depositAllExcept(PickIDs);
+					} else {
+						if (bank.isOpen() && inventory.getCount() <= 1)
+							;
 						bank.close();
 					}
 				}
-			}
-			break;
-		case WalkToRock:
-			Rock = objects.getNearest(RockID);
-			if (Rock == null)
-				;
-			RockLoc = Rock.getLocation();
-			if (RockLoc == null)
-				;
-			if (calc.distanceTo(Rock) > 5 && Rock != null && !Rock.isOnScreen()
-					&& !inventory.isFull() && CorrectRock()) {
-				if (calc.tileOnMap(RockLoc)) {
-					walking.walkTileMM(RockLoc, 1, 1);
+				break;
+			case BoxBank:
+				RSObject BankBox = objects.getNearest(BankBoxID);
+				mouse.setSpeed(random(8, 9));
+				if (BankBox == null)
+					;
+				if (Bank.contains(getMyPlayer().getLocation())
+						&& inventory.isFull() && !BankBox.isOnScreen()
+						&& BankBox != null)
+					BoxAngle();
+				if (!bank.isDepositOpen() && BankBox != null) {
+					if (BankBox == null)
+						;
+					status = "Banking";
+					bank.openDepositBox();
+					sleep(random(1500, 1700));
+					if (!bank.isDepositOpen())
+						sleep(random(1000, 1500));
 				} else {
-					walking.walkTo(RockLoc);
+					if (bank.isDepositOpen()) {
+						bank.depositAllExcept(PickIDs);
+						bank.depositAllExcept(PickIDs);
+					} else {
+						if (bank.isDepositOpen() && bank.getBoxCount() <= 1) {
+							bank.close();
+						}
+					}
 				}
-			}
-			Mine();
-			break;
-		case WalkToBank:
-			walk(toBank);
-			sleep(random(400, 600));
-			break;
-		case WalkToMine:
-			walk(toMine);
-			sleep(random(400, 600));
-			break;
+				break;
+			case WalkToRock:
+				Rock = objects.getNearest(RockID);
+				if (Rock == null)
+					;
+				RockLoc = Rock.getLocation();
+				if (RockLoc == null)
+					;
+				if (calc.distanceTo(Rock) > 5 && Rock != null && !Rock.isOnScreen()
+						&& !inventory.isFull() && CorrectRock()) {
+					if (calc.tileOnMap(RockLoc)) {
+						walking.walkTileMM(RockLoc, 1, 1);
+					} else {
+						walking.walkTo(RockLoc);
+					}
+				}
+				Mine();
+				break;
+			case WalkToBank:
+				walk(toBank);
+				sleep(random(400, 600));
+				break;
+			case WalkToMine:
+				walk(toMine);
+				sleep(random(400, 600));
+				break;
 		}
 		return 0;
 	}
@@ -585,11 +570,11 @@ public class iMiner extends Script implements PaintListener,
 				// Update coming soon
 				int Random = random(0, 125);
 				switch (Random) {
-				case 1:
-					int angle = camera.getAngle() + random(-90, 90);
-					log("Antiban: Rotating camera to " + angle + " degrees.");
-					camera.setAngle(angle);
-					break;
+					case 1:
+						int angle = camera.getAngle() + random(-90, 90);
+						log("Antiban: Rotating camera to " + angle + " degrees.");
+						camera.setAngle(angle);
+						break;
 				}
 				sleep(random(5000, 7000));
 			}
@@ -628,10 +613,10 @@ public class iMiner extends Script implements PaintListener,
 			Location = comboBox1.getSelectedItem().toString();
 			if (Location.equals("World Wide")) {
 				comboBox2.setModel(new DefaultComboBoxModel(
-						new String[] { "PowerMine" }));
+						new String[]{"PowerMine"}));
 			} else {
-				comboBox2.setModel(new DefaultComboBoxModel(new String[] {
-						"Bank", "PowerMine" }));
+				comboBox2.setModel(new DefaultComboBoxModel(new String[]{
+						"Bank", "PowerMine"}));
 			}
 		}
 
@@ -691,9 +676,9 @@ public class iMiner extends Script implements PaintListener,
 					// ---- comboBox1 ----
 					comboBox1.setMaximumRowCount(10);
 					comboBox1.setModel(new DefaultComboBoxModel(
-							new String[] { "East Varrock", "West Varrock",
+							new String[]{"East Varrock", "West Varrock",
 									"Rimmington", "Yanille (North)",
-									"Yanille (South)", "World Wide" }));
+									"Yanille (South)", "World Wide"}));
 					comboBox1.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent e) {
 							comboBox1ActionPerformed(e);
@@ -703,8 +688,8 @@ public class iMiner extends Script implements PaintListener,
 					comboBox1.setBounds(80, 10, 155, 25);
 
 					// ---- comboBox2 ----
-					comboBox2.setModel(new DefaultComboBoxModel(new String[] {
-							"Bank", "PowerMine" }));
+					comboBox2.setModel(new DefaultComboBoxModel(new String[]{
+							"Bank", "PowerMine"}));
 					panel3.add(comboBox2);
 					comboBox2.setBounds(115, 50, 118, 25);
 

@@ -44,7 +44,7 @@ public class FriendChat extends MethodProvider {
 		sleep(random(500, 800));
 		if (methods.interfaces.get(INTERFACE_JOIN_FRIEND_CHAT).isValid()) {
 			String lastChatCompText = methods.interfaces.getComponent(INTERFACE_JOIN_FRIEND_CHAT,
-			                                                          INTERFACE_JOIN_FRIEND_CHAT_LAST_CHANNEL).getText();
+					INTERFACE_JOIN_FRIEND_CHAT_LAST_CHANNEL).getText();
 			lastCachedChannel = lastChatCompText.substring(lastChatCompText.indexOf(": ") + 2);
 			methods.keyboard.sendText(channel, true);
 			sleep(random(1550, 1800));
@@ -73,10 +73,10 @@ public class FriendChat extends MethodProvider {
 		sleep(random(500, 800));
 		if (methods.interfaces.get(INTERFACE_JOIN_FRIEND_CHAT).isValid()) {
 			String lastChatCompText = methods.interfaces.getComponent(INTERFACE_JOIN_FRIEND_CHAT,
-			                                                          INTERFACE_JOIN_FRIEND_CHAT_LAST_CHANNEL).getText();
+					INTERFACE_JOIN_FRIEND_CHAT_LAST_CHANNEL).getText();
 			lastCachedChannel = lastChatCompText.substring(lastChatCompText.indexOf(": ") + 2);
 			methods.interfaces.getComponent(INTERFACE_JOIN_FRIEND_CHAT,
-			                                INTERFACE_JOIN_FRIEND_CHAT_LAST_CHANNEL).doClick();
+					INTERFACE_JOIN_FRIEND_CHAT_LAST_CHANNEL).doClick();
 			sleep(random(1550, 1800));
 			if (isInChannel()) {
 				return true;
@@ -132,7 +132,7 @@ public class FriendChat extends MethodProvider {
 			}
 			if (methods.interfaces.getComponent(INTERFACE_FRIEND_CHAT, INTERFACE_FRIEND_CHAT_USERS_LIST) != null) {
 				for (RSComponent comp : methods.interfaces.getComponent(INTERFACE_FRIEND_CHAT,
-				                                                        INTERFACE_FRIEND_CHAT_USERS_LIST).getComponents()) {
+						INTERFACE_FRIEND_CHAT_USERS_LIST).getComponents()) {
 					if (comp.getText() != null) {
 						tempList.add(comp.getText().trim());
 					} else {

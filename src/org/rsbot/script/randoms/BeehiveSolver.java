@@ -92,7 +92,7 @@ public class BeehiveSolver extends Random {
 				log.info("Checking ID: " + i);
 				final int id = returnIdAtSlot(i);
 				dragInterfaces(getBeehiveInterface().getComponent(START_INTERFACE_IDS[i - 1]),
-				               getBeehiveInterface().getComponent(returnDragTo(id)));
+						getBeehiveInterface().getComponent(returnDragTo(id)));
 			}
 			sleep(2000);
 			//Wait is necessary for delay in the change of a setting.
@@ -125,9 +125,9 @@ public class BeehiveSolver extends Random {
 	public boolean myClickContinue() {
 		sleep(random(800, 1000));
 		return interfaces.getComponent(243, 7).doClick() || interfaces.getComponent(241,
-		                                                                            5).doClick() || interfaces.getComponent(
+				5).doClick() || interfaces.getComponent(
 				242, 6).doClick() || interfaces.getComponent(244, 8).doClick() || interfaces.getComponent(64,
-		                                                                                                  5).doClick();
+				5).doClick();
 	}
 
 	public int returnDragTo(final int Model) {

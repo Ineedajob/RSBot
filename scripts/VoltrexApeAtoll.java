@@ -14,16 +14,12 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 
-@ScriptManifest(authors = { "Voltrex" }, name = "Voltrex Ape Atoll Agility", version = 1.35, description = "Trains at Ape Atoll; eats all food, and cuts pineapples if you have a knife.")
+@ScriptManifest(authors = {"Voltrex"}, name = "Voltrex Ape Atoll Agility", version = 1.35, description = "Trains at Ape Atoll; eats all food, and cuts pineapples if you have a knife.")
 public class VoltrexApeAtoll extends Script implements PaintListener {
 
 	private enum State {
@@ -34,8 +30,8 @@ public class VoltrexApeAtoll extends Script implements PaintListener {
 			ScriptManifest.class);
 	private final int pineapple = 2114;
 	private final int knife = 946;
-	private final int[] dropItems = { 2313, 1923 };
-	private final int[] food = { 1895, 1893, 1891, 4293, 2142, 291, 2140, 3228,
+	private final int[] dropItems = {2313, 1923};
+	private final int[] food = {1895, 1893, 1891, 4293, 2142, 291, 2140, 3228,
 			9980, 7223, 6297, 6293, 6295, 6299, 7521, 9988, 7228, 2878, 7568,
 			2343, 1861, 13433, 315, 325, 319, 3144, 347, 355, 333, 339, 351,
 			329, 3381, 361, 10136, 5003, 379, 365, 373, 7946, 385, 397, 391,
@@ -49,7 +45,7 @@ public class VoltrexApeAtoll extends Script implements PaintListener {
 			2048, 2036, 2217, 2213, 2205, 2209, 2054, 2040, 2080, 2277, 2225,
 			2255, 2221, 2253, 2219, 2281, 2227, 2223, 2191, 2233, 2092, 2032,
 			2074, 2030, 2281, 2235, 2064, 2028, 2187, 2185, 2229, 6883, 1971,
-			4608, 1883, 1885, 15272, 2118, 2116 };
+			4608, 1883, 1885, 15272, 2118, 2116};
 
 	private long scriptStartTime = 0;
 	private int runEnergy = random(40, 95);
@@ -84,9 +80,9 @@ public class VoltrexApeAtoll extends Script implements PaintListener {
 				&& inventory.contains(knife)
 				&& inventory.getCount(food) < 4
 				&& (new RSArea(new RSTile(2764, 2737), new RSTile(2779, 2752))
-						.contains(players.getMyPlayer().getLocation()) || new RSArea(
-						new RSTile(2755, 2742), new RSTile(2768, 2756))
-						.contains(players.getMyPlayer().getLocation()))
+				.contains(players.getMyPlayer().getLocation()) || new RSArea(
+				new RSTile(2755, 2742), new RSTile(2768, 2756))
+				.contains(players.getMyPlayer().getLocation()))
 				&& game.getPlane() != 2) {
 			return State.getpineapple;
 		}
@@ -100,7 +96,7 @@ public class VoltrexApeAtoll extends Script implements PaintListener {
 		}
 		if (players.getMyPlayer().getLocation().equals(new RSTile(2755, 2742))
 				|| players.getMyPlayer().getLocation()
-						.equals(new RSTile(2756, 2742)))
+				.equals(new RSTile(2756, 2742)))
 			return State.stone;
 		if (players.getMyPlayer().getLocation().equals(new RSTile(2753, 2742))
 				&& game.getPlane() != 2)
@@ -112,7 +108,7 @@ public class VoltrexApeAtoll extends Script implements PaintListener {
 			return State.rocks;
 		if (players.getMyPlayer().getLocation().equals(new RSTile(2742, 2741))
 				|| new RSArea(new RSTile(2747, 2729), new RSTile(2752, 2736))
-						.contains(players.getMyPlayer().getLocation()))
+				.contains(players.getMyPlayer().getLocation()))
 			return State.rope;
 		if (new RSArea(new RSTile(2756, 2730), new RSTile(2759, 2737))
 				.contains(players.getMyPlayer().getLocation()))
@@ -139,7 +135,7 @@ public class VoltrexApeAtoll extends Script implements PaintListener {
 		// START: auto update
 		/**
 		 * MAJOR credits to OneThatWalks for this AMAZING auto updater.
-		 * 
+		 *
 		 */
 		URLConnection url = null;
 		BufferedReader in = null;
@@ -213,7 +209,7 @@ public class VoltrexApeAtoll extends Script implements PaintListener {
 			}
 
 		} // end: check updates
-			// END: auto update
+		// END: auto update
 
 		try {
 			BKG = ImageIO.read(new URL("http://i54.tinypic.com/2egcfaw.jpg"));
@@ -279,38 +275,38 @@ public class VoltrexApeAtoll extends Script implements PaintListener {
 		}
 
 		switch (getState()) {
-		case stone:
-			doStone();
-			return 50;
-		case tree1:
-			doTree1();
-			return 50;
-		case bars:
-			doBars();
-			return 50;
-		case rocks:
-			doRocks();
-			return 50;
-		case rope:
-			doRope();
-			return 50;
-		case tree2:
-			doTree2();
-			return 50;
-		case tostart:
-			doTostart();
-			return 50;
-		case recover1:
-			doRecover1();
-			return 50;
-		case getpineapple:
-			doGetpineapple();
-			return 50;
-		case cutpineapple:
-			doCutpineapple();
-			return 50;
-		case error:
-			return -1;
+			case stone:
+				doStone();
+				return 50;
+			case tree1:
+				doTree1();
+				return 50;
+			case bars:
+				doBars();
+				return 50;
+			case rocks:
+				doRocks();
+				return 50;
+			case rope:
+				doRope();
+				return 50;
+			case tree2:
+				doTree2();
+				return 50;
+			case tostart:
+				doTostart();
+				return 50;
+			case recover1:
+				doRecover1();
+				return 50;
+			case getpineapple:
+				doGetpineapple();
+				return 50;
+			case cutpineapple:
+				doCutpineapple();
+				return 50;
+			case error:
+				return -1;
 		}
 
 		return 50;
@@ -325,7 +321,7 @@ public class VoltrexApeAtoll extends Script implements PaintListener {
 
 		if (calc.tileOnScreen(stone)) {
 			if (onTile(stone, "Stepping stone", "Jump-to", 0.5, 0.4, 0)) {
-				antibans.perform(new int[] { Antibans.HOVER_PLAYER },
+				antibans.perform(new int[]{Antibans.HOVER_PLAYER},
 						random(11, 18));
 				sleep(random(500, 700));
 				if (!players.getMyPlayer().getLocation()
@@ -416,7 +412,7 @@ public class VoltrexApeAtoll extends Script implements PaintListener {
 				status = "Walking to rope...";
 				walkTile(walkHere);
 				mouse.move(random(220, 340), random(130, 200), 2, 2);
-				antibans.perform(new int[] { Antibans.CAMERA_MOVE_SLIGHTLY },
+				antibans.perform(new int[]{Antibans.CAMERA_MOVE_SLIGHTLY},
 						random(13, 20));
 				sleep(random(200, 400));
 			} else {
@@ -456,7 +452,7 @@ public class VoltrexApeAtoll extends Script implements PaintListener {
 						lapStarted = false;
 					}
 					antibans.perform(
-							new int[] { Antibans.SKILLS_HOVER_AGILITY },
+							new int[]{Antibans.SKILLS_HOVER_AGILITY},
 							random(11, 17));
 					sleep(random(300, 500));
 					mouse.move(random(550, 670), random(20, 120), 2, 2);
@@ -468,7 +464,7 @@ public class VoltrexApeAtoll extends Script implements PaintListener {
 				camera.setAngle(camera.getAngle() + random(-70, 70));
 			}
 		} else {
-			antibans.perform(new int[] { Antibans.SKILLS_HOVER_AGILITY },
+			antibans.perform(new int[]{Antibans.SKILLS_HOVER_AGILITY},
 					random(11, 17));
 			sleep(random(300, 500));
 			camera.setAngle(camera.getAngle() + random(-70, 70));
@@ -481,8 +477,8 @@ public class VoltrexApeAtoll extends Script implements PaintListener {
 	private void doRecover1() {
 		status = "Walking to start...";
 
-		final RSTile[] walkHere = new RSTile[] { new RSTile(2768, 2747),
-				new RSTile(2755, 2742) };
+		final RSTile[] walkHere = new RSTile[]{new RSTile(2768, 2747),
+				new RSTile(2755, 2742)};
 
 		if (players.getMyPlayer().getLocation() != walkHere[1]) {
 			walking.walkPathMM(walkHere, 1, 1);
@@ -497,8 +493,8 @@ public class VoltrexApeAtoll extends Script implements PaintListener {
 	private void doTostart() {
 		status = "Walking to start... (2)";
 
-		final RSTile[] walkHere = new RSTile[] { new RSTile(2768, 2747),
-				new RSTile(2755, 2742) };
+		final RSTile[] walkHere = new RSTile[]{new RSTile(2768, 2747),
+				new RSTile(2755, 2742)};
 
 		if (players.getMyPlayer().getLocation().equals(new RSTile(2756, 2743))) {
 			walkTile(new RSTile(2755, 2742));
@@ -581,7 +577,7 @@ public class VoltrexApeAtoll extends Script implements PaintListener {
 	}
 
 	public boolean onTile(RSTile tile, String search, String action, double dx,
-			double dy, int height) {
+	                      double dy, int height) {
 		Point checkScreen;
 		checkScreen = calc.tileToScreen(tile, dx, dy, height);
 		if (!calc.pointOnScreen(checkScreen)) {
@@ -687,21 +683,18 @@ public class VoltrexApeAtoll extends Script implements PaintListener {
 		/**
 		 * Generates a random number, and if it's the <tt>1/probability</tt>, it
 		 * performs a randomly selected antiban from the <tt>selection</tt>.
-		 * 
-		 * @param selection
-		 *            The identifiers of the possible antibans to perform. To
-		 *            include all antibans, use only the value of
-		 *            <tt>ALL_ANTIBANS</tt>.
-		 * @param probability
-		 *            The probability for an antiban to be performed, read as
-		 *            "1 in probability", where probability is the specified
-		 *            value. The minimum allowed probability is 1.
+		 *
+		 * @param selection   The identifiers of the possible antibans to perform. To
+		 *                    include all antibans, use only the value of
+		 *                    <tt>ALL_ANTIBANS</tt>.
+		 * @param probability The probability for an antiban to be performed, read as
+		 *                    "1 in probability", where probability is the specified
+		 *                    value. The minimum allowed probability is 1.
 		 * @return <tt>true</tt> if an antiban was, and still is, being
 		 *         performed; otherwise <tt>false</tt>.
-		 * @throws IllegalArgumentException
-		 *             If the selection is null or if the probability is below
-		 *             one. Also if an invalid antiban was found in the
-		 *             selection.
+		 * @throws IllegalArgumentException If the selection is null or if the probability is below
+		 *                                  one. Also if an invalid antiban was found in the
+		 *                                  selection.
 		 */
 		private boolean perform(final int[] selection, final int probability)
 				throws IllegalArgumentException {
@@ -730,83 +723,83 @@ public class VoltrexApeAtoll extends Script implements PaintListener {
 			mouse.setSpeed(random(5, 10));
 
 			switch (currentAntiban) {
-			case MOUSE_MOVE_RANDOMLY:
-				if (timer.isRunning())
-					break;
-				timer.setEndIn(random(755, 2345));
+				case MOUSE_MOVE_RANDOMLY:
+					if (timer.isRunning())
+						break;
+					timer.setEndIn(random(755, 2345));
 
-				if (++counter < random(2, 5))
-					mouse.move(random(5, game.getWidth() - 253),
-							random(5, game.getHeight() - 169));
-				else
+					if (++counter < random(2, 5))
+						mouse.move(random(5, game.getWidth() - 253),
+								random(5, game.getHeight() - 169));
+					else
+						currentAntiban = 0;
+					break;
+				case CAMERA_MOVE_SLIGHTLY:
+					camera.setAngle(camera.getAngle() + random(-80, 80));
 					currentAntiban = 0;
-				break;
-			case CAMERA_MOVE_SLIGHTLY:
-				camera.setAngle(camera.getAngle() + random(-80, 80));
-				currentAntiban = 0;
-				break;
-			case SKILLS_HOVER_AGILITY:
-				if (timer.isRunning())
 					break;
-				timer.setEndIn(random(755, 2345));
-				if (counter == 0) {
-					skills.doHover(Skills.INTERFACE_AGILITY);
-					timer.setEndIn(random(1735, 2865));
-					counter++;
-				} else
+				case SKILLS_HOVER_AGILITY:
+					if (timer.isRunning())
+						break;
+					timer.setEndIn(random(755, 2345));
+					if (counter == 0) {
+						skills.doHover(Skills.INTERFACE_AGILITY);
+						timer.setEndIn(random(1735, 2865));
+						counter++;
+					} else
+						currentAntiban = 0;
+					break;
+				case TABS_SELECT_RANDOM:
+					if (timer.isRunning())
+						break;
+					timer.setEndIn(random(755, 2345));
+					final int[] tabs = {game.TAB_ATTACK, game.TAB_CLAN_CHAT,
+							game.TAB_CONTROLS, game.TAB_EQUIPMENT,
+							game.TAB_FRIENDS, game.TAB_FRIENDS_CHAT,
+							game.TAB_INVENTORY, game.TAB_MAGIC, game.TAB_MUSIC,
+							game.TAB_NOTES, game.TAB_OPTIONS, game.TAB_PRAYER,
+							game.TAB_QUESTS, game.TAB_STATS, game.TAB_SUMMONING};
+
+					game.openTab(tabs[random(0, tabs.length)]);
 					currentAntiban = 0;
-				break;
-			case TABS_SELECT_RANDOM:
-				if (timer.isRunning())
 					break;
-				timer.setEndIn(random(755, 2345));
-				final int[] tabs = { game.TAB_ATTACK, game.TAB_CLAN_CHAT,
-						game.TAB_CONTROLS, game.TAB_EQUIPMENT,
-						game.TAB_FRIENDS, game.TAB_FRIENDS_CHAT,
-						game.TAB_INVENTORY, game.TAB_MAGIC, game.TAB_MUSIC,
-						game.TAB_NOTES, game.TAB_OPTIONS, game.TAB_PRAYER,
-						game.TAB_QUESTS, game.TAB_STATS, game.TAB_SUMMONING };
+				case HOVER_PLAYER:
+					if (timer.isRunning())
+						break;
+					timer.setEndIn(random(755, 2345));
+					RSPlayer player = null;
+					RSPlayer[] validPlayers = players.getAll();
 
-				game.openTab(tabs[random(0, tabs.length)]);
-				currentAntiban = 0;
-				break;
-			case HOVER_PLAYER:
-				if (timer.isRunning())
+					player = validPlayers[random(0, validPlayers.length - 1)];
+					if (player != null) {
+						try {
+							String playerName = player.getName();
+							String myPlayerName = getMyPlayer().getName();
+							if (playerName.equals(myPlayerName)) {
+								break;
+							}
+						} catch (NullPointerException e) {
+						}
+						try {
+							RSTile targetLoc = player.getLocation();
+							String name = player.getName();
+							Point checkPlayer = calc.tileToScreen(targetLoc);
+							if (calc.pointOnScreen(checkPlayer)
+									&& checkPlayer != null) {
+								mouse.click(checkPlayer, 5, 5, false);
+								log("ANTIBAN - Hover Player - Right click on "
+										+ name);
+							} else {
+								break;
+							}
+						} catch (Exception ignored) {
+						}
+					}
+					currentAntiban = 0;
 					break;
-				timer.setEndIn(random(755, 2345));
-				RSPlayer player = null;
-				RSPlayer[] validPlayers = players.getAll();
-
-				player = validPlayers[random(0, validPlayers.length - 1)];
-				if (player != null) {
-					try {
-						String playerName = player.getName();
-						String myPlayerName = getMyPlayer().getName();
-						if (playerName.equals(myPlayerName)) {
-							break;
-						}
-					} catch (NullPointerException e) {
-					}
-					try {
-						RSTile targetLoc = player.getLocation();
-						String name = player.getName();
-						Point checkPlayer = calc.tileToScreen(targetLoc);
-						if (calc.pointOnScreen(checkPlayer)
-								&& checkPlayer != null) {
-							mouse.click(checkPlayer, 5, 5, false);
-							log("ANTIBAN - Hover Player - Right click on "
-									+ name);
-						} else {
-							break;
-						}
-					} catch (Exception ignored) {
-					}
-				}
-				currentAntiban = 0;
-				break;
-			default:
-				throw new AssertionError("Unsupported antiban in selection: "
-						+ currentAntiban);
+				default:
+					throw new AssertionError("Unsupported antiban in selection: "
+							+ currentAntiban);
 			}
 
 			mouse.setSpeed(mouseSpeed);

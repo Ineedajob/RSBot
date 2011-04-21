@@ -71,7 +71,7 @@ public abstract class RSCharacter extends MethodProvider {
 		}
 		if (interact < 32768) {
 			Node node = methods.nodes.lookup(methods.client.getRSNPCNC(),
-			                                 interact);
+					interact);
 			if (node == null || !(node instanceof RSNPCNode)) {
 				return null;
 			}
@@ -82,7 +82,7 @@ public abstract class RSCharacter extends MethodProvider {
 				index = 2047;
 			}
 			return new RSPlayer(methods,
-			                    methods.client.getRSPlayerArray()[index]);
+					methods.client.getRSPlayerArray()[index]);
 		}
 	}
 
@@ -130,7 +130,7 @@ public abstract class RSCharacter extends MethodProvider {
 		RSModel model = getModel();
 		if (model == null) {
 			return methods.calc.groundToScreen(c.getX(), c.getY(),
-			                                   c.getHeight() / 2);
+					c.getHeight() / 2);
 		} else {
 			return model.getPoint();
 		}

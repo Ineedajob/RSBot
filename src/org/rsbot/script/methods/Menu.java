@@ -164,13 +164,13 @@ public class Menu extends MethodProvider {
 			Point subLoc = getSubMenuLocation();
 			x = random(4, items[sIdx].length() * 4);
 			methods.mouse.move(subLoc.x + x, methods.mouse.getLocation().y, 2,
-			                   0);
+					0);
 			sleep(random(125, 150));
 
 			if (isOpen()) {
 				y = 16 * sIdx + random(3, 12) + 21;
 				methods.mouse.move(methods.mouse.getLocation().x, subLoc.y + y,
-				                   0, 2);
+						0, 2);
 				sleep(random(125, 150));
 				if (isOpen()) {
 					methods.mouse.click(true);
@@ -249,7 +249,7 @@ public class Menu extends MethodProvider {
 	public Point getLocation() {
 		if (isOpen()) {
 			return new Point(methods.client.getMenuX(),
-			                 methods.client.getMenuY());
+					methods.client.getMenuY());
 		}
 		return null;
 	}
@@ -320,7 +320,7 @@ public class Menu extends MethodProvider {
 	public Point getSubMenuLocation() {
 		if (isCollapsed()) {
 			return new Point(methods.client.getSubMenuX() + 4,
-			                 methods.client.getSubMenuY() + 4);
+					methods.client.getSubMenuY() + 4);
 		}
 		return null;
 	}

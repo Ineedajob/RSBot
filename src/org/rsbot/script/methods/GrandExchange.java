@@ -25,11 +25,11 @@ public class GrandExchange extends MethodProvider {
 	public static final int INTERFACE_GRAND_EXCHANGE_SELL_INVENTORY = 107;
 	public static final int INTERFACE_BUY_SEARCH_BOX = 389;
 	public static final int[] GRAND_EXCHANGE_SELL_BUTTON = {29, 45, 61, 77,
-	                                                        93, 109};
+			93, 109};
 	public static final int[] GRAND_EXCHANGE_BUY_BUTTON = {30, 46, 62, 78, 94,
-	                                                       110};
+			110};
 	public static final int[] GRAND_EXCHANGE_OFFER_BOXES = {19, 35, 51, 67,
-	                                                        83, 99};
+			83, 99};
 	public static final int GRAND_EXCHANGE_COLLECT_BOX_ONE = 209;
 	public static final int GRAND_EXCHANGE_COLLECT_BOX_TWO = 211;
 
@@ -49,7 +49,7 @@ public class GrandExchange extends MethodProvider {
 	 */
 	public boolean isOpen() {
 		return methods.interfaces.get(INTERFACE_GRAND_EXCHANGE_WINDOW)
-		                         .isValid();
+				.isValid();
 	}
 
 	/**
@@ -62,7 +62,7 @@ public class GrandExchange extends MethodProvider {
 			methods.npcs.getNearest(GRAND_EXCHANGE_CLERK).doAction("Exchange");
 		}
 		return methods.interfaces.get(INTERFACE_GRAND_EXCHANGE_WINDOW)
-		                         .isValid();
+				.isValid();
 	}
 
 	/**
@@ -128,7 +128,7 @@ public class GrandExchange extends MethodProvider {
 				if (checkSlotIsEmpty(i)) {
 					int slotComponent = GRAND_EXCHANGE_OFFER_BOXES[i];
 					String s = methods.interfaces.getComponent(INTERFACE_GRAND_EXCHANGE_WINDOW,
-					                                           slotComponent).getComponent(18).getText();
+							slotComponent).getComponent(18).getText();
 					if (s.equals(name)) {
 						return i;
 					}
@@ -189,15 +189,15 @@ public class GrandExchange extends MethodProvider {
 					"Veiw Offer");
 			sleep(random(700, 1200));
 			if (methods.interfaces.getComponent(INTERFACE_GRAND_EXCHANGE_WINDOW,
-			                                    GRAND_EXCHANGE_COLLECT_BOX_TWO).containsAction("Collect")) {
+					GRAND_EXCHANGE_COLLECT_BOX_TWO).containsAction("Collect")) {
 				methods.interfaces.getComponent(INTERFACE_GRAND_EXCHANGE_WINDOW,
-				                                GRAND_EXCHANGE_COLLECT_BOX_TWO).doAction("Collect");
+						GRAND_EXCHANGE_COLLECT_BOX_TWO).doAction("Collect");
 				sleep(random(400, 900));
 			}
 			if (methods.interfaces.getComponent(INTERFACE_GRAND_EXCHANGE_WINDOW,
-			                                    GRAND_EXCHANGE_COLLECT_BOX_ONE).containsAction("Collect")) {
+					GRAND_EXCHANGE_COLLECT_BOX_ONE).containsAction("Collect")) {
 				methods.interfaces.getComponent(INTERFACE_GRAND_EXCHANGE_WINDOW,
-				                                GRAND_EXCHANGE_COLLECT_BOX_ONE).doAction("Collect");
+						GRAND_EXCHANGE_COLLECT_BOX_ONE).doAction("Collect");
 				sleep(random(400, 900));
 			}
 		}
@@ -285,8 +285,8 @@ public class GrandExchange extends MethodProvider {
 	public GEItem lookup(final String itemName) {
 		try {
 			URL url = new URL(GrandExchange.HOST
-					                  + "/m=itemdb_rs/results.ws?query=" + itemName
-					                  + "&price=all&members=");
+					+ "/m=itemdb_rs/results.ws?query=" + itemName
+					+ "&price=all&members=");
 			BufferedReader br = new BufferedReader(new InputStreamReader(
 					url.openStream()));
 			String input;

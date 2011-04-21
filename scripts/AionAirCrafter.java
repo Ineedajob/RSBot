@@ -1,10 +1,3 @@
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Point;
-import java.awt.Polygon;
-import java.util.HashSet;
-import java.util.Set;
-
 import org.rsbot.event.events.MessageEvent;
 import org.rsbot.event.listeners.MessageListener;
 import org.rsbot.event.listeners.PaintListener;
@@ -15,14 +8,11 @@ import org.rsbot.script.methods.Game;
 import org.rsbot.script.methods.Skills;
 import org.rsbot.script.util.Filter;
 import org.rsbot.script.util.Timer;
-import org.rsbot.script.wrappers.RSArea;
-import org.rsbot.script.wrappers.RSItem;
-import org.rsbot.script.wrappers.RSModel;
-import org.rsbot.script.wrappers.RSNPC;
-import org.rsbot.script.wrappers.RSObject;
-import org.rsbot.script.wrappers.RSPath;
-import org.rsbot.script.wrappers.RSTile;
-import org.rsbot.script.wrappers.RSTilePath;
+import org.rsbot.script.wrappers.*;
+
+import java.awt.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @ScriptManifest(authors = "Aion", name = "Aion's Air Crafter", version = 0.2, description = "Either wear an air tiara or have an air talisman in your inventory.")
 public class AionAirCrafter extends Script implements PaintListener,
@@ -54,9 +44,9 @@ public class AionAirCrafter extends Script implements PaintListener,
 			}
 		};
 
-		RSTile[] PATH = { new RSTile(3185, 3434), new RSTile(3173, 3428),
+		RSTile[] PATH = {new RSTile(3185, 3434), new RSTile(3173, 3428),
 				new RSTile(3159, 3423), new RSTile(3147, 3415),
-				new RSTile(3135, 3407), new RSTile(3129, 3405) };
+				new RSTile(3135, 3407), new RSTile(3129, 3405)};
 
 		RSArea AREA_ALTAR = new RSArea(new RSTile(2835, 4823), new RSTile(2851,
 				4843));
@@ -197,8 +187,8 @@ public class AionAirCrafter extends Script implements PaintListener,
 							.newTilePath(Constants.AREA_MUSICIAN.getTileArray());
 					if (!tilePath.traverse()) {
 						walking.newTilePath(
-								new RSTile[] { Constants.AREA_MUSICIAN
-										.getCentralTile() }).traverse();
+								new RSTile[]{Constants.AREA_MUSICIAN
+										.getCentralTile()}).traverse();
 					}
 					waitToMove(random(600, 900));
 					walking.rest(100);
@@ -498,39 +488,39 @@ public class AionAirCrafter extends Script implements PaintListener,
 
 	private void antiban() {
 		switch (random(1, 50)) {
-		case 2:
-			if (random(1, 5) != 1) {
+			case 2:
+				if (random(1, 5) != 1) {
+					break;
+				}
+				mouse.moveSlightly();
 				break;
-			}
-			mouse.moveSlightly();
-			break;
-		case 6:
-			if (random(1, 18) != 7) {
+			case 6:
+				if (random(1, 18) != 7) {
+					break;
+				}
+				if (game.getCurrentTab() != Game.TAB_STATS) {
+					game.openTab(Game.TAB_STATS);
+					sleep(500, 900);
+				}
+				skills.doHover(Skills.INTERFACE_RUNECRAFTING);
+				sleep(random(1400, 2000), 3000);
+				if (random(0, 5) != 3) {
+					break;
+				}
+				mouse.moveSlightly();
 				break;
-			}
-			if (game.getCurrentTab() != Game.TAB_STATS) {
-				game.openTab(Game.TAB_STATS);
-				sleep(500, 900);
-			}
-			skills.doHover(Skills.INTERFACE_RUNECRAFTING);
-			sleep(random(1400, 2000), 3000);
-			if (random(0, 5) != 3) {
+			case 9:
+			case 14:
+			case 17:
+			case 25:
+				camera.setAngle(random(-360, 360));
 				break;
-			}
-			mouse.moveSlightly();
-			break;
-		case 9:
-		case 14:
-		case 17:
-		case 25:
-			camera.setAngle(random(-360, 360));
-			break;
-		case 30:
-		case 34:
-		case 37:
-		case 40:
-			camera.setPitch(camera.getPitch() >= random(65, 101) ? random(0, 61)
-					: random(61, 101));
+			case 30:
+			case 34:
+			case 37:
+			case 40:
+				camera.setPitch(camera.getPitch() >= random(65, 101) ? random(0, 61)
+						: random(61, 101));
 		}
 	}
 

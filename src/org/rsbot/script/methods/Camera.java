@@ -236,7 +236,7 @@ public class Camera extends MethodProvider {
 		int lowestCamAltPossible = random(75, 100);
 		int vertical = random(0, 20) < 15 ? KeyEvent.VK_UP : KeyEvent.VK_DOWN;
 		int horizontal = random(0, 20) < 5 ? KeyEvent.VK_LEFT
-		                                   : KeyEvent.VK_RIGHT;
+				: KeyEvent.VK_RIGHT;
 		if (random(0, 10) < 8) {
 			methods.inputManager.pressKey((char) vertical);
 		}
@@ -303,7 +303,7 @@ public class Camera extends MethodProvider {
 	 */
 	public void setNorth() {
 		methods.interfaces.getComponent(methods.gui.getCompass().getID())
-		                  .doClick();
+				.doClick();
 	}
 
 	/**

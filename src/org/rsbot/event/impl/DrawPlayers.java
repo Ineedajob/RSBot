@@ -52,7 +52,7 @@ public class DrawPlayers implements PaintListener {
 			if (msg != null) {
 				render.setColor(Color.ORANGE);
 				render.drawString(msg, location.x - metrics.stringWidth(msg) / 2,
-				                  location.y - metrics.getHeight() * (raised ? 5 : 3) / 2);
+						location.y - metrics.getHeight() * (raised ? 5 : 3) / 2);
 			}
 		}
 	}

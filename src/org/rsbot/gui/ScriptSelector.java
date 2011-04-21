@@ -155,10 +155,10 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 		});
 		submit = new JButton("Start Script", new ImageIcon(
 				GlobalConfiguration.getImage(GlobalConfiguration.Paths.Resources.ICON_START,
-				                             GlobalConfiguration.Paths.ICON_START)));
+						GlobalConfiguration.Paths.ICON_START)));
 		final JButton connect = new JButton(new ImageIcon(
 				GlobalConfiguration.getImage(GlobalConfiguration.Paths.Resources.ICON_DISCONNECT,
-				                             GlobalConfiguration.Paths.ICON_DISCONNECT)));
+						GlobalConfiguration.Paths.ICON_DISCONNECT)));
 		submit.setEnabled(false);
 		submit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
@@ -180,13 +180,13 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 					if (connected) {
 						connect.setIcon(new ImageIcon(
 								GlobalConfiguration.getImage(GlobalConfiguration.Paths.Resources.ICON_DISCONNECT,
-								                             GlobalConfiguration.Paths.ICON_DISCONNECT)));
+										GlobalConfiguration.Paths.ICON_DISCONNECT)));
 						connect.repaint();
 						connected = false;
 					} else {
 						connect.setIcon(new ImageIcon(
 								GlobalConfiguration.getImage(GlobalConfiguration.Paths.Resources.ICON_CONNECT,
-								                             GlobalConfiguration.Paths.ICON_CONNECT)));
+										GlobalConfiguration.Paths.ICON_CONNECT)));
 						connect.repaint();
 						load();
 						connected = true;
@@ -208,7 +208,7 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 		JPanel center = new JPanel();
 		center.setLayout(new BorderLayout());
 		JScrollPane pane = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-		                                   JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		center.add(pane, BorderLayout.CENTER);
 		add(center, BorderLayout.CENTER);
 		add(toolBar, BorderLayout.SOUTH);
@@ -255,16 +255,16 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 		private static final long serialVersionUID = 1L;
 		public static final ImageIcon ICON_SCRIPT_SRC = new ImageIcon(
 				GlobalConfiguration.getImage(GlobalConfiguration.Paths.Resources.ICON_SCRIPT_SRC,
-				                             GlobalConfiguration.Paths.ICON_SCRIPT_SRC));
+						GlobalConfiguration.Paths.ICON_SCRIPT_SRC));
 		public static final ImageIcon ICON_SCRIPT_PRE = new ImageIcon(
 				GlobalConfiguration.getImage(GlobalConfiguration.Paths.Resources.ICON_SCRIPT_PRE,
-				                             GlobalConfiguration.Paths.ICON_SCRIPT_PRE));
+						GlobalConfiguration.Paths.ICON_SCRIPT_PRE));
 		public static final ImageIcon ICON_SCRIPT_DRM = new ImageIcon(
 				GlobalConfiguration.getImage(GlobalConfiguration.Paths.Resources.ICON_SCRIPT_DRM,
-				                             GlobalConfiguration.Paths.ICON_SCRIPT_DRM));
+						GlobalConfiguration.Paths.ICON_SCRIPT_DRM));
 		public static final ImageIcon ICON_SCRIPT_BDL = new ImageIcon(
 				GlobalConfiguration.getImage(GlobalConfiguration.Paths.Resources.ICON_SCRIPT_BDL,
-				                             GlobalConfiguration.Paths.ICON_SCRIPT_BDL));
+						GlobalConfiguration.Paths.ICON_SCRIPT_BDL));
 		private final List<ScriptDefinition> scripts;
 		private final List<ScriptDefinition> matches;
 

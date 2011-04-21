@@ -51,9 +51,9 @@ public class Lobby extends MethodProvider {
 	private final static int[] TABS = new int[]{188, 189, 190, 191, 192, 193};
 
 	private final static Point[] TAB_POINTS = new Point[]{new Point(152, 42),
-	                                                      new Point(258, 42), new Point(358, 42), new Point(461, 42),
-	                                                      new Point(563, 42),
-	                                                      new Point(655, 42)};
+			new Point(258, 42), new Point(358, 42), new Point(461, 42),
+			new Point(563, 42),
+			new Point(655, 42)};
 
 	/**
 	 * Checks that current game is in lobby.
@@ -114,7 +114,7 @@ public class Lobby extends MethodProvider {
 		}
 		if (methods.interfaces.getComponent(WORLD_SELECT_INTERFACE, WORLD_SELECT_INTERFACE_CURRENT_WORLD).isValid()) {
 			String worldText = methods.interfaces.getComponent(WORLD_SELECT_INTERFACE,
-			                                                   WORLD_SELECT_INTERFACE_CURRENT_WORLD).getText().trim().substring(
+					WORLD_SELECT_INTERFACE_CURRENT_WORLD).getText().trim().substring(
 					methods.interfaces.getComponent(
 							WORLD_SELECT_INTERFACE, WORLD_SELECT_INTERFACE_CURRENT_WORLD).getText().trim().indexOf(
 							"World ") + 6);
@@ -139,12 +139,12 @@ public class Lobby extends MethodProvider {
 			sleep(500);
 		}
 		for (int i = 0; i < methods.interfaces.getComponent(WORLD_SELECT_INTERFACE,
-		                                                    WORLD_SELECT_INTERFACE_WORLD_NAME).getComponents().length;
+				WORLD_SELECT_INTERFACE_WORLD_NAME).getComponents().length;
 		     i++) {
 			String amount = methods.interfaces.getComponent(WORLD_SELECT_INTERFACE,
-			                                                WORLD_SELECT_INTERFACE_AMOUNT_OF_PLAYERS).getComponents()[i].getText();
+					WORLD_SELECT_INTERFACE_AMOUNT_OF_PLAYERS).getComponents()[i].getText();
 			String number = methods.interfaces.getComponent(WORLD_SELECT_INTERFACE,
-			                                                WORLD_SELECT_INTERFACE_WORLD_NAME).getComponents()[i].getText();
+					WORLD_SELECT_INTERFACE_WORLD_NAME).getComponents()[i].getText();
 			if (!amount.contains("OFFLINE") && !amount.contains("0")) {
 				if (!includingFull) {
 					if (!amount.contains("FULL")) {
@@ -203,7 +203,7 @@ public class Lobby extends MethodProvider {
 			RSComponent comp = getWorldComponent(world);
 			if (comp != null) {
 				methods.interfaces.scrollTo(comp, methods.interfaces.getComponent(WORLD_SELECT_INTERFACE,
-				                                                                  WORLD_SELECT_INTERFACE_SCROLL_AREA));
+						WORLD_SELECT_INTERFACE_SCROLL_AREA));
 				comp.doClick();
 				sleep(random(500, 800));
 				if (getSelectedWorld() == world) {
@@ -218,15 +218,15 @@ public class Lobby extends MethodProvider {
 
 	public RSComponent getWorldComponent(int world) {
 		for (int i = 0; i < methods.interfaces.getComponent(WORLD_SELECT_INTERFACE,
-		                                                    WORLD_SELECT_INTERFACE_WORLD_NAME).getComponents().length;
+				WORLD_SELECT_INTERFACE_WORLD_NAME).getComponents().length;
 		     i++) {
 			RSComponent comp = methods.interfaces.getComponent(WORLD_SELECT_INTERFACE,
-			                                                   WORLD_SELECT_INTERFACE_WORLD_NAME).getComponents()[i];
+					WORLD_SELECT_INTERFACE_WORLD_NAME).getComponents()[i];
 			if (comp != null) {
 				String number = comp.getText();
 				if (Integer.parseInt(number) == world) {
 					return methods.interfaces.getComponent(WORLD_SELECT_INTERFACE,
-					                                       WORLD_SELECT_INTERFACE_WORLD_LIST).getComponents()[i];
+							WORLD_SELECT_INTERFACE_WORLD_LIST).getComponents()[i];
 				}
 			}
 		}

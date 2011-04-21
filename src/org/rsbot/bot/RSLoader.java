@@ -108,9 +108,9 @@ public class RSLoader extends Applet implements Runnable, Loader {
 			if (webLoader.load()) {
 				ClientLoader cl = new ClientLoader();
 				cl.init(new URL(GlobalConfiguration.Paths.URLs.UPDATE),
-				        new File(GlobalConfiguration.Paths.getModScriptCache()));
+						new File(GlobalConfiguration.Paths.getModScriptCache()));
 				cl.load(new File(GlobalConfiguration.Paths.getClientCache()),
-				        new File(GlobalConfiguration.Paths.getVersionCache()));
+						new File(GlobalConfiguration.Paths.getVersionCache()));
 				targetName = cl.getTargetName();
 				classLoader = new RSClassLoader(cl.getClasses(), new URL("http://" + targetName + ".com/"));
 			} else {

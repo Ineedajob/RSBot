@@ -312,11 +312,11 @@ public class Magic extends MethodProvider {
 	 */
 	public Book getCurrentSpellBook() {
 		return methods.interfaces.get(Book.MODERN.getInterfaceID()).isValid() ? Book.MODERN
-		                                                                      :
-		       methods.interfaces.get(Book.ANCIENT.getInterfaceID())
-		                         .isValid() ? Book.ANCIENT : methods.interfaces.get(
-				       Book.LUNAR.getInterfaceID()).isValid() ? Book.LUNAR
-		                                                      : Book.NULL;
+				:
+				methods.interfaces.get(Book.ANCIENT.getInterfaceID())
+						.isValid() ? Book.ANCIENT : methods.interfaces.get(
+						Book.LUNAR.getInterfaceID()).isValid() ? Book.LUNAR
+						: Book.NULL;
 	}
 
 	/**

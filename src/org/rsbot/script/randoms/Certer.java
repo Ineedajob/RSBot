@@ -16,10 +16,10 @@ import org.rsbot.script.wrappers.RSTile;
 public class Certer extends Random {
 
 	private final int[] MODEL_IDS = {2807, 8828, 8829, 8832, 8833, 8834, 8835,
-	                                 8836, 8837};
+			8836, 8837};
 	private final int[] bookPiles = {42352, 42354};
 	private final String[] ITEM_NAMES = {"bowl", "battleaxe", "fish",
-	                                     "shield", "helmet", "ring", "shears", "sword", "spade"};
+			"shield", "helmet", "ring", "shears", "sword", "spade"};
 
 	private boolean readyToLeave = false;
 	private int failCount = 0;
@@ -86,7 +86,7 @@ public class Certer extends Random {
 
 			for (int j = 0; j < 3; j++) {
 				final RSComponent iface = interfaces.getComponent(184, 8)
-				                                    .getComponents()[j];
+						.getComponents()[j];
 				if (iface.containsText(itemName)) {
 					iface.doClick();
 					return random(1000, 1200);

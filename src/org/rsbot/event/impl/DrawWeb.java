@@ -20,7 +20,7 @@ public class DrawWeb implements PaintListener {
 		int x = (tile.getX() - player.getLocation().getX()) * 4 - 2;
 		int y = (player.getLocation().getY() - tile.getY()) * 4 - 2;
 		return new Point((int) Math.round(x * Math.cos(minimapAngle) + y * Math.sin(minimapAngle) + 628),
-		                 (int) Math.round(y * Math.cos(minimapAngle) - x * Math.sin(minimapAngle) + 87));
+				(int) Math.round(y * Math.cos(minimapAngle) - x * Math.sin(minimapAngle) + 87));
 	}
 
 	public void onRepaint(final Graphics render) {

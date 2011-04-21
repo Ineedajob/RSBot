@@ -176,7 +176,7 @@ public class ModScript {
 					fragments.put(off, code);
 				}
 				adapters.put(clazz, new InsertCodeAdapter(delegate(clazz),
-				                                          name, desc, fragments, buff.g1(), buff.g1()));
+						name, desc, fragments, buff.g1(), buff.g1()));
 			} else if (op == Opcodes.OVERRIDE_CLASS) {
 				String old_clazz = buff.gstr();
 				String new_clazz = buff.gstr();

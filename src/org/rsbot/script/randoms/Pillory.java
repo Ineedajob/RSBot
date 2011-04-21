@@ -25,8 +25,8 @@ public class Pillory extends Random implements MessageListener {
 
 	public RSTile South = new RSTile(2606, 3105);
 	RSTile[] cagetiles = {new RSTile(2608, 3105), new RSTile(2606, 3105), new RSTile(2604, 3105),
-	                      new RSTile(3226, 3407), new RSTile(3228, 3407), new RSTile(3230, 3407),
-	                      new RSTile(2685, 3489), new RSTile(2683, 3489), new RSTile(2681, 3489)};
+			new RSTile(3226, 3407), new RSTile(3228, 3407), new RSTile(3230, 3407),
+			new RSTile(2685, 3489), new RSTile(2683, 3489), new RSTile(2681, 3489)};
 
 	@Override
 	public boolean activateCondition() {

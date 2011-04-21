@@ -22,7 +22,7 @@ public abstract class Random extends Methods implements PaintListener {
 	private long timeout = random(240, 300);
 
 	private Color[] fadeArray = {Color.red, Color.white, Color.green, new Color(128, 0, 128), Color.yellow,
-	                             Color.black, Color.orange, Color.pink};
+			Color.black, Color.orange, Color.pink};
 
 	private int currentIndex = 0;
 

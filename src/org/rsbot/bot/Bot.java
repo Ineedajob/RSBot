@@ -82,9 +82,9 @@ public class Bot {
 		sh = new ScriptHandler(this);
 		bh = new BreakHandler(this);
 		backBuffer = new BufferedImage(size.width, size.height,
-		                               BufferedImage.TYPE_INT_RGB);
+				BufferedImage.TYPE_INT_RGB);
 		image = new BufferedImage(size.width, size.height,
-		                          BufferedImage.TYPE_INT_RGB);
+				BufferedImage.TYPE_INT_RGB);
 		paintEvent = new PaintEvent();
 		textPaintEvent = new TextPaintEvent();
 		eventManager = new EventManager();
@@ -119,7 +119,7 @@ public class Bot {
 
 	public void resize(int width, int height) {
 		backBuffer = new BufferedImage(width, height,
-		                               BufferedImage.TYPE_INT_RGB);
+				BufferedImage.TYPE_INT_RGB);
 		image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		// client reads size of loader applet for drawing
 		loader.setSize(width, height);

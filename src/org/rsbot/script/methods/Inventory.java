@@ -440,7 +440,7 @@ public class Inventory extends MethodProvider {
 	public RSItem getItemAt(final int index) {
 		RSComponent comp = getInterface().getComponent(index);
 		return 0 <= index && index < 28 && comp != null ? new RSItem(methods,
-		                                                             comp) : null;
+				comp) : null;
 	}
 
 	/**

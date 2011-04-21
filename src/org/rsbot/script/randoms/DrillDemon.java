@@ -219,7 +219,7 @@ public class DrillDemon extends Random {
 				return random(2000, 2500);
 			}
 		} else if (interfaces.getComponent(148, 1).getText()
-		                     .contains("push ups")) {
+				.contains("push ups")) {
 			if (sign1 == 2) {
 				if (calc.distanceTo(new RSTile(3167, 4820)) < 2) {
 					walking.walkTileMM(walking.randomize(
@@ -246,7 +246,7 @@ public class DrillDemon extends Random {
 				return random(2000, 2500);
 			}
 		} else if (interfaces.getComponent(148, 1).getText()
-		                     .contains("sit ups")) {
+				.contains("sit ups")) {
 			if (sign1 == 3) {
 				if (calc.distanceTo(new RSTile(3167, 4820)) < 2) {
 					walking.walkTileMM(walking.randomize(

@@ -17,9 +17,9 @@ public class CapnArnav extends Random {
 	private static final int ARNAV_ID = 2308;
 	private static final int EXIT_PORTAL = 11369;
 	private static final int[][] INTERFACE_SOLVE_IDS = {{7, 14, 21}, // BOWL
-	                                                    {5, 12, 19}, // RING
-	                                                    {6, 13, 20}, // COIN
-	                                                    {8, 15, 22} // BAR
+			{5, 12, 19}, // RING
+			{6, 13, 20}, // COIN
+			{8, 15, 22} // BAR
 	};
 	private static final int[][] ARROWS = {{2, 3}, {9, 10}, {16, 17}};
 	private static final int TALK_INTERFACE = 228;
@@ -172,17 +172,17 @@ public class CapnArnav extends Random {
 			RSComponent container = solver.getComponent(CHEST_INTERFACE_CENTER);
 
 			Point p1 = solver.getComponent(INTERFACE_SOLVE_IDS[index][0])
-			                 .getCenter();
+					.getCenter();
 			p1.setLocation(p1.x + 15, p1.y);
 			Point p2 = solver.getComponent(INTERFACE_SOLVE_IDS[index][1])
-			                 .getCenter();
+					.getCenter();
 			p2.setLocation(p2.x + 15, p1.y);
 			Point p3 = solver.getComponent(INTERFACE_SOLVE_IDS[index][2])
-			                 .getCenter();
+					.getCenter();
 			p3.setLocation(p3.x + 15, p1.y);
 			return (container.getArea().contains(p1)
 					&& container.getArea().contains(p2) && container.getArea()
-			                                                        .contains(p3));
+					.contains(p3));
 		}
 		return false;
 	}

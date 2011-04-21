@@ -281,10 +281,10 @@ public class Label {
 		if (referenceCount >= srcAndRefPositions.length) {
 			int[] a = new int[srcAndRefPositions.length + 6];
 			System.arraycopy(srcAndRefPositions,
-			                 0,
-			                 a,
-			                 0,
-			                 srcAndRefPositions.length);
+					0,
+					a,
+					0,
+					srcAndRefPositions.length);
 			srcAndRefPositions = a;
 		}
 		srcAndRefPositions[referenceCount++] = sourcePosition;

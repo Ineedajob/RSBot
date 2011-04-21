@@ -61,7 +61,7 @@ public class DrawBoundaries implements PaintListener {
 					}
 					if ((miniBL != null) && (miniBR != null) && (miniTR != null) && (miniTL != null)) {
 						render.fillPolygon(new int[]{miniBL.x, miniBR.x, miniTR.x, miniTL.x},
-						                   new int[]{miniBL.y, miniBR.y, miniTR.y, miniTL.y}, 4);
+								new int[]{miniBL.y, miniBR.y, miniTR.y, miniTL.y}, 4);
 					}
 				}
 				if (((blocks[i][j - 1] & 0x1280102) != 0) || ((curBlock & 0x1280120) != 0)) {

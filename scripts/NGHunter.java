@@ -13,7 +13,7 @@ import java.util.Collections;
 import java.util.List;
 
 @ScriptManifest(name = "NGHunter", authors = "Rakura", keywords = "Hunter", version = 1.0,
-                description = "crim swifts, trop wags, <grey,red> chins")
+		description = "crim swifts, trop wags, <grey,red> chins")
 public class NGHunter extends Script {
 
 	private enum TileType {
@@ -73,10 +73,10 @@ public class NGHunter extends Script {
 				wait = SNARE_WAIT;
 				failed = SNARE_FAILED;
 				caught = level >= 19 ? TROPICAL_WAGTAIL_CAUGHT
-				                     : CRIMSON_SWIFT_CAUGHT;
+						: CRIMSON_SWIFT_CAUGHT;
 				int selection = JOptionPane.showConfirmDialog(null,
-				                                              "Bury bones?", "NGHunter", JOptionPane.YES_NO_OPTION,
-				                                              JOptionPane.QUESTION_MESSAGE);
+						"Bury bones?", "NGHunter", JOptionPane.YES_NO_OPTION,
+						JOptionPane.QUESTION_MESSAGE);
 				bury = selection == JOptionPane.YES_OPTION;
 			}
 		}
@@ -169,7 +169,7 @@ public class NGHunter extends Script {
 
 	private void cleanInventory() {
 		RSItem[] meatNBones = inventory.getItems(Constants.BIRD_MEAT,
-		                                         Constants.BONES);
+				Constants.BONES);
 		List<RSItem> items = new ArrayList<RSItem>(Arrays.asList(meatNBones));
 		Collections.shuffle(items);
 		for (RSItem item : items) {

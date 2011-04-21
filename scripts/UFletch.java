@@ -1,25 +1,34 @@
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.image.*;
-import java.io.*;
-import java.net.*;
-import java.sql.Timestamp;
-import java.util.*;
-import java.util.logging.*;
-import java.util.regex.*;
+import org.rsbot.event.events.MessageEvent;
+import org.rsbot.event.listeners.MessageListener;
+import org.rsbot.event.listeners.PaintListener;
+import org.rsbot.script.Script;
+import org.rsbot.script.ScriptManifest;
+import org.rsbot.script.methods.Environment;
+import org.rsbot.script.methods.Skills;
+import org.rsbot.script.wrappers.RSInterface;
+import org.rsbot.script.wrappers.RSTile;
+import org.rsbot.util.GlobalConfiguration;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.text.*;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
+import javax.swing.text.SimpleAttributeSet;
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
+import java.io.*;
+import java.net.*;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.StringTokenizer;
+import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import org.rsbot.event.events.MessageEvent;
-import org.rsbot.event.listeners.*;
-import org.rsbot.util.GlobalConfiguration;
-import org.rsbot.script.*;
-import org.rsbot.script.methods.*;
-import org.rsbot.script.wrappers.*;
-
-@ScriptManifest(authors = { "Fletch To 99" }, keywords = "Fletching", name = "UFletch", version = 2.21, description = "The best fletcher!")
+@ScriptManifest(authors = {"Fletch To 99"}, keywords = "Fletching", name = "UFletch", version = 2.21, description = "The best fletcher!")
 /**
  * All-in-One Fletching script for RSBot 2.XX
  * @author Fletch To 99
@@ -28,16 +37,16 @@ public class UFletch extends Script implements PaintListener, MouseListener,
 		MouseMotionListener, MessageListener {
 
 	private static interface constants {
-		String[] optionMethod = { "Fletch", "String", "Fletch&String",
-				"Chop-Fletch-Drop/Shaft" };
-		String[] optionLog = { "Normal", "Oak", "Willow", "Maple", "Yew",
-				"Magic" };
-		String[] optionBow = { "Short", "Long", "Shafts", "Stocks", "N/A" };
-		String[] optionKnife = { "Normal", "clay", "N/A" };
-		String[] optionAxe = { "Bronze", "Iron", "Black", "Mith", "Addy",
-				"Rune", "Dragon", "N/A" };
-		String[] optionColor = { "Black", "Red", "Orange", "Blue", "Green",
-				"Yellow", "Pink", "White", "Tan" };
+		String[] optionMethod = {"Fletch", "String", "Fletch&String",
+				"Chop-Fletch-Drop/Shaft"};
+		String[] optionLog = {"Normal", "Oak", "Willow", "Maple", "Yew",
+				"Magic"};
+		String[] optionBow = {"Short", "Long", "Shafts", "Stocks", "N/A"};
+		String[] optionKnife = {"Normal", "clay", "N/A"};
+		String[] optionAxe = {"Bronze", "Iron", "Black", "Mith", "Addy",
+				"Rune", "Dragon", "N/A"};
+		String[] optionColor = {"Black", "Red", "Orange", "Blue", "Green",
+				"Yellow", "Pink", "White", "Tan"};
 		final String UPDATER_FILE_NAME = "UFletch.java";
 		final String UPDATER_URL = "http://dl.dropbox.com/u/23938245/Scripts/UFletch/Script/UFletch.java";
 		final Pattern UPDATER_VERSION_PATTERN = Pattern
@@ -328,18 +337,18 @@ public class UFletch extends Script implements PaintListener, MouseListener,
 
 	private int[] getTreeId() {
 		if (gui.comboBox2.getSelectedIndex() == 0) {
-			return new int[] { 1278, 1276, 38787, 38760, 38788, 38784, 38783,
-					38782 };
+			return new int[]{1278, 1276, 38787, 38760, 38788, 38784, 38783,
+					38782};
 		} else if (gui.comboBox2.getSelectedIndex() == 1) {
-			return new int[] { 1281, 38731 };
+			return new int[]{1281, 38731};
 		} else if (gui.comboBox2.getSelectedIndex() == 2) {
-			return new int[] { 5551, 5552, 5553, 1308, 38616, 38617, 38627 };
+			return new int[]{5551, 5552, 5553, 1308, 38616, 38617, 38627};
 		} else if (gui.comboBox2.getSelectedIndex() == 3) {
-			return new int[] { 1307 };
+			return new int[]{1307};
 		} else if (gui.comboBox2.getSelectedIndex() == 4) {
-			return new int[] { 1309, 38755 };
+			return new int[]{1309, 38755};
 		} else if (gui.comboBox2.getSelectedIndex() == 5) {
-			return new int[] { 1306 };
+			return new int[]{1306};
 		}
 		return null;
 	}
@@ -1074,7 +1083,7 @@ public class UFletch extends Script implements PaintListener, MouseListener,
 			if (objects.getNearest(getTreeId()) != null
 					&& !isBusy()
 					&& calc.tileOnScreen(objects.getNearest(getTreeId())
-							.getLocation())) {
+					.getLocation())) {
 				objects.getNearest(getTreeId()).doAction("Chop");
 				sleep(random(1000, 1250));
 				if (full > 5) {
@@ -1254,7 +1263,7 @@ public class UFletch extends Script implements PaintListener, MouseListener,
 						+ constants.UPDATER_FILE_NAME
 						+ " to "
 						+ GlobalConfiguration.Paths
-								.getScriptsSourcesDirectory());
+						.getScriptsSourcesDirectory());
 				log("Compiling...");
 				BufferedReader pathfile = new BufferedReader(new FileReader(
 						GlobalConfiguration.Paths.getSettingsDirectory() + "\\"
@@ -1262,8 +1271,8 @@ public class UFletch extends Script implements PaintListener, MouseListener,
 				String path = pathfile.readLine();
 				try {
 					Runtime.getRuntime()
-							.exec(new String[] { "javac", "-cp", path,
-									scriptFilePath });
+							.exec(new String[]{"javac", "-cp", path,
+									scriptFilePath});
 				} catch (Exception ex) {
 					JOptionPane.showMessageDialog(null,
 							"Error Compiling, please manually compile!");
@@ -1409,9 +1418,9 @@ public class UFletch extends Script implements PaintListener, MouseListener,
 			urlConn.setRequestProperty("Content-Type",
 					"application/x-www-form-urlencoded");
 			String content = "";
-			String[] stats = { "auth", "secs", "mins", "hours", "fletched",
-					"strung", "expgained" };
-			Object[] data = { gui.textField2.getText(), 0, 0, 0, 0, 0, 0 };
+			String[] stats = {"auth", "secs", "mins", "hours", "fletched",
+					"strung", "expgained"};
+			Object[] data = {gui.textField2.getText(), 0, 0, 0, 0, 0, 0};
 			for (int i = 0; i < stats.length; i++) {
 				content += stats[i] + "=" + data[i] + "&";
 			}
@@ -1454,10 +1463,10 @@ public class UFletch extends Script implements PaintListener, MouseListener,
 			urlConn.setRequestProperty("Content-Type",
 					"application/x-www-form-urlencoded");
 			String content = "";
-			String[] stats = { "auth", "secs", "mins", "hours", "fletched",
-					"strung", "expgained" };
-			Object[] data = { gui.textField2.getText(), seconds, minutes,
-					hours, fletched, strung, xpGained };
+			String[] stats = {"auth", "secs", "mins", "hours", "fletched",
+					"strung", "expgained"};
+			Object[] data = {gui.textField2.getText(), seconds, minutes,
+					hours, fletched, strung, xpGained};
 			for (int i = 0; i < stats.length; i++) {
 				content += stats[i] + "=" + data[i] + "&";
 			}
@@ -1571,7 +1580,7 @@ public class UFletch extends Script implements PaintListener, MouseListener,
 
 	private class MousePathPoint2 extends Point {
 		/**
-		 * 
+		 *
 		 */
 		private static final long serialVersionUID = 3567008140194371837L;
 
@@ -1688,26 +1697,26 @@ public class UFletch extends Script implements PaintListener, MouseListener,
 				g2.drawString(
 						"Exp/H: "
 								+ getHourly(skills
-										.getCurrentExp(Skills.FLETCHING)
-										- startXP), 60, 409);
+								.getCurrentExp(Skills.FLETCHING)
+								- startXP), 60, 409);
 				if (getMethod() != 2) {
 					g2.drawString("Fletched/Strung:  " + fletched, 60, 426);
 					g2.drawString(
 							"Fletched/Hr:  "
 									+ ((int) (new Double(fletched)
-											/ new Double(System
-													.currentTimeMillis()
-													- startTime) * new Double(
-											60 * 60 * 1000))), 60, 444);
+									/ new Double(System
+									.currentTimeMillis()
+									- startTime) * new Double(
+									60 * 60 * 1000))), 60, 444);
 				} else if (getMethod() == 2) {
 					g2.drawString("Fletched/Strung:  " + strung, 60, 426);
 					g2.drawString(
 							"Fletched/Hr:  "
 									+ ((int) (new Double(strung)
-											/ new Double(System
-													.currentTimeMillis()
-													- startTime) * new Double(
-											60 * 60 * 1000))), 60, 444);
+									/ new Double(System
+									.currentTimeMillis()
+									- startTime) * new Double(
+									60 * 60 * 1000))), 60, 444);
 				}
 				g2.drawString("Status:  " + status, 60, 466);
 				g2.setFont(new Font("Arial", 1, 10));
@@ -1736,15 +1745,15 @@ public class UFletch extends Script implements PaintListener, MouseListener,
 				g2.drawString(
 						"Exp/H: "
 								+ getHourly(skills
-										.getCurrentExp(Skills.FLETCHING)
-										- startXP), 60, 409);
+								.getCurrentExp(Skills.FLETCHING)
+								- startXP), 60, 409);
 				g2.drawString("Fletched/Strung:  " + fletched, 60, 426);
 				g2.drawString(
 						"Fletched/Hr:  "
 								+ ((int) (new Double(fletched)
-										/ new Double(System.currentTimeMillis()
-												- startTime) * new Double(
-										60 * 60 * 1000))), 60, 444);
+								/ new Double(System.currentTimeMillis()
+								- startTime) * new Double(
+								60 * 60 * 1000))), 60, 444);
 				g2.drawString("Status:  " + status, 60, 466);
 				g2.setFont(new Font("Arial", 1, 10));
 				g2.drawString("Hide Permanitly (Click to Fade)", 30, 355);
@@ -1775,15 +1784,15 @@ public class UFletch extends Script implements PaintListener, MouseListener,
 				g2.drawString(
 						"Exp/H: "
 								+ getHourly(skills
-										.getCurrentExp(Skills.FLETCHING)
-										- startXP), 560, 370);
+								.getCurrentExp(Skills.FLETCHING)
+								- startXP), 560, 370);
 				g2.drawString("Fletched/Strung:  " + fletched, 560, 390);
 				g2.drawString(
 						"Fletched/Hr:  "
 								+ ((int) (new Double(fletched)
-										/ new Double(System.currentTimeMillis()
-												- startTime) * new Double(
-										60 * 60 * 1000))), 560, 410);
+								/ new Double(System.currentTimeMillis()
+								- startTime) * new Double(
+								60 * 60 * 1000))), 560, 410);
 				g2.drawString("Status:  " + status, 560, 430);
 				g2.setFont(new Font("Arial", 1, 10));
 				g2.drawString("(Click to Fade) Hide Perminatly:", 560, 460);
@@ -1813,15 +1822,15 @@ public class UFletch extends Script implements PaintListener, MouseListener,
 				g2.drawString(
 						"Exp/H: "
 								+ getHourly(skills
-										.getCurrentExp(Skills.FLETCHING)
-										- startXP), 560, 370);
+								.getCurrentExp(Skills.FLETCHING)
+								- startXP), 560, 370);
 				g2.drawString("Fletched/Strung:  " + fletched, 560, 390);
 				g2.drawString(
 						"Fletched/Hr:  "
 								+ ((int) (new Double(fletched)
-										/ new Double(System.currentTimeMillis()
-												- startTime) * new Double(
-										60 * 60 * 1000))), 560, 410);
+								/ new Double(System.currentTimeMillis()
+								- startTime) * new Double(
+								60 * 60 * 1000))), 560, 410);
 				g2.drawString("Status:  " + status, 560, 430);
 				g2.setFont(new Font("Arial", 1, 10));
 				g2.drawString("(Click to Fade) Hide Perminatly:", 560, 461);
@@ -1937,11 +1946,11 @@ public class UFletch extends Script implements PaintListener, MouseListener,
 						g2.fillOval(
 								a.x
 										- a.toColor(15 * ((a.finishTime - System
-												.currentTimeMillis()) / (a.lastingTime)))
+										.currentTimeMillis()) / (a.lastingTime)))
 										/ 2,
 								a.y
 										- a.toColor(15 * ((a.finishTime - System
-												.currentTimeMillis()) / (a.lastingTime)))
+										.currentTimeMillis()) / (a.lastingTime)))
 										/ 2,
 								a.toColor(15 * ((a.finishTime - System
 										.currentTimeMillis()) / (a.lastingTime))),
@@ -1953,11 +1962,11 @@ public class UFletch extends Script implements PaintListener, MouseListener,
 						g2.drawOval(
 								a.x
 										- a.toColor(15 * ((a.finishTime - System
-												.currentTimeMillis()) / (a.lastingTime)))
+										.currentTimeMillis()) / (a.lastingTime)))
 										/ 2,
 								a.y
 										- a.toColor(15 * ((a.finishTime - System
-												.currentTimeMillis()) / (a.lastingTime)))
+										.currentTimeMillis()) / (a.lastingTime)))
 										/ 2,
 								a.toColor(15 * ((a.finishTime - System
 										.currentTimeMillis()) / (a.lastingTime))),
@@ -2003,11 +2012,11 @@ public class UFletch extends Script implements PaintListener, MouseListener,
 						g2.fillOval(
 								a.x
 										- a.toColor(15 * ((a.finishTime - System
-												.currentTimeMillis()) / (a.lastingTime)))
+										.currentTimeMillis()) / (a.lastingTime)))
 										/ 2,
 								a.y
 										- a.toColor(15 * ((a.finishTime - System
-												.currentTimeMillis()) / (a.lastingTime)))
+										.currentTimeMillis()) / (a.lastingTime)))
 										/ 2,
 								a.toColor(15 * ((a.finishTime - System
 										.currentTimeMillis()) / (a.lastingTime))),
@@ -2019,11 +2028,11 @@ public class UFletch extends Script implements PaintListener, MouseListener,
 						g2.drawOval(
 								a.x
 										- a.toColor(15 * ((a.finishTime - System
-												.currentTimeMillis()) / (a.lastingTime)))
+										.currentTimeMillis()) / (a.lastingTime)))
 										/ 2,
 								a.y
 										- a.toColor(15 * ((a.finishTime - System
-												.currentTimeMillis()) / (a.lastingTime)))
+										.currentTimeMillis()) / (a.lastingTime)))
 										/ 2,
 								a.toColor(15 * ((a.finishTime - System
 										.currentTimeMillis()) / (a.lastingTime))),
@@ -3723,21 +3732,21 @@ public class UFletch extends Script implements PaintListener, MouseListener,
 						sendRaw("PONG " + line.substring(4) + "\r\n");
 					} else if (line.contains("JOIN")
 							&& !IRCgui.textArea2.getText().contains(
-									getIRCUserName(line))) {
+							getIRCUserName(line))) {
 						users.insertString(users.getLength(), "\n"
 								+ getIRCUserName(line),
 								new SimpleAttributeSet());
 					} else if (line.contains("PART")
 							|| line.contains("QUIT")
 							&& IRCgui.textArea2.getText().contains(
-									getIRCUserName(line))) {
+							getIRCUserName(line))) {
 						users.remove(
 								IRCgui.textArea2.getText().indexOf(
 										getIRCUserName(line).trim()) - 1,
 								getIRCUserName(line).length() + 1);
 					} else if (line.contains("KICK")
 							&& getIRCUserName(line).equals(
-									nameGUI.textField1.getText())) {
+							nameGUI.textField1.getText())) {
 						nameGUI.setVisible(false);
 						irc.leave();
 						JOptionPane.showMessageDialog(null,
@@ -3825,7 +3834,7 @@ public class UFletch extends Script implements PaintListener, MouseListener,
 
 	public class IRCGui extends JFrame {
 		/**
-		 * 
+		 *
 		 */
 		private static final long serialVersionUID = 1L;
 

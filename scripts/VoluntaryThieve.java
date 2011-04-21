@@ -80,13 +80,11 @@ public final class VoluntaryThieve extends Script implements
 
 			/**
 			 * Creates a new instance representing the steps of an action.
-			 * 
-			 * @param maximumTimes
-			 *            The maximum times of the individual steps, in the
-			 *            order: PERFORM, CONFIRM, FINISH.
-			 * @throws IllegalArgumentException
-			 *             If the length of <tt>maximumTimes</tt> wasn't three,
-			 *             or if any of the maximum times were below zero.
+			 *
+			 * @param maximumTimes The maximum times of the individual steps, in the
+			 *                     order: PERFORM, CONFIRM, FINISH.
+			 * @throws IllegalArgumentException If the length of <tt>maximumTimes</tt> wasn't three,
+			 *                                  or if any of the maximum times were below zero.
 			 */
 			private Steps(final long... maximumTimes)
 					throws IllegalArgumentException {
@@ -106,7 +104,7 @@ public final class VoluntaryThieve extends Script implements
 
 			/**
 			 * Gets the current step in the action-process.
-			 * 
+			 *
 			 * @return The current step in the action-process.
 			 */
 			private int getCurrent() {
@@ -122,7 +120,7 @@ public final class VoluntaryThieve extends Script implements
 
 			/**
 			 * Gets the starting time of the current step.
-			 * 
+			 *
 			 * @return The starting time of the current step, or <tt>0</tt> if
 			 *         not set.
 			 */
@@ -132,7 +130,7 @@ public final class VoluntaryThieve extends Script implements
 
 			/**
 			 * Checks whether the starting time has been set or not.
-			 * 
+			 *
 			 * @return <tt>true</tt> if the starting time has been set;
 			 *         otherwise <tt>false</tt>.
 			 */
@@ -142,10 +140,9 @@ public final class VoluntaryThieve extends Script implements
 
 			/**
 			 * Sets the current step to the next step in the set order.
-			 * 
-			 * @throws IllegalStateException
-			 *             If the method is called when the current step is the
-			 *             <tt>FINISH</tt>-step.
+			 *
+			 * @throws IllegalStateException If the method is called when the current step is the
+			 *                               <tt>FINISH</tt>-step.
 			 */
 			private void next() throws IllegalStateException {
 				if (getCurrent() >= FINISH) {
@@ -159,11 +156,10 @@ public final class VoluntaryThieve extends Script implements
 			/**
 			 * Checks if the maximum time set has passed, i.e. if it's now
 			 * obsolete to continue doing the action.
-			 * 
+			 *
 			 * @return <tt>true</tt> if the maximum time has passed; otherwise
 			 *         <tt>false</tt>.
-			 * @throws IllegalStateException
-			 *             If the starting time has not been set.
+			 * @throws IllegalStateException If the starting time has not been set.
 			 */
 			private boolean isObsolete() throws IllegalStateException {
 				if (!isStartingTimeSet()) {
@@ -207,17 +203,14 @@ public final class VoluntaryThieve extends Script implements
 		/**
 		 * Creates a new <tt>Action</tt> with the maximum times for the three
 		 * steps of the action, namely the perform-, confirm- and finish-step.
-		 * 
-		 * @param name
-		 *            The user-friendly name of this action.
-		 * @param id
-		 *            The identification for this action.
-		 * @param maximumTimes
-		 *            The maximum times for the steps, in the order: PERFORM,
-		 *            CONFIRM, FINISH.
+		 *
+		 * @param name         The user-friendly name of this action.
+		 * @param id           The identification for this action.
+		 * @param maximumTimes The maximum times for the steps, in the order: PERFORM,
+		 *                     CONFIRM, FINISH.
 		 */
 		private Action(final String name, final int id,
-				final long... maximumTimes) {
+		               final long... maximumTimes) {
 			this.id = id;
 			this.name = name;
 			steps = new Steps(maximumTimes);
@@ -228,24 +221,20 @@ public final class VoluntaryThieve extends Script implements
 		 * three steps of the action, namely the perform-, and finish-step. The
 		 * confirm-step defaults to completed but can be overridden and will in
 		 * that case be called once before failing.
-		 * 
-		 * @param name
-		 *            The user-friendly name of this action.
-		 * @param id
-		 *            The identification for this action.
-		 * @param perform
-		 *            The maximum time before the perform-step is obsolete.
-		 * @param finish
-		 *            The maximum time before the finish-step is obsolete.
+		 *
+		 * @param name    The user-friendly name of this action.
+		 * @param id      The identification for this action.
+		 * @param perform The maximum time before the perform-step is obsolete.
+		 * @param finish  The maximum time before the finish-step is obsolete.
 		 */
 		private Action(final String name, final int id, final long perform,
-				final long finish) {
+		               final long finish) {
 			this(name, id, perform, 0, finish);
 		}
 
 		/**
 		 * Gets the user-friendly name of this action.
-		 * 
+		 *
 		 * @return The user-friendly name of the action.
 		 */
 		private String getName() {
@@ -254,7 +243,7 @@ public final class VoluntaryThieve extends Script implements
 
 		/**
 		 * Gets the identification for this action.
-		 * 
+		 *
 		 * @return The identification for this action.
 		 */
 		private int getId() {
@@ -266,7 +255,7 @@ public final class VoluntaryThieve extends Script implements
 		 * <tt>State.PROGRESSING</tt>. No matter how low a maximum time for a
 		 * step is set, the corresponding method will always be called once,
 		 * before making any conclusions.
-		 * 
+		 *
 		 * @return One of the following states: State.PROGRESSING - The action
 		 *         is still in progress. State.COMPLETED - The action completed
 		 *         successfully. State.FAILED - The action did not complete
@@ -282,26 +271,26 @@ public final class VoluntaryThieve extends Script implements
 
 			State returnState;
 			switch (steps.getCurrent()) {
-			case Steps.PERFORM:
-				if ((returnState = perform()) == State.COMPLETED) {
-					steps.next();
-					return State.PROGRESSING;
-				}
-				break;
-			case Steps.CONFIRM:
-				if ((returnState = confirm()) == State.COMPLETED) {
-					steps.next();
-					return State.PROGRESSING;
-				}
-				break;
-			case Steps.FINISH:
-				if ((returnState = finish()) == State.COMPLETED) {
-					return (actionDoneState = State.COMPLETED);
-				}
-				break;
-			default:
-				throw new AssertionError("Unsupported step: "
-						+ steps.getCurrent());
+				case Steps.PERFORM:
+					if ((returnState = perform()) == State.COMPLETED) {
+						steps.next();
+						return State.PROGRESSING;
+					}
+					break;
+				case Steps.CONFIRM:
+					if ((returnState = confirm()) == State.COMPLETED) {
+						steps.next();
+						return State.PROGRESSING;
+					}
+					break;
+				case Steps.FINISH:
+					if ((returnState = finish()) == State.COMPLETED) {
+						return (actionDoneState = State.COMPLETED);
+					}
+					break;
+				default:
+					throw new AssertionError("Unsupported step: "
+							+ steps.getCurrent());
 			}
 
 			return (returnState == State.FAILED || steps.isObsolete()) ? (actionDoneState = State.FAILED)
@@ -310,7 +299,7 @@ public final class VoluntaryThieve extends Script implements
 
 		/**
 		 * Performs the selected action, e.x. clicking on an object.
-		 * 
+		 *
 		 * @return The <tt>State</tt>, telling if the operation was successful
 		 *         or not, or if the action is still in progress.
 		 */
@@ -318,7 +307,7 @@ public final class VoluntaryThieve extends Script implements
 
 		/**
 		 * Confirms the selected action, e.x. the click on the object.
-		 * 
+		 *
 		 * @return The <tt>State</tt>, telling if the operation was successful
 		 *         or not, or if the action is still in progress.
 		 */
@@ -329,7 +318,7 @@ public final class VoluntaryThieve extends Script implements
 		/**
 		 * Checks if the actions result matches the desired result of the
 		 * action.
-		 * 
+		 *
 		 * @return The <tt>State</tt>, telling if the operation was successful
 		 *         or not, or if the action is still in progress.
 		 */
@@ -350,7 +339,7 @@ public final class VoluntaryThieve extends Script implements
 			 * Checks if the the player is logged in and has passed the welcome
 			 * screen. Also makes sure that skill levels and such are loaded, so
 			 * no misreadings happen.
-			 * 
+			 *
 			 * @return <tt>true</tt> if the player is logged in and has passed
 			 *         the welcome screen; otherwise <tt>false</tt>.
 			 */
@@ -363,13 +352,13 @@ public final class VoluntaryThieve extends Script implements
 			 * Gets the identifications for the trainers to use in the current
 			 * mode. Excludes trainers that have explicitly been marked as not
 			 * to be included.
-			 * 
+			 *
 			 * @return The identifications for the trainers to use.
 			 */
 			private int[] getTrainers() {
-				final int[] allTrainers = options.isBlackjacking ? new int[] {
-						11289, 11291, 11293, 11297 } : new int[] { 11281,
-						11283, 11285, 11287 };
+				final int[] allTrainers = options.isBlackjacking ? new int[]{
+						11289, 11291, 11293, 11297} : new int[]{11281,
+						11283, 11285, 11287};
 
 				final List<Integer> validTrainers = new ArrayList<Integer>();
 				for (final Integer trainer : allTrainers) {
@@ -388,7 +377,7 @@ public final class VoluntaryThieve extends Script implements
 
 			/**
 			 * Gets if the door to the bank is open or closed.
-			 * 
+			 *
 			 * @return <tt>true</tt> if the door could be found and is open;
 			 *         <tt>false</tt> if the door could not be found or is
 			 *         closed.
@@ -401,7 +390,7 @@ public final class VoluntaryThieve extends Script implements
 			/**
 			 * Gets the object at the position where the door to the bank should
 			 * be if it is currently open.
-			 * 
+			 *
 			 * @return The <tt>RSObject</tt> at the position of the open door.
 			 */
 			private RSObject getOpenDoor() {
@@ -412,7 +401,7 @@ public final class VoluntaryThieve extends Script implements
 			/**
 			 * Gets the object at the position where the door to the bank should
 			 * be if it is currently closed.
-			 * 
+			 *
 			 * @return The <tt>RSObject</tt> at the position of the closed door.
 			 */
 			private RSObject getClosedDoor() {
@@ -423,7 +412,7 @@ public final class VoluntaryThieve extends Script implements
 			/**
 			 * Gets if any of the interfaces for the conversation when luring is
 			 * valid or not.
-			 * 
+			 *
 			 * @return <tt>true</tt> if any of the interfaces for the
 			 *         conversation when luring is valid; otherwise
 			 *         <tt>false</tt>.
@@ -432,8 +421,8 @@ public final class VoluntaryThieve extends Script implements
 				if (hasKnockoutFailed()) {
 					return false;
 				}
-				final int[] screens = { Values.INTERFACE_LURE_FIRST,
-						Values.INTERFACE_LURE_SECOND };
+				final int[] screens = {Values.INTERFACE_LURE_FIRST,
+						Values.INTERFACE_LURE_SECOND};
 				for (final int screen : screens) {
 					final RSInterface screenInterface = interfaces.get(screen);
 					if (screenInterface != null && screenInterface.isValid()) {
@@ -447,7 +436,7 @@ public final class VoluntaryThieve extends Script implements
 			/**
 			 * Gets if the knock-out attempt has failed and the npc needs to be
 			 * lured again.
-			 * 
+			 *
 			 * @return <tt>true</tt> if the knock-out attempt has failed;
 			 *         otherwise <tt>false</tt>.
 			 */
@@ -460,7 +449,7 @@ public final class VoluntaryThieve extends Script implements
 
 			/**
 			 * Gets if the player is considered to be stunned.
-			 * 
+			 *
 			 * @return <tt>true</tt> if the player is stunned; otherwise
 			 *         <tt>false</tt>.
 			 */
@@ -471,7 +460,7 @@ public final class VoluntaryThieve extends Script implements
 			/**
 			 * Gets the appropriate action to do in order to handle the opening
 			 * of a door.
-			 * 
+			 *
 			 * @return The appropriate {@link VoluntaryThieve.Action} to take
 			 *         when opening the door.
 			 */
@@ -483,7 +472,7 @@ public final class VoluntaryThieve extends Script implements
 
 			/**
 			 * Gets if the player is inside the bank-area.
-			 * 
+			 *
 			 * @return <tt>true</tt> if the player is in the bank-area;
 			 *         otherwise <tt>false</tt>.
 			 */
@@ -496,7 +485,7 @@ public final class VoluntaryThieve extends Script implements
 
 			/**
 			 * Gets if the player is located inside the thieves guild or not.
-			 * 
+			 *
 			 * @return <tt>true</tt> if the player is inside the thieves guild;
 			 *         otherwise <tt>false</tt>.
 			 */
@@ -513,7 +502,7 @@ public final class VoluntaryThieve extends Script implements
 			 * used because, depending on how many capers the user has
 			 * completed, the guild will be placed differently in the runescape
 			 * world.
-			 * 
+			 *
 			 * @return The offset to be used for locations in the script.
 			 */
 			private Point getOffset() {
@@ -736,7 +725,7 @@ public final class VoluntaryThieve extends Script implements
 
 		/**
 		 * Gets the next action to be performed.
-		 * 
+		 *
 		 * @return The next <tt>Action</tt> to be performed or <tt>null</tt> if
 		 *         unable to get the next step.
 		 */
@@ -793,7 +782,7 @@ public final class VoluntaryThieve extends Script implements
 				return methods.getDoorAction();
 			}
 
-			final int[] trainerIds = (currentTrainerId != 0) ? new int[] { currentTrainerId }
+			final int[] trainerIds = (currentTrainerId != 0) ? new int[]{currentTrainerId}
 					: methods.getTrainers();
 
 			if (trainerIds.length == 0) {
@@ -837,7 +826,7 @@ public final class VoluntaryThieve extends Script implements
 					if (!isLured) {
 						return methods.isLureScreenValid() ? get(Values.ACTION_LURE_TALK_TRAINER)
 								: get(Values.ACTION_LURE_TRAINER,
-										nearestTrainer);
+								nearestTrainer);
 					}
 				} else {
 					isForcingBlackjack = false;
@@ -852,16 +841,13 @@ public final class VoluntaryThieve extends Script implements
 		/**
 		 * Gets the already defined action for the specified identifier,
 		 * <tt>action</tt>.
-		 * 
-		 * @param action
-		 *            The unique identifier for a predefined action, identifying
-		 *            a valid action.
-		 * @param args
-		 *            Any arguments that should be passed to the action, see
-		 *            identifiers.
+		 *
+		 * @param action The unique identifier for a predefined action, identifying
+		 *               a valid action.
+		 * @param args   Any arguments that should be passed to the action, see
+		 *               identifiers.
 		 * @return The already defined action for the specified identifier.
-		 * @throws IllegalArgumentException
-		 *             If an invalid action was specified.
+		 * @throws IllegalArgumentException If an invalid action was specified.
 		 */
 		private Action get(final int action, final Object... args)
 				throws IllegalArgumentException {
@@ -902,7 +888,7 @@ public final class VoluntaryThieve extends Script implements
 					State finish() {
 						if (calc.distanceTo(trainer) > random(4, 7)) {
 							antibans.perform(
-									new int[] { Antibans.MOUSE_MOVE_RANDOMLY },
+									new int[]{Antibans.MOUSE_MOVE_RANDOMLY},
 									random(17, 23));
 						}
 						return trainer.isOnScreen() ? State.COMPLETED
@@ -960,8 +946,8 @@ public final class VoluntaryThieve extends Script implements
 					@Override
 					State finish() {
 						antibans.perform(
-								new int[] { Antibans.MOUSE_MOVE_RANDOMLY }, 21);
-						antibans.perform(new int[] { Antibans.ALL_ANTIBANS },
+								new int[]{Antibans.MOUSE_MOVE_RANDOMLY}, 21);
+						antibans.perform(new int[]{Antibans.ALL_ANTIBANS},
 								65);
 						return stunnedTimer.isRunning() ? State.PROGRESSING
 								: State.COMPLETED;
@@ -972,7 +958,7 @@ public final class VoluntaryThieve extends Script implements
 			if (action == Values.ACTION_EQUIP_GLOVES) {
 				return new Action("Equipping a new pair of gloves",
 						Values.ACTION_EQUIP_GLOVES, random(2345, 2745), random(
-								3215, 3445)) {
+						3215, 3445)) {
 
 					int inventoryCount;
 
@@ -1007,7 +993,7 @@ public final class VoluntaryThieve extends Script implements
 			if (action == Values.ACTION_LURE_TRAINER) {
 				return new Action("Luring the trainer",
 						Values.ACTION_LURE_TRAINER, random(250, 1250), random(
-								1455, 2135)) {
+						1455, 2135)) {
 
 					RSNPC trainer;
 
@@ -1088,7 +1074,7 @@ public final class VoluntaryThieve extends Script implements
 			if (action == Values.ACTION_KNOCK_TRAINER) {
 				return new Action("Knocking the trainer",
 						Values.ACTION_KNOCK_TRAINER, random(250, 1250), random(
-								2145, 2625)) {
+						2145, 2625)) {
 
 					RSNPC trainer;
 
@@ -1151,7 +1137,7 @@ public final class VoluntaryThieve extends Script implements
 
 						if (calc.distanceTo(destination) > random(5, 7)) {
 							antibans.perform(
-									new int[] { Antibans.MOUSE_MOVE_RANDOMLY },
+									new int[]{Antibans.MOUSE_MOVE_RANDOMLY},
 									random(17, 23));
 						}
 						return calc.distanceTo(destination) < random(3, 6) ? State.COMPLETED
@@ -1198,7 +1184,7 @@ public final class VoluntaryThieve extends Script implements
 			if (action == Values.ACTION_BANK_WALK) {
 				return new Action("Walking to the bank",
 						Values.ACTION_BANK_WALK, random(1425, 1635), random(
-								2345, 2755), random(5255, 5825)) {
+						2345, 2755), random(5255, 5825)) {
 
 					RSObject bankBooth;
 
@@ -1237,7 +1223,7 @@ public final class VoluntaryThieve extends Script implements
 					State finish() {
 						if (calc.distanceTo(bankBooth) > random(4, 7)) {
 							antibans.perform(
-									new int[] { Antibans.MOUSE_MOVE_RANDOMLY },
+									new int[]{Antibans.MOUSE_MOVE_RANDOMLY},
 									random(17, 23));
 						}
 						return bankBooth.isOnScreen() ? State.COMPLETED
@@ -1366,7 +1352,7 @@ public final class VoluntaryThieve extends Script implements
 								.getNearest(Values.OBJECT_BANK_BOOTH);
 						if (bankBooth == null) {
 							antibans.perform(
-									new int[] { Antibans.MOUSE_MOVE_RANDOMLY },
+									new int[]{Antibans.MOUSE_MOVE_RANDOMLY},
 									random(17, 23));
 						}
 
@@ -1381,7 +1367,7 @@ public final class VoluntaryThieve extends Script implements
 				return new Action("Walking to the training area",
 						Values.ACTION_WALK_TO_TRAINING_AREA,
 						random(1245, 1475), random(2345, 2765), random(4985,
-								5375)) {
+						5375)) {
 
 					@Override
 					State perform() {
@@ -1401,7 +1387,7 @@ public final class VoluntaryThieve extends Script implements
 								.getTrainers());
 						if (nearestTrainer == null) {
 							antibans.perform(
-									new int[] { Antibans.MOUSE_MOVE_RANDOMLY },
+									new int[]{Antibans.MOUSE_MOVE_RANDOMLY},
 									random(17, 23));
 						}
 
@@ -1484,21 +1470,18 @@ public final class VoluntaryThieve extends Script implements
 		/**
 		 * Generates a random number, and if it's the <tt>1/probability</tt>, it
 		 * performs a randomly selected antiban from the <tt>selection</tt>.
-		 * 
-		 * @param selection
-		 *            The identifiers of the possible antibans to perform. To
-		 *            include all antibans, use only the value of
-		 *            <tt>ALL_ANTIBANS</tt>.
-		 * @param probability
-		 *            The probability for an antiban to be performed, read as
-		 *            "1 in probability", where probability is the specified
-		 *            value. The minimum allowed probability is 1.
+		 *
+		 * @param selection   The identifiers of the possible antibans to perform. To
+		 *                    include all antibans, use only the value of
+		 *                    <tt>ALL_ANTIBANS</tt>.
+		 * @param probability The probability for an antiban to be performed, read as
+		 *                    "1 in probability", where probability is the specified
+		 *                    value. The minimum allowed probability is 1.
 		 * @return <tt>true</tt> if an antiban was, and still is, being
 		 *         performed; otherwise <tt>false</tt>.
-		 * @throws IllegalArgumentException
-		 *             If the selection is null or if the probability is below
-		 *             one. Also if an invalid antiban was found in the
-		 *             selection.
+		 * @throws IllegalArgumentException If the selection is null or if the probability is below
+		 *                                  one. Also if an invalid antiban was found in the
+		 *                                  selection.
 		 */
 		private boolean perform(final int[] selection, final int probability)
 				throws IllegalArgumentException {
@@ -1530,48 +1513,48 @@ public final class VoluntaryThieve extends Script implements
 			mouse.setSpeed(random(4, 11));
 
 			switch (currentAntiban) {
-			case MOUSE_MOVE_RANDOMLY:
-				if (timer.isRunning()) {
-					break;
-				}
-				timer.setEndIn(random(755, 2345));
+				case MOUSE_MOVE_RANDOMLY:
+					if (timer.isRunning()) {
+						break;
+					}
+					timer.setEndIn(random(755, 2345));
 
-				if (++counter < random(2, 5)) {
-					mouse.move(random(5, game.getWidth() - 253),
-							random(5, game.getHeight() - 169));
-				} else {
-					currentAntiban = 0;
-				}
-				break;
-			case CAMERA_MOVE_SLIGHTLY:
-				camera.setAngle(camera.getAngle() + random(-80, 80));
-				currentAntiban = 0;
-				break;
-			case SKILLS_HOVER_THIEVING:
-				if (timer.isRunning()) {
+					if (++counter < random(2, 5)) {
+						mouse.move(random(5, game.getWidth() - 253),
+								random(5, game.getHeight() - 169));
+					} else {
+						currentAntiban = 0;
+					}
 					break;
-				}
-				if (counter == 0) {
-					skills.doHover(Skills.INTERFACE_THIEVING);
-					timer.setEndIn(random(1735, 2865));
-					counter++;
-				} else {
+				case CAMERA_MOVE_SLIGHTLY:
+					camera.setAngle(camera.getAngle() + random(-80, 80));
 					currentAntiban = 0;
-				}
-				break;
-			case TABS_SELECT_RANDOM:
-				final int[] tabs = { Game.TAB_ATTACK, Game.TAB_CLAN_CHAT,
-						Game.TAB_CONTROLS, Game.TAB_EQUIPMENT,
-						Game.TAB_FRIENDS, Game.TAB_FRIENDS_CHAT,
-						Game.TAB_INVENTORY, Game.TAB_MAGIC, Game.TAB_MUSIC,
-						Game.TAB_NOTES, Game.TAB_OPTIONS, Game.TAB_PRAYER,
-						Game.TAB_QUESTS, Game.TAB_STATS, Game.TAB_SUMMONING };
-				game.openTab(tabs[random(0, tabs.length)]);
-				currentAntiban = 0;
-				break;
-			default:
-				throw new AssertionError("Unsupported antiban in selection: "
-						+ currentAntiban);
+					break;
+				case SKILLS_HOVER_THIEVING:
+					if (timer.isRunning()) {
+						break;
+					}
+					if (counter == 0) {
+						skills.doHover(Skills.INTERFACE_THIEVING);
+						timer.setEndIn(random(1735, 2865));
+						counter++;
+					} else {
+						currentAntiban = 0;
+					}
+					break;
+				case TABS_SELECT_RANDOM:
+					final int[] tabs = {Game.TAB_ATTACK, Game.TAB_CLAN_CHAT,
+							Game.TAB_CONTROLS, Game.TAB_EQUIPMENT,
+							Game.TAB_FRIENDS, Game.TAB_FRIENDS_CHAT,
+							Game.TAB_INVENTORY, Game.TAB_MAGIC, Game.TAB_MUSIC,
+							Game.TAB_NOTES, Game.TAB_OPTIONS, Game.TAB_PRAYER,
+							Game.TAB_QUESTS, Game.TAB_STATS, Game.TAB_SUMMONING};
+					game.openTab(tabs[random(0, tabs.length)]);
+					currentAntiban = 0;
+					break;
+				default:
+					throw new AssertionError("Unsupported antiban in selection: "
+							+ currentAntiban);
 			}
 
 			mouse.setSpeed(mouseSpeed);
@@ -1605,7 +1588,7 @@ public final class VoluntaryThieve extends Script implements
 		 * predefined conditions.
 		 */
 		private Conditions() {
-			conditions = new Condition[] { new Condition() {
+			conditions = new Condition[]{new Condition() {
 
 				@Override
 				boolean isMet() {
@@ -1619,39 +1602,39 @@ public final class VoluntaryThieve extends Script implements
 				}
 			},
 
-			new Condition() {
+					new Condition() {
 
-				@Override
-				boolean isMet() {
-					return (options.maximumPickpockets > 0 && progress.pickpocketCount >= options.maximumPickpockets);
-				}
+						@Override
+						boolean isMet() {
+							return (options.maximumPickpockets > 0 && progress.pickpocketCount >= options.maximumPickpockets);
+						}
 
-				@Override
-				String getMessage() {
-					return "The maximum pickpockets to perform has been reached.";
-				}
-			},
+						@Override
+						String getMessage() {
+							return "The maximum pickpockets to perform has been reached.";
+						}
+					},
 
-			new Condition() {
+					new Condition() {
 
-				@Override
-				boolean isMet() {
-					return (options.maximumLevels > 0 && skills
-							.getRealLevel(progress.skill)
-							- Skills.getLevelAt(progress.startingExp) >= options.maximumLevels);
-				}
+						@Override
+						boolean isMet() {
+							return (options.maximumLevels > 0 && skills
+									.getRealLevel(progress.skill)
+									- Skills.getLevelAt(progress.startingExp) >= options.maximumLevels);
+						}
 
-				@Override
-				String getMessage() {
-					return "The maximum levels to gain has been reached.";
-				}
-			} };
+						@Override
+						String getMessage() {
+							return "The maximum levels to gain has been reached.";
+						}
+					}};
 		}
 
 		/**
 		 * Gets if any of the conditions in this script has been met and if that
 		 * is the case - returns the message associated with that condition.
-		 * 
+		 *
 		 * @return The message (String) associated with the {@link Condition}
 		 *         that has been met; or <tt>null</tt> if no condition has been
 		 *         met.
@@ -1707,11 +1690,9 @@ public final class VoluntaryThieve extends Script implements
 		 * node. Returns the specified default if there is no value associated
 		 * with the key, the backing store is inaccessible, or if the user has
 		 * explicitly denied any storage of configuration details.
-		 * 
-		 * @param key
-		 *            Key whose associated value is to be returned.
-		 * @param def
-		 *            The default value to return if unable to retrieve a stored
+		 *
+		 * @param key Key whose associated value is to be returned.
+		 * @param def The default value to return if unable to retrieve a stored
 		 *            value.
 		 * @return the value associated with the specified key in the preference
 		 *         node. Returns the specified default if there is no value
@@ -1730,11 +1711,9 @@ public final class VoluntaryThieve extends Script implements
 		 * Associates the specified value with the specified key in the
 		 * preference node. Only stores the value if the permission has been
 		 * given by the user.
-		 * 
-		 * @param key
-		 *            Key with which the specified value is to be associated.
-		 * @param value
-		 *            The value to be associated with the specified key.
+		 *
+		 * @param key   Key with which the specified value is to be associated.
+		 * @param value The value to be associated with the specified key.
 		 */
 		private void put(final String key, final String value) {
 			if (!initialize()) {
@@ -1746,7 +1725,7 @@ public final class VoluntaryThieve extends Script implements
 		/**
 		 * Tries to initialize the preferences-object, based on permission from
 		 * the user. Returns if the preferences object is initialized.
-		 * 
+		 *
 		 * @return <tt>true</tt> if the preferences object is initialized;
 		 *         otherwise <tt>false</tt>.
 		 */
@@ -1783,7 +1762,7 @@ public final class VoluntaryThieve extends Script implements
 		 * Asks the user to confirm/allow that configuration can be stored on
 		 * the individuals system. If the user has denied storage once, the user
 		 * won't be asked again.
-		 * 
+		 *
 		 * @return <tt>true</tt> if storage of configuration data is allowed by
 		 *         the user; otherwise <tt>false</tt>.
 		 */
@@ -1905,7 +1884,7 @@ public final class VoluntaryThieve extends Script implements
 			modeLabel.setName("modeLabel");
 
 			modeComboBox.setModel(new javax.swing.DefaultComboBoxModel(
-					new String[] { "Blackjack", "Pickpocket" }));
+					new String[]{"Blackjack", "Pickpocket"}));
 			modeComboBox.setName("modeComboBox");
 			modeComboBox.addItemListener(new java.awt.event.ItemListener() {
 				public void itemStateChanged(java.awt.event.ItemEvent e) {
@@ -2390,7 +2369,7 @@ public final class VoluntaryThieve extends Script implements
 
 		/**
 		 * Gets the options the user has selected in the graphical interface.
-		 * 
+		 *
 		 * @return A <tt>Map</tt> containing the selected options, where the
 		 *         components have been mapped against their respective values.
 		 */
@@ -2417,11 +2396,10 @@ public final class VoluntaryThieve extends Script implements
 
 		/**
 		 * Gets if the user has chosen to start the script or not.
-		 * 
+		 *
 		 * @return <tt>true</tt> if the script should start; otherwise
 		 *         <tt>false</tt>.
-		 * @throws IllegalStateException
-		 *             If the frame is still visible.
+		 * @throws IllegalStateException If the frame is still visible.
 		 */
 		private boolean shouldStart() throws IllegalStateException {
 			if (isVisible()) {
@@ -2432,9 +2410,8 @@ public final class VoluntaryThieve extends Script implements
 
 		/**
 		 * Saves the user-selected options using the configuration-instance.
-		 * 
-		 * @param evt
-		 *            The semantic event which indicates that a component-
+		 *
+		 * @param evt The semantic event which indicates that a component-
 		 *            defined action occurred.
 		 */
 		private void saveActionPerformed(java.awt.event.ActionEvent evt) {
@@ -2446,9 +2423,8 @@ public final class VoluntaryThieve extends Script implements
 
 		/**
 		 * Closes the frame and sets the <tt>shouldStart</tt>-flag.
-		 * 
-		 * @param evt
-		 *            The semantic event which indicates that a component-
+		 *
+		 * @param evt The semantic event which indicates that a component-
 		 *            defined action occurred.
 		 */
 		private void startActionPerformed(java.awt.event.ActionEvent evt) {
@@ -2458,9 +2434,8 @@ public final class VoluntaryThieve extends Script implements
 
 		/**
 		 * Shows a basic informational message in an about-box.
-		 * 
-		 * @param evt
-		 *            The semantic event which indicates that a component-
+		 *
+		 * @param evt The semantic event which indicates that a component-
 		 *            defined action occurred.
 		 */
 		private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
@@ -2474,9 +2449,8 @@ public final class VoluntaryThieve extends Script implements
 		/**
 		 * Resets any given permissions and thereby deletes all saved
 		 * configurations.
-		 * 
-		 * @param evt
-		 *            The semantic event which indicates that a component-
+		 *
+		 * @param evt The semantic event which indicates that a component-
 		 *            defined action occurred.
 		 */
 		private void resetMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
@@ -2485,9 +2459,8 @@ public final class VoluntaryThieve extends Script implements
 
 		/**
 		 * Closes the frame without setting the <tt>shouldStart</tt>-flag.
-		 * 
-		 * @param evt
-		 *            The semantic event which indicates that a component-
+		 *
+		 * @param evt The semantic event which indicates that a component-
 		 *            defined action occurred.
 		 */
 		private void exitActionPerformed(java.awt.event.ActionEvent evt) {
@@ -2570,11 +2543,10 @@ public final class VoluntaryThieve extends Script implements
 
 		/**
 		 * Creates a new <tt>Options</tt>-class using the passed arguments.
-		 * 
-		 * @param args
-		 *            The arguments passed from a graphical user interface. The
-		 *            arguments should always be pre-verified, as no type- or
-		 *            null-checks are done.
+		 *
+		 * @param args The arguments passed from a graphical user interface. The
+		 *             arguments should always be pre-verified, as no type- or
+		 *             null-checks are done.
 		 */
 		private Options(final Map<String, String> args) {
 
@@ -2585,8 +2557,8 @@ public final class VoluntaryThieve extends Script implements
 
 			/* Read the maximum runtime as entered by the user. */
 			long maximumTime = 0;
-			final String[] maxLabels = { "maxHoursSpinner",
-					"maxMinutesSpinner", "maxSecondsSpinner" };
+			final String[] maxLabels = {"maxHoursSpinner",
+					"maxMinutesSpinner", "maxSecondsSpinner"};
 			for (int n = 0; n < maxLabels.length; n++) {
 				maximumTime += Integer.parseInt(args.get(maxLabels[n])) * 1000
 						* Math.pow(60, 2 - n);
@@ -2633,7 +2605,7 @@ public final class VoluntaryThieve extends Script implements
 							+ "perform "
 							+ maximumPickpockets
 							+ (options.isBlackjacking ? " loots"
-									: " pickpockets");
+							: " pickpockets");
 				}
 				log.config("Will " + printMessage + " before stopping.");
 			}
@@ -2737,10 +2709,9 @@ public final class VoluntaryThieve extends Script implements
 
 		/**
 		 * Paints a progress-report on the specified graphics-object.
-		 * 
-		 * @param g
-		 *            The graphics-object to paint on. Should always be the
-		 *            graphics object of the Runescape-client.
+		 *
+		 * @param g The graphics-object to paint on. Should always be the
+		 *          graphics object of the Runescape-client.
 		 */
 		private void paint(final Graphics g) {
 
@@ -2864,7 +2835,7 @@ public final class VoluntaryThieve extends Script implements
 								+ " | GH: "
 								+ glovesPerHour
 								+ (options.isBanking ? " | TB: "
-										+ timesBankedCount : "");
+								+ timesBankedCount : "");
 					}
 
 					adjustmentX = -1;
@@ -2945,10 +2916,9 @@ public final class VoluntaryThieve extends Script implements
 		/**
 		 * Processes the {@link java.awt.event.MouseEvent} occurring when the
 		 * user presses the mouse.
-		 * 
-		 * @param e
-		 *            The {@link java.awt.event.MouseEvent} occurring when the
-		 *            user presses the mouse.
+		 *
+		 * @param e The {@link java.awt.event.MouseEvent} occurring when the
+		 *          user presses the mouse.
 		 */
 		private void processMousePressed(final MouseEvent e) {
 			if (isHovering) {
@@ -2959,10 +2929,9 @@ public final class VoluntaryThieve extends Script implements
 		/**
 		 * Processes the {@link java.awt.event.MouseEvent} occurring when the
 		 * user moves the mouse.
-		 * 
-		 * @param e
-		 *            The {@link java.awt.event.MouseEvent} occurring when the
-		 *            user moves the mouse.
+		 *
+		 * @param e The {@link java.awt.event.MouseEvent} occurring when the
+		 *          user moves the mouse.
 		 */
 		private void processMouseMoved(final MouseEvent e) {
 			isHovering = (experienceProgressBar != null && experienceProgressBar
@@ -2994,7 +2963,7 @@ public final class VoluntaryThieve extends Script implements
 
 		/**
 		 * Gets the latest version from a predefined internet resource.
-		 * 
+		 *
 		 * @return The latest available version of the script, or <tt>-1</tt> if
 		 *         unable to retrieve the latest version.
 		 */
@@ -3024,7 +2993,7 @@ public final class VoluntaryThieve extends Script implements
 		/**
 		 * Downloads any new updates (i.e. the latest version). Handles all
 		 * associated user-interactions.
-		 * 
+		 *
 		 * @return <tt>true</tt> if the latest version was downloaded
 		 *         successfully; otherwise <tt>false</tt>.
 		 */
@@ -3124,7 +3093,7 @@ public final class VoluntaryThieve extends Script implements
 		/**
 		 * Checks for any updates to this specific script. Handles all
 		 * associated user-interactions.
-		 * 
+		 *
 		 * @return <tt>true</tt> if the latest version was downloaded and the
 		 *         script should be stopped (not start); otherwise
 		 *         <tt>false</tt>.
@@ -3370,8 +3339,8 @@ public final class VoluntaryThieve extends Script implements
 		if (currentAction == null) {
 			log.severe("Script failed "
 					+ ((previousAction != null) ? "when "
-							+ previousAction.getName().toLowerCase()
-							: "unexpectedly") + ".");
+					+ previousAction.getName().toLowerCase()
+					: "unexpectedly") + ".");
 			stopScript(true);
 		}
 

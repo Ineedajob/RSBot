@@ -71,8 +71,8 @@ public class BotHome {
 		g.fillRect(0, height - 30, width, 30);
 		g.setColor(Color.white);
 		g.drawString("Spectating "
-				             + (bots.length == 1 ? "1 bot." : bots.length + " bots."), 5,
-		             height + metrics.getDescent() - 14);
+				+ (bots.length == 1 ? "1 bot." : bots.length + " bots."), 5,
+				height + metrics.getDescent() - 14);
 	}
 
 	public void draw(Graphics g, int idx, int x, int y, int width, int height) {

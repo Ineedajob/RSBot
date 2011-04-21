@@ -66,11 +66,11 @@ public class GraveDigger extends Random {
 
 	private static final int[] coffinIDs = {7587, 7588, 7589, 7590, 7591};
 	private static final int[] graveStoneIDs = {12716, 12717, 12718, 12719,
-	                                            12720};
+			12720};
 	private static final int[] filledGraveIDs = {12721, 12722, 12723, 12724,
-	                                             12725};
+			12725};
 	private static final int[] emptyGraveIDs = {12726, 12727, 12728, 12729,
-	                                            12730};
+			12730};
 
 	private static final int INTERFACE_READ_GRAVESTONE = 143;
 	private static final int INTERFACE_READ_GRAVESTONE_MODEL = 2;
@@ -78,15 +78,15 @@ public class GraveDigger extends Random {
 	private static final int INTERFACE_CHECK_COFFIN = 141;
 	private static final int INTERFACE_CHECK_COFFIN_CLOSE = 12;
 	private static final int[] INTERFACE_CHECK_COFFIN_ITEMS = {3, 4, 5, 6, 7,
-	                                                           8, 9, 10, 11};
+			8, 9, 10, 11};
 
 	@SuppressWarnings("unused")
 	private static final int[] NOT_TO_DEPOSIT = {1351, 1349, 1353, 1361, 1355,
-	                                             1357, 1359, 4031, 6739, 13470, 14108, 1265, 1267, 1269, 1296, 1273,
-	                                             1271, 1275, 15259, 303, 305, 307, 309, 311, 10129, 301, 13431, 313,
-	                                             314, 2347, 995, 10006, 10031, 10008, 10012, 11260, 10150, 10010,
-	                                             556, 558, 555, 557, 554, 559, 562, 560, 565, 8013, 4251, 8011,
-	                                             8010, 8009, 8008, 8007};
+			1357, 1359, 4031, 6739, 13470, 14108, 1265, 1267, 1269, 1296, 1273,
+			1271, 1275, 15259, 303, 305, 307, 309, 311, 10129, 301, 13431, 313,
+			314, 2347, 995, 10006, 10031, 10008, 10012, 11260, 10150, 10010,
+			556, 558, 555, 557, 554, 559, 562, 560, 565, 8013, 4251, 8011,
+			8010, 8009, 8008, 8007};
 
 	private final ArrayList<Group> groups = new ArrayList<Group>();
 
@@ -133,19 +133,19 @@ public class GraveDigger extends Random {
 			if (interfaces.get(Bank.INTERFACE_DEPOSIT_BOX).isValid()) {
 				sleep(random(700, 1200));
 				interfaces.get(11).getComponent(17).getComponent(27)
-				          .doAction("Dep");
+						.doAction("Dep");
 				sleep(random(700, 1200));
 				interfaces.get(11).getComponent(17).getComponent(26)
-				          .doAction("Dep");
+						.doAction("Dep");
 				sleep(random(700, 1200));
 				interfaces.get(11).getComponent(17).getComponent(25)
-				          .doAction("Dep");
+						.doAction("Dep");
 				sleep(random(700, 1200));
 				interfaces.get(11).getComponent(17).getComponent(24)
-				          .doAction("Dep");
+						.doAction("Dep");
 				sleep(random(700, 1200));
 				interfaces.get(11).getComponent(17).getComponent(23)
-				          .doAction("Dep");
+						.doAction("Dep");
 				sleep(random(700, 1200));
 				interfaces.getComponent(11, 15).doClick();
 				return random(500, 700);
@@ -186,7 +186,7 @@ public class GraveDigger extends Random {
 				for (int i = 0; i < GraveDigger.INTERFACE_CHECK_COFFIN_ITEMS.length; i++) {
 					items[i] = inters.getComponent(
 							GraveDigger.INTERFACE_CHECK_COFFIN_ITEMS[i])
-					                 .getComponentID();
+							.getComponentID();
 				}
 
 				for (final Iterator<Group> it = groups.iterator(); it.hasNext()
@@ -199,9 +199,9 @@ public class GraveDigger extends Random {
 				}
 			}
 			atCloseInterface(GraveDigger.INTERFACE_CHECK_COFFIN,
-			                 GraveDigger.INTERFACE_CHECK_COFFIN_CLOSE);
+					GraveDigger.INTERFACE_CHECK_COFFIN_CLOSE);
 		} else if (interfaces.get(GraveDigger.INTERFACE_READ_GRAVESTONE)
-		                     .isValid()) {
+				.isValid()) {
 			final int modelID = interfaces
 					.get(GraveDigger.INTERFACE_READ_GRAVESTONE)
 					.getComponent(GraveDigger.INTERFACE_READ_GRAVESTONE_MODEL)
@@ -212,7 +212,7 @@ public class GraveDigger extends Random {
 				}
 			}
 			atCloseInterface(GraveDigger.INTERFACE_READ_GRAVESTONE,
-			                 GraveDigger.INTERFACE_READ_GRAVESTONE_CLOSE);
+					GraveDigger.INTERFACE_READ_GRAVESTONE_CLOSE);
 		} else if ((tmpStatus == 0) && (tmpID != -1)) {
 			for (final Group g : groups) {
 				if (g.graveID == tmpID) {
@@ -229,7 +229,7 @@ public class GraveDigger extends Random {
 					// }
 
 					inventory.useItem(inventory
-							                  .getItem(GraveDigger.coffinIDs[g.coffinID]), obj);
+							.getItem(GraveDigger.coffinIDs[g.coffinID]), obj);
 
 					// Wait for about 10s to finish
 					final long cTime = System.currentTimeMillis();
@@ -300,7 +300,7 @@ public class GraveDigger extends Random {
 				if (inventory.getCount(GraveDigger.coffinIDs[agc.get(i)]) > 0) {
 					tmpID = agc.get(i);
 					inventory.getItem(GraveDigger.coffinIDs[agc.get(i)])
-					         .doAction("Check");
+							.doAction("Check");
 
 					return random(1800, 2400); // We are looking at the model
 				}
@@ -352,7 +352,7 @@ public class GraveDigger extends Random {
 						break;
 					case 1:
 						walking.walkTileMM(walking.getClosestTileOnMap(ch
-								                                               .getLocation().randomize(2, 2)));
+								.getLocation().randomize(2, 2)));
 
 						sleep(random(1800, 2000));
 
@@ -384,7 +384,7 @@ public class GraveDigger extends Random {
 						break;
 					case 1:
 						walking.walkTileMM(walking.getClosestTileOnMap(obj
-								                                               .getLocation().randomize(2, 2)));
+								.getLocation().randomize(2, 2)));
 						sleep(random(1800, 2000));
 						while (getMyPlayer().isMoving()) {
 							sleep(random(200, 500));

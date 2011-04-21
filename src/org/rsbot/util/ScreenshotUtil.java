@@ -41,7 +41,7 @@ public class ScreenshotUtil {
 		final WritableRaster raster = source.copyData(null);
 
 		final BufferedImage bufferedImage = new BufferedImage(source.getColorModel(), raster,
-		                                                      source.isAlphaPremultiplied(), null);
+				source.isAlphaPremultiplied(), null);
 		final Graphics2D graphics = bufferedImage.createGraphics();
 
 		if (hideUsername) {

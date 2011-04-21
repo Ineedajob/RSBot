@@ -1,25 +1,16 @@
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.RenderingHints;
-import java.util.HashSet;
-import java.util.Set;
-
 import org.rsbot.event.listeners.PaintListener;
 import org.rsbot.script.Script;
 import org.rsbot.script.ScriptManifest;
 import org.rsbot.script.methods.Skills;
 import org.rsbot.script.util.Timer;
-import org.rsbot.script.wrappers.RSArea;
-import org.rsbot.script.wrappers.RSComponent;
-import org.rsbot.script.wrappers.RSItem;
-import org.rsbot.script.wrappers.RSNPC;
-import org.rsbot.script.wrappers.RSObject;
-import org.rsbot.script.wrappers.RSTile;
+import org.rsbot.script.wrappers.*;
 
-@ScriptManifest(name = "Guild Ranger", authors = { "Vastico" }, description = "Trains range at the ranging guild on the targets.", version = 1.7, keywords = {
-		"Combat", "Ranged" })
+import java.awt.*;
+import java.util.HashSet;
+import java.util.Set;
+
+@ScriptManifest(name = "Guild Ranger", authors = {"Vastico"}, description = "Trains range at the ranging guild on the targets.", version = 1.7, keywords = {
+		"Combat", "Ranged"})
 public class GuildRanger extends Script implements PaintListener {
 
 	private interface GameConstants {
@@ -205,7 +196,7 @@ public class GuildRanger extends Script implements PaintListener {
 			if (location == null
 					|| getMyPlayer().isIdle()
 					|| (calc.distanceTo(location) < 10 && !destination
-							.contains(location))) {
+					.contains(location))) {
 				if (calc.tileOnScreen(tile) && random(0, 10) > 7) {
 					walking.walkTileOnScreen(calc.getTileOnScreen(tile));
 				} else {
@@ -325,7 +316,7 @@ public class GuildRanger extends Script implements PaintListener {
 				RSObject obj = objects.getNearest(GameConstants.GUILD_DOOR);
 				if (obj != null
 						&& calc.distanceBetween(obj.getLocation(),
-								GameConstants.GUILD_DOOR_TILE) < 2) {
+						GameConstants.GUILD_DOOR_TILE) < 2) {
 					if (obj.isOnScreen()) {
 						if (obj.doAction("Open")) {
 							sleep(random(1000, 2000));
@@ -351,7 +342,7 @@ public class GuildRanger extends Script implements PaintListener {
 				RSObject obj = objects.getNearest(GameConstants.GUILD_DOOR);
 				if (obj != null
 						&& calc.distanceBetween(obj.getLocation(),
-								GameConstants.SAFE_DOOR_TILE) < 2) {
+						GameConstants.SAFE_DOOR_TILE) < 2) {
 					if (obj.isOnScreen()) {
 						if (obj.doAction("Open")) {
 							sleep(random(1000, 2000));

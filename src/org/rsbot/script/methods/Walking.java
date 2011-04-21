@@ -151,7 +151,7 @@ public class Walking extends MethodProvider {
 	 */
 	public boolean walkTileOnScreen(final RSTile tileToWalk) {
 		return methods.tiles.doAction(methods.calc.getTileOnScreen(tileToWalk),
-		                              "Walk ");
+				"Walk ");
 	}
 
 	/**
@@ -248,9 +248,9 @@ public class Walking extends MethodProvider {
 		if (!methods.calc.tileOnMap(tile) && methods.game.isLoggedIn()) {
 			RSTile loc = methods.players.getMyPlayer().getLocation();
 			RSTile walk = new RSTile((loc.getX() + tile.getX()) / 2,
-			                         (loc.getY() + tile.getY()) / 2);
+					(loc.getY() + tile.getY()) / 2);
 			return methods.calc.tileOnMap(walk) ? walk
-			                                    : getClosestTileOnMap(walk);
+					: getClosestTileOnMap(walk);
 		}
 		return tile;
 	}
@@ -272,7 +272,7 @@ public class Walking extends MethodProvider {
 	public int getEnergy() {
 		try {
 			return Integer.parseInt(methods.interfaces.getComponent(750, 5)
-			                                          .getText());
+					.getText());
 		} catch (NumberFormatException e) {
 			return 0;
 		}

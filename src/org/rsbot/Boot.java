@@ -14,16 +14,16 @@ public class Boot {
 
 		if (os.contains("windows")) {
 			Runtime.getRuntime().exec("javaw " + flags + " -classpath \"" +
-					                          location + "\" org.rsbot.Application");
+					location + "\" org.rsbot.Application");
 		} else if (os.contains("mac")) {
 			Runtime.getRuntime().exec(new String[]{"/bin/sh",
-			                                       "-c", "java " + flags + " -Xdock:name=\"RSBot\""
+					"-c", "java " + flags + " -Xdock:name=\"RSBot\""
 							+ " -Xdock:icon=resources/images/icon.png"
 							+ " -classpath \"" +
 							location + "\" org.rsbot.Application"});
 		} else {
 			Runtime.getRuntime().exec(new String[]{"/bin/sh",
-			                                       "-c", "java " + flags + " -classpath \"" +
+					"-c", "java " + flags + " -classpath \"" +
 							location + "\" org.rsbot.Application"});
 		}
 	}

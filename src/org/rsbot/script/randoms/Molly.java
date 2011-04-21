@@ -200,7 +200,7 @@ public class Molly extends Random {
 			final RSInterface i = interfaces.get(Molly.CONTROL_INTERFACEGROUP);
 			if ((i != null) && i.isValid()) {
 				i.getComponent(options.get(random(0, options.size())))
-				 .doClick();
+						.doClick();
 			}
 			delayTime = System.currentTimeMillis();
 			while (!hasClawMoved(clawLoc)

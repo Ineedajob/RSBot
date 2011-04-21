@@ -112,7 +112,7 @@ public class Calculations extends MethodProvider {
 	 */
 	public double distanceBetween(Point curr, Point dest) {
 		return Math.sqrt(((curr.x - dest.x) * (curr.x - dest.x))
-				                 + ((curr.y - dest.y) * (curr.y - dest.y)));
+				+ ((curr.y - dest.y) * (curr.y - dest.y)));
 	}
 
 	/**
@@ -141,7 +141,7 @@ public class Calculations extends MethodProvider {
 			} else {
 				RSTile loc = methods.players.getMyPlayer().getLocation();
 				RSTile halfWayTile = new RSTile((tile.getX() + loc.getX()) / 2,
-				                                (tile.getY() + loc.getY()) / 2);
+						(tile.getY() + loc.getY()) / 2);
 				if (tileOnScreen(halfWayTile)) {
 					return halfWayTile;
 				} else {
@@ -163,7 +163,7 @@ public class Calculations extends MethodProvider {
 	public int angleToTile(RSTile t) {
 		RSTile me = methods.players.getMyPlayer().getLocation();
 		int angle = (int) Math.toDegrees(Math.atan2(t.getY() - me.getY(),
-		                                            t.getX() - me.getX()));
+				t.getX() - me.getX()));
 		return angle >= 0 ? angle : 360 + angle;
 	}
 
@@ -245,7 +245,7 @@ public class Calculations extends MethodProvider {
 	 */
 	public int distanceTo(RSTile t) {
 		return t == null ? -1 : (int) distanceBetween(methods.players
-				                                              .getMyPlayer().getLocation(), t);
+				.getMyPlayer().getLocation(), t);
 	}
 
 	/**
@@ -258,7 +258,7 @@ public class Calculations extends MethodProvider {
 	 */
 	public double distanceBetween(RSTile curr, RSTile dest) {
 		return Math.sqrt((curr.getX() - dest.getX())
-				                 * (curr.getX() - dest.getX()) + (curr.getY() - dest.getY())
+				* (curr.getX() - dest.getX()) + (curr.getY() - dest.getY())
 				* (curr.getY() - dest.getY()));
 	}
 
@@ -288,10 +288,10 @@ public class Calculations extends MethodProvider {
 	 */
 	public int pathLengthBetween(RSTile start, RSTile dest, boolean isObject) {
 		return dijkstraDist(start.getX() - methods.client.getBaseX(), // startX
-		                    start.getY() - methods.client.getBaseY(), // startY
-		                    dest.getX() - methods.client.getBaseX(), // destX
-		                    dest.getY() - methods.client.getBaseY(), // destY
-		                    isObject); // if it's an object, accept any adjacent tile
+				start.getY() - methods.client.getBaseY(), // startY
+				dest.getX() - methods.client.getBaseX(), // destX
+				dest.getY() - methods.client.getBaseY(), // destY
+				isObject); // if it's an object, accept any adjacent tile
 	}
 
 	/**
@@ -317,7 +317,7 @@ public class Calculations extends MethodProvider {
 	 */
 	public Point worldToMinimap(double x, double y) {
 		if (distanceBetween(methods.players.getMyPlayer().getLocation(),
-		                    new RSTile((int) x, (int) y)) > 17) {
+				new RSTile((int) x, (int) y)) > 17) {
 			return new Point(-1, -1);
 		}
 		x -= methods.client.getBaseX();
@@ -339,7 +339,7 @@ public class Calculations extends MethodProvider {
 					* calculatedY;
 
 			final int mmDist = 10 + Math.max(mm2.getWidth() / 2,
-			                                 mm2.getHeight() / 2);
+					mm2.getHeight() / 2);
 			if (mmDist * mmDist >= actDistSq) {
 				int angle = 0x3fff & (int) methods.client.getMinimapOffset();
 				if (methods.client.getMinimapSetting() != 4) {
@@ -469,7 +469,7 @@ public class Calculations extends MethodProvider {
 					&& (_y >= render.absoluteY1) && (_y <= render.absoluteY2)) {
 				if (methods.game.isFixed()) {
 					return new Point((int) (_x - render.absoluteX1) + 4,
-					                 (int) (_y - render.absoluteY1) + 4);
+							(int) (_y - render.absoluteY1) + 4);
 				} else {
 					int sx = (int) (_x - render.absoluteX1), sy = (int) (_y - render.absoluteY1);
 					return new Point(sx, sy);

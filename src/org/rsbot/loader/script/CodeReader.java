@@ -99,7 +99,7 @@ public class CodeReader {
 				v.visitTryCatchBlock(labels[code.g1()], labels[code.g1()], labels[code.g1()], code.gstr());
 			} else if (op == Opcodes.LOCAL_VARIABLE) {
 				v.visitLocalVariable(code.gstr(), code.gstr(), code.gstr(), labels[code.g1()], labels[code.g1()],
-				                     code.g1());
+						code.g1());
 			} else if (op == Opcodes.LABEL) {
 				v.visitLabel(labels[code.g1()]);
 			}

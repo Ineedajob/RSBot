@@ -41,7 +41,7 @@ public class BloddyMasterFarmerStealer extends Script implements PaintListener,
 	public int gainedLvls;
 	public boolean finishAt, finishWhenLevel;
 	private int startXP = 0;
-	public int[] seedID = { 5304, 5296, 5300, 5295, 5303, 5302, 5100, 5323,
+	public int[] seedID = {5304, 5296, 5300, 5295, 5303, 5302, 5100, 5323,
 			5299, 5301, 5298, 5320, 5321, 1161, 1965, 1969, 1967, 1895, 1893,
 			1891, 1971, 4293, 2142, 4291, 2140, 3228, 9980, 7223, 6297, 6293,
 			6295, 6299, 7521, 9988, 7228, 2878, 7568, 2343, 1861, 13433, 315,
@@ -56,15 +56,15 @@ public class BloddyMasterFarmerStealer extends Script implements PaintListener,
 			5753, 5755, 5757, 5759, 5761, 2084, 2034, 2048, 2036, 2217, 2213,
 			2205, 2209, 2054, 2040, 2080, 2277, 2225, 2255, 2221, 2253, 2219,
 			2281, 2227, 2223, 2191, 2233, 2092, 2032, 2074, 2030, 2281, 2235,
-			2064, 2028, 2187, 2185, 2229, 15522, 15524, 15526, 15528, 15530, 
-			15532, 15534, 15536, 15538, 15540, 15542, 15544, 15546, 15548, 
+			2064, 2028, 2187, 2185, 2229, 15522, 15524, 15526, 15528, 15530,
+			15532, 15534, 15536, 15538, 15540, 15542, 15544, 15546, 15548,
 			15550};
-	public int[] junkSeedID = { 5319, 5307, 5305, 5322, 5099, 5310, 5308, 5102,
+	public int[] junkSeedID = {5319, 5307, 5305, 5322, 5099, 5310, 5308, 5102,
 			5101, 5096, 5324, 5306, 5291, 5103, 5292, 5097, 5281, 5098, 5294,
-			5105, 5106, 5280, 5297, 5311, 5104, 5293, 5318, 5282, 5309 };
+			5105, 5106, 5280, 5297, 5311, 5104, 5293, 5318, 5282, 5309};
 	private int FOODID;
 	private int ANIMATIONID = 11974;
-	RSTile[] farmerToBank = { new RSTile(3081, 3250), new RSTile(3092, 3244) };
+	RSTile[] farmerToBank = {new RSTile(3081, 3250), new RSTile(3092, 3244)};
 	RSTile farmerTile = new RSTile(3081, 3250);
 	RSTile bankTile = new RSTile(3092, 3244);
 	String status = "";
@@ -75,13 +75,13 @@ public class BloddyMasterFarmerStealer extends Script implements PaintListener,
 	public int failPickpocket = 0;
 	public int somethingID = 5295;
 	public long startTime = System.currentTimeMillis();
-	public int[] pickpocketing = { 11942, 378 };
+	public int[] pickpocketing = {11942, 378};
 	final private cameraHeight camHeight = new cameraHeight();
 	final private cameraRotate camRotate = new cameraRotate();
 	private boolean guiWait = true, guiExit;
 	BloddyMasterFarmerGUI gui;
 
-    @Override
+	@Override
 	public boolean onStart() {
 		try {
 			final URL cursorURL = new URL("http://i48.tinypic.com/313623n.png");
@@ -110,7 +110,7 @@ public class BloddyMasterFarmerStealer extends Script implements PaintListener,
 		return !guiExit;
 	}
 
-    @Override
+	@Override
 	public void onFinish() {
 		mouse.moveOffScreen();
 		camHeight.isActive = false;
@@ -532,8 +532,8 @@ public class BloddyMasterFarmerStealer extends Script implements PaintListener,
 				g.draw3DRect(555, 210, 175, 250, true);
 
 				g.setColor(Color.WHITE);
-				int[] coords = new int[] { 225, 240, 255, 270, 285, 300, 315,
-						330, 345, 360, 375, 390, 405, 420, 435, 450, 465, 480 };
+				int[] coords = new int[]{225, 240, 255, 270, 285, 300, 315,
+						330, 345, 360, 375, 390, 405, 420, 435, 450, 465, 480};
 				g.setColor(Color.RED);
 				g.setFont(new Font("Segoe Print", Font.BOLD, 14));
 				g.drawString("Master Farmer Stealer", 561, coords[0]);
@@ -924,8 +924,8 @@ public class BloddyMasterFarmerStealer extends Script implements PaintListener,
 							.getPreferredSize()));
 
 					// ---- comboBox1 ----
-					comboBox1.setModel(new DefaultComboBoxModel(new String[] {
-							"Withdraw-5", "Withdraw-10" }));
+					comboBox1.setModel(new DefaultComboBoxModel(new String[]{
+							"Withdraw-5", "Withdraw-10"}));
 					comboBox1.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent e) {
 							comboBox1ActionPerformed(e);
