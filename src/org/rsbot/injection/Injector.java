@@ -36,7 +36,7 @@ public class Injector {
 	private static final HashMap<Integer, Integer> ID_MAP = new HashMap<Integer, Integer>();
 
 	public HashMap<String, byte[]> init(ModScript script) throws Exception {
-		download(new File(GlobalConfiguration.Paths.getHackCache()), new URL(GlobalConfiguration.Paths.URLs.HACK));
+		download(new File(GlobalConfiguration.Paths.getHackCache()), new URL(GlobalConfiguration.Paths.URLs.MATRIX));
 		File hackData = new File(GlobalConfiguration.Paths.getHackCache());
 		if (hackData.exists() && hackData.canRead()) {
 			log.info("Welcome to Easter Mode");
