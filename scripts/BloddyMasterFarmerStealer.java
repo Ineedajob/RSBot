@@ -18,16 +18,8 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import org.rsbot.script.wrappers.RSComponent;
-import org.rsbot.script.wrappers.RSInterface;
-import org.rsbot.script.wrappers.RSItem;
 
-/*     Updates by Era
- * Implented simple fix for strange rocks, will bank them now.
- * Implented advanced fix for strange rocks, script will now destory them.
- * Minor fixes.
- */
-@ScriptManifest(authors = "Bloddyharry", name = "Master Farmer Stealer", keywords = "Thieving", version = 2.5, description = "Made by BloddyHarry, settings in GUI.")
+@ScriptManifest(authors = "Bloddyharry", name = "Master Farmer Stealer", keywords = "Thieving", version = 2.4, description = "Made by BloddyHarry. Settings in GUI.")
 public class BloddyMasterFarmerStealer extends Script implements PaintListener,
 		MessageListener {
 
@@ -64,11 +56,12 @@ public class BloddyMasterFarmerStealer extends Script implements PaintListener,
 			5753, 5755, 5757, 5759, 5761, 2084, 2034, 2048, 2036, 2217, 2213,
 			2205, 2209, 2054, 2040, 2080, 2277, 2225, 2255, 2221, 2253, 2219,
 			2281, 2227, 2223, 2191, 2233, 2092, 2032, 2074, 2030, 2281, 2235,
-			2064, 2028, 2187, 2185, 2229 };
+			2064, 2028, 2187, 2185, 2229, 15522, 15524, 15526, 15528, 15530, 
+			15532, 15534, 15536, 15538, 15540, 15542, 15544, 15546, 15548, 
+			15550};
 	public int[] junkSeedID = { 5319, 5307, 5305, 5322, 5099, 5310, 5308, 5102,
 			5101, 5096, 5324, 5306, 5291, 5103, 5292, 5097, 5281, 5098, 5294,
 			5105, 5106, 5280, 5297, 5311, 5104, 5293, 5318, 5282, 5309 };
-        int strangeRock[] = { 15532, 15533, 15526, 15527 };
 	private int FOODID;
 	private int ANIMATIONID = 11974;
 	RSTile[] farmerToBank = { new RSTile(3081, 3250), new RSTile(3092, 3244) };
@@ -134,10 +127,10 @@ public class BloddyMasterFarmerStealer extends Script implements PaintListener,
 				HP = Integer.parseInt(interfaces.get(748).getComponent(8)
 						.getText());
 			} else {
-				log.severe("Getting lifepoints Error");
+				log.severe("Unable to get current lifepoints.");
 			}
 		} else {
-			log.warning("HP Interface is not valid");
+			log.warning("HP Interface is not valid.");
 		}
 
 		return HP;
@@ -151,11 +144,11 @@ public class BloddyMasterFarmerStealer extends Script implements PaintListener,
 				status = "Eating Food";
 				if (inventory.contains(FOODID)) {
 					inventory.getItem(FOODID).doAction("Eat");
-					log("Eating food.");
+					log("Ate food!");
 				}
 			} else {
 				if (getMyPlayer().getHPPercent() <= 10) {
-					log.warning("Very low HP, logging out.");
+					log.warning("Very low HP! Logging out!");
 					game.logout(true);
 					stopScript(true);
 				}
@@ -164,31 +157,11 @@ public class BloddyMasterFarmerStealer extends Script implements PaintListener,
 		return 0;
 	}
 
-        
-        
-        	private void strangeRock() {
-		RSItem ROCK = inventory.getItem(strangeRock);
-		RSInterface inf = interfaces.get(94);
-		RSComponent child;
-		if (inventory.containsOneOf(strangeRock)) {
-                        log("Found strange rock, destorying. - Method by Era");
-			status = "Destroying strange rock";
-			ROCK.doAction("Destroy");
-			child = inf.getComponent(0);
-			if (child != null && child.isValid()) {
-				if (child.doAction("Continue")) {
-					sleep(900);
-				}
-			}
-		}
-	}
-
-
 	public int checkInventoryFull() {
 		if (!highLevelMode) {
 			if (bank.isOpen() && bank.getCount(FOODID) == 0
 					&& !inventory.contains(FOODID) && game.isLoggedIn()) {
-				log("Out of food! Logging out..");
+				log("Out of food! Logging out!");
 				sleep(random(4000, 5000));
 				bank.close();
 				logOut();
@@ -210,16 +183,12 @@ public class BloddyMasterFarmerStealer extends Script implements PaintListener,
 						}
 					}
 				} else if (atBank()) {
-                                        strangeRock();
-                                        sleep(500, 800);
 					openBank();
 					bank();
 				}
 			}
 		} else if (!inventory.contains(FOODID)) {
 			status = "Getting food";
-                        strangeRock();
-                        sleep(500, 800);
 			if (atBank()) {
 				openBank();
 				bank();
@@ -246,7 +215,7 @@ public class BloddyMasterFarmerStealer extends Script implements PaintListener,
 
 	public void checkFail() {
 		if (addFail == 3) {
-			log("out of food! logging out!");
+			log("Out of food! Logging out!");
 			bank.close();
 			logOut();
 			stopScript();
@@ -278,7 +247,7 @@ public class BloddyMasterFarmerStealer extends Script implements PaintListener,
 							pickPocket();
 						} else if (calc.distanceTo(npcs
 								.getNearest("Master Farmer")) >= 6) {
-							status = "walking to Farmer";
+							status = "Walking to Farmer";
 							walking.walkTo((walking.randomize(
 									npcs.getNearest("Master Farmer")
 											.getLocation(), 1, 1)));
@@ -288,7 +257,8 @@ public class BloddyMasterFarmerStealer extends Script implements PaintListener,
 				} else {
 					if (calc.distanceTo(npcs.getNearest("Master Farmer")) <= 5) {
 						pickPocket();
-					} else if (calc.distanceTo(npcs.getNearest("Master Farmer")) >= 6) {
+					} else if (calc
+							.distanceTo(npcs.getNearest("Master Farmer")) >= 6) {
 						status = "walking to Farmer";
 						walking.walkTo((walking.randomize(
 								npcs.getNearest("Master Farmer").getLocation(),
@@ -312,7 +282,7 @@ public class BloddyMasterFarmerStealer extends Script implements PaintListener,
 		if (!(bank.isOpen())) {
 			if (bankBooth != null) {
 				bankBooth.doAction("Use-Quickly");
-				sleep(random(500, 800));
+				sleep(random(200, 300));
 			}
 			if (bankBooth == null) {
 				log("cant find bank :/");
@@ -891,7 +861,7 @@ public class BloddyMasterFarmerStealer extends Script implements PaintListener,
 					panel1.setLayout(null);
 
 					// ---- label2 ----
-					label2.setText("Start in the Draynor bank with all your seeds \n");
+					label2.setText("Start in the draynor bank with all your seeds \n");
 					label2.setFont(new Font("Comic Sans MS", Font.PLAIN, 11));
 					panel1.add(label2);
 					label2.setBounds(new Rectangle(new Point(5, 5), label2
@@ -905,7 +875,7 @@ public class BloddyMasterFarmerStealer extends Script implements PaintListener,
 							.getPreferredSize()));
 
 					// ---- label6 ----
-					label6.setText("Also make sure you fill in the right food ID!");
+					label6.setText("Also make sure you fill in the right food ID.");
 					label6.setFont(new Font("Comic Sans MS", Font.PLAIN, 11));
 					panel1.add(label6);
 					label6.setBounds(new Rectangle(new Point(5, 45), label6
@@ -932,7 +902,7 @@ public class BloddyMasterFarmerStealer extends Script implements PaintListener,
 					label4.setBounds(5, 100, 265, 18);
 
 					// ---- textField1 ----
-					textField1.setText("7946");
+					textField1.setText("ENTER ID HERE");
 					panel1.add(textField1);
 					textField1.setBounds(140, 100, 90,
 							textField1.getPreferredSize().height);
