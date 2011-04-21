@@ -56,13 +56,13 @@ public class Application {
 
 			public void uncaughtException(final Thread t, final Throwable e) {
 				log.logp(Level.SEVERE, "EXCEPTION", "",
-				         "Unhandled exception in thread " + t.getName() + ": ",
-				         e);
+						"Unhandled exception in thread " + t.getName() + ": ",
+						e);
 			}
 		});
 
 		System.setErr(new PrintStream(new LogOutputStream(Logger
-				                                                  .getLogger("STDERR"), Level.SEVERE), true));
+				.getLogger("STDERR"), Level.SEVERE), true));
 	}
 
 	// private static void stats() {

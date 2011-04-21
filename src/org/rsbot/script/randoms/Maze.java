@@ -367,7 +367,7 @@ public class Maze extends Random {
 					yTotal += thePoint.getY();
 				}
 				final Point location = new Point((int) (xTotal / thePoints.length),
-				                                 (int) (yTotal / thePoints.length) - random(0, 40));
+						(int) (yTotal / thePoints.length) - random(0, 40));
 				if ((location.x == -1) || (location.y == -1)) {
 					return false;
 				}

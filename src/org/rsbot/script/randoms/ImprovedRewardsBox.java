@@ -76,7 +76,7 @@ public class ImprovedRewardsBox extends Random {
 	public int getActualY(final RSComponent Component) {
 		int boxYPos;
 		final RSComponent[] selection = interfaces.get(202).getComponent(15)
-		                                          .getComponents();
+				.getComponents();
 		for (int end = 0; end < selection.length; end++) {
 			if (selection[end].containsText(":")) {
 				endofselection = (end - 6);
@@ -95,7 +95,7 @@ public class ImprovedRewardsBox extends Random {
 		hiddenScreenHeight = (totalScreenHeight - viewableScreenHeight);
 		if (hiddenScreenHeight > 0) {
 			final RSComponent[] scrollbar = interfaces.get(202)
-			                                          .getComponent(24).getComponents();
+					.getComponent(24).getComponents();
 			scrollbarTopLength = (scrollbar[1].getAbsoluteY() - scrollbar[0]
 					.getAbsoluteY());
 			int scrollbarBottomLength = (scrollbar[5].getAbsoluteY()
@@ -113,7 +113,7 @@ public class ImprovedRewardsBox extends Random {
 
 	public Rectangle getBoxArea(final RSComponent Component) {
 		return new Rectangle(Component.getAbsoluteX(), getActualY(Component),
-		                     Component.getWidth(), Component.getHeight());
+				Component.getWidth(), Component.getHeight());
 	}
 
 	public int loop() {
@@ -143,7 +143,7 @@ public class ImprovedRewardsBox extends Random {
 			for (final String choice : choices) {
 				for (int i = 0; i < selection.length; i++) {
 					if (selection[i].getText().toLowerCase()
-					                .contains(choice.toLowerCase())) {
+							.contains(choice.toLowerCase())) {
 						optionSelected = i - 6;
 						break;
 					}
@@ -158,20 +158,20 @@ public class ImprovedRewardsBox extends Random {
 			RSComponent[] scrollbar = interfaces.get(BOX_IF).getComponent(BOX_SCROLLBAR_IF).getComponents();
 			if (scrollbarTopLength > 0) {
 				mouse.move(scrollbar[1].getAbsoluteX() + random(1, 7),
-				           scrollbar[1].getAbsoluteY() + random(0, 20));
+						scrollbar[1].getAbsoluteY() + random(0, 20));
 				mouse.drag((int) mouse.getLocation().getX(),
-				           (int) mouse.getLocation().getY() - scrollbarTopLength);
+						(int) mouse.getLocation().getY() - scrollbarTopLength);
 			}
 			if (getBoxArea(selection[optionSelected]).y > 278) {
 				mouse.move(scrollbar[1].getAbsoluteX() + random(1, 7),
-				           scrollbar[1].getAbsoluteY() + random(20, 30));
+						scrollbar[1].getAbsoluteY() + random(20, 30));
 				int toDragtoY = (int) (mouse.getLocation().getY() + (Double
 						.parseDouble(Integer
-								             .toString((getBoxArea(selection[optionSelected]).y
-										             + getBoxArea(selection[optionSelected]).height
-										             - selection[0].getAbsoluteY() - viewableScreenHeight)))
+								.toString((getBoxArea(selection[optionSelected]).y
+										+ getBoxArea(selection[optionSelected]).height
+										- selection[0].getAbsoluteY() - viewableScreenHeight)))
 						/ Double.parseDouble(Integer
-								                     .toString(hiddenScreenHeight)) * Double
+						.toString(hiddenScreenHeight)) * Double
 						.parseDouble(Integer.toString(scrollbarTotalLength))));
 				if ((toDragtoY - (int) mouse.getLocation().getY()) > (scrollbar[5]
 						.getAbsoluteY()
@@ -192,7 +192,7 @@ public class ImprovedRewardsBox extends Random {
 				int boxWidth = getBoxArea(selection[optionSelected]).width - 30;
 				int boxHeight = getBoxArea(selection[optionSelected]).height - 30;
 				mouse.move(random(boxX, boxX + boxWidth),
-				           random(boxY, boxY + boxHeight));
+						random(boxY, boxY + boxHeight));
 				mouse.click(true);
 				interfaces.get(BOX_IF).getComponent(BOX_CONFIRM_IF).doClick();
 			}

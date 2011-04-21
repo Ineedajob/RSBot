@@ -88,7 +88,7 @@ public class RSComponent extends MethodProvider {
 		int max_x = min_x + rect.width - 2, max_y = min_y + rect.height - 2;
 
 		methods.mouse.move(random(min_x, max_x, rect.width / 3),
-		                   random(min_y, max_y, rect.height / 3));
+				random(min_y, max_y, rect.height / 3));
 		sleep(random(40, 80));
 		return methods.menu.doAction(action);
 	}
@@ -127,7 +127,7 @@ public class RSComponent extends MethodProvider {
 		int max_x = min_x + rect.width - 2, max_y = min_y + rect.height - 2;
 
 		methods.mouse.click(random(min_x, max_x, rect.width / 3),
-		                    random(min_y, max_y, rect.height / 3), leftClick);
+				random(min_y, max_y, rect.height / 3), leftClick);
 		return true;
 	}
 
@@ -154,7 +154,7 @@ public class RSComponent extends MethodProvider {
 		int max_x = min_x + rect.width - 2, max_y = min_y + rect.height - 2;
 
 		methods.mouse.move(random(min_x, max_x, rect.width / 3),
-		                   random(min_y, max_y, rect.height / 3));
+				random(min_y, max_y, rect.height / 3));
 		return true;
 	}
 
@@ -226,7 +226,7 @@ public class RSComponent extends MethodProvider {
 		// Find scrollable area
 		if (inter.getParentID() != -1) {
 			inter = methods.interfaces.getComponent(inter.getParentID() >> 16,
-			                                        inter.getParentID() & 0xFFFF).getInterfaceInternal();
+					inter.getParentID() & 0xFFFF).getInterfaceInternal();
 			if (inter.getHorizontalScrollBarSize() != 0) {
 				x -= inter.getHorizontalScrollBarThumbPosition();
 			}
@@ -278,7 +278,7 @@ public class RSComponent extends MethodProvider {
 		// Find scrollable area
 		if (inter.getParentID() != -1) {
 			inter = methods.interfaces.getComponent(inter.getParentID() >> 16,
-			                                        inter.getParentID() & 0xFFFF).getInterfaceInternal();
+					inter.getParentID() & 0xFFFF).getInterfaceInternal();
 			if (inter.getVerticalScrollBarSize() != 0) {
 				y -= inter.getVerticalScrollBarPosition();
 			}

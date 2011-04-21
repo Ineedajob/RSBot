@@ -21,6 +21,7 @@ import java.util.logging.Logger;
  * @author Timer
  * @author Method
  * @author Jacmob
+ * @author Aut0r
  * @author Qauters
  */
 public class Injector {
@@ -36,10 +37,9 @@ public class Injector {
 
 	public HashMap<String, byte[]> init(ModScript script) throws Exception {
 		download(new File(GlobalConfiguration.Paths.getHackCache()), new URL(GlobalConfiguration.Paths.URLs
-				                                                                     .EASTER_MATRIX));
+				.EASTER_MATRIX));
 		File hackData = new File(GlobalConfiguration.Paths.getHackCache());
 		if (hackData.exists() && hackData.canRead()) {
-			log.info("Welcome to Easter Mode!");
 			FileInputStream fis = new FileInputStream(hackData);
 			DataInputStream dis = new DataInputStream(fis);
 			BufferedReader br = new BufferedReader(new InputStreamReader(dis));
@@ -103,18 +103,16 @@ public class Injector {
 						}
 					}
 					if (handle != null) {
-						log.info("Injected getId() into objects... let's hope this isn't detected.");
 						InstructionFactory fac = new InstructionFactory(cg, cg.getConstantPool());
 						InstructionList il = mg.getInstructionList();
 						InstructionList nil = new InstructionList();
 						nil.append(fac.createInvoke("org.rsbot.injection.Injector", "getId", Type.INT,
-						                            new Type[]{Type.INT}, Constants.INVOKESTATIC));
+								new Type[]{Type.INT}, Constants.INVOKESTATIC));
 						il.append(handle, nil);
 						mg.setMaxLocals();
 						mg.setMaxStack();
 						mg.update();
 						cg.replaceMethod(method, mg.getMethod());
-						log.info("Credits: Method, Jacmob, Timer.");
 						break;
 					}
 				}

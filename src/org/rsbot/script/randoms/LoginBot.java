@@ -55,7 +55,7 @@ public class LoginBot extends Random {
 	public int loop() {
 		String username = account.getName().toLowerCase().trim();
 		String returnText = interfaces.get(INTERFACE_LOGIN_SCREEN)
-		                              .getComponent(INTERFACE_TEXT_RETURN).getText().toLowerCase();
+				.getComponent(INTERFACE_TEXT_RETURN).getText().toLowerCase();
 		int textlength;
 		if (game.getClientState() != INDEX_LOGGED_OUT) {
 			if (!game.isWelcomeScreen()) {
@@ -70,30 +70,30 @@ public class LoginBot extends Random {
 						.getComponent(INTERFACE_WELCOME_SCREEN_BUTTON_PLAY_2);
 
 				mouse.click(welcome_screen_button_play_1.getAbsoluteX(),
-				            welcome_screen_button_play_1.getAbsoluteY(),
-				            welcome_screen_button_play_2.getAbsoluteX()
-						            + welcome_screen_button_play_2.getWidth()
-						            - welcome_screen_button_play_1.getAbsoluteX(),
-				            welcome_screen_button_play_1.getHeight(), true);
+						welcome_screen_button_play_1.getAbsoluteY(),
+						welcome_screen_button_play_2.getAbsoluteX()
+								+ welcome_screen_button_play_2.getWidth()
+								- welcome_screen_button_play_1.getAbsoluteX(),
+						welcome_screen_button_play_1.getHeight(), true);
 
 				for (int i = 0; i < 4 && game.getClientState() == 6; i++) {
 					sleep(500);
 				}
 				returnText = interfaces.get(INTERFACE_WELCOME_SCREEN)
-				                       .getComponent(INTERFACE_WELCOME_SCREEN_TEXT_RETURN)
-				                       .getText().toLowerCase();
+						.getComponent(INTERFACE_WELCOME_SCREEN_TEXT_RETURN)
+						.getText().toLowerCase();
 
 				if (returnText.contains("total skill level of")
 						&& !AccountManager.isMember(account.getName())) {
 					log("Log back in when you total level of 1000+");
 					interfaces.getComponent(INTERFACE_WELCOME_SCREEN,
-					                        INTERFACE_WELCOME_SCREEN_BUTTON_BACK).doClick();
+							INTERFACE_WELCOME_SCREEN_BUTTON_BACK).doClick();
 					stopScript(false);
 				} else if (returnText.contains("total skill level of")
 						&& AccountManager.isMember(account.getName())) {
 					log("Log back in when you total level of 1500+");
 					interfaces.getComponent(INTERFACE_WELCOME_SCREEN,
-					                        INTERFACE_WELCOME_SCREEN_BUTTON_BACK).doClick();
+							INTERFACE_WELCOME_SCREEN_BUTTON_BACK).doClick();
 					stopScript(false);
 				}
 
@@ -128,7 +128,7 @@ public class LoginBot extends Random {
 									- back_button1.getAbsoluteX(),
 							back_button1.getHeight(), true);
 					interfaces.get(INTERFACE_WELCOME_SCREEN).getComponent(203)
-					          .doClick();
+							.doClick();
 					stopScript(false);
 				}
 
@@ -193,7 +193,7 @@ public class LoginBot extends Random {
 			}
 			if (returnText.contains("error connecting")) {
 				interfaces.get(INTERFACE_LOGIN_SCREEN)
-				          .getComponent(INTERFACE_BUTTON_BACK).doClick();
+						.getComponent(INTERFACE_BUTTON_BACK).doClick();
 				stopScript(false);
 				return random(500, 2000);
 			}
@@ -224,9 +224,9 @@ public class LoginBot extends Random {
 		}
 		if (game.getClientState() == INDEX_LOGGED_OUT) {
 			if (interfaces.getComponent(INTERFACE_GRAPHICS_NOTICE,
-			                            INTERFACE_GRAPHICS_LEAVE_ALONE).isValid()) {
+					INTERFACE_GRAPHICS_LEAVE_ALONE).isValid()) {
 				interfaces.getComponent(INTERFACE_GRAPHICS_NOTICE,
-				                        INTERFACE_GRAPHICS_LEAVE_ALONE).doClick();
+						INTERFACE_GRAPHICS_LEAVE_ALONE).doClick();
 				if (interfaces.getComponent(INTERFACE_BUTTON_BACK).isValid()) {
 					interfaces.getComponent(INTERFACE_BUTTON_BACK).doClick();
 				}
@@ -234,8 +234,8 @@ public class LoginBot extends Random {
 			}
 			if (!atLoginScreen()) {
 				interfaces.getComponent(INTERFACE_MAIN, INTERFACE_MAIN_CHILD)
-				          .getComponent(INTERFACE_MAIN_CHILD_COMPONENT_ID)
-				          .doAction("");
+						.getComponent(INTERFACE_MAIN_CHILD_COMPONENT_ID)
+						.doAction("");
 				return random(500, 600);
 			}
 			if (isUsernameFilled() && isPasswordFilled()) {
@@ -243,16 +243,16 @@ public class LoginBot extends Random {
 					keyboard.pressKey((char) KeyEvent.VK_ENTER);
 				} else {
 					interfaces.get(INTERFACE_LOGIN_SCREEN)
-					          .getComponent(INTERFACE_BUTTON_LOGIN).doClick();
+							.getComponent(INTERFACE_BUTTON_LOGIN).doClick();
 				}
 				return random(500, 600);
 			}
 			if (!isUsernameFilled()) {
 				atLoginInterface(interfaces.get(INTERFACE_LOGIN_SCREEN)
-				                           .getComponent(INTERFACE_USERNAME_WINDOW));
+						.getComponent(INTERFACE_USERNAME_WINDOW));
 				sleep(random(500, 700));
 				textlength = interfaces.get(INTERFACE_LOGIN_SCREEN)
-				                       .getComponent(INTERFACE_USERNAME).getText().length()
+						.getComponent(INTERFACE_USERNAME).getText().length()
 						+ random(3, 5);
 				for (int i = 0; i <= textlength + random(1, 5); i++) {
 					keyboard.sendText("\b", false);
@@ -265,10 +265,10 @@ public class LoginBot extends Random {
 			}
 			if (isUsernameFilled() && !isPasswordFilled()) {
 				atLoginInterface(interfaces.get(INTERFACE_LOGIN_SCREEN)
-				                           .getComponent(INTERFACE_PASSWORD_WINDOW));
+						.getComponent(INTERFACE_PASSWORD_WINDOW));
 				sleep(random(500, 700));
 				textlength = interfaces.get(INTERFACE_LOGIN_SCREEN)
-				                       .getComponent(INTERFACE_PASSWORD).getText().length()
+						.getComponent(INTERFACE_PASSWORD).getText().length()
 						+ random(3, 5);
 				for (int i = 0; i <= textlength + random(1, 5); i++) {
 					keyboard.sendText("\b", false);
@@ -284,10 +284,10 @@ public class LoginBot extends Random {
 
 	private boolean switchingWorlds() {
 		return interfaces.get(INTERFACE_WELCOME_SCREEN)
-		                 .getComponent(INTERFACE_WELCOME_SCREEN_TEXT_RETURN).isValid()
+				.getComponent(INTERFACE_WELCOME_SCREEN_TEXT_RETURN).isValid()
 				&& interfaces.get(INTERFACE_WELCOME_SCREEN)
-				             .getComponent(INTERFACE_WELCOME_SCREEN_TEXT_RETURN)
-				             .containsText("just left another world");
+				.getComponent(INTERFACE_WELCOME_SCREEN_TEXT_RETURN)
+				.containsText("just left another world");
 	}
 
 	// Clicks past all of the letters
@@ -307,7 +307,7 @@ public class LoginBot extends Random {
 			mouse.click(minX(i), midy + random(-dy, dy), true);
 		} else {
 			mouse.click(midx + random(1, maxRandomX), midy + random(-dy, dy),
-			            true);
+					true);
 		}
 		return true;
 	}
@@ -325,7 +325,7 @@ public class LoginBot extends Random {
 			return 0;
 		}
 		for (int i = 0; i < interfaces.get(INTERFACE_LOGIN_SCREEN)
-		                              .getComponent(INTERFACE_PASSWORD).getText().length(); i++) {
+				.getComponent(INTERFACE_PASSWORD).getText().length(); i++) {
 			x += 11;
 		}
 		if (x > 44) {
@@ -342,14 +342,14 @@ public class LoginBot extends Random {
 	private boolean isUsernameFilled() {
 		String username = account.getName().toLowerCase().trim();
 		return interfaces.get(INTERFACE_LOGIN_SCREEN)
-		                 .getComponent(INTERFACE_USERNAME).getText().toLowerCase()
-		                 .equalsIgnoreCase(username);
+				.getComponent(INTERFACE_USERNAME).getText().toLowerCase()
+				.equalsIgnoreCase(username);
 	}
 
 	private boolean isPasswordFilled() {
 		String passWord = AccountManager.getPassword(account.getName());
 		return interfaces.get(INTERFACE_LOGIN_SCREEN)
-		                 .getComponent(INTERFACE_PASSWORD).getText().toLowerCase()
-		                 .length() == (passWord == null ? 0 : passWord.length());
+				.getComponent(INTERFACE_PASSWORD).getText().toLowerCase()
+				.length() == (passWord == null ? 0 : passWord.length());
 	}
 }

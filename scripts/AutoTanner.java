@@ -4,11 +4,7 @@ import org.rsbot.event.listeners.PaintListener;
 import org.rsbot.script.Script;
 import org.rsbot.script.ScriptManifest;
 import org.rsbot.script.util.Timer;
-import org.rsbot.script.wrappers.RSArea;
-import org.rsbot.script.wrappers.RSInterface;
-import org.rsbot.script.wrappers.RSNPC;
-import org.rsbot.script.wrappers.RSTile;
-import org.rsbot.script.wrappers.RSTilePath;
+import org.rsbot.script.wrappers.*;
 
 import java.awt.*;
 import java.util.HashMap;

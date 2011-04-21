@@ -1,5 +1,6 @@
 package org.rsbot.gui;
 
+import org.rsbot.service.ScriptDeliveryNetwork;
 import org.rsbot.util.AccountStore;
 import org.rsbot.util.GlobalConfiguration;
 
@@ -32,12 +33,12 @@ public class AccountManager extends JDialog implements ActionListener {
 	private static final String FILE_NAME = GlobalConfiguration.Paths.getAccountsFile();
 
 	private static final String[] RANDOM_REWARDS = {"Cash", "Runes", "Coal", "Essence", "Ore", "Bars", "Gems", "Herbs",
-	                                                "Seeds", "Charms", "Surprise", "Emote", "Costume", "Attack",
-	                                                "Defence", "Strength", "Constitution", "Range", "Prayer", "Magic",
-	                                                "Cooking", "Woodcutting", "Fletching", "Fishing", "Firemaking",
-	                                                "Crafting", "Smithing", "Mining", "Herblore", "Agility", "Thieving",
-	                                                "Slayer", "Farming", "Runecrafting", "Hunter", "Construction",
-	                                                "Summoning", "Dungeoneering"};
+			"Seeds", "Charms", "Surprise", "Emote", "Costume", "Attack",
+			"Defence", "Strength", "Constitution", "Range", "Prayer", "Magic",
+			"Cooking", "Woodcutting", "Fletching", "Fishing", "Firemaking",
+			"Crafting", "Smithing", "Mining", "Herblore", "Agility", "Thieving",
+			"Slayer", "Farming", "Runecrafting", "Hunter", "Construction",
+			"Summoning", "Dungeoneering"};
 
 	private static final String[] VALID_KEYS = {"pin", "reward", "member", "take_breaks"};
 
@@ -46,7 +47,7 @@ public class AccountManager extends JDialog implements ActionListener {
 	private static AccountStore accountStore = new AccountStore(new File(FILE_NAME));
 
 	static {
-		accountStore.setPassword(BotGUI.getServiceKey().key);
+		accountStore.setPassword(ScriptDeliveryNetwork.getInstance().getKey());
 		try {
 			accountStore.load();
 		} catch (IOException ignored) {
@@ -204,7 +205,7 @@ public class AccountManager extends JDialog implements ActionListener {
 				dispose();
 			} else if (label.equals("Add")) {
 				String str = JOptionPane.showInputDialog(getParent(), "Enter the account username.", "New Account",
-				                                         JOptionPane.QUESTION_MESSAGE);
+						JOptionPane.QUESTION_MESSAGE);
 				if (str == null || str.isEmpty()) {
 					return;
 				}
@@ -253,16 +254,16 @@ public class AccountManager extends JDialog implements ActionListener {
 		gbl.rowWeights = new double[]{0.0, 1.0E-4};
 		newButton.setText("Add");
 		bar.add(newButton,
-		        new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-		                               new Insets(0, 0, 5, 5), 0, 0));
+				new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+						new Insets(0, 0, 5, 5), 0, 0));
 		removeButton.setText("Remove");
 		bar.add(removeButton,
-		        new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-		                               new Insets(0, 0, 5, 5), 0, 0));
+				new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+						new Insets(0, 0, 5, 5), 0, 0));
 		doneButton.setText("Done");
 		bar.add(doneButton,
-		        new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-		                               new Insets(0, 0, 5, 0), 0, 0));
+				new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+						new Insets(0, 0, 5, 0), 0, 0));
 		newButton.addActionListener(this);
 		doneButton.addActionListener(this);
 		removeButton.addActionListener(this);

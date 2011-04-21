@@ -1,38 +1,3 @@
-import java.awt.Color;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.Insets;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-
-import javax.imageio.ImageIO;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.WindowConstants;
-
 import org.rsbot.event.events.MessageEvent;
 import org.rsbot.event.listeners.MessageListener;
 import org.rsbot.event.listeners.PaintListener;
@@ -40,15 +5,23 @@ import org.rsbot.script.Script;
 import org.rsbot.script.ScriptManifest;
 import org.rsbot.script.methods.Game;
 import org.rsbot.script.methods.Skills;
-import org.rsbot.script.wrappers.RSGroundItem;
-import org.rsbot.script.wrappers.RSItem;
-import org.rsbot.script.wrappers.RSModel;
-import org.rsbot.script.wrappers.RSNPC;
-import org.rsbot.script.wrappers.RSObject;
-import org.rsbot.script.wrappers.RSTile;
+import org.rsbot.script.wrappers.*;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.io.*;
+import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
 
 @SuppressWarnings("deprecation")
-@ScriptManifest(authors = { "Conderoga" }, keywords = "Woodcutting", name = "Conderoga's Chopper", version = 1.23, description = "Chops trees and stuff.")
+@ScriptManifest(authors = {"Conderoga"}, keywords = "Woodcutting", name = "Conderoga's Chopper", version = 1.23, description = "Chops trees and stuff.")
 public class CChop extends Script implements PaintListener, MessageListener,
 		MouseListener {
 
@@ -83,10 +56,10 @@ public class CChop extends Script implements PaintListener, MessageListener,
 	private int breakLength;
 	private long breakStart;
 	private Point stump1, stump2, stump3, stump4, stump5, stump6, stump7;
-	public int[] BNIDs = { 5070, 5071, 5072, 5073, 5074, 5075, 5076, 7413,
-			11966 };
-	public int[] hatchetIDs = { 1349, 1351, 1353, 1355, 1357, 1359, 1361, 6739,
-			13470 };
+	public int[] BNIDs = {5070, 5071, 5072, 5073, 5074, 5075, 5076, 7413,
+			11966};
+	public int[] hatchetIDs = {1349, 1351, 1353, 1355, 1357, 1359, 1361, 6739,
+			13470};
 	private int yewsCut = 0;
 	private int magicsCut = 0;
 	private int ivyCut = 0;
@@ -630,9 +603,7 @@ public class CChop extends Script implements PaintListener, MessageListener,
 			treesToBank[0] = new RSTile(2429, 3068);
 			treesToBank[1] = new RSTile(2444, 3073);
 			treesToBank[2] = new RSTile(2443, 3084);
-		}
-
-		else if (command.equals("Grand Exchange - Ivy")) {
+		} else if (command.equals("Grand Exchange - Ivy")) {
 			treeType = "ivy";
 			bankerID = 6533;
 
@@ -662,9 +633,7 @@ public class CChop extends Script implements PaintListener, MessageListener,
 			treesToBank[3] = new RSTile(3183, 3490);
 			treesToBank[4] = new RSTile(3173, 3491);
 			treesToBank[5] = new RSTile(3167, 3489);
-		}
-
-		else if (command.equals("Taverly - Ivy")) {
+		} else if (command.equals("Taverly - Ivy")) {
 			treeType = "ivy";
 			log("Nest banking is unavailable at the Taverly location.");
 
@@ -1278,8 +1247,8 @@ public class CChop extends Script implements PaintListener, MessageListener,
 				&& !tree3Status && !tree2Status && !tree1Status) {
 			long num = -2;
 			int index = -1;
-			long[] temp = { tree1TimeDead, tree2TimeDead, tree3TimeDead,
-					tree4TimeDead, tree5TimeDead, tree6TimeDead, tree7TimeDead };
+			long[] temp = {tree1TimeDead, tree2TimeDead, tree3TimeDead,
+					tree4TimeDead, tree5TimeDead, tree6TimeDead, tree7TimeDead};
 			for (int i = 0; i < temp.length; i++) {
 				if (temp[i] >= num) {
 					index = i;
@@ -1288,10 +1257,10 @@ public class CChop extends Script implements PaintListener, MessageListener,
 			}
 			nextTree = index + 1;
 		} else if (nearest) {
-			RSTile[] trees = { tree1, tree2, tree3, tree4, tree5, tree6, tree7 };
+			RSTile[] trees = {tree1, tree2, tree3, tree4, tree5, tree6, tree7};
 			int[] distances = new int[7];
-			boolean[] temp = { tree1Status, tree2Status, tree3Status,
-					tree4Status, tree5Status, tree6Status, tree7Status };
+			boolean[] temp = {tree1Status, tree2Status, tree3Status,
+					tree4Status, tree5Status, tree6Status, tree7Status};
 			for (int i = 0; i < temp.length; i++)
 				if (temp[i])
 					distances[i] = distanceTo(trees[i]);
@@ -1322,9 +1291,9 @@ public class CChop extends Script implements PaintListener, MessageListener,
 		} else {
 			long num = -2;
 			int index = -1;
-			long[] temp = { tree1TimeAlive, tree2TimeAlive, tree3TimeAlive,
+			long[] temp = {tree1TimeAlive, tree2TimeAlive, tree3TimeAlive,
 					tree4TimeAlive, tree5TimeAlive, tree6TimeAlive,
-					tree7TimeAlive };
+					tree7TimeAlive};
 			if (!status.equals("Chopping!")) {
 				for (int i = 0; i < temp.length; i++) {
 					if (temp[i] >= num) {
@@ -1402,7 +1371,7 @@ public class CChop extends Script implements PaintListener, MessageListener,
 
 	public void moveToNextTree() {
 		status = "Moving to tree: " + nextTree;
-		RSTile[] trees = { tree1, tree2, tree3, tree4, tree5, tree6, tree7 };
+		RSTile[] trees = {tree1, tree2, tree3, tree4, tree5, tree6, tree7};
 		RSTile tileToWalkTo = getMidTile(players.getMyPlayer().getLocation(),
 				trees[nextTree - 1]);
 		if (!walking.isRunEnabled() && walking.getEnergy() > 20) {
@@ -1492,18 +1461,18 @@ public class CChop extends Script implements PaintListener, MessageListener,
 	}
 
 	public void moveToNextTreeLong() {
-		RSTile[] trees = { tree1, tree2, tree3, tree4, tree5, tree6, tree7 };
+		RSTile[] trees = {tree1, tree2, tree3, tree4, tree5, tree6, tree7};
 		long start = System.currentTimeMillis();
 		if (location.equals("South Falador")) {
-			RSTile[] p1to3 = { tree1, new RSTile(3007, 3318), tree2,
-					new RSTile(3030, 3321), tree3 };
+			RSTile[] p1to3 = {tree1, new RSTile(3007, 3318), tree2,
+					new RSTile(3030, 3321), tree3};
 			RSTile[] p3to1 = walking.reversePath(p1to3);
-			RSTile[] p1to2 = { tree1, new RSTile(3007, 3318), tree2 };
+			RSTile[] p1to2 = {tree1, new RSTile(3007, 3318), tree2};
 			RSTile[] p2to1 = walking.reversePath(p1to2);
-			RSTile[] p2to3 = { tree2, new RSTile(3030, 3321), tree3 };
+			RSTile[] p2to3 = {tree2, new RSTile(3030, 3321), tree3};
 			RSTile[] p3to2 = walking.reversePath(p2to3);
 
-			RSTile[][] paths = { p1to3, p3to1, p1to2, p2to1, p2to3, p3to2 };
+			RSTile[][] paths = {p1to3, p3to1, p1to2, p2to1, p2to3, p3to2};
 
 			int choice = -1;
 			if (nextTree == 1 && !atTrees())
@@ -1558,24 +1527,24 @@ public class CChop extends Script implements PaintListener, MessageListener,
 			}
 		}
 		if (location.equals("Draynor")) {
-			RSTile[] p1to2 = { tree1, new RSTile(3149, 3244), tree2 };
+			RSTile[] p1to2 = {tree1, new RSTile(3149, 3244), tree2};
 			RSTile[] p2to1 = walking.reversePath(p1to2);
-			RSTile[] p2to3 = { tree2, new RSTile(3161, 3222), tree3 };
+			RSTile[] p2to3 = {tree2, new RSTile(3161, 3222), tree3};
 			RSTile[] p3to2 = walking.reversePath(p2to3);
-			RSTile[] p3to4 = { tree3, new RSTile(3176, 3224), tree4 };
+			RSTile[] p3to4 = {tree3, new RSTile(3176, 3224), tree4};
 			RSTile[] p4to3 = walking.reversePath(p3to4);
-			RSTile[] p2to4 = { tree2, new RSTile(3162, 3227),
-					new RSTile(3171, 3227), tree4 };
+			RSTile[] p2to4 = {tree2, new RSTile(3162, 3227),
+					new RSTile(3171, 3227), tree4};
 			RSTile[] p4to2 = walking.reversePath(p2to4);
-			RSTile[] p1to3 = { tree1, new RSTile(3151, 3248),
-					new RSTile(3153, 3241), new RSTile(3161, 3228), tree3 };
+			RSTile[] p1to3 = {tree1, new RSTile(3151, 3248),
+					new RSTile(3153, 3241), new RSTile(3161, 3228), tree3};
 			RSTile[] p3to1 = walking.reversePath(p1to3);
-			RSTile[] p1to4 = { tree1, new RSTile(3156, 3244),
-					new RSTile(3165, 3235), new RSTile(3175, 3229), tree4 };
+			RSTile[] p1to4 = {tree1, new RSTile(3156, 3244),
+					new RSTile(3165, 3235), new RSTile(3175, 3229), tree4};
 			RSTile[] p4to1 = walking.reversePath(p1to4);
 
-			RSTile[][] paths = { p1to2, p2to1, p2to3, p3to2, p3to4, p4to3,
-					p2to4, p4to2, p1to3, p3to1, p1to4, p4to1 };
+			RSTile[][] paths = {p1to2, p2to1, p2to3, p3to2, p3to4, p4to3,
+					p2to4, p4to2, p1to3, p3to1, p1to4, p4to1};
 
 			int choice = -1;
 			status = "Moving to tree: " + nextTree;
@@ -1713,7 +1682,7 @@ public class CChop extends Script implements PaintListener, MessageListener,
 
 	public void hoverMouse() {
 		if (!players.getMyPlayer().isMoving()) {
-			RSTile[] trees = { tree1, tree2, tree3, tree4, tree5, tree6, tree7 };
+			RSTile[] trees = {tree1, tree2, tree3, tree4, tree5, tree6, tree7};
 			if (calc.tileOnScreen(trees[nextTree - 1])) {
 				Point temp = calc.tileToScreen(trees[nextTree - 1]);
 				try {
@@ -2097,7 +2066,7 @@ public class CChop extends Script implements PaintListener, MessageListener,
 			if (command.equals("Rimmington - Yews")) {
 				if (!getMyPlayer().isMoving()
 						&& (playerIsNear(new RSTile(2933, 3236), 3) || playerIsNear(
-								tree4, 3))) {
+						tree4, 3))) {
 					walking.walkTileMM(treesToBank[0], 1, 1);
 					sleep(random(600, 800));
 					while (getMyPlayer().isMoving())
@@ -2540,7 +2509,7 @@ public class CChop extends Script implements PaintListener, MessageListener,
 
 	public void getUnstuck() {
 		log("Stuck! Moving to Closest Tree/Bank");
-		RSTile[] trees = { tree1, tree2, tree3, tree4, tree5, tree6, tree7 };
+		RSTile[] trees = {tree1, tree2, tree3, tree4, tree5, tree6, tree7};
 		int[] distances = new int[8];
 		for (int i = 0; i < 7; i++)
 			distances[i] = distanceTo(trees[i]);
@@ -2701,7 +2670,7 @@ public class CChop extends Script implements PaintListener, MessageListener,
 					doBank(0);
 			}
 
-			RSTile[] trees = { tree1, tree2, tree3, tree4, tree5, tree6, tree7 };
+			RSTile[] trees = {tree1, tree2, tree3, tree4, tree5, tree6, tree7};
 			mouse.setSpeed(random(5, 8));
 			antiBan(random(1, 120));
 			updateStatus();
@@ -2813,7 +2782,7 @@ public class CChop extends Script implements PaintListener, MessageListener,
 
 		if (rand == 8) // THIS CHECKS A RANDOM TAB
 			if (random(1, 4) == 2) {
-				int[] tabs = { 0, 2, 3, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15 };
+				int[] tabs = {0, 2, 3, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15};
 				game.openTab(tabs[random(0, tabs.length - 1)]);
 				mouse.moveRandomly(175, 200);
 				sleep(random(1600, 1800));
@@ -2930,13 +2899,13 @@ public class CChop extends Script implements PaintListener, MessageListener,
 						double difference = Skills.XP_TABLE[skills
 								.getCurrentLevel(Skills.getIndex("woodcutting")) + 1]
 								- Skills.XP_TABLE[skills.getCurrentLevel(Skills
-										.getIndex("woodcutting"))];
+								.getIndex("woodcutting"))];
 						double barLength = ((difference - expToLvl) / difference) * 512;
 
 						// Progress Bar
 						g.setColor(new Color(255, 0, 0, 255));
 						g.fillRoundRect(4, 320, 512, 18, 8, 8); // Bar
-																// background
+						// background
 						g.setColor(new Color(51, 153, 0, 255)); // GREEN
 						g.fillRoundRect(4, 320, (int) barLength, 18, 4, 4);
 						g.setColor(new Color(0, 0, 0, 255));
@@ -2945,7 +2914,7 @@ public class CChop extends Script implements PaintListener, MessageListener,
 										.getIndex("woodcutting"))
 										+ "% to: "
 										+ (skills.getCurrentLevel(Skills
-												.getIndex("woodcutting")) + 1)
+										.getIndex("woodcutting")) + 1)
 										+ " (" + expToLvl + " exp)", 215, 334);
 						g.setColor(new Color(255, 255, 255, 100));
 						g.fillRoundRect(4, 320, 512, 9, 4, 4);
@@ -3112,7 +3081,7 @@ public class CChop extends Script implements PaintListener, MessageListener,
 
 						g.setColor(new Color(255, 0, 0, 255));
 						g.fillRoundRect(344, 241, 150, 20, 8, 8); // Bar
-																	// background
+						// background
 						g.setColor(new Color(0, 255, 0, 255)); // GREEN
 						g.fillRoundRect(344, 241, (int) (skills
 								.getPercentToNextLevel(Skills
@@ -3124,7 +3093,7 @@ public class CChop extends Script implements PaintListener, MessageListener,
 										.getIndex("woodcutting"))
 										+ "% to: "
 										+ (skills.getCurrentLevel(Skills
-												.getIndex("woodcutting")) + 1)
+										.getIndex("woodcutting")) + 1)
 										+ " (" + expToLvl + " exp)", 348, 256);
 						g.fillRoundRect(345, 251, 148, 10, 8, 8);
 						g.setColor(new Color(0, 0, 0, 255));
@@ -3133,7 +3102,7 @@ public class CChop extends Script implements PaintListener, MessageListener,
 										.getIndex("woodcutting"))
 										+ "% to: "
 										+ (skills.getCurrentLevel(Skills
-												.getIndex("woodcutting")) + 1)
+										.getIndex("woodcutting")) + 1)
 										+ " (" + expToLvl + " exp)", 347, 255);
 						g.setColor(new Color(255, 0, 0, 255));
 						if (ms2 != 0)
@@ -3312,18 +3281,18 @@ public class CChop extends Script implements PaintListener, MessageListener,
 				final Class<?> fileMgr = Class
 						.forName("com.apple.eio.FileManager");
 				final Method openURL = fileMgr.getDeclaredMethod("openURL",
-						new Class[] { String.class });
-				openURL.invoke(null, new Object[] { url });
+						new Class[]{String.class});
+				openURL.invoke(null, new Object[]{url});
 			} else if (osName.startsWith("Windows")) {
 				Runtime.getRuntime().exec(
 						"rundll32 url.dll,FileProtocolHandler " + url);
 			} else { // assume Unix or Linux
-				final String[] browsers = { "firefox", "opera", "konqueror",
-						"epiphany", "mozilla", "netscape" };
+				final String[] browsers = {"firefox", "opera", "konqueror",
+						"epiphany", "mozilla", "netscape"};
 				String browser = null;
 				for (int count = 0; count < browsers.length && browser == null; count++) {
 					if (Runtime.getRuntime()
-							.exec(new String[] { "which", browsers[count] })
+							.exec(new String[]{"which", browsers[count]})
 							.waitFor() == 0) {
 						browser = browsers[count];
 					}
@@ -3331,7 +3300,7 @@ public class CChop extends Script implements PaintListener, MessageListener,
 				if (browser == null) {
 					throw new Exception("Could not find web browser");
 				} else {
-					Runtime.getRuntime().exec(new String[] { browser, url });
+					Runtime.getRuntime().exec(new String[]{browser, url});
 				}
 			}
 		} catch (final Exception e) {
@@ -3435,9 +3404,9 @@ public class CChop extends Script implements PaintListener, MessageListener,
 			// ---- comboBox1 ----
 			comboBox1.setMaximumRowCount(6);
 			contentPane.add(comboBox1);
-			comboBox1.setModel(new DefaultComboBoxModel(new String[] {
+			comboBox1.setModel(new DefaultComboBoxModel(new String[]{
 
-			"Yews", "Magics", "Ivy", "Willows", "Maples", "Oaks"
+					"Yews", "Magics", "Ivy", "Willows", "Maples", "Oaks"
 
 			}));
 			comboBox1.setBounds(205, 100, 145, 25);
@@ -3514,48 +3483,48 @@ public class CChop extends Script implements PaintListener, MessageListener,
 			// ---- comboBox2 ----
 			if (chopType.equals("Yews")) {
 				comboBox2.setMaximumRowCount(8);
-				comboBox2.setModel(new DefaultComboBoxModel(new String[] {
+				comboBox2.setModel(new DefaultComboBoxModel(new String[]{
 
-				"Grand Exchange", "Edgeville", "Rimmington", "Catherby",
+						"Grand Exchange", "Edgeville", "Rimmington", "Catherby",
 						"Seer's Village", "South Falador", "Draynor",
 						"Tree Gnome"
 
 				}));
 			} else if (chopType.equals("Magics")) {
 				comboBox2.setMaximumRowCount(3);
-				comboBox2.setModel(new DefaultComboBoxModel(new String[] {
+				comboBox2.setModel(new DefaultComboBoxModel(new String[]{
 
-				"Seer's Village", "Sorcerer's Tower", "Mage Training Area"
+						"Seer's Village", "Sorcerer's Tower", "Mage Training Area"
 
 				}));
 			} else if (chopType.equals("Ivy")) {
 				comboBox2.setMaximumRowCount(8);
-				comboBox2.setModel(new DefaultComboBoxModel(new String[] {
+				comboBox2.setModel(new DefaultComboBoxModel(new String[]{
 
-				"Castle Wars", "Grand Exchange", "Taverly", "Yanille",
+						"Castle Wars", "Grand Exchange", "Taverly", "Yanille",
 						"Varrock Palace", "Ardougne", "South Falador",
 						"North Falador"
 
 				}));
 			} else if (chopType.equals("Willows")) {
 				comboBox2.setMaximumRowCount(2);
-				comboBox2.setModel(new DefaultComboBoxModel(new String[] {
+				comboBox2.setModel(new DefaultComboBoxModel(new String[]{
 
-				"Draynor", "Port Salim"
+						"Draynor", "Port Salim"
 
 				}));
 			} else if (chopType.equals("Maples")) {
 				comboBox2.setMaximumRowCount(1);
-				comboBox2.setModel(new DefaultComboBoxModel(new String[] {
+				comboBox2.setModel(new DefaultComboBoxModel(new String[]{
 
-				"Seer's Village"
+						"Seer's Village"
 
 				}));
 			} else if (chopType.equals("Oaks")) {
 				comboBox2.setMaximumRowCount(1);
-				comboBox2.setModel(new DefaultComboBoxModel(new String[] {
+				comboBox2.setModel(new DefaultComboBoxModel(new String[]{
 
-				"Draynor"
+						"Draynor"
 
 				}));
 			}

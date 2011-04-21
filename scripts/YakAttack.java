@@ -1,40 +1,3 @@
-import java.awt.Color;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Insets;
-import java.awt.Point;
-import java.awt.Polygon;
-import java.awt.Rectangle;
-import java.awt.RenderingHints;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.geom.Rectangle2D;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Random;
-
-import javax.swing.AbstractListModel;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
-import javax.swing.JSlider;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingConstants;
-
 import org.rsbot.event.events.MessageEvent;
 import org.rsbot.event.listeners.MessageListener;
 import org.rsbot.event.listeners.PaintListener;
@@ -44,13 +7,19 @@ import org.rsbot.script.methods.Game;
 import org.rsbot.script.methods.Skills;
 import org.rsbot.script.util.Filter;
 import org.rsbot.script.util.Timer;
-import org.rsbot.script.wrappers.RSGroundItem;
-import org.rsbot.script.wrappers.RSItem;
-import org.rsbot.script.wrappers.RSModel;
-import org.rsbot.script.wrappers.RSNPC;
-import org.rsbot.script.wrappers.RSTile;
+import org.rsbot.script.wrappers.*;
 
-@ScriptManifest(authors = { "Pervy Shuya" }, keywords = "Combat", name = "YakAttack PRo", version = 1.5, description = "Settings in GUI")
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.geom.Rectangle2D;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Random;
+
+@ScriptManifest(authors = {"Pervy Shuya"}, keywords = "Combat", name = "YakAttack PRo", version = 1.5, description = "Settings in GUI")
 public class YakAttack extends Script implements PaintListener, MessageListener {
 	private final int KILLYAKS = 0, KILLSCRIPT = 1, SPECIAL = 2;
 
@@ -58,22 +27,22 @@ public class YakAttack extends Script implements PaintListener, MessageListener 
 			ScriptManifest.class);
 	private final int yakID = 5529;
 
-	private final int[] Junk = { 10814, 10816, 10818, 526 };
-	private final int[] superStrength = { 2440, 157, 159, 161 };
-	private final int[] superDefense = { 2442, 163, 165, 167 };
-	private final int[] superAttack = { 2436, 145, 147, 149 };
-	private final int[] normalStrength = { 113, 115, 117, 119 };
-	private final int[] normalDefense = { 2432, 133, 135, 137 };
-	private final int[] normalAttack = { 2428, 121, 123, 125 };
-	private final int[] normalRange = { 2444, 169, 171, 173 };
-	private final int[] combatPots = { 9739, 9741, 9743, 9745 };
-	private final int[] potionSet = { 2440, 157, 159, 161, 2442, 163, 165, 167,
+	private final int[] Junk = {10814, 10816, 10818, 526};
+	private final int[] superStrength = {2440, 157, 159, 161};
+	private final int[] superDefense = {2442, 163, 165, 167};
+	private final int[] superAttack = {2436, 145, 147, 149};
+	private final int[] normalStrength = {113, 115, 117, 119};
+	private final int[] normalDefense = {2432, 133, 135, 137};
+	private final int[] normalAttack = {2428, 121, 123, 125};
+	private final int[] normalRange = {2444, 169, 171, 173};
+	private final int[] combatPots = {9739, 9741, 9743, 9745};
+	private final int[] potionSet = {2440, 157, 159, 161, 2442, 163, 165, 167,
 			2436, 145, 147, 149, 113, 115, 117, 119, 2432, 133, 135, 137, 2428,
-			121, 123, 125, 2444, 169, 171, 173, 9739, 9741, 9743, 9745 };
+			121, 123, 125, 2444, 169, 171, 173, 9739, 9741, 9743, 9745};
 
-	private final String[] potionsToDrink = { "Super Attack", "Super Strength",
+	private final String[] potionsToDrink = {"Super Attack", "Super Strength",
 			"Super Defense", "Combat potion", "Normal Range", "Normal Attack",
-			"Normal Strength", "Normal Defense" };
+			"Normal Strength", "Normal Defense"};
 	private static String currLocation = "Unknown";
 	private int speed, hp2EatAt;
 
@@ -104,10 +73,10 @@ public class YakAttack extends Script implements PaintListener, MessageListener 
 	private final Timer timeRan = new Timer(0L);
 
 	private String Status = "Starting", arrowName;
-	private final Object[][] validTiles = new Object[][] { { "Yak's Pen",
-			new RSTile(2324, 3792) } };
+	private final Object[][] validTiles = new Object[][]{{"Yak's Pen",
+			new RSTile(2324, 3792)}};
 	private boolean wants2Eat, doSpec, guiWait = true, guiExit, Wait;
-	private final int[] foodID = { 1895, 1893, 1891, 4293, 2142, 291, 2140,
+	private final int[] foodID = {1895, 1893, 1891, 4293, 2142, 291, 2140,
 			3228, 9980, 7223, 6297, 6293, 6295, 6299, 7521, 9988, 7228, 2878,
 			7568, 2343, 1861, 13433, 315, 325, 319, 3144, 347, 355, 333, 339,
 			351, 329, 3381, 361, 10136, 5003, 379, 365, 373, 7946, 385, 397,
@@ -121,12 +90,12 @@ public class YakAttack extends Script implements PaintListener, MessageListener 
 			2034, 2048, 2036, 2217, 2213, 2205, 2209, 2054, 2040, 2080, 2277,
 			2225, 2255, 2221, 2253, 2219, 2281, 2227, 2223, 2191, 2233, 2092,
 			2032, 2074, 2030, 2281, 2235, 2064, 2028, 2187, 2185, 2229, 6883,
-			1971, 4608, 1883, 1885 }, arrowPack = { 882, 884, 886, 888, 890,
+			1971, 4608, 1883, 1885}, arrowPack = {882, 884, 886, 888, 890,
 			892, 877, 8882, 9139, 9140, 9141, 13083, 9142, 9143, 9144, 13280,
 			864, 863, 865, 869, 866, 867, 868, 806, 807, 808, 3093, 809, 810,
-			811 };
+			811};
 
-	private final int[] exptolevel = { 0, 83, 174, 276, 388, 512, 650, 801,
+	private final int[] exptolevel = {0, 83, 174, 276, 388, 512, 650, 801,
 			969, 1154, 1358, 1584, 1833, 2107, 2411, 2746, 3115, 3523, 3973,
 			4470, 5018, 5624, 6291, 7028, 7842, 8740, 9730, 10824, 12031,
 			13363, 14833, 16456, 18247, 20224, 22406, 24815, 27473, 30408,
@@ -138,14 +107,14 @@ public class YakAttack extends Script implements PaintListener, MessageListener 
 			1798808, 1986068, 2192818, 2421087, 2673114, 2951373, 3258594,
 			3597792, 3972294, 4385776, 4842295, 5346332, 5902831, 6517253,
 			7195629, 7944614, 8771558, 9684577, 10692629, 11805606, 13034431,
-			200000001 };
+			200000001};
 	private final int[] startinglvl = new int[8];
 	private final int[] currentlvl = new int[8];
 	private final int[] startingexp = new int[8];
 	private final int[] currentexp = new int[8];
 	private final int[] diffexp = new int[8];
-	private final String[] statnames = { "MAGIC", "ATTACK", "DEFENSE",
-			"CONSTITUTION", "PRAYER", "RANGE", "SLAYER", "STRENGTH" };
+	private final String[] statnames = {"MAGIC", "ATTACK", "DEFENSE",
+			"CONSTITUTION", "PRAYER", "RANGE", "SLAYER", "STRENGTH"};
 
 	private boolean pickupArrows(int[] id, String itemName) {
 		boolean back = false;
@@ -302,7 +271,7 @@ public class YakAttack extends Script implements PaintListener, MessageListener 
 				if (skills.getCurrentLevel(Skills.STRENGTH) <= skills
 						.getRealLevel(Skills.STRENGTH) + random(2, 4)
 						|| skills.getCurrentLevel(Skills.ATTACK) <= skills
-								.getRealLevel(Skills.ATTACK) + random(2, 4)) {
+						.getRealLevel(Skills.ATTACK) + random(2, 4)) {
 					if (inventory.getCount(id) > 0) {
 						inventory.getItem(combatPots).doAction("Drink");
 						while (getMyPlayer().getAnimation() != -1) {
@@ -341,19 +310,18 @@ public class YakAttack extends Script implements PaintListener, MessageListener 
 		return skills.getCurrentLevel(Skills.STRENGTH) <= skills
 				.getRealLevel(Skills.STRENGTH) + random(3, 5)
 				|| skills.getCurrentLevel(Skills.ATTACK) <= skills
-						.getRealLevel(Skills.ATTACK) + random(3, 5)
+				.getRealLevel(Skills.ATTACK) + random(3, 5)
 				|| skills.getCurrentLevel(Skills.DEFENSE) <= skills
-						.getRealLevel(Skills.DEFENSE) + random(3, 5)
+				.getRealLevel(Skills.DEFENSE) + random(3, 5)
 				|| skills.getCurrentLevel(Skills.RANGE) <= skills
-						.getRealLevel(Skills.RANGE) + random(3, 5);
+				.getRealLevel(Skills.RANGE) + random(3, 5);
 	}
 
 	/**
 	 * Returns the RSNPC that is nearest, out of all of the RSPNCs with the
 	 * provided name(s), that is not currently in combat. Can return null.
-	 * 
-	 * @param names
-	 *            The name(s) of the NPCs that you are searching.
+	 *
+	 * @param names The name(s) of the NPCs that you are searching.
 	 * @return An RSNPC object representing the nearest RSNPC with one of the
 	 *         provided names that is not in combat; or null if there are no
 	 *         mathching NPCs in the current region.
@@ -397,7 +365,7 @@ public class YakAttack extends Script implements PaintListener, MessageListener 
 	}
 
 	private void drawNiceBox(Graphics g, String text, int x, int y, Color col1,
-			Color col2, Color col3, Boolean important) {
+	                         Color col2, Color col3, Boolean important) {
 		int widthInPixels = 0;
 		int height = 0;
 		Rectangle2D bounds;
@@ -406,7 +374,7 @@ public class YakAttack extends Script implements PaintListener, MessageListener 
 			FontMetrics metrics = new FontMetrics(font) {
 
 				/**
-				 * 
+				 *
 				 */
 				private static final long serialVersionUID = 1L;
 			};
@@ -418,7 +386,7 @@ public class YakAttack extends Script implements PaintListener, MessageListener 
 			FontMetrics metrics = new FontMetrics(font) {
 
 				/**
-				 * 
+				 *
 				 */
 				private static final long serialVersionUID = 1L;
 			};
@@ -446,9 +414,9 @@ public class YakAttack extends Script implements PaintListener, MessageListener 
 					g,
 					"Eating: "
 							+ item.getName()
-									.substring(
-											item.getName().indexOf(
-													"<col=ff9040>") + 12), item
+							.substring(
+									item.getName().indexOf(
+											"<col=ff9040>") + 12), item
 							.getComponent().getArea().x - 80, item
 							.getComponent().getArea().y
 							+ item.getComponent().getArea().height, new Color(
@@ -466,22 +434,22 @@ public class YakAttack extends Script implements PaintListener, MessageListener 
 
 	private int statInfo(int i) {
 		switch (i) {
-		case 0:
-			return Skills.MAGIC;
-		case 1:
-			return Skills.ATTACK;
-		case 2:
-			return Skills.DEFENSE;
-		case 3:
-			return Skills.CONSTITUTION;
-		case 4:
-			return Skills.PRAYER;
-		case 5:
-			return Skills.RANGE;
-		case 6:
-			return Skills.SLAYER;
-		case 7:
-			return Skills.STRENGTH;
+			case 0:
+				return Skills.MAGIC;
+			case 1:
+				return Skills.ATTACK;
+			case 2:
+				return Skills.DEFENSE;
+			case 3:
+				return Skills.CONSTITUTION;
+			case 4:
+				return Skills.PRAYER;
+			case 5:
+				return Skills.RANGE;
+			case 6:
+				return Skills.SLAYER;
+			case 7:
+				return Skills.STRENGTH;
 		}
 		return i;
 	}
@@ -712,62 +680,62 @@ public class YakAttack extends Script implements PaintListener, MessageListener 
 		}
 
 		switch (getAction()) {
-		case SPECIAL:
-			if (inventory.containsOneOf(SPEC_WEP_ID)) {
-				inventory.getItem(SPEC_WEP_ID).doAction("Wield");
-				sleep(random(1000, 1100));
-			}
-			while (getMyPlayer().getInteracting() != null
-					&& settings.getSetting(300) >= specialCost) {
-				if (getMyPlayer().getInteracting() == null) {
-					break;
+			case SPECIAL:
+				if (inventory.containsOneOf(SPEC_WEP_ID)) {
+					inventory.getItem(SPEC_WEP_ID).doAction("Wield");
+					sleep(random(1000, 1100));
 				}
-				if (game.getCurrentTab() != Game.TAB_ATTACK) {
-					game.openTab(Game.TAB_ATTACK);
-					sleep(random(400, 600));
-				}
-				if (settings.getSetting(301) != 1) {
-					interfaces.get(884).getComponent(4).doClick();
-					sleep(random(900, 1000));
-				} else {
-					sleep(random(100, 300));
-				}
-			}
-			break;
-
-		case KILLYAKS:
-			runControl();
-
-			RSGroundItem rangeStuff = groundItems.getNearest(arrowID);
-			if (rangeStuff != null && arrowID != -1) {
-				if (inventory.getCount(arrowID) == random(50, 100)) {
-					if (game.getCurrentTab() != 4) {
-						game.openTab(4);
+				while (getMyPlayer().getInteracting() != null
+						&& settings.getSetting(300) >= specialCost) {
+					if (getMyPlayer().getInteracting() == null) {
+						break;
 					}
-					Status = "Equiping Arrows";
-					inventory.getItem(arrowID).doAction("Wield");
-					return random(15000, 30000);
+					if (game.getCurrentTab() != Game.TAB_ATTACK) {
+						game.openTab(Game.TAB_ATTACK);
+						sleep(random(400, 600));
+					}
+					if (settings.getSetting(301) != 1) {
+						interfaces.get(884).getComponent(4).doClick();
+						sleep(random(900, 1000));
+					} else {
+						sleep(random(100, 300));
+					}
 				}
-			} else {
-				rangeStuff = null;
-			}
-			if (inventory.getCount(potionSet) >= 1 && shouldDrinkPot()) {
-				for (String aPotion : potionsToDrink) {
-					drinkPot(aPotion);
-				}
-			}
+				break;
 
-			if (yak != null && getMyPlayer().getInteracting() == null) {
-				Status = "Attacking Yaks";
-				if (clickNPC(yak, "Attack"))
-					mouse.moveOffScreen();
-				return random(400, 600);
-			}
-			break;
-		case KILLSCRIPT:
-			log.warning("Stopping script get to the Yak Pen on Neitiznot.");
-			stopScript(true);
-			return random(100, 200);
+			case KILLYAKS:
+				runControl();
+
+				RSGroundItem rangeStuff = groundItems.getNearest(arrowID);
+				if (rangeStuff != null && arrowID != -1) {
+					if (inventory.getCount(arrowID) == random(50, 100)) {
+						if (game.getCurrentTab() != 4) {
+							game.openTab(4);
+						}
+						Status = "Equiping Arrows";
+						inventory.getItem(arrowID).doAction("Wield");
+						return random(15000, 30000);
+					}
+				} else {
+					rangeStuff = null;
+				}
+				if (inventory.getCount(potionSet) >= 1 && shouldDrinkPot()) {
+					for (String aPotion : potionsToDrink) {
+						drinkPot(aPotion);
+					}
+				}
+
+				if (yak != null && getMyPlayer().getInteracting() == null) {
+					Status = "Attacking Yaks";
+					if (clickNPC(yak, "Attack"))
+						mouse.moveOffScreen();
+					return random(400, 600);
+				}
+				break;
+			case KILLSCRIPT:
+				log.warning("Stopping script get to the Yak Pen on Neitiznot.");
+				stopScript(true);
+				return random(100, 200);
 		}
 
 		return random(200, 400);
@@ -1084,7 +1052,7 @@ public class YakAttack extends Script implements PaintListener, MessageListener 
 						.toString(),
 				new StringBuilder().append("Yaks Killed: ").append(yaksKilled)
 						.append("  |  YaksKilled/HR: ").append(yaksPerHour)
-						.toString(), "www.powerbot.org" };
+						.toString(), "www.powerbot.org"};
 
 		i12 = 5;
 		i13 = 30;
@@ -1129,13 +1097,13 @@ public class YakAttack extends Script implements PaintListener, MessageListener 
 			while (isActive()) {
 				try {
 					if (random.nextInt(Math.abs(15 - 0)) == 0) {
-						final char[] LR = new char[] { KeyEvent.VK_LEFT,
-								KeyEvent.VK_RIGHT };
-						final char[] UD = new char[] { KeyEvent.VK_DOWN,
-								KeyEvent.VK_UP };
-						final char[] LRUD = new char[] { KeyEvent.VK_LEFT,
+						final char[] LR = new char[]{KeyEvent.VK_LEFT,
+								KeyEvent.VK_RIGHT};
+						final char[] UD = new char[]{KeyEvent.VK_DOWN,
+								KeyEvent.VK_UP};
+						final char[] LRUD = new char[]{KeyEvent.VK_LEFT,
 								KeyEvent.VK_RIGHT, KeyEvent.VK_UP,
-								KeyEvent.VK_UP };
+								KeyEvent.VK_UP};
 						final int random2 = random.nextInt(Math.abs(2 - 0));
 						final int random1 = random.nextInt(Math.abs(2 - 0));
 						final int random4 = random.nextInt(Math.abs(4 - 0));
@@ -1578,7 +1546,7 @@ public class YakAttack extends Script implements PaintListener, MessageListener 
 						label10.setBounds(145, 5, 180, 26);
 
 						// ---- list3 ----
-						list3.setModel(new DefaultComboBoxModel(new String[] {
+						list3.setModel(new DefaultComboBoxModel(new String[]{
 								"None", "Bronze arrow", "Iron arrow",
 								"Mithril arrow", "Adamant arrow", "Rune arrow",
 								"Bronze bolts", "Bluerite bolts", "Iron bolts",
@@ -1588,7 +1556,7 @@ public class YakAttack extends Script implements PaintListener, MessageListener 
 								"Black knife", "Mithril knife",
 								"Adamant knife", "Rune knife", "Bronze dart",
 								"Iron dart", "Steel dart", "Black dart",
-								"Mithril dart", "Adamant dart", "Rune dart" }));
+								"Mithril dart", "Adamant dart", "Rune dart"}));
 						panel2.add(list3);
 						list3.setBounds(185, 40, 120, 25);
 						panel2.add(separator5);
@@ -1645,7 +1613,7 @@ public class YakAttack extends Script implements PaintListener, MessageListener 
 
 						// ---- specComboBox ----
 						specComboBox.setModel(new DefaultComboBoxModel(
-								new String[] { "Dragon dagger (p++)",
+								new String[]{"Dragon dagger (p++)",
 										"Dragon longsword", "Dragon mace",
 										"Dragon battleaxe", "Dragon halberd",
 										"Dragon scimitar", "Dragon claws",
@@ -1656,7 +1624,7 @@ public class YakAttack extends Script implements PaintListener, MessageListener 
 										"Ancient mace", "Saradomin sword",
 										"Armadyl godsword", "Bandos godsword",
 										"Saradomin godsword",
-										"Zamorak godsword" }));
+										"Zamorak godsword"}));
 						panel2.add(specComboBox);
 						specComboBox.setBounds(new Rectangle(new Point(5, 30),
 								specComboBox.getPreferredSize()));
@@ -1696,13 +1664,13 @@ public class YakAttack extends Script implements PaintListener, MessageListener 
 
 							// ---- list2 ----
 							list2.setModel(new AbstractListModel() {
-								String[] values = { "None", "Lobster",
+								String[] values = {"None", "Lobster",
 										"Salmon", "Tuna", "Trout", "Sharks",
 										"Monkfish", "Manta ray", "Sea turtle",
 										"Cake", "Chocolate cake",
 										"Plain pizza", "Pineapple pizza",
 										"Meat pizza", "Rocktail", "Cavefish",
-										"Swordfish" };
+										"Swordfish"};
 
 								@Override
 								public int getSize() {

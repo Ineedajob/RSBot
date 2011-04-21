@@ -50,7 +50,7 @@ public class LogFormatter extends Formatter {
 
 		return String.format(
 				name.length() > maxLen ? name.substring(0,
-				                                        maxLen - append.length())
+						maxLen - append.length())
 						+ append : name);
 	}
 

@@ -4,55 +4,6 @@
  * 			No one except White Bear has the right to modify this script!
  */
 
-import java.awt.Color;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Insets;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.RenderingHints;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.awt.geom.Rectangle2D;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Properties;
-
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JFormattedTextField;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextArea;
-import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
-import javax.swing.WindowConstants;
-
 import org.rsbot.event.events.MessageEvent;
 import org.rsbot.event.listeners.MessageListener;
 import org.rsbot.event.listeners.PaintListener;
@@ -63,16 +14,23 @@ import org.rsbot.script.methods.Game;
 import org.rsbot.script.methods.GrandExchange.GEItem;
 import org.rsbot.script.methods.Players;
 import org.rsbot.script.methods.Skills;
-import org.rsbot.script.wrappers.RSComponent;
-import org.rsbot.script.wrappers.RSGroundItem;
-import org.rsbot.script.wrappers.RSItem;
-import org.rsbot.script.wrappers.RSNPC;
-import org.rsbot.script.wrappers.RSObject;
-import org.rsbot.script.wrappers.RSPlayer;
-import org.rsbot.script.wrappers.RSTile;
+import org.rsbot.script.wrappers.*;
 import org.rsbot.util.GlobalConfiguration;
 
-@ScriptManifest(authors = { "WhiteBear" }, keywords = "Magic All in One", name = "White Bear AIO Magic", version = 2.11, description = "Flawless All-in-One script for training magic!", website = "http://whitebearrs.orgfree.com")
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.geom.Rectangle2D;
+import java.io.*;
+import java.net.URL;
+import java.net.URLConnection;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Properties;
+
+@ScriptManifest(authors = {"WhiteBear"}, keywords = "Magic All in One", name = "White Bear AIO Magic", version = 2.11, description = "Flawless All-in-One script for training magic!", website = "http://whitebearrs.orgfree.com")
 public class WhiteBearAIOMagic extends Script implements PaintListener,
 		MessageListener, MouseListener, MouseMotionListener {
 
@@ -249,140 +207,41 @@ public class WhiteBearAIOMagic extends Script implements PaintListener,
 
 	private int doAction() {
 		switch (getState()) {
-		case Bolts:
-			status = "Enchanting Bolts";
-			if (useFkeys && game.getCurrentTab() != Game.TAB_MAGIC) {
-				keyboard.pressKey((char) KeyEvent.VK_F4);
-				sleep(random(50, 110));
-				keyboard.releaseKey((char) KeyEvent.VK_F4);
-				sleep(random(160, 220));
-			}
-			if (!interfaces.get(432).isValid()) {
-				magic.castSpell(component);
-				sleep(random(400, 600));
-			}
-			if (interfaces.get(432).isValid()) {
-				if (!interfaces.getComponent(432, boltComponent).doAction(
-						"Make 10")) {
-					sleep(random(300, 400));
-					if (!interfaces.getComponent(432, boltComponent).doAction(
-							"Make 10")) {
-						sleep(random(300, 400));
-						if (interfaces.get(432).isValid()
-								&& !interfaces.getComponent(432, boltComponent)
-										.doAction("Make 10")) {
-							sleep(random(300, 400));
-							if (!interfaces.getComponent(432, boltComponent)
-									.doAction("Make 10")) {
-								sleep(random(300, 400));
-								interfaces.getComponent(432, 12).doClick();
-								log.warning("Unable to cast Enchant Crossbow Bolt spell for 4 tries, logging out.");
-								logOutR = true;
-								return random(200, 300);
-							}
-						}
-					}
-				}
-			}
-			if (random(0, 4) == 0) {
-				if (antiban.lookAway()) {
-					return random(50, 100);
-				}
-			}
-			if (random(0, 3) == 0) {
-				antiban.main(true);
-				sleep(random(190, 300));
-			} else {
-				sleep(random(460, 550));
-			}
-			int mx = 0;
-			while (valid() && getMyPlayer().getAnimation() == -1 && mx < 26) {
-				mx += 1;
-				sleep(random(49, 52));
-			}
-			mx = 0;
-			while (valid() && getMyPlayer().getAnimation() != -1 && mx < 46) {
-				mx += 1;
-				sleep(random(49, 52));
-				if (getMyPlayer().getAnimation() > 4000
-						&& getMyPlayer().getAnimation() < 5000)
-					mx = 20;
-			}
-			return random(20, 50);
-		case Teleport:
-			status = "Cast " + spellName;
-			if (useFkeys && game.getCurrentTab() != Game.TAB_MAGIC) {
-				keyboard.pressKey((char) KeyEvent.VK_F4);
-				sleep(random(50, 110));
-				keyboard.releaseKey((char) KeyEvent.VK_F4);
-				sleep(random(160, 220));
-			}
-			magic.castSpell(component);
-			if (random(0, 4) == 0) {
-				if (antiban.lookAway()) {
-					return random(50, 100);
-				}
-			}
-			if (random(0, 3) == 0) {
-				antiban.main(true);
-				sleep(random(190, 300));
-			} else {
-				sleep(random(460, 550));
-			}
-			int m = 0;
-			while (valid() && getMyPlayer().getAnimation() == 8939 && m < 46) {
-				m += 1;
-				sleep(random(49, 52));
-			}
-			return 20;
-		case Alchemy:
-			status = "Cast " + spellName;
-			if (clicked || !magic.isSpellSelected()) {
+			case Bolts:
+				status = "Enchanting Bolts";
 				if (useFkeys && game.getCurrentTab() != Game.TAB_MAGIC) {
 					keyboard.pressKey((char) KeyEvent.VK_F4);
 					sleep(random(50, 110));
 					keyboard.releaseKey((char) KeyEvent.VK_F4);
 					sleep(random(160, 220));
 				}
-				magic.castSpell(component);
-				clicked = false;
-			}
-			if (magic.isSpellSelected()) {
-				if (useFkeys && game.getCurrentTab() != Game.TAB_INVENTORY) {
-					keyboard.pressKey((char) KeyEvent.VK_F1);
-					sleep(random(50, 110));
-					keyboard.releaseKey((char) KeyEvent.VK_F1);
-					sleep(random(160, 220));
+				if (!interfaces.get(432).isValid()) {
+					magic.castSpell(component);
+					sleep(random(400, 600));
 				}
-				for (int i = 0; i < 11; i++) {
-					sleep(50);
-					if (game.getCurrentTab() == Game.TAB_INVENTORY)
-						break;
-				}
-				if (inventory.getItem(itemID) == null) {
-					sleep(random(150, 250));
-					if (inventory.getItem(itemID) == null) {
-						sleep(random(150, 250));
-						if (inventory.getItem(itemID) == null) {
-							sleep(random(800, 1100));
-							if (inventory.getItem(itemID) == null) {
-								RSItem[] items = equipment.getItems();
-								for (RSItem i : items) {
-									if (i.getID() == itemID) {
-										i.doAction("Remove");
-										return 100;
-									}
+				if (interfaces.get(432).isValid()) {
+					if (!interfaces.getComponent(432, boltComponent).doAction(
+							"Make 10")) {
+						sleep(random(300, 400));
+						if (!interfaces.getComponent(432, boltComponent).doAction(
+								"Make 10")) {
+							sleep(random(300, 400));
+							if (interfaces.get(432).isValid()
+									&& !interfaces.getComponent(432, boltComponent)
+									.doAction("Make 10")) {
+								sleep(random(300, 400));
+								if (!interfaces.getComponent(432, boltComponent)
+										.doAction("Make 10")) {
+									sleep(random(300, 400));
+									interfaces.getComponent(432, 12).doClick();
+									log.warning("Unable to cast Enchant Crossbow Bolt spell for 4 tries, logging out.");
+									logOutR = true;
+									return random(200, 300);
 								}
-								log.warning("You have run out of the selected item ("
-										+ itemID + ")! Logging out!");
-								doLogOut(false, true);
-								return 100;
 							}
 						}
 					}
 				}
-				if (inventory.getItem(itemID).doAction("Cast"))
-					clicked = true;
 				if (random(0, 4) == 0) {
 					if (antiban.lookAway()) {
 						return random(50, 100);
@@ -394,18 +253,49 @@ public class WhiteBearAIOMagic extends Script implements PaintListener,
 				} else {
 					sleep(random(460, 550));
 				}
-				sleep(500);
-				int maxA = 0;
-				while (valid() && game.getCurrentTab() != 7 && maxA <= 23) {
-					maxA += 1;
-					sleep(random(99, 102));
+				int mx = 0;
+				while (valid() && getMyPlayer().getAnimation() == -1 && mx < 26) {
+					mx += 1;
+					sleep(random(49, 52));
 				}
-			}
-			return 10;
-		case Curse:
-			if (curseWait < System.currentTimeMillis()) {
+				mx = 0;
+				while (valid() && getMyPlayer().getAnimation() != -1 && mx < 46) {
+					mx += 1;
+					sleep(random(49, 52));
+					if (getMyPlayer().getAnimation() > 4000
+							&& getMyPlayer().getAnimation() < 5000)
+						mx = 20;
+				}
+				return random(20, 50);
+			case Teleport:
 				status = "Cast " + spellName;
-				if (!magic.isSpellSelected()) {
+				if (useFkeys && game.getCurrentTab() != Game.TAB_MAGIC) {
+					keyboard.pressKey((char) KeyEvent.VK_F4);
+					sleep(random(50, 110));
+					keyboard.releaseKey((char) KeyEvent.VK_F4);
+					sleep(random(160, 220));
+				}
+				magic.castSpell(component);
+				if (random(0, 4) == 0) {
+					if (antiban.lookAway()) {
+						return random(50, 100);
+					}
+				}
+				if (random(0, 3) == 0) {
+					antiban.main(true);
+					sleep(random(190, 300));
+				} else {
+					sleep(random(460, 550));
+				}
+				int m = 0;
+				while (valid() && getMyPlayer().getAnimation() == 8939 && m < 46) {
+					m += 1;
+					sleep(random(49, 52));
+				}
+				return 20;
+			case Alchemy:
+				status = "Cast " + spellName;
+				if (clicked || !magic.isSpellSelected()) {
 					if (useFkeys && game.getCurrentTab() != Game.TAB_MAGIC) {
 						keyboard.pressKey((char) KeyEvent.VK_F4);
 						sleep(random(50, 110));
@@ -413,287 +303,7 @@ public class WhiteBearAIOMagic extends Script implements PaintListener,
 						sleep(random(160, 220));
 					}
 					magic.castSpell(component);
-				}
-				if (magic.isSpellSelected()) {
-					RSNPC target = npcs.getNearest(npcID);
-					if (target != null && target.isOnScreen()) {
-						if (!target.doAction("Cast")) {
-							antiban.main(true);
-						} else {
-							sleep(500);
-						}
-						int maxCr = 0;
-						while (valid() && getMyPlayer().getAnimation() != -1
-								&& maxCr <= 20) {
-							maxCr += 1;
-							sleep(random(99, 102));
-						}
-					} else {
-						status = "Waiting";
-						if (random(0, 4) == 0) {
-							if (antiban.curseLA()) {
-								return random(50, 100);
-							}
-						}
-						if (random(0, 3) == 0) {
-							antiban.main(true);
-							sleep(random(190, 300));
-						} else {
-							sleep(random(460, 550));
-						}
-					}
-				}
-			} else {
-				status = "Waiting";
-				if (random(0, 4) == 0) {
-					if (antiban.curseLA()) {
-						return random(50, 100);
-					}
-				}
-				if (random(0, 3) == 0) {
-					antiban.main(true);
-					sleep(random(190, 300));
-				} else {
-					sleep(random(460, 550));
-				}
-			}
-			return 200;
-		case Superheat:
-			if (doBanking) {
-				status = "Banking";
-				openBank();
-				sleep(random(400, 450));
-				if (bank.isOpen()) {
-					if (bank.getItem(ore1ID) == null
-							|| bank.getItem(ore2ID) == null) {
-						sleep(random(400, 600));
-						if (bank.getItem(995) == null) {
-							bank.close();
-							return random(600, 800);
-						}
-						if (bank.getItem(ore1ID) == null
-								|| bank.getItem(ore2ID) == null) {
-							sleep(random(600, 800));
-							if (bank.getItem(ore1ID) == null
-									|| bank.getItem(ore2ID) == null) {
-								log.warning("You have run out of the ores required! Logging out!");
-								doLogOut(false, true);
-								return 100;
-							}
-						}
-					}
-					if (inventory.contains(barID) && !bank.deposit(barID, 0)) {
-						return 100;
-					}
-					sleep(random(500, 550));
-					int c1 = inventory.getCount(ore1ID), c2 = inventory
-							.getCount(ore2ID);
-					if (ore2ID == -1) { // silver / gold / iron
-						bank.withdraw(ore1ID, 0);
-					} else { // needs 2 ores
-						if (c1 > 0 && c1 != ore1Amt)
-							bank.deposit(ore1ID, 0);
-						sleep(random(90, 150));
-						if (c2 > 0 && c2 != ore2Amt)
-							bank.deposit(ore2ID, 0);
-						sleep(random(300, 600));
-						bank.withdraw(ore2ID, ore2Amt);
-						sleep(random(90, 150));
-						bank.withdraw(ore1ID, ore1Amt);
-					}
-					doBanking = false;
-					bankCount = bank.getCount(ore1ID);
-					sleep(random(450, 600));
-					bank.close();
-					return 10;
-				}
-			} else {
-				status = "Casting Superheat";
-				if (bank.isOpen()) {
-					bank.close();
-				}
-				if (useFkeys && game.getCurrentTab() != Game.TAB_MAGIC) {
-					keyboard.pressKey((char) KeyEvent.VK_F4);
-					sleep(random(50, 110));
-					keyboard.releaseKey((char) KeyEvent.VK_F4);
-					sleep(random(160, 220));
-				}
-				if (!magic.castSpell(component)) {
-					return random(200, 500);
-				}
-				int m2 = 0;
-				while (valid() && m2 < 24
-						&& game.getCurrentTab() != Game.TAB_INVENTORY) {
-					m2 += 1;
-					sleep(50);
-				}
-				if (!findOre()) {
-					doBanking = true;
-					return random(100, 200);
-				} else {
-					if (!getLastOre().doAction("Cast Superheat")) {
-						return random(400, 600);
-					}
-					if (random(0, 4) == 0) {
-						if (antiban.lookAway())
-							return random(50, 100);
-					}
-					if (random(0, 3) == 0)
-						antiban.main(true);
-					sleep(random(350, 550));
-					if (useFkeys && game.getCurrentTab() != Game.TAB_MAGIC) {
-						keyboard.pressKey((char) KeyEvent.VK_F4);
-						sleep(random(50, 110));
-						keyboard.releaseKey((char) KeyEvent.VK_F4);
-						sleep(random(160, 220));
-					}
-					int m3 = 0;
-					while (valid()
-							&& game.getCurrentTab() == Game.TAB_INVENTORY
-							&& m3 < 24) {
-						m3 += 1;
-						sleep(50);
-					}
-				}
-			}
-			return 200;
-		case Bones:
-			if (doBanking) {
-				status = "Banking";
-				openBank();
-				sleep(random(400, 450));
-				if (bank.isOpen()) {
-					if (bank.getItem(itemID) == null) {
-						sleep(random(400, 600));
-						if (bank.getItem(995) == null
-								&& bank.getItem(foodItem) == null) {
-							bank.close();
-							return random(600, 800);
-						}
-						if (bank.getItem(itemID) == null) {
-							sleep(random(600, 800));
-							if (bank.getItem(itemID) == null) {
-								log.warning("You have run out of bones! Logging out!");
-								doLogOut(false, true);
-								return 100;
-							}
-						}
-					}
-					if (inventory.isFull() && inventory.contains(itemID)) {
-						doBanking = false;
-						return random(100, 300);
-					}
-					if (inventory.contains(foodItem)) {
-						if (bank.deposit(foodItem, 0)) {
-							sleep(random(500, 600));
-							if (bank.withdraw(itemID, 0)) {
-								doBanking = false;
-								bankCount = bank.getCount(itemID);
-								sleep(random(150, 250));
-								bank.close();
-							}
-						}
-					} else if (bank.withdraw(itemID, 0)) {
-						doBanking = false;
-						bankCount = bank.getCount(itemID);
-						sleep(random(150, 250));
-						bank.close();
-					}
-				}
-				return 10;
-			} else {
-				if (bank.isOpen()) {
-					bank.close();
-				}
-				status = "Casting " + spellName;
-				if (useFkeys && game.getCurrentTab() != Game.TAB_MAGIC) {
-					keyboard.pressKey((char) KeyEvent.VK_F4);
-					sleep(random(50, 110));
-					keyboard.releaseKey((char) KeyEvent.VK_F4);
-					sleep(random(160, 220));
-				}
-				if (!magic.castSpell(component)) {
-					return random(500, 600);
-				}
-				if (random(0, 4) == 0) {
-					if (antiban.lookAway()) {
-						return random(50, 100);
-					}
-				}
-				if (random(0, 3) == 0) {
-					antiban.main(true);
-					sleep(random(150, 250));
-				} else {
-					sleep(random(350, 400));
-				}
-				int maxB = 0;
-				while (valid() && maxB < 11) {
-					maxB += 1;
-					sleep(50);
-					if (doBanking)
-						return 1;
-				}
-			}
-			return random(140, 230);
-		case Enchant:
-			int[] runes = { 561, 554, 564, 558, 555, 557, 556, itemID };
-			if (doBanking) {
-				status = "Banking";
-				openBank();
-				if (bank.isOpen()) {
-					sleep(random(500, 750));
-					bankCount = bank.getCount(itemID);
-					if (inventory.isFull() && inventory.contains(itemID)) {
-						doBanking = false;
-						return random(100, 300);
-					}
-					if (!bank.depositAllExcept(runes)) {
-						return random(500, 600);
-					}
-					sleep(random(500, 600));
-					if (bank.getItem(itemID) == null) {
-						sleep(random(400, 600));
-						if (bank.getItem(995) == null) {
-							bank.close();
-							return random(600, 800);
-						}
-						if (bank.getItem(itemID) == null) {
-							sleep(random(600, 800));
-							if (bank.getItem(itemID) == null) {
-								log.warning("You have run out of the selected item ("
-										+ itemID + ")! Logging out!");
-								doLogOut(false, true);
-								return 100;
-							}
-						}
-					}
-					if (bank.withdraw(itemID, 0)) {
-						sleep(random(100, 200));
-						bankCount = bank.getCount(itemID);
-						doBanking = false;
-						bank.close();
-					}
-				}
-				return 10;
-			} else {
-				bank.close();
-				status = "Casting Lvl-" + spellName;
-				if (!magic.isSpellSelected()) {
-					if (useFkeys && game.getCurrentTab() != Game.TAB_MAGIC) {
-						keyboard.pressKey((char) KeyEvent.VK_F4);
-						sleep(random(50, 110));
-						keyboard.releaseKey((char) KeyEvent.VK_F4);
-						sleep(random(160, 220));
-					}
-					if (magic.castSpell(component)) {
-						int maxEE = 0;
-						while (valid()
-								&& game.getCurrentTab() != Game.TAB_INVENTORY
-								&& maxEE < 20) {
-							maxEE += 1;
-							sleep(50);
-						}
-					}
+					clicked = false;
 				}
 				if (magic.isSpellSelected()) {
 					if (useFkeys && game.getCurrentTab() != Game.TAB_INVENTORY) {
@@ -702,142 +312,490 @@ public class WhiteBearAIOMagic extends Script implements PaintListener,
 						keyboard.releaseKey((char) KeyEvent.VK_F1);
 						sleep(random(160, 220));
 					}
+					for (int i = 0; i < 11; i++) {
+						sleep(50);
+						if (game.getCurrentTab() == Game.TAB_INVENTORY)
+							break;
+					}
 					if (inventory.getItem(itemID) == null) {
-						doBanking = true;
-						return 10;
-					} else {
-						if (!inventory.getItem(itemID).doAction(
-								"Cast Lvl-" + spellName)) {
-							return random(300, 500);
-						}
-						if (random(0, 4) == 0) {
-							if (antiban.lookAway()) {
-								return random(50, 100);
+						sleep(random(150, 250));
+						if (inventory.getItem(itemID) == null) {
+							sleep(random(150, 250));
+							if (inventory.getItem(itemID) == null) {
+								sleep(random(800, 1100));
+								if (inventory.getItem(itemID) == null) {
+									RSItem[] items = equipment.getItems();
+									for (RSItem i : items) {
+										if (i.getID() == itemID) {
+											i.doAction("Remove");
+											return 100;
+										}
+									}
+									log.warning("You have run out of the selected item ("
+											+ itemID + ")! Logging out!");
+									doLogOut(false, true);
+									return 100;
+								}
 							}
 						}
-						if (random(0, 3) == 0) {
-							antiban.main(true);
-							sleep(random(150, 250));
-						} else {
-							sleep(random(350, 400));
-						}
-						int maxES = 0;
-						while (valid()
-								&& game.getCurrentTab() == Game.TAB_INVENTORY
-								&& maxES < 20) {
-							maxES += 1;
-							sleep(50);
-						}
-						if (inventory.getItem(itemID) == null) {
-							doBanking = true;
-							return 10;
+					}
+					if (inventory.getItem(itemID).doAction("Cast"))
+						clicked = true;
+					if (random(0, 4) == 0) {
+						if (antiban.lookAway()) {
+							return random(50, 100);
 						}
 					}
-				}
-			}
-			return random(10, 90);
-		case AlchNCurse:
-			status = "Doing Alch + Curse";
-			if (useFkeys && game.getCurrentTab() != Game.TAB_MAGIC) {
-				keyboard.pressKey((char) KeyEvent.VK_F4);
-				sleep(random(50, 110));
-				keyboard.releaseKey((char) KeyEvent.VK_F4);
-				sleep(random(160, 220));
-			}
-			RSNPC target = npcs.getNearest(npcID);
-			if (target != null && target.isOnScreen()) {
-				magic.castSpell(curseComponent);
-				sleep(random(130, 200));
-				if (magic.isSpellSelected()) {
-					if (!target.doAction("Cast")) {
+					if (random(0, 3) == 0) {
 						antiban.main(true);
+						sleep(random(190, 300));
+					} else {
+						sleep(random(460, 550));
+					}
+					sleep(500);
+					int maxA = 0;
+					while (valid() && game.getCurrentTab() != 7 && maxA <= 23) {
+						maxA += 1;
+						sleep(random(99, 102));
 					}
 				}
-			} else {
-				if (antiban.curseLA()) {
-					return random(50, 100);
+				return 10;
+			case Curse:
+				if (curseWait < System.currentTimeMillis()) {
+					status = "Cast " + spellName;
+					if (!magic.isSpellSelected()) {
+						if (useFkeys && game.getCurrentTab() != Game.TAB_MAGIC) {
+							keyboard.pressKey((char) KeyEvent.VK_F4);
+							sleep(random(50, 110));
+							keyboard.releaseKey((char) KeyEvent.VK_F4);
+							sleep(random(160, 220));
+						}
+						magic.castSpell(component);
+					}
+					if (magic.isSpellSelected()) {
+						RSNPC target = npcs.getNearest(npcID);
+						if (target != null && target.isOnScreen()) {
+							if (!target.doAction("Cast")) {
+								antiban.main(true);
+							} else {
+								sleep(500);
+							}
+							int maxCr = 0;
+							while (valid() && getMyPlayer().getAnimation() != -1
+									&& maxCr <= 20) {
+								maxCr += 1;
+								sleep(random(99, 102));
+							}
+						} else {
+							status = "Waiting";
+							if (random(0, 4) == 0) {
+								if (antiban.curseLA()) {
+									return random(50, 100);
+								}
+							}
+							if (random(0, 3) == 0) {
+								antiban.main(true);
+								sleep(random(190, 300));
+							} else {
+								sleep(random(460, 550));
+							}
+						}
+					}
+				} else {
+					status = "Waiting";
+					if (random(0, 4) == 0) {
+						if (antiban.curseLA()) {
+							return random(50, 100);
+						}
+					}
+					if (random(0, 3) == 0) {
+						antiban.main(true);
+						sleep(random(190, 300));
+					} else {
+						sleep(random(460, 550));
+					}
 				}
-			}
-			magic.castSpell(component);
-			sleep(random(150, 280));
-			if (magic.isSpellSelected()) {
-				if (inventory.getItem(itemID) == null) {
-					sleep(random(300, 500));
-					if (inventory.getItem(itemID) == null) {
-						sleep(random(400, 600));
-						if (inventory.getItem(itemID) == null) {
-							log.warning("You have run out of the selected item ("
-									+ itemID + ")! Logging out!");
-							doLogOut(false, true);
+				return 200;
+			case Superheat:
+				if (doBanking) {
+					status = "Banking";
+					openBank();
+					sleep(random(400, 450));
+					if (bank.isOpen()) {
+						if (bank.getItem(ore1ID) == null
+								|| bank.getItem(ore2ID) == null) {
+							sleep(random(400, 600));
+							if (bank.getItem(995) == null) {
+								bank.close();
+								return random(600, 800);
+							}
+							if (bank.getItem(ore1ID) == null
+									|| bank.getItem(ore2ID) == null) {
+								sleep(random(600, 800));
+								if (bank.getItem(ore1ID) == null
+										|| bank.getItem(ore2ID) == null) {
+									log.warning("You have run out of the ores required! Logging out!");
+									doLogOut(false, true);
+									return 100;
+								}
+							}
+						}
+						if (inventory.contains(barID) && !bank.deposit(barID, 0)) {
 							return 100;
 						}
+						sleep(random(500, 550));
+						int c1 = inventory.getCount(ore1ID), c2 = inventory
+								.getCount(ore2ID);
+						if (ore2ID == -1) { // silver / gold / iron
+							bank.withdraw(ore1ID, 0);
+						} else { // needs 2 ores
+							if (c1 > 0 && c1 != ore1Amt)
+								bank.deposit(ore1ID, 0);
+							sleep(random(90, 150));
+							if (c2 > 0 && c2 != ore2Amt)
+								bank.deposit(ore2ID, 0);
+							sleep(random(300, 600));
+							bank.withdraw(ore2ID, ore2Amt);
+							sleep(random(90, 150));
+							bank.withdraw(ore1ID, ore1Amt);
+						}
+						doBanking = false;
+						bankCount = bank.getCount(ore1ID);
+						sleep(random(450, 600));
+						bank.close();
+						return 10;
+					}
+				} else {
+					status = "Casting Superheat";
+					if (bank.isOpen()) {
+						bank.close();
+					}
+					if (useFkeys && game.getCurrentTab() != Game.TAB_MAGIC) {
+						keyboard.pressKey((char) KeyEvent.VK_F4);
+						sleep(random(50, 110));
+						keyboard.releaseKey((char) KeyEvent.VK_F4);
+						sleep(random(160, 220));
+					}
+					if (!magic.castSpell(component)) {
+						return random(200, 500);
+					}
+					int m2 = 0;
+					while (valid() && m2 < 24
+							&& game.getCurrentTab() != Game.TAB_INVENTORY) {
+						m2 += 1;
+						sleep(50);
+					}
+					if (!findOre()) {
+						doBanking = true;
+						return random(100, 200);
+					} else {
+						if (!getLastOre().doAction("Cast Superheat")) {
+							return random(400, 600);
+						}
+						if (random(0, 4) == 0) {
+							if (antiban.lookAway())
+								return random(50, 100);
+						}
+						if (random(0, 3) == 0)
+							antiban.main(true);
+						sleep(random(350, 550));
+						if (useFkeys && game.getCurrentTab() != Game.TAB_MAGIC) {
+							keyboard.pressKey((char) KeyEvent.VK_F4);
+							sleep(random(50, 110));
+							keyboard.releaseKey((char) KeyEvent.VK_F4);
+							sleep(random(160, 220));
+						}
+						int m3 = 0;
+						while (valid()
+								&& game.getCurrentTab() == Game.TAB_INVENTORY
+								&& m3 < 24) {
+							m3 += 1;
+							sleep(50);
+						}
 					}
 				}
-				if (inventory.getItem(itemID).doAction("Cast")) {
+				return 200;
+			case Bones:
+				if (doBanking) {
+					status = "Banking";
+					openBank();
+					sleep(random(400, 450));
+					if (bank.isOpen()) {
+						if (bank.getItem(itemID) == null) {
+							sleep(random(400, 600));
+							if (bank.getItem(995) == null
+									&& bank.getItem(foodItem) == null) {
+								bank.close();
+								return random(600, 800);
+							}
+							if (bank.getItem(itemID) == null) {
+								sleep(random(600, 800));
+								if (bank.getItem(itemID) == null) {
+									log.warning("You have run out of bones! Logging out!");
+									doLogOut(false, true);
+									return 100;
+								}
+							}
+						}
+						if (inventory.isFull() && inventory.contains(itemID)) {
+							doBanking = false;
+							return random(100, 300);
+						}
+						if (inventory.contains(foodItem)) {
+							if (bank.deposit(foodItem, 0)) {
+								sleep(random(500, 600));
+								if (bank.withdraw(itemID, 0)) {
+									doBanking = false;
+									bankCount = bank.getCount(itemID);
+									sleep(random(150, 250));
+									bank.close();
+								}
+							}
+						} else if (bank.withdraw(itemID, 0)) {
+							doBanking = false;
+							bankCount = bank.getCount(itemID);
+							sleep(random(150, 250));
+							bank.close();
+						}
+					}
+					return 10;
+				} else {
+					if (bank.isOpen()) {
+						bank.close();
+					}
+					status = "Casting " + spellName;
+					if (useFkeys && game.getCurrentTab() != Game.TAB_MAGIC) {
+						keyboard.pressKey((char) KeyEvent.VK_F4);
+						sleep(random(50, 110));
+						keyboard.releaseKey((char) KeyEvent.VK_F4);
+						sleep(random(160, 220));
+					}
+					if (!magic.castSpell(component)) {
+						return random(500, 600);
+					}
 					if (random(0, 4) == 0) {
+						if (antiban.lookAway()) {
+							return random(50, 100);
+						}
+					}
+					if (random(0, 3) == 0) {
 						antiban.main(true);
 						sleep(random(150, 250));
 					} else {
 						sleep(random(350, 400));
 					}
-					int maxA = 0;
-					while (valid()
-							&& game.getCurrentTab() == Game.TAB_INVENTORY
-							&& maxA <= 30) {
-						maxA += 1;
-						sleep(random(49, 52));
+					int maxB = 0;
+					while (valid() && maxB < 11) {
+						maxB += 1;
+						sleep(50);
+						if (doBanking)
+							return 1;
 					}
 				}
-			}
-			return random(100, 230);
-		case Telekinetic:
-			if (invFull) {
-				if (useFkeys && game.getCurrentTab() != Game.TAB_INVENTORY) {
-					keyboard.pressKey((char) KeyEvent.VK_F1);
-					sleep(random(50, 110));
-					keyboard.releaseKey((char) KeyEvent.VK_F1);
-					sleep(random(160, 220));
-				}
-				for (int i = 0; i < 28; i++) {
-					if (interfaces.getComponent(149, 0).getComponent(i)
-							.getComponentID() == itemID) {
-						if (interfaces.getComponent(149, 0).getComponent(i)
-								.doAction("Drop")) {
-							sleep(random(300, 500));
+				return random(140, 230);
+			case Enchant:
+				int[] runes = {561, 554, 564, 558, 555, 557, 556, itemID};
+				if (doBanking) {
+					status = "Banking";
+					openBank();
+					if (bank.isOpen()) {
+						sleep(random(500, 750));
+						bankCount = bank.getCount(itemID);
+						if (inventory.isFull() && inventory.contains(itemID)) {
+							doBanking = false;
+							return random(100, 300);
+						}
+						if (!bank.depositAllExcept(runes)) {
+							return random(500, 600);
+						}
+						sleep(random(500, 600));
+						if (bank.getItem(itemID) == null) {
+							sleep(random(400, 600));
+							if (bank.getItem(995) == null) {
+								bank.close();
+								return random(600, 800);
+							}
+							if (bank.getItem(itemID) == null) {
+								sleep(random(600, 800));
+								if (bank.getItem(itemID) == null) {
+									log.warning("You have run out of the selected item ("
+											+ itemID + ")! Logging out!");
+									doLogOut(false, true);
+									return 100;
+								}
+							}
+						}
+						if (bank.withdraw(itemID, 0)) {
+							sleep(random(100, 200));
+							bankCount = bank.getCount(itemID);
+							doBanking = false;
+							bank.close();
 						}
 					}
-					if (!valid())
-						break;
+					return 10;
+				} else {
+					bank.close();
+					status = "Casting Lvl-" + spellName;
+					if (!magic.isSpellSelected()) {
+						if (useFkeys && game.getCurrentTab() != Game.TAB_MAGIC) {
+							keyboard.pressKey((char) KeyEvent.VK_F4);
+							sleep(random(50, 110));
+							keyboard.releaseKey((char) KeyEvent.VK_F4);
+							sleep(random(160, 220));
+						}
+						if (magic.castSpell(component)) {
+							int maxEE = 0;
+							while (valid()
+									&& game.getCurrentTab() != Game.TAB_INVENTORY
+									&& maxEE < 20) {
+								maxEE += 1;
+								sleep(50);
+							}
+						}
+					}
+					if (magic.isSpellSelected()) {
+						if (useFkeys && game.getCurrentTab() != Game.TAB_INVENTORY) {
+							keyboard.pressKey((char) KeyEvent.VK_F1);
+							sleep(random(50, 110));
+							keyboard.releaseKey((char) KeyEvent.VK_F1);
+							sleep(random(160, 220));
+						}
+						if (inventory.getItem(itemID) == null) {
+							doBanking = true;
+							return 10;
+						} else {
+							if (!inventory.getItem(itemID).doAction(
+									"Cast Lvl-" + spellName)) {
+								return random(300, 500);
+							}
+							if (random(0, 4) == 0) {
+								if (antiban.lookAway()) {
+									return random(50, 100);
+								}
+							}
+							if (random(0, 3) == 0) {
+								antiban.main(true);
+								sleep(random(150, 250));
+							} else {
+								sleep(random(350, 400));
+							}
+							int maxES = 0;
+							while (valid()
+									&& game.getCurrentTab() == Game.TAB_INVENTORY
+									&& maxES < 20) {
+								maxES += 1;
+								sleep(50);
+							}
+							if (inventory.getItem(itemID) == null) {
+								doBanking = true;
+								return 10;
+							}
+						}
+					}
 				}
-			}
-			RSGroundItem item = groundItems.getNearest(itemID);
-			if (item == null || item.isOnScreen() == false) {
-				status = "Waiting";
-				if (!antiban.telekineticLA()) {
-					antiban.main(true);
+				return random(10, 90);
+			case AlchNCurse:
+				status = "Doing Alch + Curse";
+				if (useFkeys && game.getCurrentTab() != Game.TAB_MAGIC) {
+					keyboard.pressKey((char) KeyEvent.VK_F4);
+					sleep(random(50, 110));
+					keyboard.releaseKey((char) KeyEvent.VK_F4);
+					sleep(random(160, 220));
 				}
-				return random(56, 80);
-			}
-			if (useFkeys && game.getCurrentTab() != Game.TAB_MAGIC) {
-				keyboard.pressKey((char) KeyEvent.VK_F4);
-				sleep(random(50, 110));
-				keyboard.releaseKey((char) KeyEvent.VK_F4);
-				sleep(random(160, 220));
-			}
-			status = "Telegrabing";
-			magic.castSpell(component);
-			item.doAction("Cast");
-			sleep(random(500, 600));
-			int maxTel = 0;
-			while (valid() && getMyPlayer().getAnimation() != -1
-					&& maxTel <= 30) {
-				maxTel += 1;
-				sleep(random(49, 52));
-			}
-			return 10;
-		case Antiban:
-			antiban.main(true);
-			return 100;
+				RSNPC target = npcs.getNearest(npcID);
+				if (target != null && target.isOnScreen()) {
+					magic.castSpell(curseComponent);
+					sleep(random(130, 200));
+					if (magic.isSpellSelected()) {
+						if (!target.doAction("Cast")) {
+							antiban.main(true);
+						}
+					}
+				} else {
+					if (antiban.curseLA()) {
+						return random(50, 100);
+					}
+				}
+				magic.castSpell(component);
+				sleep(random(150, 280));
+				if (magic.isSpellSelected()) {
+					if (inventory.getItem(itemID) == null) {
+						sleep(random(300, 500));
+						if (inventory.getItem(itemID) == null) {
+							sleep(random(400, 600));
+							if (inventory.getItem(itemID) == null) {
+								log.warning("You have run out of the selected item ("
+										+ itemID + ")! Logging out!");
+								doLogOut(false, true);
+								return 100;
+							}
+						}
+					}
+					if (inventory.getItem(itemID).doAction("Cast")) {
+						if (random(0, 4) == 0) {
+							antiban.main(true);
+							sleep(random(150, 250));
+						} else {
+							sleep(random(350, 400));
+						}
+						int maxA = 0;
+						while (valid()
+								&& game.getCurrentTab() == Game.TAB_INVENTORY
+								&& maxA <= 30) {
+							maxA += 1;
+							sleep(random(49, 52));
+						}
+					}
+				}
+				return random(100, 230);
+			case Telekinetic:
+				if (invFull) {
+					if (useFkeys && game.getCurrentTab() != Game.TAB_INVENTORY) {
+						keyboard.pressKey((char) KeyEvent.VK_F1);
+						sleep(random(50, 110));
+						keyboard.releaseKey((char) KeyEvent.VK_F1);
+						sleep(random(160, 220));
+					}
+					for (int i = 0; i < 28; i++) {
+						if (interfaces.getComponent(149, 0).getComponent(i)
+								.getComponentID() == itemID) {
+							if (interfaces.getComponent(149, 0).getComponent(i)
+									.doAction("Drop")) {
+								sleep(random(300, 500));
+							}
+						}
+						if (!valid())
+							break;
+					}
+				}
+				RSGroundItem item = groundItems.getNearest(itemID);
+				if (item == null || item.isOnScreen() == false) {
+					status = "Waiting";
+					if (!antiban.telekineticLA()) {
+						antiban.main(true);
+					}
+					return random(56, 80);
+				}
+				if (useFkeys && game.getCurrentTab() != Game.TAB_MAGIC) {
+					keyboard.pressKey((char) KeyEvent.VK_F4);
+					sleep(random(50, 110));
+					keyboard.releaseKey((char) KeyEvent.VK_F4);
+					sleep(random(160, 220));
+				}
+				status = "Telegrabing";
+				magic.castSpell(component);
+				item.doAction("Cast");
+				sleep(random(500, 600));
+				int maxTel = 0;
+				while (valid() && getMyPlayer().getAnimation() != -1
+						&& maxTel <= 30) {
+					maxTel += 1;
+					sleep(random(49, 52));
+				}
+				return 10;
+			case Antiban:
+				antiban.main(true);
+				return 100;
 		}
 		return 100;
 	}
@@ -856,24 +814,24 @@ public class WhiteBearAIOMagic extends Script implements PaintListener,
 			return State.Antiban;
 		}
 		switch (doWhat) {
-		case 0:
-			return State.Teleport;
-		case 1:
-			return State.Alchemy;
-		case 2:
-			return State.Curse;
-		case 3:
-			return State.AlchNCurse;
-		case 4:
-			return State.Enchant;
-		case 5:
-			return State.Superheat;
-		case 6:
-			return State.Bones;
-		case 7:
-			return State.Telekinetic;
-		case 8:
-			return State.Bolts;
+			case 0:
+				return State.Teleport;
+			case 1:
+				return State.Alchemy;
+			case 2:
+				return State.Curse;
+			case 3:
+				return State.AlchNCurse;
+			case 4:
+				return State.Enchant;
+			case 5:
+				return State.Superheat;
+			case 6:
+				return State.Bones;
+			case 7:
+				return State.Telekinetic;
+			case 8:
+				return State.Bolts;
 		}
 		status = "Error!";
 		return State.Antiban;
@@ -1095,197 +1053,197 @@ public class WhiteBearAIOMagic extends Script implements PaintListener,
 			}
 
 			switch (currentTab) {
-			case -1: // PAINT OFF
-				g.setColor(hiddenPaint);
-				g.fillRect(r1.x, r1.y, r1.width, r1.height);
-				g.setColor(fonts);
-				drawString(g, "O", r1, 5);
-				break;
-			case 0: // DEFAULT TAB - MAIN
-				drawPaint(g, r2c);
-				g.setColor(lines);
-				g.drawLine(r.x + 204, r.y + 22, r.x + 204, r.y + 109);
-				g.setColor(fonts);
-				g.setFont(new Font(font, Font.BOLD, 14));
-				drawString(g, properties.name(), r, -40);
-				g.setFont(new Font(font, Font.PLAIN, 12));
-				drawStringMain(g, "Runtime: ", totalTime, r, 20, 35, 0, true);
-				drawStringMain(g, "", status, r, 20, 35, 0, false);
-				int castPerHour = 0;
-				int xpPerHour = 0;
-				totalExp = expGained + curseExpGained;
-				if ((runTime / 1000) > 0) {
-					castPerHour = (int) ((3600000.0 / runTime) * (count1));
-					xpPerHour = (int) ((3600000.0 / runTime) * (expGained + curseExpGained));
-				}
-				drawStringMain(g, "Casts ", formatter.format((count1)), r, 20,
-						35, 2, true);
-				drawStringMain(g, "Casts / Hour: ",
-						formatter.format((castPerHour)), r, 20, 35, 3, true);
-
-				drawStringMain(g, "EXP Gained: ",
-						formatter.format((long) (expGained + curseExpGained)),
-						r, 20, 35, 2, false);
-				drawStringMain(g, "EXP / Hour: ",
-						formatter.format((xpPerHour)), r, 20, 35, 3, false);
-				break;
-			case 1: // INFO
-				drawPaint(g, r3c);
-				g.setColor(lines);
-				g.drawLine(r.x + 204, r.y + 22, r.x + 204, r.y + 109);
-				g.setColor(fonts);
-				g.setFont(new Font(font, Font.BOLD, 14));
-				drawString(g, properties.name(), r, -40);
-				g.setFont(new Font(font, Font.PLAIN, 12));
-				drawStringMain(g, "Version: ",
-						Double.toString(properties.version()), r, 20, 35, 0,
-						true);
-				if (foundType == true) {
-					if (doWhat != 8) {
-						drawStringMain(g, "Amt of " + itemtype + " in Bank:",
-								"", r, 20, 35, 2, true);
-						drawStringMain(g, "", formatter.format((bankCount)), r,
-								20, 35, 3, true);
-						drawStringMain(g, "Worth:",
-								formatter.format((bankCount * priceGuide)), r,
-								20, 35, 4, true);
+				case -1: // PAINT OFF
+					g.setColor(hiddenPaint);
+					g.fillRect(r1.x, r1.y, r1.width, r1.height);
+					g.setColor(fonts);
+					drawString(g, "O", r1, 5);
+					break;
+				case 0: // DEFAULT TAB - MAIN
+					drawPaint(g, r2c);
+					g.setColor(lines);
+					g.drawLine(r.x + 204, r.y + 22, r.x + 204, r.y + 109);
+					g.setColor(fonts);
+					g.setFont(new Font(font, Font.BOLD, 14));
+					drawString(g, properties.name(), r, -40);
+					g.setFont(new Font(font, Font.PLAIN, 12));
+					drawStringMain(g, "Runtime: ", totalTime, r, 20, 35, 0, true);
+					drawStringMain(g, "", status, r, 20, 35, 0, false);
+					int castPerHour = 0;
+					int xpPerHour = 0;
+					totalExp = expGained + curseExpGained;
+					if ((runTime / 1000) > 0) {
+						castPerHour = (int) ((3600000.0 / runTime) * (count1));
+						xpPerHour = (int) ((3600000.0 / runTime) * (expGained + curseExpGained));
 					}
-					drawStringMain(g, itemtype + " Prices", "", r, 20, 35, 0,
-							false);
-					drawStringMain(g, "Price Guide:",
-							Integer.toString(priceGuide) + " coins", r, 20, 35,
-							2, false);
-				} else {
-					drawStringMain(g, "Prices not loaded!", "", r, 20, 35, 0,
-							false);
-				}
-				break;
-			case 2: // STATS
-				drawPaint(g, r4c);
-				g.setColor(lines);
-				g.drawLine(r.x + 204, r.y + 43, r.x + 204, r.y + 109);
-				drawStats(g);
-				g.setColor(fonts);
-				g.setFont(new Font(font, Font.BOLD, 14));
-				drawString(g, properties.name(), r, -40);
-				g.setFont(new Font(font, Font.PLAIN, 12));
-				final int xpTL = skills.getExpToNextLevel(Skills.MAGIC);
-				final int xpHour = ((int) ((3600000.0 / runTime) * gained_exp));
-				final int TTL = (int) (((double) xpTL / (double) xpHour) * 3600000);
-				drawStringMain(g, "Current Level:",
-						skills.getCurrentLevel(Skills.MAGIC) + "", r, 20, 35,
-						2, true);
-				drawStringMain(g, "Level Gained:", gained_lvl + " lvl", r, 20,
-						35, 3, true);
-				drawStringMain(g, "Time to Lvl:", formatTime(TTL), r, 20, 35,
-						4, true);
+					drawStringMain(g, "Casts ", formatter.format((count1)), r, 20,
+							35, 2, true);
+					drawStringMain(g, "Casts / Hour: ",
+							formatter.format((castPerHour)), r, 20, 35, 3, true);
 
-				drawStringMain(g, "XP Gained:", formatter.format(gained_exp)
-						+ "xp", r, 20, 35, 2, false);
-				drawStringMain(g, "XP / Hour:",
-						formatter.format(xpHour) + "xp", r, 20, 35, 3, false);
-				drawStringMain(g, "XP to Lvl:", formatter.format(xpTL) + "xp",
-						r, 20, 35, 4, false);
-				break;
-			case 3: // ETC
-				drawPaint(g, r5c);
-				g.setColor(lines);
-				g.drawLine(r.x + 204, r.y + 22, r.x + 204, r.y + 109);
-				g.setColor(fonts);
-				g.setFont(new Font(font, Font.BOLD, 14));
-				drawString(g, properties.name(), r, -40);
-				g.setFont(new Font(font, Font.PLAIN, 12));
-				if (useBreaking == true) {
-					if (randomBreaking == true) {
-						drawStringMain(g, "Break Distance:", "Random", r, 20,
-								35, 0, true);
-						drawStringMain(g, "Break Length:", "Random", r, 20, 35,
-								1, true);
+					drawStringMain(g, "EXP Gained: ",
+							formatter.format((long) (expGained + curseExpGained)),
+							r, 20, 35, 2, false);
+					drawStringMain(g, "EXP / Hour: ",
+							formatter.format((xpPerHour)), r, 20, 35, 3, false);
+					break;
+				case 1: // INFO
+					drawPaint(g, r3c);
+					g.setColor(lines);
+					g.drawLine(r.x + 204, r.y + 22, r.x + 204, r.y + 109);
+					g.setColor(fonts);
+					g.setFont(new Font(font, Font.BOLD, 14));
+					drawString(g, properties.name(), r, -40);
+					g.setFont(new Font(font, Font.PLAIN, 12));
+					drawStringMain(g, "Version: ",
+							Double.toString(properties.version()), r, 20, 35, 0,
+							true);
+					if (foundType == true) {
+						if (doWhat != 8) {
+							drawStringMain(g, "Amt of " + itemtype + " in Bank:",
+									"", r, 20, 35, 2, true);
+							drawStringMain(g, "", formatter.format((bankCount)), r,
+									20, 35, 3, true);
+							drawStringMain(g, "Worth:",
+									formatter.format((bankCount * priceGuide)), r,
+									20, 35, 4, true);
+						}
+						drawStringMain(g, itemtype + " Prices", "", r, 20, 35, 0,
+								false);
+						drawStringMain(g, "Price Guide:",
+								Integer.toString(priceGuide) + " coins", r, 20, 35,
+								2, false);
 					} else {
-						drawStringMain(
-								g,
-								"Break Distance:",
-								Integer.toString(midTime) + " \u00B1"
-										+ Integer.toString(randTime), r, 20,
-								35, 0, true);
-						drawStringMain(g, "Break Length:",
-								Integer.toString(midLength) + " \u00B1"
-										+ Integer.toString(randLength), r, 20,
-								35, 1, true);
+						drawStringMain(g, "Prices not loaded!", "", r, 20, 35, 0,
+								false);
 					}
-					drawStringMain(g, "Next Break:",
-							formatTime((int) (nextBreak - System
-									.currentTimeMillis())), r, 20, 35, 3, true);
-					drawStringMain(g, "Break Length:",
-							formatTime((int) nextLength), r, 20, 35, 4, true);
-				} else {
-					drawStringMain(g, "Breaking is disabled!", "", r, 20, 35,
-							0, true);
-				}
-				drawStringMain(g, "Camera Turns:", Integer.toString(camTurned),
-						r, 20, 35, 0, false);
-				if (useChatRes) {
-					drawStringMain(g, "Chat Response:",
-							Integer.toString(resCount), r, 20, 35, 3, false);
-				} else {
-					drawStringMain(g, "Chat Responder is disabled!", "", r, 20,
-							35, 3, false);
-				}
-				if (useRemote) {
-					drawStringMain(g, "Remote Control:", "Enabled", r, 20, 35,
-							4, false);
-				} else {
-					drawStringMain(g, "Remote Control is disabled!", "", r, 20,
-							35, 4, false);
-				}
-				break;
-			case 4:
-				drawPaint(g, r6c);
-				g.setColor(lines);
-				g.drawLine(r.x + 204, r.y + 22, r.x + 204, r.y + 109);
-				g.setColor(fonts);
-				g.setFont(new Font(font, Font.BOLD, 14));
-				drawString(g, properties.name(), r, -40);
-				g.setFont(new Font(font, Font.PLAIN, 12));
-				g.setColor(Color.WHITE);
-				g.drawString("Settings", paintX + 15, paintY + 31);
-				if (useChatRes == true) {
-					g.setColor(Color.GREEN);
-					g.drawString("Chat Responder ON", cr1.x + 19, cr1.y + 13);
-				} else {
-					g.setColor(Color.RED);
-					g.drawString("Chat Responder OFF", cr1.x + 19, cr1.y + 13);
-				}
-				g.setColor(new Color(0, 0, 0, 190));
-				g.fillRect(clr1.x, clr1.y, clr1.width, clr1.height);
-				g.fillRect(cr1.x, cr1.y, cr1.width, cr1.height);
-				g.setColor(new Color(0, 0, 70, 190));
-				g.fillRect(clr2.x, clr2.y, clr2.width, clr2.height);
-				g.setColor(new Color(0, 70, 0, 190));
-				g.fillRect(clr3.x, clr3.y, clr3.width, clr3.height);
-				g.setColor(new Color(65, 0, 0, 190));
-				g.fillRect(clr4.x, clr4.y, clr4.width, clr4.height);
-				g.setColor(new Color(65, 0, 65, 190));
-				g.fillRect(clr5.x, clr5.y, clr5.width, clr5.height);
-				g.setColor(new Color(82, 41, 0, 190));
-				g.fillRect(clr6.x, clr6.y, clr6.width, clr6.height);
-				g.setColor(Color.WHITE);
-				g.drawString("T", cr1.x + 4, cr1.y + 12);
-				if (exitStage == 0) {
-					g.setColor(new Color(0, 0, 0, 160));
-					g.fillRect(logOut.x, logOut.y, logOut.width, logOut.height);
-					g.setColor(Color.YELLOW);
-					g.drawString("Log Out", logOut.x + 6, logOut.y + 12);
-				}
-				if (counter < 1) {
-					g.setColor(new Color(0, 0, 0, 160));
-					g.fillRect(logOut.x + 125, logOut.y, logOut.width + 53,
-							logOut.height);
-					g.setColor(Color.YELLOW);
-					g.drawString("Take Screenshot", logOut.x + 131,
-							logOut.y + 12);
-				}
-				break;
+					break;
+				case 2: // STATS
+					drawPaint(g, r4c);
+					g.setColor(lines);
+					g.drawLine(r.x + 204, r.y + 43, r.x + 204, r.y + 109);
+					drawStats(g);
+					g.setColor(fonts);
+					g.setFont(new Font(font, Font.BOLD, 14));
+					drawString(g, properties.name(), r, -40);
+					g.setFont(new Font(font, Font.PLAIN, 12));
+					final int xpTL = skills.getExpToNextLevel(Skills.MAGIC);
+					final int xpHour = ((int) ((3600000.0 / runTime) * gained_exp));
+					final int TTL = (int) (((double) xpTL / (double) xpHour) * 3600000);
+					drawStringMain(g, "Current Level:",
+							skills.getCurrentLevel(Skills.MAGIC) + "", r, 20, 35,
+							2, true);
+					drawStringMain(g, "Level Gained:", gained_lvl + " lvl", r, 20,
+							35, 3, true);
+					drawStringMain(g, "Time to Lvl:", formatTime(TTL), r, 20, 35,
+							4, true);
+
+					drawStringMain(g, "XP Gained:", formatter.format(gained_exp)
+							+ "xp", r, 20, 35, 2, false);
+					drawStringMain(g, "XP / Hour:",
+							formatter.format(xpHour) + "xp", r, 20, 35, 3, false);
+					drawStringMain(g, "XP to Lvl:", formatter.format(xpTL) + "xp",
+							r, 20, 35, 4, false);
+					break;
+				case 3: // ETC
+					drawPaint(g, r5c);
+					g.setColor(lines);
+					g.drawLine(r.x + 204, r.y + 22, r.x + 204, r.y + 109);
+					g.setColor(fonts);
+					g.setFont(new Font(font, Font.BOLD, 14));
+					drawString(g, properties.name(), r, -40);
+					g.setFont(new Font(font, Font.PLAIN, 12));
+					if (useBreaking == true) {
+						if (randomBreaking == true) {
+							drawStringMain(g, "Break Distance:", "Random", r, 20,
+									35, 0, true);
+							drawStringMain(g, "Break Length:", "Random", r, 20, 35,
+									1, true);
+						} else {
+							drawStringMain(
+									g,
+									"Break Distance:",
+									Integer.toString(midTime) + " \u00B1"
+											+ Integer.toString(randTime), r, 20,
+									35, 0, true);
+							drawStringMain(g, "Break Length:",
+									Integer.toString(midLength) + " \u00B1"
+											+ Integer.toString(randLength), r, 20,
+									35, 1, true);
+						}
+						drawStringMain(g, "Next Break:",
+								formatTime((int) (nextBreak - System
+										.currentTimeMillis())), r, 20, 35, 3, true);
+						drawStringMain(g, "Break Length:",
+								formatTime((int) nextLength), r, 20, 35, 4, true);
+					} else {
+						drawStringMain(g, "Breaking is disabled!", "", r, 20, 35,
+								0, true);
+					}
+					drawStringMain(g, "Camera Turns:", Integer.toString(camTurned),
+							r, 20, 35, 0, false);
+					if (useChatRes) {
+						drawStringMain(g, "Chat Response:",
+								Integer.toString(resCount), r, 20, 35, 3, false);
+					} else {
+						drawStringMain(g, "Chat Responder is disabled!", "", r, 20,
+								35, 3, false);
+					}
+					if (useRemote) {
+						drawStringMain(g, "Remote Control:", "Enabled", r, 20, 35,
+								4, false);
+					} else {
+						drawStringMain(g, "Remote Control is disabled!", "", r, 20,
+								35, 4, false);
+					}
+					break;
+				case 4:
+					drawPaint(g, r6c);
+					g.setColor(lines);
+					g.drawLine(r.x + 204, r.y + 22, r.x + 204, r.y + 109);
+					g.setColor(fonts);
+					g.setFont(new Font(font, Font.BOLD, 14));
+					drawString(g, properties.name(), r, -40);
+					g.setFont(new Font(font, Font.PLAIN, 12));
+					g.setColor(Color.WHITE);
+					g.drawString("Settings", paintX + 15, paintY + 31);
+					if (useChatRes == true) {
+						g.setColor(Color.GREEN);
+						g.drawString("Chat Responder ON", cr1.x + 19, cr1.y + 13);
+					} else {
+						g.setColor(Color.RED);
+						g.drawString("Chat Responder OFF", cr1.x + 19, cr1.y + 13);
+					}
+					g.setColor(new Color(0, 0, 0, 190));
+					g.fillRect(clr1.x, clr1.y, clr1.width, clr1.height);
+					g.fillRect(cr1.x, cr1.y, cr1.width, cr1.height);
+					g.setColor(new Color(0, 0, 70, 190));
+					g.fillRect(clr2.x, clr2.y, clr2.width, clr2.height);
+					g.setColor(new Color(0, 70, 0, 190));
+					g.fillRect(clr3.x, clr3.y, clr3.width, clr3.height);
+					g.setColor(new Color(65, 0, 0, 190));
+					g.fillRect(clr4.x, clr4.y, clr4.width, clr4.height);
+					g.setColor(new Color(65, 0, 65, 190));
+					g.fillRect(clr5.x, clr5.y, clr5.width, clr5.height);
+					g.setColor(new Color(82, 41, 0, 190));
+					g.fillRect(clr6.x, clr6.y, clr6.width, clr6.height);
+					g.setColor(Color.WHITE);
+					g.drawString("T", cr1.x + 4, cr1.y + 12);
+					if (exitStage == 0) {
+						g.setColor(new Color(0, 0, 0, 160));
+						g.fillRect(logOut.x, logOut.y, logOut.width, logOut.height);
+						g.setColor(Color.YELLOW);
+						g.drawString("Log Out", logOut.x + 6, logOut.y + 12);
+					}
+					if (counter < 1) {
+						g.setColor(new Color(0, 0, 0, 160));
+						g.fillRect(logOut.x + 125, logOut.y, logOut.width + 53,
+								logOut.height);
+						g.setColor(Color.YELLOW);
+						g.drawString("Take Screenshot", logOut.x + 131,
+								logOut.y + 12);
+					}
+					break;
 			}
 			if (counter > 1) {
 				proggiePaint(g);
@@ -1454,7 +1412,7 @@ public class WhiteBearAIOMagic extends Script implements PaintListener,
 		}
 
 		public void drawString(final Graphics g, final String str,
-				final Rectangle rect, final int offset) {
+		                       final Rectangle rect, final int offset) {
 			final FontMetrics font = g.getFontMetrics();
 			final Rectangle2D bounds = font.getStringBounds(str, g);
 			final int width = (int) bounds.getWidth();
@@ -1463,7 +1421,7 @@ public class WhiteBearAIOMagic extends Script implements PaintListener,
 		}
 
 		public void drawStringEnd(final Graphics g, final String str,
-				final Rectangle rect, final int xOffset, final int yOffset) {
+		                          final Rectangle rect, final int xOffset, final int yOffset) {
 			final FontMetrics font = g.getFontMetrics();
 			final Rectangle2D bounds = font.getStringBounds(str, g);
 			final int width = (int) bounds.getWidth();
@@ -1472,8 +1430,8 @@ public class WhiteBearAIOMagic extends Script implements PaintListener,
 		}
 
 		public void drawStringMain(final Graphics g, final String str,
-				final String val, final Rectangle rect, final int xOffset,
-				final int yOffset, final int index, final boolean leftSide) {
+		                           final String val, final Rectangle rect, final int xOffset,
+		                           final int yOffset, final int index, final boolean leftSide) {
 			final FontMetrics font = g.getFontMetrics();
 			final Rectangle2D bounds = font.getStringBounds(val, g);
 			final int indexMult = 17;
@@ -1648,7 +1606,7 @@ public class WhiteBearAIOMagic extends Script implements PaintListener,
 							sleepCR(random(28, 31));
 							timeExp = System.currentTimeMillis()
 									+ (long) random(timeOutExp - 1500,
-											timeOutExp + 1500);
+									timeOutExp + 1500);
 							chatRes.wait = false;
 						}
 					}
@@ -1660,14 +1618,14 @@ public class WhiteBearAIOMagic extends Script implements PaintListener,
 								&& random(1, friend) == 1) {
 							if (getMyPlayer().getAnimation() != -1
 									|| (getMyPlayer().isMoving() && calc
-											.distanceTo(walking
-													.getDestination()) > 5)) {
+									.distanceTo(walking
+											.getDestination()) > 5)) {
 								chatRes.wait = true;
 								game.openTab(9);
 								sleepCR(random(18, 25));
 								timeFriend = System.currentTimeMillis()
 										+ (long) random(timeOutFriend - 1500,
-												timeOutFriend + 1500);
+										timeOutFriend + 1500);
 								chatRes.wait = false;
 							}
 						}
@@ -1698,10 +1656,10 @@ public class WhiteBearAIOMagic extends Script implements PaintListener,
 		private void turnCamera() {
 			if (doWhat == 2 || doWhat == 3 || doWhat == 7)
 				return;
-			final char[] LR = new char[] { KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT };
-			final char[] UD = new char[] { KeyEvent.VK_DOWN, KeyEvent.VK_UP };
-			final char[] LRUD = new char[] { KeyEvent.VK_LEFT,
-					KeyEvent.VK_RIGHT, KeyEvent.VK_UP, KeyEvent.VK_UP };
+			final char[] LR = new char[]{KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT};
+			final char[] UD = new char[]{KeyEvent.VK_DOWN, KeyEvent.VK_UP};
+			final char[] LRUD = new char[]{KeyEvent.VK_LEFT,
+					KeyEvent.VK_RIGHT, KeyEvent.VK_UP, KeyEvent.VK_UP};
 			final int randomLR = random(0, 2);
 			final int randomUD = random(0, 2);
 			final int randomAll = random(0, 4);
@@ -2146,7 +2104,7 @@ public class WhiteBearAIOMagic extends Script implements PaintListener,
 	}
 
 	private boolean onTile(final RSTile tile, final String action,
-			final double dx, final double dy, final int height) {
+	                       final double dx, final double dy, final int height) {
 		Point checkScreen;
 		try {
 			checkScreen = calc.tileToScreen(tile, dx, dy, height);
@@ -2247,8 +2205,8 @@ public class WhiteBearAIOMagic extends Script implements PaintListener,
 		if (thePainter.currentTab == 4
 				&& counter == 0
 				&& new Rectangle(thePainter.logOut.x + 125,
-						thePainter.logOut.y, thePainter.logOut.width + 53,
-						thePainter.logOut.height).contains(p)) {
+				thePainter.logOut.y, thePainter.logOut.width + 53,
+				thePainter.logOut.height).contains(p)) {
 			thePainter.currentTab = 0;
 			counter = 400;
 		}
@@ -2261,8 +2219,8 @@ public class WhiteBearAIOMagic extends Script implements PaintListener,
 		int mouseY = p.y;
 		if (game.getClientState() == 10
 				&& (mouseX >= thePainter.paintX
-						&& mouseX <= (thePainter.paintX + totalWidth)
-						&& mouseY >= thePainter.paintY && mouseY <= (thePainter.paintY + moveHeight)))
+				&& mouseX <= (thePainter.paintX + totalWidth)
+				&& mouseY >= thePainter.paintY && mouseY <= (thePainter.paintY + moveHeight)))
 			if (thePainter.currentTab != -1 && thePainter.currentTab != 4) {
 				thePainter.paintX = mouseX - (totalWidth / 2);
 				thePainter.paintY = mouseY - (totalHeight / 2);
@@ -2285,22 +2243,22 @@ public class WhiteBearAIOMagic extends Script implements PaintListener,
 				nextCustom = System.currentTimeMillis() - 1000000;
 		long lastSaidLevel = System.currentTimeMillis() - 110000,
 				nextModAlert = System.currentTimeMillis(), sayNo = System
-						.currentTimeMillis();
+				.currentTimeMillis();
 		int level = 0; // records MAGIC level
 		boolean run = true, doLevelRes = false, doCustomRes = false;
 		boolean typing = false; // read by antiban (true = suppress antiban)
 		boolean wait = false; // written by antiban (true = chat responder will
-								// wait)
+		// wait)
 		boolean pause = false; // true if look away from screen is active
 
 		// Chat Responder Customization
-		String[] tradeRes = { "No thanks", "No thx", "Nope", "Im fine" },
-				greetingRes = { "hi!", "hi.", "hi", "hello", "hello!",
+		String[] tradeRes = {"No thanks", "No thx", "Nope", "Im fine"},
+				greetingRes = {"hi!", "hi.", "hi", "hello", "hello!",
 						"hello.", "hello..", "yo", "yo!", "yes?", "what",
-						"what?", "hey!" }, botterRes = { "huh", "zzz", "...",
-						"???", "?????", "what", "what?", "no", "nop", "nope" },
-				levelRes = { "yay", "haha", ":)", "yay!", "yay!!!",
-						"finally..." }, customDetect = {}, customRes = {};
+						"what?", "hey!"}, botterRes = {"huh", "zzz", "...",
+				"???", "?????", "what", "what?", "no", "nop", "nope"},
+				levelRes = {"yay", "haha", ":)", "yay!", "yay!!!",
+						"finally..."}, customDetect = {}, customRes = {};
 		double customTO = 160000, customTOR = 30000;
 
 		@Override
@@ -2328,7 +2286,7 @@ public class WhiteBearAIOMagic extends Script implements PaintListener,
 						if (m != null
 								&& !m.equals(lastMessage)
 								&& (m.contains(getMyPlayer().getName()
-										.toLowerCase() + ": <") != true)) {
+								.toLowerCase() + ": <") != true)) {
 							remoteControl(m);
 							if (useChatRes) {
 								response(m);
@@ -2384,7 +2342,7 @@ public class WhiteBearAIOMagic extends Script implements PaintListener,
 					lastLevelUp = System.currentTimeMillis();
 					if (random(0, 11) <= 7
 							&& calc.distanceTo(players
-									.getNearest(Players.ALL_FILTER)) < 10) {
+							.getNearest(Players.ALL_FILTER)) < 10) {
 						resCount++;
 						sleepNE(random(200, 600));
 						String[] r = levelRes;
@@ -2399,10 +2357,10 @@ public class WhiteBearAIOMagic extends Script implements PaintListener,
 				level = skills.getCurrentLevel(Skills.MAGIC);
 			}
 			if ((System.currentTimeMillis() - 150000) >= lastSaidLevel) {
-				if (findText(m, new String[] { "magic", "mage", "maging",
-						"magik", "maggic" })
-						&& findText(m, new String[] { "level", "levl", "lvel",
-								"lvl" })) {
+				if (findText(m, new String[]{"magic", "mage", "maging",
+						"magik", "maggic"})
+						&& findText(m, new String[]{"level", "levl", "lvel",
+						"lvl"})) {
 					lastSaidLevel = System.currentTimeMillis();
 					resCount++;
 					sleepNE(random(600, 2000));
@@ -2438,9 +2396,9 @@ public class WhiteBearAIOMagic extends Script implements PaintListener,
 					return;
 				}
 			}
-			if (findText(m, new String[] { "bottin", "botin", "botttin",
+			if (findText(m, new String[]{"bottin", "botin", "botttin",
 					"botter", "bottter", "boter", "bootin", "boottin",
-					"booter", "bootter" })) {
+					"booter", "bootter"})) {
 				if (m.contains("?")
 						|| m.contains(getMyPlayer().getName().toLowerCase())
 						|| m.contains("!")) {
@@ -2458,8 +2416,8 @@ public class WhiteBearAIOMagic extends Script implements PaintListener,
 					}
 				}
 			}
-			if (findText(m, new String[] { "hi ", "hello", "hi<", "hey", "hi!",
-					"hi.", "yo!", "yo.", "yo<" })) {
+			if (findText(m, new String[]{"hi ", "hello", "hi<", "hey", "hi!",
+					"hi.", "yo!", "yo.", "yo<"})) {
 				if ((System.currentTimeMillis() - 130000) >= lastSaidHi) {
 					lastSaidHi = System.currentTimeMillis();
 					resCount++;
@@ -2737,58 +2695,58 @@ public class WhiteBearAIOMagic extends Script implements PaintListener,
 			teleportCombo.setVisible(false);
 			boltCombo.setVisible(false);
 			switch (i) {
-			case 0: // Teleports
-				teleportCombo.setVisible(true);
-				label32.setVisible(true);
-				break;
-			case 1: // Alchemy
-				alchemyCombo.setVisible(true);
-				label32.setVisible(true);
-				label31.setVisible(true);
-				tfItemID.setVisible(true);
-				break;
-			case 2: // Curses
-				curseCombo.setVisible(true);
-				label33.setVisible(true);
-				label34.setVisible(true);
-				tfNpcID.setVisible(true);
-				break;
-			case 3: // Alch + Curse
-				alchemyCombo.setVisible(true);
-				label32.setVisible(true);
-				label31.setVisible(true);
-				tfItemID.setVisible(true);
-				curseCombo.setVisible(true);
-				label33.setVisible(true);
-				label34.setVisible(true);
-				tfNpcID.setVisible(true);
-				break;
-			case 4: // Enchants
-				enchantCombo.setVisible(true);
-				label32.setVisible(true);
-				label31.setVisible(true);
-				tfItemID.setVisible(true);
-				bankCombo.setVisible(true);
-				label35.setVisible(true);
-				break;
-			case 5: // Superheat
-				superheatCombo.setVisible(true);
-				label36.setVisible(true);
-				bankCombo.setVisible(true);
-				label35.setVisible(true);
-				break;
-			case 6: // Bolt Enchant
-				boltCombo.setVisible(true);
-				label32.setVisible(true);
-				break;
-			case 7: // Others
-				othersCombo.setVisible(true);
-				label32.setVisible(true);
-				label31.setVisible(true);
-				tfItemID.setVisible(true);
-				bankCombo.setVisible(true);
-				label35.setVisible(true);
-				break;
+				case 0: // Teleports
+					teleportCombo.setVisible(true);
+					label32.setVisible(true);
+					break;
+				case 1: // Alchemy
+					alchemyCombo.setVisible(true);
+					label32.setVisible(true);
+					label31.setVisible(true);
+					tfItemID.setVisible(true);
+					break;
+				case 2: // Curses
+					curseCombo.setVisible(true);
+					label33.setVisible(true);
+					label34.setVisible(true);
+					tfNpcID.setVisible(true);
+					break;
+				case 3: // Alch + Curse
+					alchemyCombo.setVisible(true);
+					label32.setVisible(true);
+					label31.setVisible(true);
+					tfItemID.setVisible(true);
+					curseCombo.setVisible(true);
+					label33.setVisible(true);
+					label34.setVisible(true);
+					tfNpcID.setVisible(true);
+					break;
+				case 4: // Enchants
+					enchantCombo.setVisible(true);
+					label32.setVisible(true);
+					label31.setVisible(true);
+					tfItemID.setVisible(true);
+					bankCombo.setVisible(true);
+					label35.setVisible(true);
+					break;
+				case 5: // Superheat
+					superheatCombo.setVisible(true);
+					label36.setVisible(true);
+					bankCombo.setVisible(true);
+					label35.setVisible(true);
+					break;
+				case 6: // Bolt Enchant
+					boltCombo.setVisible(true);
+					label32.setVisible(true);
+					break;
+				case 7: // Others
+					othersCombo.setVisible(true);
+					label32.setVisible(true);
+					label31.setVisible(true);
+					tfItemID.setVisible(true);
+					bankCombo.setVisible(true);
+					label35.setVisible(true);
+					break;
 			}
 		}
 
@@ -3469,14 +3427,14 @@ public class WhiteBearAIOMagic extends Script implements PaintListener,
 							teleportCombo.setFont(new Font("Century Gothic",
 									Font.BOLD, 12));
 							teleportCombo.setModel(new DefaultComboBoxModel(
-									new String[] { "Varrock Teleport",
+									new String[]{"Varrock Teleport",
 											"Lumbridge Teleport",
 											"Falador Teleport",
 											"Camelot Teleport",
 											"Ardougne Teleport",
 											"Watchtower Teleport",
 											"Trollheim Teleport",
-											"Teleport to Ape Atoll" }));
+											"Teleport to Ape Atoll"}));
 							teleportCombo.setSelectedIndex(0);
 							panel6.add(teleportCombo);
 							teleportCombo.setBounds(75, 64, 155, 25);
@@ -3522,10 +3480,10 @@ public class WhiteBearAIOMagic extends Script implements PaintListener,
 							spellTypeCombo.setFont(new Font("Century Gothic",
 									Font.BOLD, 12));
 							spellTypeCombo.setModel(new DefaultComboBoxModel(
-									new String[] { "Teleports", "Alchemy",
+									new String[]{"Teleports", "Alchemy",
 											"Curses", "Alch + Curse",
 											"Enchants", "Superheat",
-											"Bolt Enchant", "Others" }));
+											"Bolt Enchant", "Others"}));
 							spellTypeCombo.addItemListener(new ItemListener() {
 								@Override
 								public void itemStateChanged(ItemEvent e) {
@@ -3562,8 +3520,8 @@ public class WhiteBearAIOMagic extends Script implements PaintListener,
 							alchemyCombo.setFont(new Font("Century Gothic",
 									Font.BOLD, 12));
 							alchemyCombo.setModel(new DefaultComboBoxModel(
-									new String[] { "Low Level Alchemy",
-											"High Level Alchemy" }));
+									new String[]{"Low Level Alchemy",
+											"High Level Alchemy"}));
 							alchemyCombo.setSelectedIndex(0);
 							panel6.add(alchemyCombo);
 							alchemyCombo.setBounds(75, 64, 155, 25);
@@ -3576,9 +3534,9 @@ public class WhiteBearAIOMagic extends Script implements PaintListener,
 									Font.BOLD, 12));
 							boltCombo
 									.setModel(new DefaultComboBoxModel(
-											new String[] { "Sapphire",
+											new String[]{"Sapphire",
 													"Emerald", "Ruby",
-													"Diamond", "Dragon", "Onyx" }));
+													"Diamond", "Dragon", "Onyx"}));
 							boltCombo.setSelectedIndex(0);
 							panel6.add(boltCombo);
 							boltCombo.setBounds(75, 64, 155, 25);
@@ -3608,10 +3566,10 @@ public class WhiteBearAIOMagic extends Script implements PaintListener,
 							curseCombo.setFont(new Font("Century Gothic",
 									Font.BOLD, 12));
 							curseCombo.setModel(new DefaultComboBoxModel(
-									new String[] { "Confuse", "Weaken",
+									new String[]{"Confuse", "Weaken",
 											"Curse", "Bind", "Snare",
 											"Vulnerability", "Enfeeble",
-											"Entangle", "Stun" }));
+											"Entangle", "Stun"}));
 							curseCombo.setSelectedIndex(0);
 							panel6.add(curseCombo);
 							curseCombo.setBounds(75, 106, 155, 25);
@@ -3641,12 +3599,12 @@ public class WhiteBearAIOMagic extends Script implements PaintListener,
 							enchantCombo.setFont(new Font("Century Gothic",
 									Font.BOLD, 12));
 							enchantCombo.setModel(new DefaultComboBoxModel(
-									new String[] { "Enchant Level 1",
+									new String[]{"Enchant Level 1",
 											"Enchant Level 2",
 											"Enchant Level 3",
 											"Enchant Level 4",
 											"Enchant Level 5",
-											"Enchant Level 6" }));
+											"Enchant Level 6"}));
 							enchantCombo.setSelectedIndex(0);
 							panel6.add(enchantCombo);
 							enchantCombo.setBounds(75, 65, 155, 25);
@@ -3658,9 +3616,9 @@ public class WhiteBearAIOMagic extends Script implements PaintListener,
 							othersCombo.setFont(new Font("Century Gothic",
 									Font.BOLD, 12));
 							othersCombo.setModel(new DefaultComboBoxModel(
-									new String[] { "Bones to Banana",
+									new String[]{"Bones to Banana",
 											"Bones to Peaches",
-											"Telekinetic Grab" }));
+											"Telekinetic Grab"}));
 							othersCombo.setSelectedIndex(0);
 							panel6.add(othersCombo);
 							othersCombo.setBounds(75, 65, 155, 25);
@@ -3681,8 +3639,8 @@ public class WhiteBearAIOMagic extends Script implements PaintListener,
 							bankCombo.setFont(new Font("Century Gothic",
 									Font.BOLD, 12));
 							bankCombo.setModel(new DefaultComboBoxModel(
-									new String[] { "Bankers", "Bank Booth",
-											"Chests", "Chest (Soul Wars)" }));
+									new String[]{"Bankers", "Bank Booth",
+											"Chests", "Chest (Soul Wars)"}));
 							bankCombo.setSelectedIndex(0);
 							panel6.add(bankCombo);
 							bankCombo.setBounds(105, 107, 125, 25);
@@ -3703,9 +3661,9 @@ public class WhiteBearAIOMagic extends Script implements PaintListener,
 							superheatCombo.setFont(new Font("Century Gothic",
 									Font.BOLD, 12));
 							superheatCombo.setModel(new DefaultComboBoxModel(
-									new String[] { "Bronze", "Iron", "Steel",
+									new String[]{"Bronze", "Iron", "Steel",
 											"Silver", "Gold", "Mithril",
-											"Adamant", "Rune" }));
+											"Adamant", "Rune"}));
 							superheatCombo.setSelectedIndex(0);
 							panel6.add(superheatCombo);
 							superheatCombo.setBounds(100, 64, 95, 25);
@@ -3770,8 +3728,8 @@ public class WhiteBearAIOMagic extends Script implements PaintListener,
 							clrSelected.setFont(new Font("Century Gothic",
 									Font.BOLD, 12));
 							clrSelected.setModel(new DefaultComboBoxModel(
-									new String[] { "Black", "Blue", "Green",
-											"Red", "Purple", "Brown" }));
+									new String[]{"Black", "Blue", "Green",
+											"Red", "Purple", "Brown"}));
 							clrSelected.setSelectedIndex(0);
 							panel2.add(clrSelected);
 							clrSelected.setBounds(118, 16, 110, 25);

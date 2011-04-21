@@ -36,8 +36,8 @@ public class RSArea {
 	 */
 	public RSArea(RSTile sw, RSTile ne, int plane) {
 		this(new RSTile[]{sw, new RSTile(ne.getX() + 1, sw.getY()),
-		                  new RSTile(ne.getX() + 1, ne.getY() + 1),
-		                  new RSTile(sw.getX(), ne.getY() + 1)}, plane);
+				new RSTile(ne.getX() + 1, ne.getY() + 1),
+				new RSTile(sw.getX(), ne.getY() + 1)}, plane);
 	}
 
 	/**
@@ -109,7 +109,7 @@ public class RSArea {
 			totalY += area.ypoints[i];
 		}
 		return new RSTile(Math.round(totalX / area.npoints),
-		                  Math.round(totalY / area.npoints));
+				Math.round(totalY / area.npoints));
 	}
 
 	/**
@@ -209,7 +209,7 @@ public class RSArea {
 	 */
 	public Rectangle getBounds() {
 		return new Rectangle(this.area.getBounds().x + 1,
-		                     this.area.getBounds().y + 1, this.getWidth(), this.getHeight());
+				this.area.getBounds().y + 1, this.getWidth(), this.getHeight());
 	}
 
 	/**
@@ -233,7 +233,7 @@ public class RSArea {
 	 */
 	private double distanceBetween(RSTile curr, RSTile dest) {
 		return Math.sqrt((curr.getX() - dest.getX())
-				                 * (curr.getX() - dest.getX()) + (curr.getY() - dest.getY())
+				* (curr.getX() - dest.getX()) + (curr.getY() - dest.getY())
 				* (curr.getY() - dest.getY()));
 	}
 

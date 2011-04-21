@@ -48,39 +48,39 @@ public class AutoIvy extends Script implements MessageListener, PaintListener {
 	private boolean busy() {
 		return System.currentTimeMillis() - activityTime < 8000;
 	}
-	
+
 	private void antiBan() {
 		int random = random(1, 5);
 		switch (random) {
-		case 1:
-			if (random(1, 25) != 1)
+			case 1:
+				if (random(1, 25) != 1)
+					return;
+				mouse.move(random(10, 750), random(10, 495));
 				return;
-			mouse.move(random(10, 750), random(10, 495));
-			return;
-		case 2:
-			if (random(1, 6) != 1)
+			case 2:
+				if (random(1, 6) != 1)
+					return;
+				int angle = camera.getAngle() + random(-45, 45);
+				if (angle < 0) {
+					angle = random(0, 10);
+				}
+				if (angle > 359) {
+					angle = random(0, 10);
+				}
+				char whichDir = 37; //left
+				if (random(0, 100) < 50)
+					whichDir = 39; //right
+				keyboard.pressKey(whichDir);
+				sleep(random(100, 500));
+				keyboard.releaseKey(whichDir);
 				return;
-			int angle = camera.getAngle() + random(-45, 45);
-			if (angle < 0) {
-				angle = random(0, 10);
-			}
-			if (angle > 359) {
-				angle = random(0, 10);
-			}
-			char whichDir = 37; //left
-			if (random(0,100) < 50)
-				whichDir = 39; //right
-			keyboard.pressKey(whichDir);
-			sleep(random(100,500));
-			keyboard.releaseKey(whichDir);
-			return;
-		case 3:
-			if (random(1, 15) != 1)
+			case 3:
+				if (random(1, 15) != 1)
+					return;
+				mouse.moveSlightly();
 				return;
-			mouse.moveSlightly();
-			return;
-		default:
-			return;
+			default:
+				return;
 		}
 	}
 

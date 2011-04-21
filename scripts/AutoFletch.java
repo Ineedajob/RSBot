@@ -1,10 +1,3 @@
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.util.HashMap;
-
 import org.rsbot.event.events.MessageEvent;
 import org.rsbot.event.listeners.MessageListener;
 import org.rsbot.event.listeners.PaintListener;
@@ -14,14 +7,17 @@ import org.rsbot.script.methods.Skills;
 import org.rsbot.script.util.Timer;
 import org.rsbot.script.wrappers.RSItem;
 
-@ScriptManifest(authors = { "LastCoder" }, keywords = " Auto", name = "AutoFletch", version = 1.0, description = "Start, all options are in GUI.")
+import java.awt.*;
+import java.util.HashMap;
+
+@ScriptManifest(authors = {"LastCoder"}, keywords = " Auto", name = "AutoFletch", version = 1.0, description = "Start, all options are in GUI.")
 public class AutoFletch extends Script implements MessageListener,
 		PaintListener {
 
-	private static final Log[] LOGS = new Log[] {
+	private static final Log[] LOGS = new Log[]{
 			new Log("Normal Log", 0, 1511), new Log("Oak Log", 0, 1521),
 			new Log("Willow Log", 0, 1519), new Log("Maple Log", 0, 1517),
-			new Log("Yew Log", 0, 1515), new Log("Magic Log", 0, 1513) };
+			new Log("Yew Log", 0, 1515), new Log("Magic Log", 0, 1513)};
 	private static final int KNIFE_ID = 946;
 	private static final Color COLOR_1 = new Color(0, 0, 0, 155);
 	private static final Color COLOR_2 = new Color(0, 0, 0);
@@ -66,35 +62,35 @@ public class AutoFletch extends Script implements MessageListener,
 	private void antiBan() {
 		int random = random(1, 5);
 		switch (random) {
-		case 1:
-			if (random(1, 25) != 1)
+			case 1:
+				if (random(1, 25) != 1)
+					return;
+				mouse.move(random(10, 750), random(10, 495));
 				return;
-			mouse.move(random(10, 750), random(10, 495));
-			return;
-		case 2:
-			if (random(1, 6) != 1)
+			case 2:
+				if (random(1, 6) != 1)
+					return;
+				int angle = camera.getAngle() + random(-45, 45);
+				if (angle < 0) {
+					angle = random(0, 10);
+				}
+				if (angle > 359) {
+					angle = random(0, 10);
+				}
+				char whichDir = 37; // left
+				if (random(0, 100) < 50)
+					whichDir = 39; // right
+				keyboard.pressKey(whichDir);
+				sleep(random(100, 500));
+				keyboard.releaseKey(whichDir);
 				return;
-			int angle = camera.getAngle() + random(-45, 45);
-			if (angle < 0) {
-				angle = random(0, 10);
-			}
-			if (angle > 359) {
-				angle = random(0, 10);
-			}
-			char whichDir = 37; // left
-			if (random(0, 100) < 50)
-				whichDir = 39; // right
-			keyboard.pressKey(whichDir);
-			sleep(random(100, 500));
-			keyboard.releaseKey(whichDir);
-			return;
-		case 3:
-			if (random(1, 15) != 1)
+			case 3:
+				if (random(1, 15) != 1)
+					return;
+				mouse.moveSlightly();
 				return;
-			mouse.moveSlightly();
-			return;
-		default:
-			return;
+			default:
+				return;
 		}
 	}
 
@@ -115,59 +111,59 @@ public class AutoFletch extends Script implements MessageListener,
 	@Override
 	public int loop() {
 		switch (getState()) {
-		case BANK:
-			if (!bank.isOpen()) {
-				bank.open();
-				for (int i = 0; i < 100 && !bank.isOpen(); i++)
-					sleep(10);
-				sleep(random(800, 1200));
-			} else {
-				if (!inventory.contains(single_log.id)) {
-					if (inventory.getCount() > 2) {
-						bank.depositAllExcept(KNIFE_ID);
-						for (int i = 0; i < 100 && inventory.getCount() > 2; i++)
-							sleep(20);
+			case BANK:
+				if (!bank.isOpen()) {
+					bank.open();
+					for (int i = 0; i < 100 && !bank.isOpen(); i++)
+						sleep(10);
+					sleep(random(800, 1200));
+				} else {
+					if (!inventory.contains(single_log.id)) {
+						if (inventory.getCount() > 2) {
+							bank.depositAllExcept(KNIFE_ID);
+							for (int i = 0; i < 100 && inventory.getCount() > 2; i++)
+								sleep(20);
+						}
+						if (bank.getItem(single_log.id) == null)
+							return -1;
+						bank.withdraw(single_log.id, 0);
+						for (int i = 0; i < 100
+								&& !inventory.contains(single_log.id); i++)
+							sleep(10);
+						bank.close();
+						for (int i = 0; i < 100 && bank.isOpen(); i++)
+							sleep(10);
 					}
-					if (bank.getItem(single_log.id) == null)
-						return -1;
-					bank.withdraw(single_log.id, 0);
-					for (int i = 0; i < 100
-							&& !inventory.contains(single_log.id); i++)
-						sleep(10);
-					bank.close();
-					for (int i = 0; i < 100 && bank.isOpen(); i++)
-						sleep(10);
 				}
-			}
-			break;
-		case CUT:
-			if (!inventory.isItemSelected()) {
-				RSItem item = inventory.getItem(KNIFE_ID);
-				if (item != null) {
-					item.doAction("Use");
-					for (int i = 0; i < 100 && !inventory.isItemSelected(); i++)
+				break;
+			case CUT:
+				if (!inventory.isItemSelected()) {
+					RSItem item = inventory.getItem(KNIFE_ID);
+					if (item != null) {
+						item.doAction("Use");
+						for (int i = 0; i < 100 && !inventory.isItemSelected(); i++)
+							sleep(10);
+					}
+				} else if (inventory.isItemSelected()
+						&& inventory.getSelectedItem().getID() != KNIFE_ID) {
+					inventory.clickSelectedItem();
+					for (int i = 0; i < 100 && inventory.isItemSelected(); i++)
 						sleep(10);
+				} else {
+					RSItem Log = inventory.getItem(single_log.id);
+					if (Log != null) {
+						Log.doAction("Use");
+					}
 				}
-			} else if (inventory.isItemSelected()
-					&& inventory.getSelectedItem().getID() != KNIFE_ID) {
-				inventory.clickSelectedItem();
-				for (int i = 0; i < 100 && inventory.isItemSelected(); i++)
-					sleep(10);
-			} else {
-				RSItem Log = inventory.getItem(single_log.id);
-				if (Log != null) {
-					Log.doAction("Use");
-				}
-			}
-			break;
-		case INTERFACE:
-			interfaces.get(905).getComponent(15).doAction("All");
-			activityTime = System.currentTimeMillis();
-			break;
-		case SLEEP:
-			sleep(200);
-			antiBan();
-			break;
+				break;
+			case INTERFACE:
+				interfaces.get(905).getComponent(15).doAction("All");
+				activityTime = System.currentTimeMillis();
+				break;
+			case SLEEP:
+				sleep(200);
+				antiBan();
+				break;
 		}
 		return random(600, 1200);
 	}
@@ -181,7 +177,9 @@ public class AutoFletch extends Script implements MessageListener,
 		public HashMap<String, Log> hideOptMap = new HashMap<String, Log>();
 		public String[] hideOpt = new String[LOGS.length];
 
-		/** Creates new form Gui */
+		/**
+		 * Creates new form Gui
+		 */
 		public Gui() {
 			initComponents();
 		}

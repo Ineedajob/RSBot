@@ -172,7 +172,7 @@ public class Interfaces extends MethodProvider {
 			return true;
 		}
 		methods.mouse.move(random(minX, minX + width),
-		                   random(minY, minY + height));
+				random(minY, minY + height));
 		return methods.menu.doAction(action);
 	}
 

@@ -1,22 +1,13 @@
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.RenderingHints;
-import java.text.NumberFormat;
-import java.util.Locale;
-
 import org.rsbot.event.listeners.PaintListener;
 import org.rsbot.script.Script;
 import org.rsbot.script.ScriptManifest;
 import org.rsbot.script.methods.Game;
 import org.rsbot.script.methods.Skills;
-import org.rsbot.script.wrappers.RSArea;
-import org.rsbot.script.wrappers.RSInterface;
-import org.rsbot.script.wrappers.RSObject;
-import org.rsbot.script.wrappers.RSTile;
-import org.rsbot.script.wrappers.RSTilePath;
+import org.rsbot.script.wrappers.*;
+
+import java.awt.*;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 @ScriptManifest(authors = "Vastico", name = "Flaxer", version = 0.12)
 public class Flaxer extends Script implements PaintListener {
@@ -28,10 +19,10 @@ public class Flaxer extends Script implements PaintListener {
 		WALK_TO_FIELD, WALK_TO_BANK, PICK, BANK
 	}
 
-	private static final RSTile[] PATH = { new RSTile(2726, 3491),
+	private static final RSTile[] PATH = {new RSTile(2726, 3491),
 			new RSTile(2725, 3481), new RSTile(2728, 3472),
 			new RSTile(2726, 3464), new RSTile(2730, 3453),
-			new RSTile(2735, 3447), new RSTile(2739, 3443) };
+			new RSTile(2735, 3447), new RSTile(2739, 3443)};
 
 	private static final int FLAX_OBJECT = 2646;
 
@@ -88,43 +79,43 @@ public class Flaxer extends Script implements PaintListener {
 			walking.setRun(true);
 		}
 		switch (getAction()) {
-		case WALK_TO_BANK:
-			if (pathToBank.traverse()) {
-				sleep(500);
-			}
-			break;
-		case WALK_TO_FIELD:
-			if (pathToFlax.traverse()) {
-				sleep(500);
-			}
-			break;
-		case PICK:
-			RSObject flax = objects.getNearest(FLAX_OBJECT);
-			if (flax != null && flax.isOnScreen()) {
-				int startCount = inventory.getCount();
-				if (pickFlax(flax)) {
-					long picked = System.currentTimeMillis();
-					while (startCount == inventory.getCount()
-							&& System.currentTimeMillis() - picked < 10000) {
+			case WALK_TO_BANK:
+				if (pathToBank.traverse()) {
+					sleep(500);
+				}
+				break;
+			case WALK_TO_FIELD:
+				if (pathToFlax.traverse()) {
+					sleep(500);
+				}
+				break;
+			case PICK:
+				RSObject flax = objects.getNearest(FLAX_OBJECT);
+				if (flax != null && flax.isOnScreen()) {
+					int startCount = inventory.getCount();
+					if (pickFlax(flax)) {
+						long picked = System.currentTimeMillis();
+						while (startCount == inventory.getCount()
+								&& System.currentTimeMillis() - picked < 10000) {
+							sleep(100);
+						}
+						if (startCount < inventory.getCount()) {
+							flaxCollected++;
+						}
+					}
+				}
+				break;
+			case BANK:
+				if (!bank.isOpen()) {
+					bank.open();
+				} else {
+					bank.depositAll();
+					long deposit = System.currentTimeMillis();
+					while (inventory.getCount() > 0
+							&& System.currentTimeMillis() - deposit < 10000) {
 						sleep(100);
 					}
-					if (startCount < inventory.getCount()) {
-						flaxCollected++;
-					}
 				}
-			}
-			break;
-		case BANK:
-			if (!bank.isOpen()) {
-				bank.open();
-			} else {
-				bank.depositAll();
-				long deposit = System.currentTimeMillis();
-				while (inventory.getCount() > 0
-						&& System.currentTimeMillis() - deposit < 10000) {
-					sleep(100);
-				}
-			}
 		}
 		return random(100, 200);
 	}

@@ -83,7 +83,7 @@ public class Hiscores extends MethodProvider {
 		public int getExperience(int index) {
 			if (index < 0 || index >= exps.length - 1) {
 				throw new IllegalArgumentException("Illegal skill index: "
-						                                   + index);
+						+ index);
 			}
 			return exps[index + 1];
 		}
@@ -97,7 +97,7 @@ public class Hiscores extends MethodProvider {
 		public int getLevel(int index) {
 			if (index < 0 || index >= exps.length - 1) {
 				throw new IllegalArgumentException("Illegal skill index: "
-						                                   + index);
+						+ index);
 			}
 			return lvls[index + 1];
 		}
@@ -111,7 +111,7 @@ public class Hiscores extends MethodProvider {
 		public int getRank(int index) {
 			if (index < 0 || index >= exps.length - 1) {
 				throw new IllegalArgumentException("Illegal skill index: "
-						                                   + index);
+						+ index);
 			}
 			return ranks[index + 1];
 		}

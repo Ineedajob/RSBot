@@ -245,16 +245,16 @@ public abstract class RSModel extends MethodProvider {
 		int height = methods.calc.tileHeight(locX, locY);
 		for (int i = 0; i < len; ++i) {
 			Point one = methods.calc.worldToScreen(locX + xPoints[indices1[i]],
-			                                       locY + zPoints[indices1[i]], height + yPoints[indices1[i]]);
+					locY + zPoints[indices1[i]], height + yPoints[indices1[i]]);
 			Point two = methods.calc.worldToScreen(locX + xPoints[indices2[i]],
-			                                       locY + zPoints[indices2[i]], height + yPoints[indices2[i]]);
+					locY + zPoints[indices2[i]], height + yPoints[indices2[i]]);
 			Point three = methods.calc.worldToScreen(locX
-					                                         + xPoints[indices3[i]], locY + zPoints[indices3[i]], height
+					+ xPoints[indices3[i]], locY + zPoints[indices3[i]], height
 					+ yPoints[indices3[i]]);
 
 			if (one.x >= 0 && two.x >= 0 && three.x >= 0) {
 				polygons.add(new Polygon(new int[]{one.x, two.x, three.x},
-				                         new int[]{one.y, two.y, three.y}, 3));
+						new int[]{one.y, two.y, three.y}, 3));
 			}
 		}
 		return polygons.toArray(new Polygon[polygons.size()]);
@@ -293,14 +293,14 @@ public abstract class RSModel extends MethodProvider {
 		int height = methods.calc.tileHeight(locX, locY);
 		for (int i = start; i < end; ++i) {
 			Point one = methods.calc.worldToScreen(locX + xPoints[indices1[i]],
-			                                       locY + zPoints[indices1[i]], height + yPoints[indices1[i]]);
+					locY + zPoints[indices1[i]], height + yPoints[indices1[i]]);
 			int x = -1, y = -1;
 			if (one.x >= 0) {
 				x = one.x;
 				y = one.y;
 			}
 			Point two = methods.calc.worldToScreen(locX + xPoints[indices2[i]],
-			                                       locY + zPoints[indices2[i]], height + yPoints[indices2[i]]);
+					locY + zPoints[indices2[i]], height + yPoints[indices2[i]]);
 			if (two.x >= 0) {
 				if (x >= 0) {
 					x = (x + two.x) / 2;
@@ -311,7 +311,7 @@ public abstract class RSModel extends MethodProvider {
 				}
 			}
 			Point three = methods.calc.worldToScreen(locX
-					                                         + xPoints[indices3[i]], locY + zPoints[indices3[i]], height
+					+ xPoints[indices3[i]], locY + zPoints[indices3[i]], height
 					+ yPoints[indices3[i]]);
 			if (three.x >= 0) {
 				if (x >= 0) {

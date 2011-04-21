@@ -90,7 +90,7 @@ public class Store extends MethodProvider {
 		}
 
 		if (methods.interfaces.getComponent(INTERFACE_STORE,
-		                                    INTERFACE_STORE_BUTTON_CLOSE).doClick()) {
+				INTERFACE_STORE_BUTTON_CLOSE).doClick()) {
 			sleep(random(500, 600));
 			return !isOpen();
 		} else {

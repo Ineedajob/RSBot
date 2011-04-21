@@ -1,45 +1,17 @@
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.geom.GeneralPath;
-import java.util.ArrayList;
-
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.border.EmptyBorder;
-
 import org.rsbot.event.listeners.PaintListener;
 import org.rsbot.script.Script;
 import org.rsbot.script.ScriptManifest;
 import org.rsbot.script.methods.Bank;
 import org.rsbot.script.methods.Game;
 import org.rsbot.script.methods.Skills;
-import org.rsbot.script.wrappers.RSArea;
-import org.rsbot.script.wrappers.RSInterface;
-import org.rsbot.script.wrappers.RSItem;
-import org.rsbot.script.wrappers.RSModel;
-import org.rsbot.script.wrappers.RSObject;
-import org.rsbot.script.wrappers.RSPlayer;
-import org.rsbot.script.wrappers.RSTile;
+import org.rsbot.script.wrappers.*;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.geom.GeneralPath;
+import java.util.ArrayList;
 
 @ScriptManifest(authors = "Aut0r", keywords = "Crafting", name = "Aut0Jewelry", version = 1.21, description = "Supports Jewelry and Gem Cutting")
 public class Aut0Jewelry extends Script implements PaintListener, MouseListener {
@@ -253,301 +225,301 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 			mouse.setSpeed(speedMouse);
 			final State state = getState(); // Gets the state
 			switch (state) { // Switches between these states based on getState
-			case OPENGBANK:
-				status = "Opening Bank";
-				if (openBank < 2) {
-					bank.open();
-					mouse.moveRandomly(50);
-					if (waitForBankIF(2000)) {
-						openBank++;
-					} else {
+				case OPENGBANK:
+					status = "Opening Bank";
+					if (openBank < 2) {
 						bank.open();
 						mouse.moveRandomly(50);
-						waitForBankIF(2000);
-						openBank++;
-					}
-				} else {
-					game.openTab(random(0, 17));
-					sleep(random(300, 600));
-					game.openTab(Game.TAB_INVENTORY);
-					openBank = 0;
-				}
-				break;
-			case GBANK:
-				status = "Banking";
-				if (!bank.isOpen()) {
-					break;
-				}
-				openBank = 0;
-				if (inventory.getCount() > 1) {
-					bank.depositAllExcept(chiselID);
-					waitForDepositedItem(2500);
-				}
-				if (checkBank(uncutGemID, 27) >= 1) {
-					withdraw(uncutGemID, itemsInBank);
-					waitForWithdrawnItem(uncutGemID, 2000);
-				}
-				if (inventory.getCount(gemID) < 1
-						&& inventory.getCount(chiselID) == 1) {
-					bank.close();
-					break;
-				} else if (inventory.getCount(chiselID) != 1) {
-					bank.depositAllExcept(chiselID);
-					waitForDepositedItem(2500);
-					if (checkBank(chiselID, 1) >= 1) {
-						withdraw(chiselID, 1);
-						waitForWithdrawnItem(chiselID, 2000);
-					}
-				}
-			case CUTTING:
-				status = "Cutting " + barName;
-				if (!isCutting()
-						&& interfaces.getComponent(ifParent, ifChild).isValid()) {
-					interfaces.getComponent(ifParent, ifChild).doAction(
-							"Cut All");
-				}
-				if (isCutting() && inventory.contains(uncutGemID)) {
-					sleep(random(500, 750));
-				} else if (!isCutting() && inventory.contains(uncutGemID)) {
-					RSItem RSI_uncut = inventory.getItem(uncutGemID);
-					RSItem RSI_chisel = inventory.getItem(chiselID);
-					if (RSI_uncut != null && RSI_uncut != null
-							&& inventory.contains(uncutGemID)
-							&& inventory.contains(chiselID)) {
-						if (!inventory.isItemSelected()) {
-							if (RSI_chisel != null) {
-								RSI_chisel.doAction("Use");
-								waitForInventoryAction(1000);
-							}
+						if (waitForBankIF(2000)) {
+							openBank++;
+						} else {
+							bank.open();
+							mouse.moveRandomly(50);
+							waitForBankIF(2000);
+							openBank++;
 						}
-						if (inventory.isItemSelected()) {
-							if (RSI_uncut != null) {
-								RSI_uncut.doAction("Use Chisel -> " + barName);
-								waitForIF(interfaces.get(ifParent),
-										random(2000, 3000));
-							}
-						}
+					} else {
+						game.openTab(random(0, 17));
 						sleep(random(300, 600));
+						game.openTab(Game.TAB_INVENTORY);
+						openBank = 0;
 					}
-				}
-				break;
-			case OPENBANK:
-				status = "Opening Bank";
-				if (openBank < 2) {
-					if (!banker.doAction("Use-quickly")) {
-						camera.turnTo(banker);
-					}
-					mouse.moveRandomly(50);
-					waitForBankIF(2000);
-					sleep(random(100, 200));
-					openBank++;
-				} else {
-					game.openTab(random(0, 17));
-					sleep(random(300, 600));
-					game.openTab(Game.TAB_INVENTORY);
-					openBank = 0;
-				}
-				break;
-			case OPENCHEST:
-				status = "Opening Bank Chest";
-				if (openBank < 2) {
-					if (!banker.doAction("Bank")) {
-						camera.turnTo(banker);
-					}
-					mouse.moveRandomly(50);
-					waitForBankIF(2000);
-					openBank++;
-				} else {
-					game.openTab(random(0, 17));
-					sleep(random(300, 600));
-					game.openTab(Game.TAB_INVENTORY);
-					openBank = 0;
-				}
-				break;
-			case BANK:
-				status = "Banking";
-				if (!bank.isOpen()) {
 					break;
-				}
-				openBank = 0;
-				if (inventory.contains(itemID)) {
-					bank.depositAllExcept(mouldID);
-					waitForDepositedItem(2500);
-				}
-				if (!gem) {
-					if (checkBank(barID, 27) == 27) {
-						withdraw(barID, itemsInBank);
-						waitForWithdrawnItem(barID, 2000);
-					} else if (checkBank(barID, 27) <= 26) {
-						log.severe("Last run.");
-						withdraw(barID, itemsInBank);
-						waitForWithdrawnItem(barID, 2000);
+				case GBANK:
+					status = "Banking";
+					if (!bank.isOpen()) {
+						break;
 					}
-				} else {
-					if (checkBank(barID, 13) == 13) {
-						withdraw(barID, itemsInBank);
-						waitForWithdrawnItem(barID, 2000);
-					} else if (checkBank(barID, 13) <= 12) {
-						log.severe("Last run.");
-						withdraw(barID, itemsInBank);
-						waitForWithdrawnItem(barID, 2000);
+					openBank = 0;
+					if (inventory.getCount() > 1) {
+						bank.depositAllExcept(chiselID);
+						waitForDepositedItem(2500);
 					}
-					if (checkBank(gemID, 13) == 13) {
-						withdraw(gemID, itemsInBank);
-						waitForWithdrawnItem(gemID, 2000);
-					} else if (checkBank(gemID, 13) <= 12) {
-						log.severe("Last run.");
-						withdraw(gemID, itemsInBank);
-						waitForWithdrawnItem(gemID, 2000);
+					if (checkBank(uncutGemID, 27) >= 1) {
+						withdraw(uncutGemID, itemsInBank);
+						waitForWithdrawnItem(uncutGemID, 2000);
 					}
-				}
-				if (readyToCraft()) {
-					bank.close();
-					break;
-				}
-			case CRAFT:
-				status = "Crafting " + itemName;
-				if (interfaces.getComponent(ifParent, ifChild).isValid()) {
-					interfaces.getComponent(ifParent, ifChild).doAction(
-							"Make All");
-					sleep(random(400, 700));
-				} else if (!isIdle() && inventory.contains(barID)) {
-					if (!gem) {
-						sleep(random(750, 1000));
-					} else if (gem) {
-						sleep(random(500, 750));
-					}
-				} else if (isIdle()
-						&& !interfaces.getComponent(ifParent, ifChild)
-								.isValid()) {
-					RSObject smithObj = objects.getNearest(smithID);
-					RSItem itemOnFurn = inventory.getItem(barID);
-					if (smithObj != null && itemOnFurn != null
-							&& inventory.contains(barID)) {
-						if (!inventory.isItemSelected()) {
-							if (itemOnFurn != null) {
-								itemOnFurn.doAction("Use");
-								waitForInventoryAction(1000);
-							}
+					if (inventory.getCount(gemID) < 1
+							&& inventory.getCount(chiselID) == 1) {
+						bank.close();
+						break;
+					} else if (inventory.getCount(chiselID) != 1) {
+						bank.depositAllExcept(chiselID);
+						waitForDepositedItem(2500);
+						if (checkBank(chiselID, 1) >= 1) {
+							withdraw(chiselID, 1);
+							waitForWithdrawnItem(chiselID, 2000);
 						}
-						RSModel furModel = smithObj.getModel();
-						if (furModel != null) {
-							if (failCounter > 2) {
-								failCounter = 0;
-								inventory.clickSelectedItem();
-								break;
+					}
+				case CUTTING:
+					status = "Cutting " + barName;
+					if (!isCutting()
+							&& interfaces.getComponent(ifParent, ifChild).isValid()) {
+						interfaces.getComponent(ifParent, ifChild).doAction(
+								"Cut All");
+					}
+					if (isCutting() && inventory.contains(uncutGemID)) {
+						sleep(random(500, 750));
+					} else if (!isCutting() && inventory.contains(uncutGemID)) {
+						RSItem RSI_uncut = inventory.getItem(uncutGemID);
+						RSItem RSI_chisel = inventory.getItem(chiselID);
+						if (RSI_uncut != null && RSI_uncut != null
+								&& inventory.contains(uncutGemID)
+								&& inventory.contains(chiselID)) {
+							if (!inventory.isItemSelected()) {
+								if (RSI_chisel != null) {
+									RSI_chisel.doAction("Use");
+									waitForInventoryAction(1000);
+								}
 							}
-							if (doActionAtModel(furModel, furnaceAction)) {
-								waitForIF(interfaces.get(ifParent),
-										random(2000, 3000));
-								break;
-							} else {
-								camera.turnTo(smithObj);
-								failCounter++;
+							if (inventory.isItemSelected()) {
+								if (RSI_uncut != null) {
+									RSI_uncut.doAction("Use Chisel -> " + barName);
+									waitForIF(interfaces.get(ifParent),
+											random(2000, 3000));
+								}
 							}
 							sleep(random(300, 600));
 						}
 					}
-				}
-				break;
-			case WALKTOFURNACE:
-				status = "Walking to Furnace";
-				try {
-					if (readyToCraft() && atFurnace()) {
-						break;
-					}
-					if (step(path) == path.size()) {
-						path = generatePath(pathToFurnace);
-						structType = pathToFurnace;
-					}
-				} catch (Exception e) {
-				}
-				break;
-			case WALKTOBANK:
-				status = "Walking to Bank";
-				try {
-					if (readyToBank() && atBank()) {
-						break;
-					}
-					if (step(path) == path.size()) {
-						path = generatePath(pathToBank);
-						structType = pathToBank;
-					}
-				} catch (Exception e) {
-				}
-				break;
-			case ANTIBAN:
-				try {
-					int ran = random(0, 6);
-					switch (ran) {
-					case 0:
-						int cam = random(0, 3);
-						switch (cam) {
-						case 0:
-							status = "Camera Thread 1";
-							new CameraRotateThread().start();
-							break;
-						case 1:
-							status = "Camera Thread 2";
-							new CameraRotateThread().start();
-							new CameraRotateThread().start();
-							break;
-						case 3:
-							status = "Camera Thread 3";
-							new CameraHeightThread().start();
-							new CameraRotateThread().start();
-							break;
+					break;
+				case OPENBANK:
+					status = "Opening Bank";
+					if (openBank < 2) {
+						if (!banker.doAction("Use-quickly")) {
+							camera.turnTo(banker);
 						}
+						mouse.moveRandomly(50);
+						waitForBankIF(2000);
+						sleep(random(100, 200));
+						openBank++;
+					} else {
+						game.openTab(random(0, 17));
+						sleep(random(300, 600));
+						game.openTab(Game.TAB_INVENTORY);
+						openBank = 0;
+					}
+					break;
+				case OPENCHEST:
+					status = "Opening Bank Chest";
+					if (openBank < 2) {
+						if (!banker.doAction("Bank")) {
+							camera.turnTo(banker);
+						}
+						mouse.moveRandomly(50);
+						waitForBankIF(2000);
+						openBank++;
+					} else {
+						game.openTab(random(0, 17));
+						sleep(random(300, 600));
+						game.openTab(Game.TAB_INVENTORY);
+						openBank = 0;
+					}
+					break;
+				case BANK:
+					status = "Banking";
+					if (!bank.isOpen()) {
 						break;
-					case 1:
-						status = "Hover Player Thread";
-						hoverPlayer();
-						sleep(random(550, 1800));
-						mouse.moveRandomly(750);
-						sleep(random(400, 1000));
+					}
+					openBank = 0;
+					if (inventory.contains(itemID)) {
+						bank.depositAllExcept(mouldID);
+						waitForDepositedItem(2500);
+					}
+					if (!gem) {
+						if (checkBank(barID, 27) == 27) {
+							withdraw(barID, itemsInBank);
+							waitForWithdrawnItem(barID, 2000);
+						} else if (checkBank(barID, 27) <= 26) {
+							log.severe("Last run.");
+							withdraw(barID, itemsInBank);
+							waitForWithdrawnItem(barID, 2000);
+						}
+					} else {
+						if (checkBank(barID, 13) == 13) {
+							withdraw(barID, itemsInBank);
+							waitForWithdrawnItem(barID, 2000);
+						} else if (checkBank(barID, 13) <= 12) {
+							log.severe("Last run.");
+							withdraw(barID, itemsInBank);
+							waitForWithdrawnItem(barID, 2000);
+						}
+						if (checkBank(gemID, 13) == 13) {
+							withdraw(gemID, itemsInBank);
+							waitForWithdrawnItem(gemID, 2000);
+						} else if (checkBank(gemID, 13) <= 12) {
+							log.severe("Last run.");
+							withdraw(gemID, itemsInBank);
+							waitForWithdrawnItem(gemID, 2000);
+						}
+					}
+					if (readyToCraft()) {
+						bank.close();
 						break;
-					case 2:
-						status = "Hover Object Thread";
-						hoverObject();
-						sleep(random(550, 1800));
-						mouse.moveRandomly(750);
-						sleep(random(400, 1000));
-						break;
-					case 3:
-						status = "Mouse Thread 1";
-						if (System.currentTimeMillis() - mouse.getPressTime() > 5000) {
-							Point mouseP = mouse.getLocation();
-							sleep(random(500, 1000));
-							if (mouseP.equals(mouse.getLocation())) {
-								mouse.moveRandomly(200);
+					}
+				case CRAFT:
+					status = "Crafting " + itemName;
+					if (interfaces.getComponent(ifParent, ifChild).isValid()) {
+						interfaces.getComponent(ifParent, ifChild).doAction(
+								"Make All");
+						sleep(random(400, 700));
+					} else if (!isIdle() && inventory.contains(barID)) {
+						if (!gem) {
+							sleep(random(750, 1000));
+						} else if (gem) {
+							sleep(random(500, 750));
+						}
+					} else if (isIdle()
+							&& !interfaces.getComponent(ifParent, ifChild)
+							.isValid()) {
+						RSObject smithObj = objects.getNearest(smithID);
+						RSItem itemOnFurn = inventory.getItem(barID);
+						if (smithObj != null && itemOnFurn != null
+								&& inventory.contains(barID)) {
+							if (!inventory.isItemSelected()) {
+								if (itemOnFurn != null) {
+									itemOnFurn.doAction("Use");
+									waitForInventoryAction(1000);
+								}
+							}
+							RSModel furModel = smithObj.getModel();
+							if (furModel != null) {
+								if (failCounter > 2) {
+									failCounter = 0;
+									inventory.clickSelectedItem();
+									break;
+								}
+								if (doActionAtModel(furModel, furnaceAction)) {
+									waitForIF(interfaces.get(ifParent),
+											random(2000, 3000));
+									break;
+								} else {
+									camera.turnTo(smithObj);
+									failCounter++;
+								}
+								sleep(random(300, 600));
 							}
 						}
-						break;
-					case 4:
-						status = "Camera Thread 4";
-						new CameraHeightThread().start();
-						break;
-					case 5:
-						status = "Camera Thread 5";
-						new CameraRotateThread().start();
-						break;
-					case 6:
-						status = "Mouse Thread 2 ";
-						if (System.currentTimeMillis() - mouse.getPressTime() > 5000) {
-							Point mouseP = mouse.getLocation();
-							sleep(random(500, 1000));
-							if (mouseP.equals(mouse.getLocation())) {
-								mouse.moveRandomly(200);
-							}
-						}
-						break;
 					}
-					sleep(random(100, 200));
-				} catch (Exception e) {
-				}
-				break;
-			case CHILL:
-				break;
+					break;
+				case WALKTOFURNACE:
+					status = "Walking to Furnace";
+					try {
+						if (readyToCraft() && atFurnace()) {
+							break;
+						}
+						if (step(path) == path.size()) {
+							path = generatePath(pathToFurnace);
+							structType = pathToFurnace;
+						}
+					} catch (Exception e) {
+					}
+					break;
+				case WALKTOBANK:
+					status = "Walking to Bank";
+					try {
+						if (readyToBank() && atBank()) {
+							break;
+						}
+						if (step(path) == path.size()) {
+							path = generatePath(pathToBank);
+							structType = pathToBank;
+						}
+					} catch (Exception e) {
+					}
+					break;
+				case ANTIBAN:
+					try {
+						int ran = random(0, 6);
+						switch (ran) {
+							case 0:
+								int cam = random(0, 3);
+								switch (cam) {
+									case 0:
+										status = "Camera Thread 1";
+										new CameraRotateThread().start();
+										break;
+									case 1:
+										status = "Camera Thread 2";
+										new CameraRotateThread().start();
+										new CameraRotateThread().start();
+										break;
+									case 3:
+										status = "Camera Thread 3";
+										new CameraHeightThread().start();
+										new CameraRotateThread().start();
+										break;
+								}
+								break;
+							case 1:
+								status = "Hover Player Thread";
+								hoverPlayer();
+								sleep(random(550, 1800));
+								mouse.moveRandomly(750);
+								sleep(random(400, 1000));
+								break;
+							case 2:
+								status = "Hover Object Thread";
+								hoverObject();
+								sleep(random(550, 1800));
+								mouse.moveRandomly(750);
+								sleep(random(400, 1000));
+								break;
+							case 3:
+								status = "Mouse Thread 1";
+								if (System.currentTimeMillis() - mouse.getPressTime() > 5000) {
+									Point mouseP = mouse.getLocation();
+									sleep(random(500, 1000));
+									if (mouseP.equals(mouse.getLocation())) {
+										mouse.moveRandomly(200);
+									}
+								}
+								break;
+							case 4:
+								status = "Camera Thread 4";
+								new CameraHeightThread().start();
+								break;
+							case 5:
+								status = "Camera Thread 5";
+								new CameraRotateThread().start();
+								break;
+							case 6:
+								status = "Mouse Thread 2 ";
+								if (System.currentTimeMillis() - mouse.getPressTime() > 5000) {
+									Point mouseP = mouse.getLocation();
+									sleep(random(500, 1000));
+									if (mouseP.equals(mouse.getLocation())) {
+										mouse.moveRandomly(200);
+									}
+								}
+								break;
+						}
+						sleep(random(100, 200));
+					} catch (Exception e) {
+					}
+					break;
+				case CHILL:
+					break;
 			}
 		} catch (Exception ignored) {
 		}
@@ -556,7 +528,7 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 
 	/**
 	 * Methods
-	 **/
+	 */
 	public void quit() {
 		stopScript();
 	}
@@ -784,33 +756,33 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 			return false;
 		final int inventoryCount = inventory.getCount(true);
 		switch (count) {
-		case 0: // Withdraw All
-			item.doAction("Withdraw-All");
-			break;
-		case 1: // Withdraw 1
-			item.doClick(true);
-			break;
-		case 5: // Withdraw 5
-		case 10: // Withdraw 10
-			item.doAction("Withdraw-" + count);
-			break;
-		default: // Withdraw x
-			if (item.doClick(false)) {
-				sleep(random(200, 500));
-				if (menu.contains("Withdraw-" + count)) {
-					if (menu.doAction("Withdraw-" + count)) {
-						sleep(random(100, 200));
-						return true;
+			case 0: // Withdraw All
+				item.doAction("Withdraw-All");
+				break;
+			case 1: // Withdraw 1
+				item.doClick(true);
+				break;
+			case 5: // Withdraw 5
+			case 10: // Withdraw 10
+				item.doAction("Withdraw-" + count);
+				break;
+			default: // Withdraw x
+				if (item.doClick(false)) {
+					sleep(random(200, 500));
+					if (menu.contains("Withdraw-" + count)) {
+						if (menu.doAction("Withdraw-" + count)) {
+							sleep(random(100, 200));
+							return true;
+						}
+						return false;
 					}
-					return false;
+					if (item.doAction("Withdraw-X")) {
+						sleep(random(1000, 1300));
+						keyboard.sendText("" + count, true);
+					}
+					sleep(random(100, 200));
 				}
-				if (item.doAction("Withdraw-X")) {
-					sleep(random(1000, 1300));
-					keyboard.sendText("" + count, true);
-				}
-				sleep(random(100, 200));
-			}
-			break;
+				break;
 		}
 		return (inventory.getCount(true) > inventoryCount)
 				|| (inventory.getCount(true) == 28);
@@ -924,7 +896,7 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 			profit = (double) ((itemsMade * itemsPrice) - ((barPrice * itemsMade) + (gemPrice * itemsMade))) / 1000;
 			r__pph = ((itemsMade * itemsPrice * 3600000D)
 					/ ((System.currentTimeMillis() - startTime)
-							- (+cutPerHour * gemPrice) + (+cutPerHour * barPrice)) / 1000);
+					- (+cutPerHour * gemPrice) + (+cutPerHour * barPrice)) / 1000);
 		} else {
 			profit = (double) ((itemsMade * itemsPrice) - (barPrice * itemsMade)) / 1000;
 			r__pph = ((itemsMade * itemsPrice * 3600000D
@@ -1085,14 +1057,14 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 		}
 		if (index >= 0
 				&& (dest == null || (index > shortest) || !getMyPlayer()
-						.isMoving())) {
+				.isMoving())) {
 			if (walking.walkTileMM(path.get(index))) {
 				waitToMove(random(600, 900));
 			}
 			nextStep = random(13, 15);
 			while (walking.getDestination() != null
 					&& (calc.distanceBetween(walking.getDestination(),
-							getMyPlayer().getLocation()) >= 5)) {
+					getMyPlayer().getLocation()) >= 5)) {
 				sleep(random(50, 100));
 			}
 			restructPath();
@@ -1106,11 +1078,11 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 	}
 
 	private ArrayList<RSTile> generatePath(Line[] lines) { // you're generating
-															// the path at
-															// walking start,
-															// you need to
-															// gernerate it AS
-															// YOU WALK.
+		// the path at
+		// walking start,
+		// you need to
+		// gernerate it AS
+		// YOU WALK.
 		double minStep = 5, maxStep = 10, wander = 3;
 		if (lines.length < 2) {
 			return null;
@@ -1445,10 +1417,10 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 							// @START CRAFTINGTYPE
 							craftingType
 									.setModel(new javax.swing.DefaultComboBoxModel(
-											new String[] { "",
+											new String[]{"",
 													"Gold Jewellery",
 													"Silver Jewellery",
-													"Cut Gems" }));
+													"Cut Gems"}));
 							panel1.add(craftingType);
 							craftingType.setBounds(5, 30, 115,
 									type.getPreferredSize().height);
@@ -1461,22 +1433,22 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 													.getSelectedItem();
 											if (co == "Gold Jewellery") {
 												craftObj.setModel(new javax.swing.DefaultComboBoxModel(
-														new String[] { "Gold",
+														new String[]{"Gold",
 																"Sapphire",
 																"Emerald",
 																"Ruby",
-																"Diamond" }));
+																"Diamond"}));
 												type.setModel(new javax.swing.DefaultComboBoxModel(
-														new String[] { "",
+														new String[]{"",
 																"Ring",
 																"Necklace",
 																"Bracelet",
-																"Amulet" }));
+																"Amulet"}));
 												loc.setModel(new DefaultComboBoxModel(
-														new String[] {
+														new String[]{
 																"Al Kharid",
 																"Edgeville",
-																"Neitiznot(not operational)" }));
+																"Neitiznot(not operational)"}));
 												// @START - COMBOBOX - TYPE
 												panel1.add(type);
 												type.setBounds(
@@ -1493,16 +1465,16 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 														35);
 											} else if (co == "Silver Jewellery") {
 												craftObj.setModel(new javax.swing.DefaultComboBoxModel(
-														new String[] { "Silver" }));
+														new String[]{"Silver"}));
 												type.setModel(new javax.swing.DefaultComboBoxModel(
-														new String[] { "",
+														new String[]{"",
 																"Holy Symbol",
-																"Tiara" }));
+																"Tiara"}));
 												loc.setModel(new DefaultComboBoxModel(
-														new String[] {
+														new String[]{
 																"Al Kharid",
 																"Edgeville",
-																"Neitiznot(not operational)" }));
+																"Neitiznot(not operational)"}));
 												// @START - COMBOBOX - TYPE
 												panel1.add(type);
 												type.setBounds(
@@ -1519,14 +1491,14 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 														35);
 											} else if (co == "Cut Gems") {
 												craftObj.setModel(new javax.swing.DefaultComboBoxModel(
-														new String[] {
+														new String[]{
 																"Sapphire",
 																"Emerald",
 																"Ruby",
 																"Diamond",
-																"Dragonstone" }));
+																"Dragonstone"}));
 												loc.setModel(new DefaultComboBoxModel(
-														new String[] { "Any Location" }));
+														new String[]{"Any Location"}));
 											}
 										}
 									});
@@ -1543,11 +1515,11 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 							// @START - COMBOBOX - MOUSESPEED
 							mouseSpeed
 									.setModel(new javax.swing.DefaultComboBoxModel(
-											new String[] { "Slow",
+											new String[]{"Slow",
 													"Slow-Medium",
 													"Medium(Recommended)",
 													"Medium-Fast(Recommended)",
-													"Fast**", "Super Fast**" }));
+													"Fast**", "Super Fast**"}));
 							panel1.add(mouseSpeed);
 							mouseSpeed.setBounds(170, 110, 115,
 									mouseSpeed.getPreferredSize().height);
@@ -1661,10 +1633,10 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 				{
 					buttonBar.setBorder(new EmptyBorder(12, 0, 0, 0));
 					buttonBar.setLayout(new GridBagLayout());
-					((GridBagLayout) buttonBar.getLayout()).columnWidths = new int[] {
-							0, 85, 80 };
-					((GridBagLayout) buttonBar.getLayout()).columnWeights = new double[] {
-							1.0, 0.0, 0.0 };
+					((GridBagLayout) buttonBar.getLayout()).columnWidths = new int[]{
+							0, 85, 80};
+					((GridBagLayout) buttonBar.getLayout()).columnWeights = new double[]{
+							1.0, 0.0, 0.0};
 
 					// ---- okButton ----
 					okButton.setText("Start " + scriptName);
@@ -1726,45 +1698,45 @@ public class Aut0Jewelry extends Script implements PaintListener, MouseListener 
 				speedMouse = random(2, 3);
 			}
 			if (location.contains("harid")) {
-				pathToFurnace = new Line[] { new Line(3275, 3172, 3279, 3174),
+				pathToFurnace = new Line[]{new Line(3275, 3172, 3279, 3174),
 						new Line(3280, 3183, 3282, 3187),
-						new Line(3275, 3185, 3275, 3187) };
-				pathToBank = new Line[] { new Line(3280, 3183, 3282, 3187),
+						new Line(3275, 3185, 3275, 3187)};
+				pathToBank = new Line[]{new Line(3280, 3183, 3282, 3187),
 						new Line(3275, 3172, 3279, 3174),
-						new Line(3269, 3164, 3269, 3170) };
-				AREAS = new RSArea[] {
+						new Line(3269, 3164, 3269, 3170)};
+				AREAS = new RSArea[]{
 						new RSArea(new RSTile(3269, 3164), new RSTile(3271,
 								3170)),
 						new RSArea(new RSTile(3274, 3184), new RSTile(3277,
-								3188)) };
+								3188))};
 				bankID = 35647;
 				smithID = 11666;
 				craftLoc = "Al Kharid";
 			} else if (location.contains("Edgeville")) {
-				pathToFurnace = new Line[] { new Line(3103, 3498, 3105, 3500),
-						new Line(3108, 3500, 3109, 3502) };
-				pathToBank = new Line[] { new Line(3103, 3498, 3105, 3500),
-						new Line(3096, 3496, 3098, 3497) };
-				AREAS = new RSArea[] {
+				pathToFurnace = new Line[]{new Line(3103, 3498, 3105, 3500),
+						new Line(3108, 3500, 3109, 3502)};
+				pathToBank = new Line[]{new Line(3103, 3498, 3105, 3500),
+						new Line(3096, 3496, 3098, 3497)};
+				AREAS = new RSArea[]{
 						new RSArea(new RSTile(3095, 3496), new RSTile(3098,
 								3498)),
 						new RSArea(new RSTile(3107, 3498), new RSTile(3113,
-								3503)) };
+								3503))};
 				bankID = 26972;
 				smithID = 26814;
 				craftLoc = "Edgeville";
 			} else if (location.contains("Neitiznot")) {
-				pathToFurnace = new Line[] { new Line(2335, 3803, 2337, 3804),
+				pathToFurnace = new Line[]{new Line(2335, 3803, 2337, 3804),
 						new Line(2341, 3803, 2341, 3805),
-						new Line(2343, 3810, 2345, 3810) };
-				pathToBank = new Line[] { new Line(2341, 3803, 2341, 3805),
+						new Line(2343, 3810, 2345, 3810)};
+				pathToBank = new Line[]{new Line(2341, 3803, 2341, 3805),
 						new Line(2335, 3803, 2337, 3804),
-						new Line(2335, 3807, 2338, 3807) };
-				AREAS = new RSArea[] {
+						new Line(2335, 3807, 2338, 3807)};
+				AREAS = new RSArea[]{
 						new RSArea(new RSTile(2334, 3805), new RSTile(2339,
 								3808)),
 						new RSArea(new RSTile(2343, 3809), new RSTile(2345,
-								3811)) };
+								3811))};
 				bankID = 21301;
 				smithID = 21303;
 				craftLoc = "Neitiznot";

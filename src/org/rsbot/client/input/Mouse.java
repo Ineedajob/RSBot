@@ -4,7 +4,7 @@ import java.awt.*;
 import java.awt.event.*;
 
 public abstract class Mouse extends Focus implements MouseListener,
-                                                     MouseMotionListener, MouseWheelListener {
+		MouseMotionListener, MouseWheelListener {
 
 	private int clientX;
 	private int clientY;

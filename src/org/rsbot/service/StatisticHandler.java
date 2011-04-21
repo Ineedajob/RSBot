@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 public class StatisticHandler {
 
 	private static final Logger log = Logger.getLogger(StatisticHandler.class
-			                                                   .getName());
+			.getName());
 
 
 	public String reportHackingAttempt(StackTraceElement[] stackTraceElements) {

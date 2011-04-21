@@ -26,8 +26,8 @@ public class UpdateUtil {
 		if (getLatestVersion() > GlobalConfiguration.getVersion()) {
 			UpdateUtil.log.info("New version available!");
 			final int update = JOptionPane.showConfirmDialog(parent,
-			                                                 "A newer version is available. Do you wish to update?",
-			                                                 "Update Found", JOptionPane.YES_NO_OPTION);
+					"A newer version is available. Do you wish to update?",
+					"Update Found", JOptionPane.YES_NO_OPTION);
 			if (update != 0) {
 				UpdateUtil.log.info("Cancelled update");
 			}

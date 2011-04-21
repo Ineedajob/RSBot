@@ -30,22 +30,22 @@ public class Game extends MethodProvider {
 	public static final int INDEX_FIXED = 746;
 
 	public static final int[] TAB_FUNCTION_KEYS = {KeyEvent.VK_F5, // Attack
-	                                               0, // Achievements
-	                                               0, // Stats
-	                                               0, // Quests
-	                                               KeyEvent.VK_F1, // Inventory
-	                                               KeyEvent.VK_F2, // Equipment
-	                                               KeyEvent.VK_F3, // Prayer
-	                                               KeyEvent.VK_F4, // Magic
-	                                               0, // Summoning
-	                                               0, // Friends
-	                                               0, // Ignore
-	                                               0, // Clan
-	                                               0, // Options
-	                                               0, // Controls
-	                                               0, // Music
-	                                               0, // Notes
-	                                               0, // Logout
+			0, // Achievements
+			0, // Stats
+			0, // Quests
+			KeyEvent.VK_F1, // Inventory
+			KeyEvent.VK_F2, // Equipment
+			KeyEvent.VK_F3, // Prayer
+			KeyEvent.VK_F4, // Magic
+			0, // Summoning
+			0, // Friends
+			0, // Ignore
+			0, // Clan
+			0, // Options
+			0, // Controls
+			0, // Music
+			0, // Notes
+			0, // Logout
 	};
 	public static final int TAB_ATTACK = 0;
 	public static final int TAB_TASK = 1;
@@ -91,16 +91,16 @@ public class Game extends MethodProvider {
 	public static final int INTERFACE_PRAYER_ORB = 749;
 
 	public static final int[] INTERFACE_TALKS = new int[]{211, 241, 251, 101,
-	                                                      242, 102, 161, 249, 243, 64, 65, 244, 255, 249, 230, 372,
-	                                                      421};
+			242, 102, 161, 249, 243, 64, 65, 244, 255, 249, 230, 372,
+			421};
 	public static final int[] INTERFACE_OPTIONS = new int[]{230, 228};
 
 	public static final String[] TAB_NAMES = new String[]{"Combat Styles",
-	                                                      "Task System", "Stats", "Quest Journals", "Inventory",
-	                                                      "Worn Equipment", "Prayer List", "Magic Spellbook", "",
-	                                                      "Friends List", "Friends Chat", "Clan Chat", "Options",
-	                                                      "Emotes",
-	                                                      "Music Player", "Notes", "Exit"};
+			"Task System", "Stats", "Quest Journals", "Inventory",
+			"Worn Equipment", "Prayer List", "Magic Spellbook", "",
+			"Friends List", "Friends Chat", "Clan Chat", "Options",
+			"Emotes",
+			"Music Player", "Notes", "Exit"};
 
 	Game(final MethodContext ctx) {
 		super(ctx);
@@ -345,7 +345,7 @@ public class Game extends MethodProvider {
 	 */
 	public boolean mouseChatButton(int button, boolean left) {
 		RSComponent chatButton = methods.interfaces.get(CHAT_OPTION)
-		                                           .getComponent(button);
+				.getComponent(button);
 		return chatButton.isValid() && chatButton.doClick(left);
 	}
 
@@ -512,7 +512,7 @@ public class Game extends MethodProvider {
 			int idx = methods.client.getGUIRSInterfaceIndex();
 			// Logout button in the top right hand corner
 			methods.interfaces.getComponent(idx, isFixed() ? 181 : 172)
-			                  .doClick();
+					.doClick();
 			int timesToWait = 0;
 			while (!isOnLogoutTab() && timesToWait < 5) {
 				sleep(random(200, 400));
@@ -579,7 +579,7 @@ public class Game extends MethodProvider {
 	 */
 	public boolean isWelcomeScreen() {
 		return methods.interfaces.get(INTERFACE_WELCOME_SCREEN)
-		                         .getComponent(INTERFACE_WELCOME_SCREEN_CHILD).getAbsoluteY() > 2;
+				.getComponent(INTERFACE_WELCOME_SCREEN_CHILD).getAbsoluteY() > 2;
 	}
 
 	/**

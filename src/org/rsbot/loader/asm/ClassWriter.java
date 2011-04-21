@@ -595,13 +595,13 @@ public class ClassWriter implements ClassVisitor {
 			final String signature,
 			final String[] exceptions) {
 		return new MethodWriter(this,
-		                        access,
-		                        name,
-		                        desc,
-		                        signature,
-		                        exceptions,
-		                        computeMaxs,
-		                        computeFrames);
+				access,
+				name,
+				desc,
+				signature,
+				exceptions,
+				computeMaxs,
+				computeFrames);
 	}
 
 	public void visitEnd() {
@@ -801,8 +801,8 @@ public class ClassWriter implements ClassVisitor {
 		} else if (cst instanceof Type) {
 			Type t = (Type) cst;
 			return newClassItem(t.getSort() == Type.OBJECT
-			                    ? t.getInternalName()
-			                    : t.getDescriptor());
+					? t.getInternalName()
+					: t.getDescriptor());
 		} else {
 			throw new IllegalArgumentException("value " + cst);
 		}

@@ -53,13 +53,13 @@ public class BotMenuBar extends JMenuBar {
 
 		TITLES = new String[]{"File", "Edit", "View", "Help"};
 		ELEMENTS = new String[][]{
-				{"New Bot", "Close Bot", "-", "Service Key", "-", "Run Script", "Stop Script",
+				{"New Bot", "Close Bot", "-", /*"Service Key", "-",*/ "Run Script", "Stop Script",
 						"Pause Script", "-", "Snap to Tray", "Save Screenshot",
 						"-", "Exit"},
 				{"Accounts", "-", "ToggleF Force Input", "ToggleF Less CPU",
 						"-", "ToggleF Disable Anti-Randoms",
 						"ToggleF Disable Auto Login", "-",
-						"ToggleF Disable Advertisements", "ToggleF Disable Exit Confirmation", "ToggleF Easter"}, constructDebugs(),
+						"ToggleF Disable Advertisements", "ToggleF Disable Confirmations", "ToggleF Enable Easter"}, constructDebugs(),
 				{"Site", "Project", "About"}};
 	}
 
@@ -239,7 +239,7 @@ public class BotMenuBar extends JMenuBar {
 	}
 
 	public boolean showAds = true;
-	public boolean disableConfirmationMessages = false;
+	public boolean disableConfirmations = false;
 
 
 	public void loadProps() {
@@ -262,7 +262,7 @@ public class BotMenuBar extends JMenuBar {
 			}
 			if (props.contains("ExitMessages") && props.getProperty("ExitMessages").contains("true")) {
 				commandCheckMap.get("Disable Exit Confirmation").setSelected(true);
-				disableConfirmationMessages = true;
+				disableConfirmations = true;
 			}
 		}
 	}

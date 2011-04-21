@@ -67,7 +67,7 @@ public class Environment extends MethodProvider {
 	public boolean enableRandom(String name) {
 		for (final Random random : methods.bot.getScriptHandler().getRandoms()) {
 			if (random.getClass().getAnnotation(ScriptManifest.class).name()
-			          .toLowerCase().equals(name.toLowerCase())) {
+					.toLowerCase().equals(name.toLowerCase())) {
 				if (random.isEnabled()) {
 					return true;
 				} else {
@@ -89,7 +89,7 @@ public class Environment extends MethodProvider {
 	public boolean disableRandom(String name) {
 		for (final Random random : methods.bot.getScriptHandler().getRandoms()) {
 			if (random.getClass().getAnnotation(ScriptManifest.class).name()
-			          .toLowerCase().equals(name.toLowerCase())) {
+					.toLowerCase().equals(name.toLowerCase())) {
 				if (!random.isEnabled()) {
 					return true;
 				} else {

@@ -226,7 +226,7 @@ public class Objects extends MethodProvider {
 							rsObj = (org.rsbot.client.RSObject) obj;
 							if (rsObj.getID() != -1) {
 								objects.add(new RSObject(methods, rsObj,
-								                         RSObject.Type.INTERACTABLE, plane));
+										RSObject.Type.INTERACTABLE, plane));
 							}
 						}
 					}
@@ -239,7 +239,7 @@ public class Objects extends MethodProvider {
 						rsObj = (org.rsbot.client.RSObject) obj;
 						if (rsObj.getID() != -1) {
 							objects.add(new RSObject(methods, rsObj,
-							                         RSObject.Type.FLOOR_DECORATION, plane));
+									RSObject.Type.FLOOR_DECORATION, plane));
 						}
 					}
 				}
@@ -251,7 +251,7 @@ public class Objects extends MethodProvider {
 						rsObj = (org.rsbot.client.RSObject) obj;
 						if (rsObj.getID() != -1) {
 							objects.add(new RSObject(methods, rsObj,
-							                         RSObject.Type.BOUNDARY, plane));
+									RSObject.Type.BOUNDARY, plane));
 						}
 					}
 
@@ -260,7 +260,7 @@ public class Objects extends MethodProvider {
 						rsObj = (org.rsbot.client.RSObject) obj;
 						if (rsObj.getID() != -1) {
 							objects.add(new RSObject(methods, rsObj,
-							                         RSObject.Type.BOUNDARY, plane));
+									RSObject.Type.BOUNDARY, plane));
 						}
 					}
 				}
@@ -272,7 +272,7 @@ public class Objects extends MethodProvider {
 						rsObj = (org.rsbot.client.RSObject) obj;
 						if (rsObj.getID() != -1) {
 							objects.add(new RSObject(methods, rsObj,
-							                         RSObject.Type.WALL_DECORATION, plane));
+									RSObject.Type.WALL_DECORATION, plane));
 						}
 					}
 
@@ -281,7 +281,7 @@ public class Objects extends MethodProvider {
 						rsObj = (org.rsbot.client.RSObject) obj;
 						if (rsObj.getID() != -1) {
 							objects.add(new RSObject(methods, rsObj,
-							                         RSObject.Type.WALL_DECORATION, plane));
+									RSObject.Type.WALL_DECORATION, plane));
 						}
 					}
 				}

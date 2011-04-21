@@ -112,8 +112,8 @@ public class GlobalConfiguration {
 			final String env = System.getenv(GlobalConfiguration.NAME.toUpperCase() + "_HOME");
 			if ((env == null) || env.isEmpty()) {
 				return (GlobalConfiguration.getCurrentOperatingSystem() == OperatingSystem.WINDOWS ?
-				        FileSystemView.getFileSystemView().getDefaultDirectory().getAbsolutePath() :
-				        Paths.getUnixHome()) + File.separator + GlobalConfiguration.NAME;
+						FileSystemView.getFileSystemView().getDefaultDirectory().getAbsolutePath() :
+						Paths.getUnixHome()) + File.separator + GlobalConfiguration.NAME;
 			} else {
 				return env;
 			}
@@ -280,7 +280,7 @@ public class GlobalConfiguration {
 		try {
 			return Toolkit.getDefaultToolkit().getImage(
 					GlobalConfiguration.RUNNING_FROM_JAR ? GlobalConfiguration.class.getResource(resource) :
-					new File(path).toURI().toURL());
+							new File(path).toURI().toURL());
 		} catch (Exception ignored) {
 		}
 		return null;
@@ -326,8 +326,8 @@ public class GlobalConfiguration {
 		BufferedReader reader = null;
 		try {
 			is = new InputStreamReader(RUNNING_FROM_JAR ?
-			                           GlobalConfiguration.class.getClassLoader().getResourceAsStream(
-					                           Paths.Resources.VERSION) : new FileInputStream(Paths.Resources.VERSION));
+					GlobalConfiguration.class.getClassLoader().getResourceAsStream(
+							Paths.Resources.VERSION) : new FileInputStream(Paths.Resources.VERSION));
 			reader = new BufferedReader(is);
 			String s = reader.readLine().trim();
 			return Integer.parseInt(s);

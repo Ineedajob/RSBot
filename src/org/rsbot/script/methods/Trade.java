@@ -159,7 +159,7 @@ public class Trade extends MethodProvider {
 					"Decline");
 		} else if (inTradeSecond()) {
 			return methods.interfaces.get(INTERFACE_TRADE_SECOND).getComponent(INTERFACE_TRADE_SECOND_DECLINE)
-			                         .doAction("Decline");
+					.doAction("Decline");
 		} else {
 			return false;
 		}

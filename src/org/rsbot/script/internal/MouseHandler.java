@@ -291,7 +291,7 @@ public class MouseHandler {
 				return;
 			}
 			final Point[] controls = MouseHandler.generateControls(x1, y1, x2 + random.nextInt(randX),
-			                                                       y2 + random.nextInt(randY), 50, 120);
+					y2 + random.nextInt(randY), 50, 120);
 			final Point[] spline = MouseHandler.generateSpline(controls);
 			final long timeToMove = MouseHandler.fittsLaw(Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2)), 10);
 			final Point[] path = MouseHandler.applyDynamism(spline, (int) timeToMove, MouseHandler.DEFAULT_MOUSE_SPEED);

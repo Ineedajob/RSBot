@@ -986,9 +986,9 @@ public class Base64 {
 		long len = b64.getEncodedLength(binaryData);
 		if (len > maxResultSize) {
 			throw new IllegalArgumentException("Input array too big, the output array would be bigger (" +
-					                                   len +
-					                                   ") than the specified maximum size of " +
-					                                   maxResultSize);
+					len +
+					") than the specified maximum size of " +
+					maxResultSize);
 		}
 
 		return b64.encode(binaryData);

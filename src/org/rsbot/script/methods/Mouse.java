@@ -60,13 +60,13 @@ public class Mouse extends MethodProvider {
 		 * coordinate
 		 */
 		distance -= Math.abs((maxX - Math.max(0,
-		                                      Math.min(methods.game.getWidth(), maxX)))
-				                     / xvec);
+				Math.min(methods.game.getWidth(), maxX)))
+				/ xvec);
 		/* Do the same thing with the Y coordinate */
 		int maxY = (int) Math.round(yvec * distance + p.y);
 		distance -= Math.abs((maxY - Math.max(0,
-		                                      Math.min(methods.game.getHeight(), maxY)))
-				                     / yvec);
+				Math.min(methods.game.getHeight(), maxY)))
+				/ yvec);
 		/*
 		 * If the maximum distance in the generated direction is too small,
 		 * don't move the mouse at all
@@ -91,19 +91,19 @@ public class Mouse extends MethodProvider {
 			switch (random(0, 4)) {
 				case 0: // up
 					move(random(-10, methods.game.getWidth() + 10),
-					     random(-100, -10));
+							random(-100, -10));
 					break;
 				case 1: // down
 					move(random(-10, methods.game.getWidth() + 10),
-					     methods.game.getHeight() + random(10, 100));
+							methods.game.getHeight() + random(10, 100));
 					break;
 				case 2: // left
 					move(random(-100, -10),
-					     random(-10, methods.game.getHeight() + 10));
+							random(-10, methods.game.getHeight() + 10));
 					break;
 				case 3: // right
 					move(random(10, 100) + methods.game.getWidth(),
-					     random(-10, methods.game.getHeight() + 10));
+							random(-10, methods.game.getHeight() + 10));
 					break;
 			}
 		}
@@ -145,7 +145,7 @@ public class Mouse extends MethodProvider {
 			sleep(random(50, 350));
 			Point pos = getLocation();
 			move(pos.x - moveAfterDist, pos.y - moveAfterDist,
-			     moveAfterDist * 2, moveAfterDist * 2);
+					moveAfterDist * 2, moveAfterDist * 2);
 		}
 	}
 
@@ -332,7 +332,7 @@ public class Mouse extends MethodProvider {
 				sleep(random(60, 300));
 				Point pos = getLocation();
 				move(pos.x - afterOffset, pos.y - afterOffset, afterOffset * 2,
-				     afterOffset * 2);
+						afterOffset * 2);
 			}
 		}
 	}
@@ -450,7 +450,7 @@ public class Mouse extends MethodProvider {
 			int dist = methods.game.getWidth() - p.x;
 			return p.x
 					+ random(1, dist < maxDistance && dist > 0 ? dist
-					                                           : maxDistance);
+					: maxDistance);
 		}
 	}
 
@@ -470,7 +470,7 @@ public class Mouse extends MethodProvider {
 			int dist = methods.game.getHeight() - p.y;
 			return p.y
 					+ random(1, dist < maxDistance && dist > 0 ? dist
-					                                           : maxDistance);
+					: maxDistance);
 		}
 	}
 

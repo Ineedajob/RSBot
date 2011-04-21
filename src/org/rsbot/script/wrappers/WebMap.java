@@ -54,8 +54,8 @@ public class WebMap {
 				break;
 			}
 			double sqrt = Math.sqrt((ctrl.getX() - tile.getX())
-					                        * (ctrl.getX() - tile.getX())
-					                        + (ctrl.getY() - tile.getY())
+					* (ctrl.getX() - tile.getX())
+					+ (ctrl.getY() - tile.getY())
 					* (ctrl.getY() - tile.getY()));
 			if (sqrt < maxDist) {
 				webTile = ctrl;
@@ -96,8 +96,8 @@ public class WebMap {
 			RSTile curr = start.tile();
 			RSTile dest = end.tile();
 			return Math.sqrt((curr.getX() - dest.getX())
-					                 * (curr.getX() - dest.getX())
-					                 + (curr.getY() - dest.getY())
+					* (curr.getX() - dest.getX())
+					+ (curr.getY() - dest.getY())
 					* (curr.getY() - dest.getY()));
 		} else {
 			return 1.0;

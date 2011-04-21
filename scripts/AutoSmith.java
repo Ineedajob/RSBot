@@ -5,11 +5,7 @@ import org.rsbot.script.Script;
 import org.rsbot.script.ScriptManifest;
 import org.rsbot.script.methods.Skills;
 import org.rsbot.script.util.Timer;
-import org.rsbot.script.wrappers.RSArea;
-import org.rsbot.script.wrappers.RSItem;
-import org.rsbot.script.wrappers.RSObject;
-import org.rsbot.script.wrappers.RSTile;
-import org.rsbot.script.wrappers.RSTilePath;
+import org.rsbot.script.wrappers.*;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -454,7 +450,7 @@ public class AutoSmith extends Script implements MessageListener,
 		public RSTile[] walk_path;
 
 		public SMLoc(String name, int FURNACE_ID, RSArea bankZones,
-					 RSTile[] WALK_PATH) {
+		             RSTile[] WALK_PATH) {
 			this.name = name;
 			this.furnace_id = FURNACE_ID;
 			this.bank_area = bankZones;
@@ -471,7 +467,7 @@ public class AutoSmith extends Script implements MessageListener,
 		public int secondary;
 
 		public Materials(String name, int REQ_LVL, int INV_ID,
-						 int INV_SECOND_ID, int PRIMARY, int SECONDARY) {
+		                 int INV_SECOND_ID, int PRIMARY, int SECONDARY) {
 			this.name = name;
 			this.req_lvl = REQ_LVL;
 			this.inv_id = INV_ID;

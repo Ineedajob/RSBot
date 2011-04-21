@@ -43,7 +43,7 @@ public class Canvas extends java.awt.Canvas {
 		}
 		try {
 			Thread.sleep(bot.disableRendering ? SLOW_GRAPHICS_DELAY
-			                                  : GRAPHICS_DELAY);
+					: GRAPHICS_DELAY);
 		} catch (InterruptedException ignored) {
 		}
 		return bot.getBufferGraphics();
@@ -88,12 +88,12 @@ public class Canvas extends java.awt.Canvas {
 			// null opposite; permanent gain, as expected when entire Applet
 			// regains focus
 			super.processEvent(new FocusEvent(this, FocusEvent.FOCUS_GAINED,
-			                                  false, null));
+					false, null));
 		} else if (this.focused) {
 			// null opposite; temporary loss, as expected when entire Applet
 			// loses focus
 			super.processEvent(new FocusEvent(this, FocusEvent.FOCUS_LOST,
-			                                  true, null));
+					true, null));
 		}
 		this.focused = focused;
 	}
@@ -107,12 +107,12 @@ public class Canvas extends java.awt.Canvas {
 		int[] pixels = new int[height * width];
 		DataBufferInt databufferint = new DataBufferInt(pixels, pixels.length);
 		DirectColorModel directcolormodel = new DirectColorModel(32, 0xff0000,
-		                                                         0xff00, 255);
+				0xff00, 255);
 		WritableRaster writableraster = Raster.createWritableRaster(
 				directcolormodel.createCompatibleSampleModel(width, height),
 				databufferint, null);
 		return new BufferedImage(directcolormodel, writableraster, false,
-		                         new Hashtable());
+				new Hashtable());
 	}
 
 	@Override

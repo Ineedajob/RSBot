@@ -39,7 +39,7 @@ public class ClanChat extends MethodProvider {
 		String temp = null;
 		if (isInformationOpen()) {
 			temp = methods.interfaces.getComponent(INTERFACE_CLAN_CHAT_INFO,
-			                                       INTERFACE_CLAN_CHAT_INFO_CHANNEL_OWNER).getText();
+					INTERFACE_CLAN_CHAT_INFO_CHANNEL_OWNER).getText();
 		} else {
 			if (methods.game.getCurrentTab() != Game.TAB_CLAN_CHAT) {
 				methods.game.openTab(Game.TAB_CLAN_CHAT);
@@ -48,7 +48,7 @@ public class ClanChat extends MethodProvider {
 				if (openInformation()) {
 					if (isInformationOpen()) {
 						temp = methods.interfaces.getComponent(INTERFACE_CLAN_CHAT_INFO,
-						                                       INTERFACE_CLAN_CHAT_INFO_CHANNEL_OWNER).getText();
+								INTERFACE_CLAN_CHAT_INFO_CHANNEL_OWNER).getText();
 					}
 				}
 			}
@@ -68,7 +68,7 @@ public class ClanChat extends MethodProvider {
 		String temp = null;
 		if (isInformationOpen()) {
 			temp = methods.interfaces.getComponent(INTERFACE_CLAN_CHAT_INFO,
-			                                       INTERFACE_CLAN_CHAT_INFO_CHANNEL_NAME).getText();
+					INTERFACE_CLAN_CHAT_INFO_CHANNEL_NAME).getText();
 		} else {
 			if (methods.game.getCurrentTab() != Game.TAB_CLAN_CHAT) {
 				methods.game.openTab(Game.TAB_CLAN_CHAT);
@@ -77,7 +77,7 @@ public class ClanChat extends MethodProvider {
 				if (openInformation()) {
 					if (isInformationOpen()) {
 						temp = methods.interfaces.getComponent(INTERFACE_CLAN_CHAT_INFO,
-						                                       INTERFACE_CLAN_CHAT_INFO_CHANNEL_NAME).getText();
+								INTERFACE_CLAN_CHAT_INFO_CHANNEL_NAME).getText();
 					}
 				}
 			}
@@ -101,7 +101,7 @@ public class ClanChat extends MethodProvider {
 		if (methods.game.getCurrentTab() == Game.TAB_CLAN_CHAT) {
 			if (methods.interfaces.getComponent(INTERFACE_CLAN_CHAT, INTERFACE_CLAN_CHAT_USERS_LIST) != null) {
 				for (RSComponent comp : methods.interfaces.getComponent(INTERFACE_CLAN_CHAT,
-				                                                        INTERFACE_CLAN_CHAT_USERS_LIST).getComponents()) {
+						INTERFACE_CLAN_CHAT_USERS_LIST).getComponents()) {
 					if (comp.getText() != null) {
 						tempList.add(comp.getText().trim());
 					} else {
@@ -149,7 +149,7 @@ public class ClanChat extends MethodProvider {
 			if (methods.game.getCurrentTab() == Game.TAB_CLAN_CHAT) {
 				if (isInChannel()) {
 					methods.interfaces.getComponent(INTERFACE_CLAN_CHAT_INFO,
-					                                INTERFACE_CLAN_CHAT_INFO_BUTTON).doClick();
+							INTERFACE_CLAN_CHAT_INFO_BUTTON).doClick();
 				} else {
 					return false;
 				}
@@ -192,7 +192,7 @@ public class ClanChat extends MethodProvider {
 			if (methods.game.getCurrentTab() == Game.TAB_CLAN_CHAT) {
 				if (isInChannel()) {
 					methods.interfaces.getComponent(INTERFACE_CLAN_CHAT_SETTINGS,
-					                                INTERFACE_CLAN_CHAT_SETTINGS_BUTTON).doClick();
+							INTERFACE_CLAN_CHAT_SETTINGS_BUTTON).doClick();
 				} else {
 					return false;
 				}
@@ -209,7 +209,7 @@ public class ClanChat extends MethodProvider {
 	public boolean closeSettings() {
 		if (isSettingsOpen()) {
 			methods.interfaces.getComponent(INTERFACE_CLAN_CHAT_SETTINGS,
-			                                INTERFACE_CLAN_CHAT_SETTINGS_CLOSE_BUTTON).doClick();
+					INTERFACE_CLAN_CHAT_SETTINGS_CLOSE_BUTTON).doClick();
 		}
 		return !isSettingsOpen();
 	}

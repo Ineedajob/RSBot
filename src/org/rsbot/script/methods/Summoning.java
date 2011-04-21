@@ -35,85 +35,85 @@ public class Summoning extends MethodProvider {
 	public static enum Familiar {
 
 		SPIRIT_WOLF("Spirit Wolf", 1, 6, 3, "Howl", 0), DREADFOWL("Dreadfowl",
-		                                                          4, 4, 3, "Dreadfowl Strike", 0), SPIRIT_SPIDER(
+				4, 4, 3, "Dreadfowl Strike", 0), SPIRIT_SPIDER(
 				"Spirit spider",
 				10, 15, 6, "Egg Spawn", 0), THORNY_SNAIL("Thorny snail", 13,
-		                                                 16, 3, "Slime Spray", 3), GRANITE_CRAB("Granite crab", 16, 18,
-		                                                                                        12, "Stony Shell",
-		                                                                                        0), MOSQUITO("Mosquito",
-		                                                                                                     17, 12, 3,
-		                                                                                                     "Pester",
-		                                                                                                     0), DESERT_WYRM(
+				16, 3, "Slime Spray", 3), GRANITE_CRAB("Granite crab", 16, 18,
+				12, "Stony Shell",
+				0), MOSQUITO("Mosquito",
+				17, 12, 3,
+				"Pester",
+				0), DESERT_WYRM(
 				"Desert wyrm", 18, 19, 6,
 				"Electric Lash", 0), SPIRIT_SCORPION("Spirit scorpion", 19, 17,
-		                                             6, "Venom Shot", 0), SPIRIT_TZ_KIH("Spirit Tz-Kih", 22, 18, 6,
-		                                                                                "Fireball Assault",
-		                                                                                0), ALBINO_RAT("Albino rat", 23,
-		                                                                                               22, 6,
-		                                                                                               "Cheese Feast",
-		                                                                                               0), SPIRIT_KALPHITE(
+				6, "Venom Shot", 0), SPIRIT_TZ_KIH("Spirit Tz-Kih", 22, 18, 6,
+				"Fireball Assault",
+				0), ALBINO_RAT("Albino rat", 23,
+				22, 6,
+				"Cheese Feast",
+				0), SPIRIT_KALPHITE(
 				"Spirit kalphite", 25, 22,
 				6, "Sandstorm", 6), COMPOST_MOUND("Compost Mound", 28, 24, 12,
-		                                          "Generate Compost", 0), GIANT_CHINCHOMPA("Giant chinchompa",
-		                                                                                   29, 31, 3, "Explode",
-		                                                                                   0), VAMPIRE_BAT(
+				"Generate Compost", 0), GIANT_CHINCHOMPA("Giant chinchompa",
+				29, 31, 3, "Explode",
+				0), VAMPIRE_BAT(
 				"Vampire bat", 31, 33, 4,
 				"Vampire Touch", 0), HONEY_BADGER("Honey badger", 32, 25, 12,
-		                                          "Insane Ferocity", 0), BEAVER("Beaver", 33, 27, 3, "Multichop",
-		                                                                        0), VOID_RAVAGER("Void ravager", 34, 27,
-		                                                                                         3, "Call to Arms",
-		                                                                                         0), VOID_SHIFTER(
+				"Insane Ferocity", 0), BEAVER("Beaver", 33, 27, 3, "Multichop",
+				0), VOID_RAVAGER("Void ravager", 34, 27,
+				3, "Call to Arms",
+				0), VOID_SHIFTER(
 				"Void shifter", 34, 94, 3, "Call to Arms", 0), VOID_SPINNER(
 				"Void spinner", 34, 27, 3, "Call to Arms", 0), VOID_TORCHER(
 				"Void torcher", 34, 94, 3, "Call to Arms", 0), BRONZE_MINOTAUR(
 				"Bronze minotaur", 36, 30, 6, "Bronze Bull Rush", 0), BULL_ANT(
 				"Bull ant", 40, 30, 12, "Unburden", 9), MACAW("Macaw", 41, 31,
-		                                                      12, "Herbcall", 0), EVIL_TURNIP("Evil turnip", 42, 30, 6,
-		                                                                                      "Evil Flames",
-		                                                                                      0), SPIRIT_COCKATRICE(
+				12, "Herbcall", 0), EVIL_TURNIP("Evil turnip", 42, 30, 6,
+				"Evil Flames",
+				0), SPIRIT_COCKATRICE(
 				"Spirit cockatrice", 43,
 				36, 3, "Petrifying Gaze", 0), IRON_MINOTAUR("Iron minotaur",
-		                                                    46, 37, 6, "Iron Bull Rush", 0), PYRELORD("Pyrelord", 46,
-		                                                                                              32,
-		                                                                                              6, "Immense Heat",
-		                                                                                              0), MAGPIE(
+				46, 37, 6, "Iron Bull Rush", 0), PYRELORD("Pyrelord", 46,
+				32,
+				6, "Immense Heat",
+				0), MAGPIE(
 				"Magpie", 47, 34, 12,
 				"Thieving Fingers", 0), BLOATED_LEECH("Bloated leech", 49, 34,
-		                                              6, "Blood Drain", 0), SPIRIT_TERRORBIRD("Spirit terrorbird",
-		                                                                                      52, 36, 8, "Tireless Run",
-		                                                                                      12), ABYSSAL_PARASITE(
+				6, "Blood Drain", 0), SPIRIT_TERRORBIRD("Spirit terrorbird",
+				52, 36, 8, "Tireless Run",
+				12), ABYSSAL_PARASITE(
 				"Abyssal parasite", 54, 30, 6, "Abyssal Drain", 7), SPIRIT_JELLY(
 				"Spirit jelly", 55, 43, 6, "Dissolve", 0), IBIS("Ibis", 56, 38,
-		                                                        12, "Fish Rain", 0), STEEL_MINOTAUR("Steel minotaur",
-		                                                                                            56, 46,
-		                                                                                            6,
-		                                                                                            "Steel Bull Rush",
-		                                                                                            0), SPIRIT_GRAAHK(
+				12, "Fish Rain", 0), STEEL_MINOTAUR("Steel minotaur",
+				56, 46,
+				6,
+				"Steel Bull Rush",
+				0), SPIRIT_GRAAHK(
 				"Spirit graahk", 57,
 				49, 3, "Goad", 0), SPIRIT_KYATT("Spirit kyatt", 57, 49, 3,
-		                                        "Ambush", 0), SPIRIT_LARUPIA("Spirit larupia", 57, 49, 6,
-		                                                                     "Rending", 0), KARAMTHULHU_OVERLORD(
+				"Ambush", 0), SPIRIT_LARUPIA("Spirit larupia", 57, 49, 6,
+				"Rending", 0), KARAMTHULHU_OVERLORD(
 				"Karamthulhu overlord", 58,
 				44, 3, "Doomspere Device", 0), SMOKE_DEVIL("Smoke devil", 61,
-		                                                   48, 6, "Dust Cloud", 0), ABYSSAL_LURKER("Abyssal lurker", 62,
-		                                                                                           41, 20,
-		                                                                                           "Abyssal Stealth",
-		                                                                                           7), SPIRIT_COBRA(
+				48, 6, "Dust Cloud", 0), ABYSSAL_LURKER("Abyssal lurker", 62,
+				41, 20,
+				"Abyssal Stealth",
+				7), SPIRIT_COBRA(
 				"Spirit cobra", 63,
 				56, 3, "Ophidian Incubation", 0), STRANGER_PLANT(
 				"Stranger plant", 64, 49, 6, "Poisonous Blast", 0), BARKER_TOAD(
 				"Barker toad", 66, 8, 6, "Toad Bark", 0), MITHRIL_MINOTAUR(
 				"Mithril minotaur", 66, 55, 6, "Mithril Bull Rush", 0), WAR_TORTOISE(
 				"War tortoise", 67, 43, 20, "Testudo", 18), BUNYIP("Bunyip",
-		                                                           68, 44, 3, "Swallow Whole", 0), FRUIT_BAT(
+				68, 44, 3, "Swallow Whole", 0), FRUIT_BAT(
 				"Fruit bat", 69, 45,
 				6, "Fruitfall", 0), RAVENOUS_LOCUST("Ravenous locust", 70, 24,
-		                                            12, "Famine", 0), ARCTIC_BEAR("Arctic bear", 71, 28, 6,
-		                                                                          "Arctic Blast", 0), PHOENIX("Phoenix",
-		                                                                                                      72, 30,
-		                                                                                                      12,
-		                                                                                                      "Rise from the Ashes",
-		                                                                                                      0), OBSIDIAN_GOLEM(
+				12, "Famine", 0), ARCTIC_BEAR("Arctic bear", 71, 28, 6,
+				"Arctic Blast", 0), PHOENIX("Phoenix",
+				72, 30,
+				12,
+				"Rise from the Ashes",
+				0), OBSIDIAN_GOLEM(
 				"Obsidian golem", 73,
 				55, 12, "Volcanic Strength", 0), GRANITE_LOBSTER(
 				"Granite lobster", 74, 47, 6, "Crushing Claw", 0), PRAYING_MANTIS(
@@ -224,7 +224,7 @@ public class Summoning extends MethodProvider {
 	 */
 	public boolean isFamiliarSummoned() {
 		return methods.interfaces.getComponent(INTERFACE_TAB_SUMMONING, 3)
-		                         .getBackgroundColor() == 1802;
+				.getBackgroundColor() == 1802;
 	}
 
 	/**
@@ -234,10 +234,10 @@ public class Summoning extends MethodProvider {
 	 */
 	public boolean doAction(String act) {
 		return methods.interfaces.get(INTERFACE_TAB_SUMMONING)
-		                         .getComponent(INTERFACE_TAB_SUMMONING_CHILD).isValid()
+				.getComponent(INTERFACE_TAB_SUMMONING_CHILD).isValid()
 				&& methods.interfaces.get(INTERFACE_TAB_SUMMONING)
-				                     .getComponent(INTERFACE_TAB_SUMMONING_CHILD)
-				                     .doAction(act);
+				.getComponent(INTERFACE_TAB_SUMMONING_CHILD)
+				.doAction(act);
 	}
 
 	/**
@@ -247,7 +247,7 @@ public class Summoning extends MethodProvider {
 	 */
 	public boolean doAttack() {
 		return methods.interfaces.getComponent(INTERFACE_TAB_SUMMONING,
-		                                       INTERFACE_TAB_SUMMONING_CHILD).doAction("Attack");
+				INTERFACE_TAB_SUMMONING_CHILD).doAction("Attack");
 	}
 
 	/**
@@ -259,7 +259,7 @@ public class Summoning extends MethodProvider {
 		return isFamiliarSummoned()
 				&& methods.inventory.getItemID(getFamiliar().getScrollName()) != -1
 				&& methods.interfaces.getComponent(INTERFACE_TAB_SUMMONING,
-				                                   INTERFACE_TAB_SUMMONING_CHILD).doAction("Cast");
+				INTERFACE_TAB_SUMMONING_CHILD).doAction("Cast");
 
 	}
 
@@ -270,7 +270,7 @@ public class Summoning extends MethodProvider {
 	 */
 	public boolean doCancel() {
 		return methods.interfaces.getComponent(INTERFACE_TAB_SUMMONING,
-		                                       INTERFACE_TAB_SUMMONING_CHILD).doAction("Cancel");
+				INTERFACE_TAB_SUMMONING_CHILD).doAction("Cancel");
 	}
 
 	/**
@@ -281,9 +281,9 @@ public class Summoning extends MethodProvider {
 	public boolean doRenewFamiliar() {
 		return isFamiliarSummoned()
 				&& methods.inventory.getItemID(getFamiliar().getName()
-						                               + " pouch") != -1
+				+ " pouch") != -1
 				&& methods.interfaces.getComponent(INTERFACE_TAB_SUMMONING,
-				                                   INTERFACE_TAB_SUMMONING_CHILD).doAction(
+				INTERFACE_TAB_SUMMONING_CHILD).doAction(
 				"Renew Familiar");
 	}
 
@@ -294,7 +294,7 @@ public class Summoning extends MethodProvider {
 	 */
 	public boolean doTakeBob() {
 		return methods.interfaces.getComponent(INTERFACE_TAB_SUMMONING,
-		                                       INTERFACE_TAB_SUMMONING_CHILD).doAction("Take BoB");
+				INTERFACE_TAB_SUMMONING_CHILD).doAction("Take BoB");
 	}
 
 	/**
@@ -304,7 +304,7 @@ public class Summoning extends MethodProvider {
 	 */
 	public boolean doDismiss() {
 		methods.interfaces.getComponent(INTERFACE_TAB_SUMMONING,
-		                                INTERFACE_TAB_SUMMONING_CHILD).doAction("Dismiss");
+				INTERFACE_TAB_SUMMONING_CHILD).doAction("Dismiss");
 
 		RSComponent dismissInterface = methods.interfaces.getComponent(228, 2);
 
@@ -324,7 +324,7 @@ public class Summoning extends MethodProvider {
 	 */
 	public boolean doCallFollower() {
 		return methods.interfaces.getComponent(INTERFACE_TAB_SUMMONING,
-		                                       INTERFACE_TAB_SUMMONING_CHILD).doAction("Call Follower");
+				INTERFACE_TAB_SUMMONING_CHILD).doAction("Call Follower");
 	}
 
 	/**
@@ -334,7 +334,7 @@ public class Summoning extends MethodProvider {
 	 */
 	public boolean doShowDetails() {
 		return methods.interfaces.getComponent(INTERFACE_TAB_SUMMONING,
-		                                       INTERFACE_TAB_SUMMONING_CHILD).doAction("Follower Details");
+				INTERFACE_TAB_SUMMONING_CHILD).doAction("Follower Details");
 	}
 
 	/**
@@ -386,13 +386,13 @@ public class Summoning extends MethodProvider {
 	 */
 	public boolean setLeftClickOption(int option) {
 		methods.interfaces.getComponent(INTERFACE_TAB_SUMMONING,
-		                                INTERFACE_TAB_SUMMONING_CHILD).doAction(
+				INTERFACE_TAB_SUMMONING_CHILD).doAction(
 				"Select left-click option");
 		sleep(random(300, 400));
 		return methods.interfaces.getComponent(INTERFACE_OPTIONS, option)
-		                         .doClick()
+				.doClick()
 				&& methods.interfaces.getComponent(INTERFACE_OPTIONS, 5)
-				                     .doClick();
+				.doClick();
 	}
 
 	/**
@@ -403,7 +403,7 @@ public class Summoning extends MethodProvider {
 	public Familiar getFamiliar() {
 		for (int element : methods.client.getRSNPCIndexArray()) {
 			Node node = methods.nodes.lookup(methods.client.getRSNPCNC(),
-			                                 element);
+					element);
 			if (node == null || !(node instanceof RSNPCNode)) {
 				continue;
 			}

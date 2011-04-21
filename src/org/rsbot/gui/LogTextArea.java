@@ -23,7 +23,7 @@ public class LogTextArea extends JList {
 	public static final int MAX_ENTRIES = 100;
 
 	public static final Rectangle BOTTOM_OF_WINDOW = new Rectangle(0,
-	                                                               Integer.MAX_VALUE, 0, 0);
+			Integer.MAX_VALUE, 0, 0);
 
 	private static final long serialVersionUID = 0;
 
@@ -52,7 +52,7 @@ public class LogTextArea extends JList {
 					"[%s] %-" + maxLen + "s %s %s",
 					dateFormat.format(record.getMillis()),
 					name.length() > maxLen ? name.substring(0,
-					                                        maxLen - append.length())
+							maxLen - append.length())
 							+ append : name, record.getMessage(),
 					StringUtil.throwableToString(record.getThrown()));
 		}
@@ -174,7 +174,7 @@ public class LogTextArea extends JList {
 			result.setComponentOrientation(list.getComponentOrientation());
 			result.setFont(list.getFont());
 			result.setBorder(cellHasFocus || isSelected ? SELECTED_BORDER
-			                                            : EMPTY_BORDER);
+					: EMPTY_BORDER);
 
 			result.setForeground(Color.DARK_GRAY);
 			result.setBackground(Color.WHITE);
