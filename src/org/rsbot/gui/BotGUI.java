@@ -163,7 +163,7 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 			menuBar.saveProps();
 			if (option.equals("Accounts")) {
 				AccountManager.getInstance().showGUI();
-			} else if (option.equals("Easter")) {
+			} else if (option.equals("Enable Easter")) {
 				Injector.easterMode = ((JCheckBoxMenuItem) evt.getSource()).isSelected();
 			} else if (option.equals("Disable Advertisements")) {
 				showAds = ((JCheckBoxMenuItem) evt.getSource()).isSelected();

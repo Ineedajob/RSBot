@@ -19,7 +19,7 @@ public class DrawMouse implements PaintListener {
 	private final Object lock = new Object();
 	private final ArrayList<Particle> p = new ArrayList<Particle>();
 	private Color[] fadeArray = {Color.red, Color.white, Color.green, new Color(128, 0, 128), Color.yellow,
-			Color.black, Color.orange, Color.pink};
+	                             Color.black, Color.orange, Color.pink};
 	private Point lastPoint = new Point(0, 0);
 	static java.util.Random generator = new java.util.Random();
 
@@ -59,15 +59,14 @@ public class DrawMouse implements PaintListener {
 				if (Point.distance(x, y, lastPoint.x, lastPoint.y) > 15) {
 					lastPoint = new Point(x, y);
 					synchronized (lock) {
-						for (int i = 0; i < 50; i++, p.add(new Particle(x, y, fadeArray[random(0, fadeArray.length)]))) {
-							;
-						}
+						for (int i = 0; i < 50;
+						     i++, p.add(new Particle(x, y, fadeArray[random(0, fadeArray.length)], 0)));
 					}
 				}
 				if (mouse.isPressed()) {
 					lastPoint = new Point(x, y);
 					synchronized (lock) {
-						for (int i = 0; i < 50; i++, p.add(new Particle(x, y, Color.green.darker()))) {
+						for (int i = 0; i < 50; i++, p.add(new Particle(x, y, Color.yellow, 1))) {
 							;
 						}
 					}
@@ -160,13 +159,15 @@ public class DrawMouse implements PaintListener {
 		private double movY;
 		private int alpha = 255;
 		private Color color;
+		private int off = 0;
 
-		Particle(int pos_x, int pos_y, Color color) {
+		Particle(int pos_x, int pos_y, Color color, int off) {
 			posX = (double) pos_x;
 			posY = (double) pos_y;
 			movX = ((double) generator.nextInt(40) - 20) / 16;
 			movY = ((double) generator.nextInt(40) - 20) / 16;
 			this.color = color;
+			this.off = off;
 		}
 
 		public boolean handle(Graphics page) {
@@ -175,7 +176,7 @@ public class DrawMouse implements PaintListener {
 				return false;
 			}
 			page.setColor(new Color(color.getRed(), color.getBlue(), color.getGreen(), alpha));
-			page.drawLine((int) posX, (int) posY, (int) posX, (int) posY);
+			page.drawLine((int) posX, (int) posY, (int) posX + off, (int) posY + off);
 			posX += movX;
 			posY += movY;
 			return true;
