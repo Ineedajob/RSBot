@@ -57,7 +57,17 @@ public class DrawMouse implements PaintListener {
 			if (Point.distance(x, y, lastPoint.x, lastPoint.y) > 15) {
 				lastPoint = new Point(x, y);
 				synchronized (lock) {
-					for (int i = 0; i < 50; i++, p.add(new Particle(x, y, fadeArray[random(0, fadeArray.length)])));
+					for (int i = 0; i < 50; i++, p.add(new Particle(x, y, fadeArray[random(0, fadeArray.length)]))) {
+						;
+					}
+				}
+			}
+			if (mouse.isPressed()) {
+				lastPoint = new Point(x, y);
+				synchronized (lock) {
+					for (int i = 0; i < 100; i++, p.add(new Particle(x, y, fadeArray[random(0, fadeArray.length)]))) {
+						;
+					}
 				}
 			}
 			synchronized (lock) {

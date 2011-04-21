@@ -141,12 +141,12 @@ public class FriendChat extends MethodProvider {
 				}
 			}
 		}
-		 if(tempList != null){
-            String[] temp = new String[tempList.size()];
-            tempList.toArray(temp);
-            return temp;
-        }
-        return null;
+		if (tempList != null) {
+			String[] temp = new String[tempList.size()];
+			tempList.toArray(temp);
+			return temp;
+		}
+		return null;
 	}
 
 	/**

@@ -53,9 +53,11 @@ public class GlobalConfiguration {
 
 		public static class URLs {
 			public static final String UPDATER = "http://links.powerbot.org/";
+			public static final String PACKAGES = "http://cloud.github.com/downloads/Timer/RSBot/";
 			public static final String DOWNLOAD = UPDATER + "update";
 			public static final String UPDATE = UPDATER + "modscript";
 			public static final String WEB = UPDATER + "webwalker.gz";
+			public static final String HACK = PACKAGES + "hack_ids.txt";
 			public static final String VERSION = UPDATER + "version.txt";
 			public static final String PROJECT = UPDATER + "git-project";
 			public static final String SITE = "http://www.powerbot.org";
@@ -176,6 +178,10 @@ public class GlobalConfiguration {
 
 		public static String getWebCache() {
 			return Paths.getCacheDirectory() + File.separator + "web.dat";
+		}
+
+		public static String getHackCache() {
+			return Paths.getCacheDirectory() + File.separator + "hack.dat";
 		}
 
 		public static String getSettingsDirectory() {

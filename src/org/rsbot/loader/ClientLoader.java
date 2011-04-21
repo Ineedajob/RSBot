@@ -1,5 +1,6 @@
 package org.rsbot.loader;
 
+import org.rsbot.injection.Injector;
 import org.rsbot.loader.asm.ClassReader;
 import org.rsbot.loader.script.ModScript;
 import org.rsbot.loader.script.ParseException;
@@ -91,14 +92,11 @@ public class ClientLoader {
 			checkVersion(jar.getInputStream(jar.getJarEntry("client.class")));
 
 			log.info("Processing client");
-			Enumeration<JarEntry> entries = jar.entries();
-			while (entries.hasMoreElements()) {
-				JarEntry entry = entries.nextElement();
-				String name = entry.getName();
-				if (name.endsWith(".class")) {
-					name = name.substring(0, name.length() - 6).replace('/', '.');
-					classes.put(name, script.process(name, jar.getInputStream(entry)));
-				}
+			Injector injector = new Injector();
+			try {
+				classes = injector.init(script);
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		} else {
 			log.info("Downloading client: " + target);
