@@ -60,7 +60,6 @@ public class FriendChat extends MethodProvider {
 	 * Joins the given channel.
 	 * If we are already in a channel, it will leave it.
 	 *
-	 * @param channel The channel to join
 	 * @return <tt>true</tt> if successful; otherwise <tt>false</tt>
 	 */
 	public boolean joinLastChannel() {
@@ -123,7 +122,6 @@ public class FriendChat extends MethodProvider {
 	 * @return The users in the channel or null if unavailable
 	 */
 	public String[] getChannelUsers() {
-		String[] temp = null;
 		ArrayList<String> tempList = new ArrayList<String>();
 		if (methods.game.getCurrentTab() != Game.TAB_FRIENDS_CHAT) {
 			methods.game.openTab(Game.TAB_FRIENDS_CHAT);
@@ -143,8 +141,12 @@ public class FriendChat extends MethodProvider {
 				}
 			}
 		}
-		tempList.toArray(temp);
-		return temp;
+		 if(tempList != null){
+            String[] temp = new String[tempList.size()];
+            tempList.toArray(temp);
+            return temp;
+        }
+        return null;
 	}
 
 	/**

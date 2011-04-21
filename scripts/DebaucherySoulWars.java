@@ -1,23 +1,4 @@
 // <editor-fold defaultstate="collapsed" desc="Imports">
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.RenderingHints;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import javax.imageio.ImageIO;
 
 import org.rsbot.event.events.MessageEvent;
 import org.rsbot.event.listeners.MessageListener;
@@ -30,16 +11,18 @@ import org.rsbot.script.methods.Game;
 import org.rsbot.script.methods.Skills;
 import org.rsbot.script.util.Filter;
 import org.rsbot.script.util.Timer;
-import org.rsbot.script.wrappers.RSArea;
-import org.rsbot.script.wrappers.RSComponent;
-import org.rsbot.script.wrappers.RSGroundItem;
-import org.rsbot.script.wrappers.RSItem;
-import org.rsbot.script.wrappers.RSModel;
-import org.rsbot.script.wrappers.RSNPC;
-import org.rsbot.script.wrappers.RSObject;
-import org.rsbot.script.wrappers.RSPath;
-import org.rsbot.script.wrappers.RSPlayer;
-import org.rsbot.script.wrappers.RSTile;
+import org.rsbot.script.wrappers.*;
+
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 // </editor-fold>
 
 @ScriptManifest(authors = "Debauchery", name = "DebaucherySoulWars", version = 0.51, description = "Start the script in soulwars lobby")
@@ -57,7 +40,7 @@ public class DebaucherySoulWars extends Script implements MouseListener, Message
             bandageTableID = {42023, 42024},
             barricadeID = {8600},
             blueAvatarID = {8597}, redAvatarID = {8596}, fragmentID = {
-        14646, 15792}, arrowsID = {9242, 13280, 9142, 864, 863};
+            14646, 15792}, arrowsID = {9242, 13280, 9142, 864, 863};
     private String result, task, breakHandlerStatus;
     @SuppressWarnings("unused")
     private boolean randomTeam, lastWonTeam, lastLostTeam, redTeam, blueTeam,
@@ -703,8 +686,6 @@ public class DebaucherySoulWars extends Script implements MouseListener, Message
 
     public RSPlayer teamMate() {
         return players.getNearest(new Filter<RSPlayer>() {
-
-            @Override
             public boolean accept(RSPlayer player) {
                 return player != null
                         && player.getTeam() == getMyPlayer().getTeam()
@@ -750,7 +731,6 @@ public class DebaucherySoulWars extends Script implements MouseListener, Message
     public RSPlayer opponent() {
         return players.getNearest(new Filter<RSPlayer>() {
 
-            @Override
             public boolean accept(RSPlayer player) {
                 return player != null
                         && player.getTeam() != getMyPlayer().getTeam()
@@ -1050,23 +1030,23 @@ public class DebaucherySoulWars extends Script implements MouseListener, Message
     private int specialUsage() {
         int[] amountUsage = {10, 25, 33, 35, 45, 50, 55, 60, 80, 85, 100};
         String[][] weapons = {
-            {"Rune thrownaxe", "Rod of ivandis"},
-            {"Dragon Dagger", "Dragon dagger (p)", "Dragon dagger (p+)",
-                "Dragon dagger (p++)", "Dragon Mace", "Dragon Spear",
-                "Dragon longsword", "Rune claws"},
-            {"Dragon Halberd"},
-            {"Magic Longbow"},
-            {"Magic Composite Bow"},
-            {"Dragon Claws", "Abyssal Whip", "Granite Maul", "Darklight",
-                "Barrelchest Anchor", "Armadyl Godsword"},
-            {"Magic Shortbow"},
-            {"Dragon Scimitar", "Dragon 2H Sword", "Zamorak Godsword",
-                "Korasi's sword"},
-            {"Dorgeshuun Crossbow", "Bone Dagger"},
-            {"Brine Sabre"},
-            {"Bandos Godsword", "Dragon Battleaxe", "Dragon Hatchet",
-                "Seercull Bow", "Excalibur", "Enhanced excalibur",
-                "Ancient Mace", "Saradomin sword"}};
+                {"Rune thrownaxe", "Rod of ivandis"},
+                {"Dragon Dagger", "Dragon dagger (p)", "Dragon dagger (p+)",
+                        "Dragon dagger (p++)", "Dragon Mace", "Dragon Spear",
+                        "Dragon longsword", "Rune claws"},
+                {"Dragon Halberd"},
+                {"Magic Longbow"},
+                {"Magic Composite Bow"},
+                {"Dragon Claws", "Abyssal Whip", "Granite Maul", "Darklight",
+                        "Barrelchest Anchor", "Armadyl Godsword"},
+                {"Magic Shortbow"},
+                {"Dragon Scimitar", "Dragon 2H Sword", "Zamorak Godsword",
+                        "Korasi's sword"},
+                {"Dorgeshuun Crossbow", "Bone Dagger"},
+                {"Brine Sabre"},
+                {"Bandos Godsword", "Dragon Battleaxe", "Dragon Hatchet",
+                        "Seercull Bow", "Excalibur", "Enhanced excalibur",
+                        "Ancient Mace", "Saradomin sword"}};
         String str = equipment.getItem(Equipment.WEAPON).getName();
         str = str.substring(str.indexOf(">") + 1);
         for (int i = 0; i < weapons.length; i++) {
@@ -1286,7 +1266,7 @@ public class DebaucherySoulWars extends Script implements MouseListener, Message
     private void avatarStrat() {
         if (getMyLocation().equals(
                 (getMyPlayer().getTeam() == 1 ? Location.RED_AVATAR
-                : Location.BLUE_AVATAR))) {
+                        : Location.BLUE_AVATAR))) {
             heal();
             qPrayer();
             attackAvatar();
@@ -1389,39 +1369,39 @@ public class DebaucherySoulWars extends Script implements MouseListener, Message
     private enum Location {
 
         RED_WAITING(new RSArea(new RSTile(1909, 3167), new RSTile(1899, 3156)),
-        "Red waiting", false), BLUE_WAITING(new RSArea(new RSTile(1880,
-        3167), new RSTile(1869, 3157)), "Blue waiting", false), OUTSIDE(
-        new RSArea(new RSTile(1918, 3187), new RSTile(1862, 3149)),
-        "Lobby", false), RED_SPAWN(new RSArea(new RSTile(1951, 3234),
-        new RSTile(1958, 3244)), "Inside red spawn", false), BLUE_SPAWN(
-        new RSArea(new RSTile(1816, 3220), new RSTile(1823, 3230)),
-        "Inside blue spawn", false), BLUE_SPAWN_OUT(new RSArea(
-        new RSTile(1815, 3231), new RSTile(1808, 3219)),
-        "Outside blue spawn", true), RED_SPAWN_OUT(new RSArea(
-        new RSTile(1965, 3245), new RSTile(1959, 3232)),
-        "Outside red spawn", true), EAST_GRAVE(new RSArea(new RSTile(
-        1932, 3244), new RSTile(1934, 3246)), "Inside east grave",
-        false), WEST_GRAVE(new RSArea(new RSTile(1841, 3217),
-        new RSTile(1843, 3219)), "Inside west grave", false), EAST_GRAVE_OUT(
-        new RSArea(new RSTile(1937, 3250), new RSTile(1927, 3242)),
-        "Outside east grave", true), WEST_GRAVE_OUT(new RSArea(
-        new RSTile(1847, 3223), new RSTile(1837, 3214)),
-        "Outside west grave", true), RED_SUPPLIES(new RSArea(
-        new RSTile(1977, 3213), new RSTile(1961, 3203)),
-        "Red supplies", true), BLUE_SUPPLIES(new RSArea(new RSTile(
-        1812, 3261), new RSTile(1795, 3250)), "Blue Supplies", true), RED_AVATAR(
-        new RSArea(new RSTile(1976, 3261), new RSTile(1959, 3244)),
-        "Red avatar", true), BLUE_AVATAR(new RSArea(new RSTile(1816,
-        3220), new RSTile(1798, 3202)), "Blue avatar", true), SOUTHEAST_PYRES(
-        new RSArea(new RSTile(1938, 3222), new RSTile(1917, 3204)),
-        "Southeast pryes", true), NORTHWEST_PRYES(new RSArea(
-        new RSTile(1856, 3258), new RSTile(1834, 3238)),
-        "Northwest pryes", true), NORTH_JELLIES(new RSArea(new RSTile(
-        1906, 3263), new RSTile(1869, 3248)), "North jellies", true), SOUTH_JELLIES(
-        new RSArea(new RSTile(1899, 3214), new RSTile(1873, 3199)),
-        "South jellies", true), OBELISK(new RSArea(new RSTile(1901,
-        3241), new RSTile(1872, 3221)), "Obelisk", true), OTHER(
-        new RSArea(new RSTile(0, 0), new RSTile(0, 0)), "Other", false);
+                "Red waiting", false), BLUE_WAITING(new RSArea(new RSTile(1880,
+                3167), new RSTile(1869, 3157)), "Blue waiting", false), OUTSIDE(
+                new RSArea(new RSTile(1918, 3187), new RSTile(1862, 3149)),
+                "Lobby", false), RED_SPAWN(new RSArea(new RSTile(1951, 3234),
+                new RSTile(1958, 3244)), "Inside red spawn", false), BLUE_SPAWN(
+                new RSArea(new RSTile(1816, 3220), new RSTile(1823, 3230)),
+                "Inside blue spawn", false), BLUE_SPAWN_OUT(new RSArea(
+                new RSTile(1815, 3231), new RSTile(1808, 3219)),
+                "Outside blue spawn", true), RED_SPAWN_OUT(new RSArea(
+                new RSTile(1965, 3245), new RSTile(1959, 3232)),
+                "Outside red spawn", true), EAST_GRAVE(new RSArea(new RSTile(
+                1932, 3244), new RSTile(1934, 3246)), "Inside east grave",
+                false), WEST_GRAVE(new RSArea(new RSTile(1841, 3217),
+                new RSTile(1843, 3219)), "Inside west grave", false), EAST_GRAVE_OUT(
+                new RSArea(new RSTile(1937, 3250), new RSTile(1927, 3242)),
+                "Outside east grave", true), WEST_GRAVE_OUT(new RSArea(
+                new RSTile(1847, 3223), new RSTile(1837, 3214)),
+                "Outside west grave", true), RED_SUPPLIES(new RSArea(
+                new RSTile(1977, 3213), new RSTile(1961, 3203)),
+                "Red supplies", true), BLUE_SUPPLIES(new RSArea(new RSTile(
+                1812, 3261), new RSTile(1795, 3250)), "Blue Supplies", true), RED_AVATAR(
+                new RSArea(new RSTile(1976, 3261), new RSTile(1959, 3244)),
+                "Red avatar", true), BLUE_AVATAR(new RSArea(new RSTile(1816,
+                3220), new RSTile(1798, 3202)), "Blue avatar", true), SOUTHEAST_PYRES(
+                new RSArea(new RSTile(1938, 3222), new RSTile(1917, 3204)),
+                "Southeast pryes", true), NORTHWEST_PRYES(new RSArea(
+                new RSTile(1856, 3258), new RSTile(1834, 3238)),
+                "Northwest pryes", true), NORTH_JELLIES(new RSArea(new RSTile(
+                1906, 3263), new RSTile(1869, 3248)), "North jellies", true), SOUTH_JELLIES(
+                new RSArea(new RSTile(1899, 3214), new RSTile(1873, 3199)),
+                "South jellies", true), OBELISK(new RSArea(new RSTile(1901,
+                3241), new RSTile(1872, 3221)), "Obelisk", true), OTHER(
+                new RSArea(new RSTile(0, 0), new RSTile(0, 0)), "Other", false);
         private final RSArea area;
         private final String name;
         private final boolean combatArea;
@@ -1560,59 +1540,59 @@ public class DebaucherySoulWars extends Script implements MouseListener, Message
     private enum Summoning {
 
         SPIRITWOLF("Spirit wolf", 12047, 12425), DREADFOWL("Dreadfowl", 12043,
-        12445), MEERKAT("Meerkat", 19622, 19621), SPIRITSPIDER(
-        "Spirit spider", 12059, 12428), THORNYSNAIL("Thorny snail",
-        12019, 12459), GRANITECRAB("Granite crab", 12009, 12533), SPIRITMOSQUITO(
-        "Spirit mosquito", 12778, 12838), DESERTWYRM("Desert wyrm",
-        12049, 12460), SPIRITSCORPION("Spirit scorpion", 12055, 12432), SPIRITTZKIH(
-        "Spirit tz-kih", 12808, 12839), ALBINORAT("Albino rat", 12067,
-        12430), SPIRITKALPHITE("Spirit kalphite", 12063, 12446), COMPSTMOUND(
-        "Compost mound", 12091, 12440), GIANTCHINCHOMPA(
-        "Giant chinchompa", 12800, 12834), VAMPIREBAT("Vampire bat",
-        12053, 12447), HONEYBADGER("Honey badger", 12065, 12433), BEAVER(
-        "Beaver", 12021, 12429), VOIDRAVAGER("Void ravager", 12818,
-        12443), VOIDSPINNER("Void spinner", 12780, 12443), VOIDTOUCHER(
-        "Void torcher", 12798, 12443), VOIDSHIFTER("Void shifter",
-        12814, 12443), BULLANT("Bull ant", 12087, 12431), MACAW(
-        "Macaw", 12071, 12422), EVILTURNIP("Evil turnip", 12051, 12448), SPCOCKATRICE(
-        "Sp. cockatrice", 12095, 12458), SPGUTHATRICE("Sp. guthatrice",
-        12097, 12458), SPSARATRICE("Sp. saratrice", 12099, 12458), SPZAMATRICE(
-        "Sp. zamatrice", 12101, 12458), SPPENGATRICE("Sp. pengatrice",
-        12103, 12458), SPCORAXTRICE("Sp. coraxatrice", 12105, 12458), SPVULATRICE(
-        "Sp. vulatrice", 12107, 12458), PYRELORD("Pyrelord", 12816,
-        12829), MAGPIE("Magpie", 12041, 12426), BLOATEDLEECH(
-        "Bloated leech", 12061, 12444), SPIRITTERRORBIRD(
-        "Spirit terrorbird", 12007, 12441), ABYSSALPARASITE(
-        "Abyssal parasite", 12035, 12454), SPIRITJELLY("Spirit jelly",
-        12027, 12453), IBIS("Ibis", 12531, 12424), SPIRITKYATT(
-        "Spirit kyatt", 12812, 12836), SPIRITLARUPIA("Spirit larupia",
-        12784, 12840), SPIRITGRAAK("Spirit graahk", 12810, 12835), KARAMOVERLOAD(
-        "Karam. overlord", 12023, 12455), SMOKEDEVIL("Smoke devil",
-        12085, 12468), ABYSSALLURKER("Abyssal lurker", 12037, 12427), SPIRITCOBRA(
-        "Spirit cobra", 12015, 12436), STRANGERPLANT("Stranger plant",
-        12045, 12467), BARKERTOAD("Barker toad", 12123, 12452), WARTORTOISE(
-        "War tortoise", 12031, 12439), BUNYIP("Bunyip", 12029, 12438), FRUITBAT(
-        "Fruit bat", 12033, 12423), RAVENOUSLOCUST("Ravenous locust",
-        12820, 12830), ARCTICBEAR("Arctic bear", 12057, 12451), PHOENIX(
-        "Phoenix", 14623, 14622), OBSIDIANGOLEM("Obsidian golem",
-        12792, 12826), GRANITELOBSTER("Granite lobster", 12069, 12449), PRAYINGMANTIS(
-        "Praying mantis", 12011, 12450), FORGEREGENT("Forge regent",
-        12782, 12841), TALONBEAST("Talon beast", 12794, 12831), GIANTENT(
-        "Giant ent", 12013, 12457), FIRETITAN("Fire titan", 12802,
-        12824), MOSSTITAN("Moss titan", 12804, 12824), ICETITAN(
-        "Ice titan", 12806, 12824), HYDRA("Hydra", 12025, 12442), SPIRITDAGANNOTH(
-        "Spirit dagannoth", 12017, 12456), LAVATITAN("Lava titan",
-        12788, 12837), SWAMPTITAN("Swamp titan", 12776, 12832), BRONZEMINOTAUR(
-        "Bronze minotaur", 12073, 12461), IRONMINOTOUR("Iron minotaur",
-        12075, 12462), STEELMINOTOUR("Steel minotaur", 12077, 12463), MITHRILMINOTAUR(
-        "Mithril minotaur", 12079, 12464), ADAMANTMINOTAUR(
-        "Adamant minotaur", 12081, 12465), RUNEMINOTAUR(
-        "Rune minotaur", 12083, 12466), UNICORNSTALLION(
-        "Unicorn stallion", 12039, 12434), GEYSERTITAN("Geyser titan",
-        12786, 12833), WOLPERTINGER("Wolpertinger", 12089, 12437), ABYSSALTITAN(
-        "Abyssal titan", 12796, 12827), IRONTITAN("Iron titan", 12822,
-        12828), PACKYAK("Pack yak", 12093, 12435), STEELTITAN(
-        "Steel titan", 12790, 12825);
+                12445), MEERKAT("Meerkat", 19622, 19621), SPIRITSPIDER(
+                "Spirit spider", 12059, 12428), THORNYSNAIL("Thorny snail",
+                12019, 12459), GRANITECRAB("Granite crab", 12009, 12533), SPIRITMOSQUITO(
+                "Spirit mosquito", 12778, 12838), DESERTWYRM("Desert wyrm",
+                12049, 12460), SPIRITSCORPION("Spirit scorpion", 12055, 12432), SPIRITTZKIH(
+                "Spirit tz-kih", 12808, 12839), ALBINORAT("Albino rat", 12067,
+                12430), SPIRITKALPHITE("Spirit kalphite", 12063, 12446), COMPSTMOUND(
+                "Compost mound", 12091, 12440), GIANTCHINCHOMPA(
+                "Giant chinchompa", 12800, 12834), VAMPIREBAT("Vampire bat",
+                12053, 12447), HONEYBADGER("Honey badger", 12065, 12433), BEAVER(
+                "Beaver", 12021, 12429), VOIDRAVAGER("Void ravager", 12818,
+                12443), VOIDSPINNER("Void spinner", 12780, 12443), VOIDTOUCHER(
+                "Void torcher", 12798, 12443), VOIDSHIFTER("Void shifter",
+                12814, 12443), BULLANT("Bull ant", 12087, 12431), MACAW(
+                "Macaw", 12071, 12422), EVILTURNIP("Evil turnip", 12051, 12448), SPCOCKATRICE(
+                "Sp. cockatrice", 12095, 12458), SPGUTHATRICE("Sp. guthatrice",
+                12097, 12458), SPSARATRICE("Sp. saratrice", 12099, 12458), SPZAMATRICE(
+                "Sp. zamatrice", 12101, 12458), SPPENGATRICE("Sp. pengatrice",
+                12103, 12458), SPCORAXTRICE("Sp. coraxatrice", 12105, 12458), SPVULATRICE(
+                "Sp. vulatrice", 12107, 12458), PYRELORD("Pyrelord", 12816,
+                12829), MAGPIE("Magpie", 12041, 12426), BLOATEDLEECH(
+                "Bloated leech", 12061, 12444), SPIRITTERRORBIRD(
+                "Spirit terrorbird", 12007, 12441), ABYSSALPARASITE(
+                "Abyssal parasite", 12035, 12454), SPIRITJELLY("Spirit jelly",
+                12027, 12453), IBIS("Ibis", 12531, 12424), SPIRITKYATT(
+                "Spirit kyatt", 12812, 12836), SPIRITLARUPIA("Spirit larupia",
+                12784, 12840), SPIRITGRAAK("Spirit graahk", 12810, 12835), KARAMOVERLOAD(
+                "Karam. overlord", 12023, 12455), SMOKEDEVIL("Smoke devil",
+                12085, 12468), ABYSSALLURKER("Abyssal lurker", 12037, 12427), SPIRITCOBRA(
+                "Spirit cobra", 12015, 12436), STRANGERPLANT("Stranger plant",
+                12045, 12467), BARKERTOAD("Barker toad", 12123, 12452), WARTORTOISE(
+                "War tortoise", 12031, 12439), BUNYIP("Bunyip", 12029, 12438), FRUITBAT(
+                "Fruit bat", 12033, 12423), RAVENOUSLOCUST("Ravenous locust",
+                12820, 12830), ARCTICBEAR("Arctic bear", 12057, 12451), PHOENIX(
+                "Phoenix", 14623, 14622), OBSIDIANGOLEM("Obsidian golem",
+                12792, 12826), GRANITELOBSTER("Granite lobster", 12069, 12449), PRAYINGMANTIS(
+                "Praying mantis", 12011, 12450), FORGEREGENT("Forge regent",
+                12782, 12841), TALONBEAST("Talon beast", 12794, 12831), GIANTENT(
+                "Giant ent", 12013, 12457), FIRETITAN("Fire titan", 12802,
+                12824), MOSSTITAN("Moss titan", 12804, 12824), ICETITAN(
+                "Ice titan", 12806, 12824), HYDRA("Hydra", 12025, 12442), SPIRITDAGANNOTH(
+                "Spirit dagannoth", 12017, 12456), LAVATITAN("Lava titan",
+                12788, 12837), SWAMPTITAN("Swamp titan", 12776, 12832), BRONZEMINOTAUR(
+                "Bronze minotaur", 12073, 12461), IRONMINOTOUR("Iron minotaur",
+                12075, 12462), STEELMINOTOUR("Steel minotaur", 12077, 12463), MITHRILMINOTAUR(
+                "Mithril minotaur", 12079, 12464), ADAMANTMINOTAUR(
+                "Adamant minotaur", 12081, 12465), RUNEMINOTAUR(
+                "Rune minotaur", 12083, 12466), UNICORNSTALLION(
+                "Unicorn stallion", 12039, 12434), GEYSERTITAN("Geyser titan",
+                12786, 12833), WOLPERTINGER("Wolpertinger", 12089, 12437), ABYSSALTITAN(
+                "Abyssal titan", 12796, 12827), IRONTITAN("Iron titan", 12822,
+                12828), PACKYAK("Pack yak", 12093, 12435), STEELTITAN(
+                "Steel titan", 12790, 12825);
         private final String name;
         private final int pouchID;
 
@@ -1737,14 +1717,14 @@ public class DebaucherySoulWars extends Script implements MouseListener, Message
 
             ChooseTeam.setModel(new javax.swing.DefaultComboBoxModel(
                     new String[]{"Random", "Red", "Blue", "Last Won",
-                        "Last Lost", "Clan Chat"}));
+                            "Last Lost", "Clan Chat"}));
 
             jLabel5.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
             jLabel5.setText("Choose Activity: ");
 
             ChooseActivity.setModel(new javax.swing.DefaultComboBoxModel(
                     new String[]{"Random", "Attack Players", "Attack Pyres",
-                        "Attack Jellies", "Pure Mode"}));
+                            "Attack Jellies", "Pure Mode"}));
 
             AttackAvatar.setText("Attack Avatar");
 
@@ -1755,8 +1735,6 @@ public class DebaucherySoulWars extends Script implements MouseListener, Message
             Start.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
             Start.setText("Start");
             Start.addActionListener(new java.awt.event.ActionListener() {
-
-                @Override
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
                     StartActionPerformed(evt);
                 }
@@ -1766,8 +1744,6 @@ public class DebaucherySoulWars extends Script implements MouseListener, Message
 
             info.setText("Infomation");
             info.addActionListener(new java.awt.event.ActionListener() {
-
-                @Override
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
                     infoActionPerformed(evt);
                 }
@@ -1775,8 +1751,6 @@ public class DebaucherySoulWars extends Script implements MouseListener, Message
 
             donate.setText("Donate");
             donate.addActionListener(new java.awt.event.ActionListener() {
-
-                @Override
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
                     donateActionPerformed(evt);
                 }
@@ -1804,166 +1778,166 @@ public class DebaucherySoulWars extends Script implements MouseListener, Message
             jPanel1Layout.setHorizontalGroup(jPanel1Layout.createParallelGroup(
                     javax.swing.GroupLayout.Alignment.LEADING).addGroup(
                     jPanel1Layout.createSequentialGroup().addComponent(jLabel3).addContainerGap(108,
-                    Short.MAX_VALUE)).addComponent(jSeparator1,
+                            Short.MAX_VALUE)).addComponent(jSeparator1,
                     javax.swing.GroupLayout.DEFAULT_SIZE, 392,
                     Short.MAX_VALUE).addGroup(
                     jPanel1Layout.createSequentialGroup().addContainerGap().addGroup(
-                    jPanel1Layout.createParallelGroup(
-                    javax.swing.GroupLayout.Alignment.LEADING).addGroup(
-                    jPanel1Layout.createSequentialGroup().addGroup(
-                    jPanel1Layout.createParallelGroup(
-                    javax.swing.GroupLayout.Alignment.LEADING).addGroup(
-                    jPanel1Layout.createSequentialGroup().addGroup(
-                    jPanel1Layout.createParallelGroup(
-                    javax.swing.GroupLayout.Alignment.TRAILING).addGroup(
-                    jPanel1Layout.createSequentialGroup().addComponent(
-                    donate,
-                    javax.swing.GroupLayout.DEFAULT_SIZE,
-                    101,
-                    Short.MAX_VALUE).addGap(8,
-                    8,
-                    8)).addGroup(
-                    jPanel1Layout.createSequentialGroup().addComponent(
-                    info,
-                    javax.swing.GroupLayout.DEFAULT_SIZE,
-                    103,
-                    Short.MAX_VALUE).addPreferredGap(
-                    javax.swing.LayoutStyle.ComponentPlacement.RELATED))).addComponent(
-                    Start,
-                    javax.swing.GroupLayout.PREFERRED_SIZE,
-                    153,
-                    javax.swing.GroupLayout.PREFERRED_SIZE).addGap(19,
-                    19,
-                    19)).addGroup(
-                    javax.swing.GroupLayout.Alignment.TRAILING,
-                    jPanel1Layout.createSequentialGroup().addGroup(
-                    jPanel1Layout.createParallelGroup(
-                    javax.swing.GroupLayout.Alignment.LEADING).addComponent(
-                    jLabel4).addComponent(
-                    jLabel5)).addGap(32,
-                    32,
-                    32).addGroup(
-                    jPanel1Layout.createParallelGroup(
-                    javax.swing.GroupLayout.Alignment.TRAILING,
-                    false).addComponent(
-                    ChooseTeam,
-                    0,
-                    javax.swing.GroupLayout.DEFAULT_SIZE,
-                    Short.MAX_VALUE).addComponent(
-                    ChooseActivity,
-                    0,
-                    145,
-                    Short.MAX_VALUE).addComponent(
-                    ChooseLocation,
-                    javax.swing.GroupLayout.Alignment.LEADING,
-                    0,
-                    javax.swing.GroupLayout.DEFAULT_SIZE,
-                    Short.MAX_VALUE)))).addGap(101,
-                    101,
-                    101)).addGroup(
-                    jPanel1Layout.createSequentialGroup().addGroup(
-                    jPanel1Layout.createParallelGroup(
-                    javax.swing.GroupLayout.Alignment.TRAILING).addGroup(
-                    jPanel1Layout.createParallelGroup(
-                    javax.swing.GroupLayout.Alignment.LEADING).addComponent(
-                    PickUpBones).addComponent(
-                    GetSupplies)).addComponent(
-                    WeponSpec)).addPreferredGap(
-                    javax.swing.LayoutStyle.ComponentPlacement.UNRELATED).addGroup(
-                    jPanel1Layout.createParallelGroup(
-                    javax.swing.GroupLayout.Alignment.LEADING).addComponent(
-                    PickUpArrows).addComponent(
-                    HealOthers).addComponent(
-                    QuickPrayer)).addPreferredGap(
-                    javax.swing.LayoutStyle.ComponentPlacement.RELATED).addGroup(
-                    jPanel1Layout.createParallelGroup(
-                    javax.swing.GroupLayout.Alignment.LEADING).addGroup(
-                    jPanel1Layout.createSequentialGroup().addComponent(
-                    BuryAtGrave,
-                    javax.swing.GroupLayout.DEFAULT_SIZE,
-                    111,
-                    Short.MAX_VALUE).addContainerGap(
-                    81,
-                    javax.swing.GroupLayout.PREFERRED_SIZE)).addGroup(
-                    jPanel1Layout.createSequentialGroup().addComponent(
-                    AttackAvatar,
-                    javax.swing.GroupLayout.DEFAULT_SIZE,
-                    186,
-                    Short.MAX_VALUE).addContainerGap()))))).addGroup(
+                            jPanel1Layout.createParallelGroup(
+                                    javax.swing.GroupLayout.Alignment.LEADING).addGroup(
+                                    jPanel1Layout.createSequentialGroup().addGroup(
+                                            jPanel1Layout.createParallelGroup(
+                                                    javax.swing.GroupLayout.Alignment.LEADING).addGroup(
+                                                    jPanel1Layout.createSequentialGroup().addGroup(
+                                                            jPanel1Layout.createParallelGroup(
+                                                                    javax.swing.GroupLayout.Alignment.TRAILING).addGroup(
+                                                                    jPanel1Layout.createSequentialGroup().addComponent(
+                                                                            donate,
+                                                                            javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                            101,
+                                                                            Short.MAX_VALUE).addGap(8,
+                                                                            8,
+                                                                            8)).addGroup(
+                                                                    jPanel1Layout.createSequentialGroup().addComponent(
+                                                                            info,
+                                                                            javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                            103,
+                                                                            Short.MAX_VALUE).addPreferredGap(
+                                                                            javax.swing.LayoutStyle.ComponentPlacement.RELATED))).addComponent(
+                                                            Start,
+                                                            javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                            153,
+                                                            javax.swing.GroupLayout.PREFERRED_SIZE).addGap(19,
+                                                            19,
+                                                            19)).addGroup(
+                                                    javax.swing.GroupLayout.Alignment.TRAILING,
+                                                    jPanel1Layout.createSequentialGroup().addGroup(
+                                                            jPanel1Layout.createParallelGroup(
+                                                                    javax.swing.GroupLayout.Alignment.LEADING).addComponent(
+                                                                    jLabel4).addComponent(
+                                                                    jLabel5)).addGap(32,
+                                                            32,
+                                                            32).addGroup(
+                                                            jPanel1Layout.createParallelGroup(
+                                                                    javax.swing.GroupLayout.Alignment.TRAILING,
+                                                                    false).addComponent(
+                                                                    ChooseTeam,
+                                                                    0,
+                                                                    javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                    Short.MAX_VALUE).addComponent(
+                                                                    ChooseActivity,
+                                                                    0,
+                                                                    145,
+                                                                    Short.MAX_VALUE).addComponent(
+                                                                    ChooseLocation,
+                                                                    javax.swing.GroupLayout.Alignment.LEADING,
+                                                                    0,
+                                                                    javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                    Short.MAX_VALUE)))).addGap(101,
+                                            101,
+                                            101)).addGroup(
+                                    jPanel1Layout.createSequentialGroup().addGroup(
+                                            jPanel1Layout.createParallelGroup(
+                                                    javax.swing.GroupLayout.Alignment.TRAILING).addGroup(
+                                                    jPanel1Layout.createParallelGroup(
+                                                            javax.swing.GroupLayout.Alignment.LEADING).addComponent(
+                                                            PickUpBones).addComponent(
+                                                            GetSupplies)).addComponent(
+                                                    WeponSpec)).addPreferredGap(
+                                            javax.swing.LayoutStyle.ComponentPlacement.UNRELATED).addGroup(
+                                            jPanel1Layout.createParallelGroup(
+                                                    javax.swing.GroupLayout.Alignment.LEADING).addComponent(
+                                                    PickUpArrows).addComponent(
+                                                    HealOthers).addComponent(
+                                                    QuickPrayer)).addPreferredGap(
+                                            javax.swing.LayoutStyle.ComponentPlacement.RELATED).addGroup(
+                                            jPanel1Layout.createParallelGroup(
+                                                    javax.swing.GroupLayout.Alignment.LEADING).addGroup(
+                                                    jPanel1Layout.createSequentialGroup().addComponent(
+                                                            BuryAtGrave,
+                                                            javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                            111,
+                                                            Short.MAX_VALUE).addContainerGap(
+                                                            81,
+                                                            javax.swing.GroupLayout.PREFERRED_SIZE)).addGroup(
+                                                    jPanel1Layout.createSequentialGroup().addComponent(
+                                                            AttackAvatar,
+                                                            javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                            186,
+                                                            Short.MAX_VALUE).addContainerGap()))))).addGroup(
                     javax.swing.GroupLayout.Alignment.TRAILING,
                     jPanel1Layout.createSequentialGroup().addGap(200, 200, 200).addComponent(
-                    AttackEverywhere,
-                    javax.swing.GroupLayout.DEFAULT_SIZE,
-                    186, Short.MAX_VALUE).addContainerGap()).addGroup(
+                            AttackEverywhere,
+                            javax.swing.GroupLayout.DEFAULT_SIZE,
+                            186, Short.MAX_VALUE).addContainerGap()).addGroup(
                     jPanel1Layout.createSequentialGroup().addContainerGap().addComponent(jLabel18).addContainerGap(275,
-                    Short.MAX_VALUE)));
+                            Short.MAX_VALUE)));
             jPanel1Layout.setVerticalGroup(jPanel1Layout.createParallelGroup(
                     javax.swing.GroupLayout.Alignment.LEADING).addGroup(
                     jPanel1Layout.createSequentialGroup().addComponent(jLabel3).addGap(8, 8, 8).addComponent(
-                    jSeparator1,
-                    javax.swing.GroupLayout.PREFERRED_SIZE,
-                    javax.swing.GroupLayout.DEFAULT_SIZE,
-                    javax.swing.GroupLayout.PREFERRED_SIZE).addPreferredGap(
-                    javax.swing.LayoutStyle.ComponentPlacement.RELATED).addGroup(
-                    jPanel1Layout.createParallelGroup(
-                    javax.swing.GroupLayout.Alignment.BASELINE).addComponent(
-                    jLabel4).addComponent(
-                    ChooseTeam,
-                    javax.swing.GroupLayout.PREFERRED_SIZE,
-                    javax.swing.GroupLayout.DEFAULT_SIZE,
-                    javax.swing.GroupLayout.PREFERRED_SIZE)).addPreferredGap(
-                    javax.swing.LayoutStyle.ComponentPlacement.RELATED).addGroup(
-                    jPanel1Layout.createParallelGroup(
-                    javax.swing.GroupLayout.Alignment.BASELINE).addComponent(
-                    jLabel5).addComponent(
-                    ChooseActivity,
-                    javax.swing.GroupLayout.PREFERRED_SIZE,
-                    javax.swing.GroupLayout.DEFAULT_SIZE,
-                    javax.swing.GroupLayout.PREFERRED_SIZE)).addPreferredGap(
-                    javax.swing.LayoutStyle.ComponentPlacement.RELATED).addGroup(
-                    jPanel1Layout.createParallelGroup(
-                    javax.swing.GroupLayout.Alignment.BASELINE).addComponent(
-                    jLabel18).addComponent(
-                    ChooseLocation,
-                    javax.swing.GroupLayout.PREFERRED_SIZE,
-                    javax.swing.GroupLayout.DEFAULT_SIZE,
-                    javax.swing.GroupLayout.PREFERRED_SIZE)).addPreferredGap(
-                    javax.swing.LayoutStyle.ComponentPlacement.RELATED,
-                    8, Short.MAX_VALUE).addGroup(
-                    jPanel1Layout.createParallelGroup(
-                    javax.swing.GroupLayout.Alignment.BASELINE).addComponent(
-                    AttackEverywhere).addComponent(
-                    QuickPrayer).addComponent(
-                    WeponSpec)).addPreferredGap(
-                    javax.swing.LayoutStyle.ComponentPlacement.UNRELATED).addGroup(
-                    jPanel1Layout.createParallelGroup(
-                    javax.swing.GroupLayout.Alignment.BASELINE).addComponent(
-                    GetSupplies).addComponent(
-                    HealOthers).addComponent(
-                    AttackAvatar,
-                    javax.swing.GroupLayout.PREFERRED_SIZE,
-                    23,
-                    javax.swing.GroupLayout.PREFERRED_SIZE)).addPreferredGap(
-                    javax.swing.LayoutStyle.ComponentPlacement.UNRELATED).addGroup(
-                    jPanel1Layout.createParallelGroup(
-                    javax.swing.GroupLayout.Alignment.BASELINE).addComponent(
-                    PickUpBones).addComponent(
-                    PickUpArrows).addComponent(
-                    BuryAtGrave)).addPreferredGap(
-                    javax.swing.LayoutStyle.ComponentPlacement.UNRELATED).addGroup(
-                    jPanel1Layout.createParallelGroup(
-                    javax.swing.GroupLayout.Alignment.TRAILING,
-                    false).addGroup(
-                    jPanel1Layout.createSequentialGroup().addComponent(
-                    info).addPreferredGap(
-                    javax.swing.LayoutStyle.ComponentPlacement.RELATED,
-                    javax.swing.GroupLayout.DEFAULT_SIZE,
-                    Short.MAX_VALUE).addComponent(
-                    donate)).addComponent(
-                    Start,
-                    javax.swing.GroupLayout.PREFERRED_SIZE,
-                    55,
-                    javax.swing.GroupLayout.PREFERRED_SIZE)).addContainerGap()));
+                            jSeparator1,
+                            javax.swing.GroupLayout.PREFERRED_SIZE,
+                            javax.swing.GroupLayout.DEFAULT_SIZE,
+                            javax.swing.GroupLayout.PREFERRED_SIZE).addPreferredGap(
+                            javax.swing.LayoutStyle.ComponentPlacement.RELATED).addGroup(
+                            jPanel1Layout.createParallelGroup(
+                                    javax.swing.GroupLayout.Alignment.BASELINE).addComponent(
+                                    jLabel4).addComponent(
+                                    ChooseTeam,
+                                    javax.swing.GroupLayout.PREFERRED_SIZE,
+                                    javax.swing.GroupLayout.DEFAULT_SIZE,
+                                    javax.swing.GroupLayout.PREFERRED_SIZE)).addPreferredGap(
+                            javax.swing.LayoutStyle.ComponentPlacement.RELATED).addGroup(
+                            jPanel1Layout.createParallelGroup(
+                                    javax.swing.GroupLayout.Alignment.BASELINE).addComponent(
+                                    jLabel5).addComponent(
+                                    ChooseActivity,
+                                    javax.swing.GroupLayout.PREFERRED_SIZE,
+                                    javax.swing.GroupLayout.DEFAULT_SIZE,
+                                    javax.swing.GroupLayout.PREFERRED_SIZE)).addPreferredGap(
+                            javax.swing.LayoutStyle.ComponentPlacement.RELATED).addGroup(
+                            jPanel1Layout.createParallelGroup(
+                                    javax.swing.GroupLayout.Alignment.BASELINE).addComponent(
+                                    jLabel18).addComponent(
+                                    ChooseLocation,
+                                    javax.swing.GroupLayout.PREFERRED_SIZE,
+                                    javax.swing.GroupLayout.DEFAULT_SIZE,
+                                    javax.swing.GroupLayout.PREFERRED_SIZE)).addPreferredGap(
+                            javax.swing.LayoutStyle.ComponentPlacement.RELATED,
+                            8, Short.MAX_VALUE).addGroup(
+                            jPanel1Layout.createParallelGroup(
+                                    javax.swing.GroupLayout.Alignment.BASELINE).addComponent(
+                                    AttackEverywhere).addComponent(
+                                    QuickPrayer).addComponent(
+                                    WeponSpec)).addPreferredGap(
+                            javax.swing.LayoutStyle.ComponentPlacement.UNRELATED).addGroup(
+                            jPanel1Layout.createParallelGroup(
+                                    javax.swing.GroupLayout.Alignment.BASELINE).addComponent(
+                                    GetSupplies).addComponent(
+                                    HealOthers).addComponent(
+                                    AttackAvatar,
+                                    javax.swing.GroupLayout.PREFERRED_SIZE,
+                                    23,
+                                    javax.swing.GroupLayout.PREFERRED_SIZE)).addPreferredGap(
+                            javax.swing.LayoutStyle.ComponentPlacement.UNRELATED).addGroup(
+                            jPanel1Layout.createParallelGroup(
+                                    javax.swing.GroupLayout.Alignment.BASELINE).addComponent(
+                                    PickUpBones).addComponent(
+                                    PickUpArrows).addComponent(
+                                    BuryAtGrave)).addPreferredGap(
+                            javax.swing.LayoutStyle.ComponentPlacement.UNRELATED).addGroup(
+                            jPanel1Layout.createParallelGroup(
+                                    javax.swing.GroupLayout.Alignment.TRAILING,
+                                    false).addGroup(
+                                    jPanel1Layout.createSequentialGroup().addComponent(
+                                            info).addPreferredGap(
+                                            javax.swing.LayoutStyle.ComponentPlacement.RELATED,
+                                            javax.swing.GroupLayout.DEFAULT_SIZE,
+                                            Short.MAX_VALUE).addComponent(
+                                            donate)).addComponent(
+                                    Start,
+                                    javax.swing.GroupLayout.PREFERRED_SIZE,
+                                    55,
+                                    javax.swing.GroupLayout.PREFERRED_SIZE)).addContainerGap()));
 
             jTabbedPane1.addTab("General", jPanel1);
 
@@ -1984,35 +1958,35 @@ public class DebaucherySoulWars extends Script implements MouseListener, Message
             jPanel4Layout.setHorizontalGroup(jPanel4Layout.createParallelGroup(
                     javax.swing.GroupLayout.Alignment.LEADING).addGroup(
                     jPanel4Layout.createSequentialGroup().addGroup(
-                    jPanel4Layout.createParallelGroup(
-                    javax.swing.GroupLayout.Alignment.LEADING).addGroup(
-                    jPanel4Layout.createSequentialGroup().addGap(92,
-                    92,
-                    92).addComponent(
-                    EnableSummoning)).addGroup(
-                    jPanel4Layout.createSequentialGroup().addContainerGap().addComponent(
-                    jLabel17)).addGroup(
-                    jPanel4Layout.createSequentialGroup().addContainerGap().addComponent(
-                    ChooseFamiliar,
-                    0,
-                    284,
-                    Short.MAX_VALUE)).addGroup(
-                    jPanel4Layout.createSequentialGroup().addContainerGap().addComponent(
-                    WithdrawPouches)).addGroup(
-                    jPanel4Layout.createSequentialGroup().addContainerGap().addComponent(
-                    UseScrolls))).addContainerGap()));
+                            jPanel4Layout.createParallelGroup(
+                                    javax.swing.GroupLayout.Alignment.LEADING).addGroup(
+                                    jPanel4Layout.createSequentialGroup().addGap(92,
+                                            92,
+                                            92).addComponent(
+                                            EnableSummoning)).addGroup(
+                                    jPanel4Layout.createSequentialGroup().addContainerGap().addComponent(
+                                            jLabel17)).addGroup(
+                                    jPanel4Layout.createSequentialGroup().addContainerGap().addComponent(
+                                            ChooseFamiliar,
+                                            0,
+                                            284,
+                                            Short.MAX_VALUE)).addGroup(
+                                    jPanel4Layout.createSequentialGroup().addContainerGap().addComponent(
+                                            WithdrawPouches)).addGroup(
+                                    jPanel4Layout.createSequentialGroup().addContainerGap().addComponent(
+                                            UseScrolls))).addContainerGap()));
             jPanel4Layout.setVerticalGroup(jPanel4Layout.createParallelGroup(
                     javax.swing.GroupLayout.Alignment.LEADING).addGroup(
                     jPanel4Layout.createSequentialGroup().addContainerGap().addComponent(EnableSummoning).addPreferredGap(
-                    javax.swing.LayoutStyle.ComponentPlacement.RELATED).addComponent(jLabel17).addPreferredGap(
-                    javax.swing.LayoutStyle.ComponentPlacement.RELATED).addComponent(
-                    ChooseFamiliar,
-                    javax.swing.GroupLayout.PREFERRED_SIZE,
-                    javax.swing.GroupLayout.DEFAULT_SIZE,
-                    javax.swing.GroupLayout.PREFERRED_SIZE).addPreferredGap(
-                    javax.swing.LayoutStyle.ComponentPlacement.UNRELATED).addComponent(WithdrawPouches).addPreferredGap(
-                    javax.swing.LayoutStyle.ComponentPlacement.RELATED).addComponent(UseScrolls).addContainerGap(141,
-                    Short.MAX_VALUE)));
+                            javax.swing.LayoutStyle.ComponentPlacement.RELATED).addComponent(jLabel17).addPreferredGap(
+                            javax.swing.LayoutStyle.ComponentPlacement.RELATED).addComponent(
+                            ChooseFamiliar,
+                            javax.swing.GroupLayout.PREFERRED_SIZE,
+                            javax.swing.GroupLayout.DEFAULT_SIZE,
+                            javax.swing.GroupLayout.PREFERRED_SIZE).addPreferredGap(
+                            javax.swing.LayoutStyle.ComponentPlacement.UNRELATED).addComponent(WithdrawPouches).addPreferredGap(
+                            javax.swing.LayoutStyle.ComponentPlacement.RELATED).addComponent(UseScrolls).addContainerGap(141,
+                            Short.MAX_VALUE)));
 
             jTabbedPane1.addTab("Summoning", jPanel4);
 
@@ -2022,13 +1996,13 @@ public class DebaucherySoulWars extends Script implements MouseListener, Message
 
             jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(
                     new String[]{"Attack", "Defence", "Strenght", "Magic",
-                        "Range", "Health", "Prayer", "Slayer"}));
+                            "Range", "Health", "Prayer", "Slayer"}));
 
             jLabel14.setText("Amount");
 
             jComboBox2.setModel(new javax.swing.DefaultComboBoxModel(
                     new String[]{"Every Game", "10", "20", "50",
-                        "100", "150"}));
+                            "100", "150"}));
 
             jButton1.setText("Add >");
 
@@ -2042,60 +2016,60 @@ public class DebaucherySoulWars extends Script implements MouseListener, Message
             jPanel3Layout.setHorizontalGroup(jPanel3Layout.createParallelGroup(
                     javax.swing.GroupLayout.Alignment.LEADING).addGroup(
                     jPanel3Layout.createSequentialGroup().addContainerGap().addGroup(
-                    jPanel3Layout.createParallelGroup(
-                    javax.swing.GroupLayout.Alignment.LEADING).addGroup(
-                    jPanel3Layout.createParallelGroup(
-                    javax.swing.GroupLayout.Alignment.TRAILING).addGroup(
-                    jPanel3Layout.createParallelGroup(
-                    javax.swing.GroupLayout.Alignment.LEADING,
-                    false).addComponent(
-                    jComboBox2,
-                    0,
-                    javax.swing.GroupLayout.DEFAULT_SIZE,
-                    Short.MAX_VALUE).addComponent(
-                    jLabel13).addComponent(
-                    jComboBox1,
-                    0,
-                    114,
-                    Short.MAX_VALUE).addComponent(
-                    jLabel14)).addComponent(
-                    jButton1)).addComponent(
-                    jLabel15).addComponent(
-                    jLabel16)).addPreferredGap(
-                    javax.swing.LayoutStyle.ComponentPlacement.RELATED).addComponent(
-                    jScrollPane1,
-                    javax.swing.GroupLayout.DEFAULT_SIZE,
-                    162, Short.MAX_VALUE).addContainerGap()));
+                            jPanel3Layout.createParallelGroup(
+                                    javax.swing.GroupLayout.Alignment.LEADING).addGroup(
+                                    jPanel3Layout.createParallelGroup(
+                                            javax.swing.GroupLayout.Alignment.TRAILING).addGroup(
+                                            jPanel3Layout.createParallelGroup(
+                                                    javax.swing.GroupLayout.Alignment.LEADING,
+                                                    false).addComponent(
+                                                    jComboBox2,
+                                                    0,
+                                                    javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                    Short.MAX_VALUE).addComponent(
+                                                    jLabel13).addComponent(
+                                                    jComboBox1,
+                                                    0,
+                                                    114,
+                                                    Short.MAX_VALUE).addComponent(
+                                                    jLabel14)).addComponent(
+                                            jButton1)).addComponent(
+                                    jLabel15).addComponent(
+                                    jLabel16)).addPreferredGap(
+                            javax.swing.LayoutStyle.ComponentPlacement.RELATED).addComponent(
+                            jScrollPane1,
+                            javax.swing.GroupLayout.DEFAULT_SIZE,
+                            162, Short.MAX_VALUE).addContainerGap()));
             jPanel3Layout.setVerticalGroup(jPanel3Layout.createParallelGroup(
                     javax.swing.GroupLayout.Alignment.LEADING).addGroup(
                     jPanel3Layout.createSequentialGroup().addContainerGap().addGroup(
-                    jPanel3Layout.createParallelGroup(
-                    javax.swing.GroupLayout.Alignment.LEADING).addGroup(
-                    jPanel3Layout.createSequentialGroup().addComponent(
-                    jLabel13).addPreferredGap(
-                    javax.swing.LayoutStyle.ComponentPlacement.RELATED).addComponent(
-                    jComboBox1,
-                    javax.swing.GroupLayout.PREFERRED_SIZE,
-                    javax.swing.GroupLayout.DEFAULT_SIZE,
-                    javax.swing.GroupLayout.PREFERRED_SIZE).addPreferredGap(
-                    javax.swing.LayoutStyle.ComponentPlacement.RELATED).addComponent(
-                    jLabel14).addPreferredGap(
-                    javax.swing.LayoutStyle.ComponentPlacement.RELATED).addComponent(
-                    jComboBox2,
-                    javax.swing.GroupLayout.PREFERRED_SIZE,
-                    javax.swing.GroupLayout.DEFAULT_SIZE,
-                    javax.swing.GroupLayout.PREFERRED_SIZE).addPreferredGap(
-                    javax.swing.LayoutStyle.ComponentPlacement.RELATED).addComponent(
-                    jButton1).addGap(6,
-                    6,
-                    6).addComponent(
-                    jLabel15).addPreferredGap(
-                    javax.swing.LayoutStyle.ComponentPlacement.RELATED).addComponent(
-                    jLabel16)).addComponent(
-                    jScrollPane1,
-                    javax.swing.GroupLayout.DEFAULT_SIZE,
-                    244,
-                    Short.MAX_VALUE)).addContainerGap()));
+                            jPanel3Layout.createParallelGroup(
+                                    javax.swing.GroupLayout.Alignment.LEADING).addGroup(
+                                    jPanel3Layout.createSequentialGroup().addComponent(
+                                            jLabel13).addPreferredGap(
+                                            javax.swing.LayoutStyle.ComponentPlacement.RELATED).addComponent(
+                                            jComboBox1,
+                                            javax.swing.GroupLayout.PREFERRED_SIZE,
+                                            javax.swing.GroupLayout.DEFAULT_SIZE,
+                                            javax.swing.GroupLayout.PREFERRED_SIZE).addPreferredGap(
+                                            javax.swing.LayoutStyle.ComponentPlacement.RELATED).addComponent(
+                                            jLabel14).addPreferredGap(
+                                            javax.swing.LayoutStyle.ComponentPlacement.RELATED).addComponent(
+                                            jComboBox2,
+                                            javax.swing.GroupLayout.PREFERRED_SIZE,
+                                            javax.swing.GroupLayout.DEFAULT_SIZE,
+                                            javax.swing.GroupLayout.PREFERRED_SIZE).addPreferredGap(
+                                            javax.swing.LayoutStyle.ComponentPlacement.RELATED).addComponent(
+                                            jButton1).addGap(6,
+                                            6,
+                                            6).addComponent(
+                                            jLabel15).addPreferredGap(
+                                            javax.swing.LayoutStyle.ComponentPlacement.RELATED).addComponent(
+                                            jLabel16)).addComponent(
+                                    jScrollPane1,
+                                    javax.swing.GroupLayout.DEFAULT_SIZE,
+                                    244,
+                                    Short.MAX_VALUE)).addContainerGap()));
 
             jTabbedPane1.addTab("Trade in Zeals", jPanel3);
 
@@ -2137,86 +2111,86 @@ public class DebaucherySoulWars extends Script implements MouseListener, Message
             jPanel2Layout.setHorizontalGroup(jPanel2Layout.createParallelGroup(
                     javax.swing.GroupLayout.Alignment.LEADING).addGroup(
                     jPanel2Layout.createSequentialGroup().addGroup(
-                    jPanel2Layout.createParallelGroup(
-                    javax.swing.GroupLayout.Alignment.LEADING).addGroup(
-                    jPanel2Layout.createSequentialGroup().addContainerGap().addGroup(
-                    jPanel2Layout.createParallelGroup(
-                    javax.swing.GroupLayout.Alignment.LEADING).addComponent(
-                    jLabel6).addComponent(
-                    jLabel7).addComponent(
-                    jLabel8).addComponent(
-                    jLabel9).addComponent(
-                    TakeBreak)).addGap(18,
-                    18,
-                    18).addGroup(
-                    jPanel2Layout.createParallelGroup(
-                    javax.swing.GroupLayout.Alignment.LEADING,
-                    false).addComponent(
-                    MaxiumTimeForBreak).addComponent(
-                    MaxiumTimeUntillBreak).addComponent(
-                    MinimiumTimeUntillBreak,
-                    javax.swing.GroupLayout.DEFAULT_SIZE,
-                    82,
-                    Short.MAX_VALUE).addComponent(
-                    MinimiumTimeForBreak))).addGroup(
-                    jPanel2Layout.createSequentialGroup().addGap(32,
-                    32,
-                    32).addComponent(
-                    jLabel12)).addGroup(
-                    jPanel2Layout.createSequentialGroup().addContainerGap().addComponent(
-                    jLabel11)).addGroup(
-                    jPanel2Layout.createSequentialGroup().addGap(36,
-                    36,
-                    36).addComponent(
-                    jLabel10))).addContainerGap(22,
-                    Short.MAX_VALUE)));
+                            jPanel2Layout.createParallelGroup(
+                                    javax.swing.GroupLayout.Alignment.LEADING).addGroup(
+                                    jPanel2Layout.createSequentialGroup().addContainerGap().addGroup(
+                                            jPanel2Layout.createParallelGroup(
+                                                    javax.swing.GroupLayout.Alignment.LEADING).addComponent(
+                                                    jLabel6).addComponent(
+                                                    jLabel7).addComponent(
+                                                    jLabel8).addComponent(
+                                                    jLabel9).addComponent(
+                                                    TakeBreak)).addGap(18,
+                                            18,
+                                            18).addGroup(
+                                            jPanel2Layout.createParallelGroup(
+                                                    javax.swing.GroupLayout.Alignment.LEADING,
+                                                    false).addComponent(
+                                                    MaxiumTimeForBreak).addComponent(
+                                                    MaxiumTimeUntillBreak).addComponent(
+                                                    MinimiumTimeUntillBreak,
+                                                    javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                    82,
+                                                    Short.MAX_VALUE).addComponent(
+                                                    MinimiumTimeForBreak))).addGroup(
+                                    jPanel2Layout.createSequentialGroup().addGap(32,
+                                            32,
+                                            32).addComponent(
+                                            jLabel12)).addGroup(
+                                    jPanel2Layout.createSequentialGroup().addContainerGap().addComponent(
+                                            jLabel11)).addGroup(
+                                    jPanel2Layout.createSequentialGroup().addGap(36,
+                                            36,
+                                            36).addComponent(
+                                            jLabel10))).addContainerGap(22,
+                            Short.MAX_VALUE)));
             jPanel2Layout.setVerticalGroup(jPanel2Layout.createParallelGroup(
                     javax.swing.GroupLayout.Alignment.LEADING).addGroup(
                     jPanel2Layout.createSequentialGroup().addContainerGap().addComponent(TakeBreak).addPreferredGap(
-                    javax.swing.LayoutStyle.ComponentPlacement.RELATED).addGroup(
-                    jPanel2Layout.createParallelGroup(
-                    javax.swing.GroupLayout.Alignment.BASELINE).addComponent(
-                    jLabel6).addComponent(
-                    MinimiumTimeUntillBreak,
-                    javax.swing.GroupLayout.PREFERRED_SIZE,
-                    javax.swing.GroupLayout.DEFAULT_SIZE,
-                    javax.swing.GroupLayout.PREFERRED_SIZE)).addPreferredGap(
-                    javax.swing.LayoutStyle.ComponentPlacement.RELATED).addGroup(
-                    jPanel2Layout.createParallelGroup(
-                    javax.swing.GroupLayout.Alignment.BASELINE).addComponent(
-                    jLabel7).addComponent(
-                    MaxiumTimeUntillBreak,
-                    javax.swing.GroupLayout.PREFERRED_SIZE,
-                    javax.swing.GroupLayout.DEFAULT_SIZE,
-                    javax.swing.GroupLayout.PREFERRED_SIZE)).addPreferredGap(
-                    javax.swing.LayoutStyle.ComponentPlacement.RELATED).addGroup(
-                    jPanel2Layout.createParallelGroup(
-                    javax.swing.GroupLayout.Alignment.BASELINE).addComponent(
-                    jLabel8).addComponent(
-                    MinimiumTimeForBreak,
-                    javax.swing.GroupLayout.PREFERRED_SIZE,
-                    20,
-                    javax.swing.GroupLayout.PREFERRED_SIZE)).addPreferredGap(
-                    javax.swing.LayoutStyle.ComponentPlacement.RELATED).addGroup(
-                    jPanel2Layout.createParallelGroup(
-                    javax.swing.GroupLayout.Alignment.BASELINE).addComponent(
-                    jLabel9).addComponent(
-                    MaxiumTimeForBreak,
-                    javax.swing.GroupLayout.PREFERRED_SIZE,
-                    javax.swing.GroupLayout.DEFAULT_SIZE,
-                    javax.swing.GroupLayout.PREFERRED_SIZE)).addPreferredGap(
-                    javax.swing.LayoutStyle.ComponentPlacement.RELATED,
-                    72, Short.MAX_VALUE).addComponent(
-                    jLabel10,
-                    javax.swing.GroupLayout.PREFERRED_SIZE,
-                    13,
-                    javax.swing.GroupLayout.PREFERRED_SIZE).addPreferredGap(
-                    javax.swing.LayoutStyle.ComponentPlacement.RELATED).addComponent(
-                    jLabel11,
-                    javax.swing.GroupLayout.PREFERRED_SIZE,
-                    13,
-                    javax.swing.GroupLayout.PREFERRED_SIZE).addPreferredGap(
-                    javax.swing.LayoutStyle.ComponentPlacement.RELATED).addComponent(jLabel12).addContainerGap()));
+                            javax.swing.LayoutStyle.ComponentPlacement.RELATED).addGroup(
+                            jPanel2Layout.createParallelGroup(
+                                    javax.swing.GroupLayout.Alignment.BASELINE).addComponent(
+                                    jLabel6).addComponent(
+                                    MinimiumTimeUntillBreak,
+                                    javax.swing.GroupLayout.PREFERRED_SIZE,
+                                    javax.swing.GroupLayout.DEFAULT_SIZE,
+                                    javax.swing.GroupLayout.PREFERRED_SIZE)).addPreferredGap(
+                            javax.swing.LayoutStyle.ComponentPlacement.RELATED).addGroup(
+                            jPanel2Layout.createParallelGroup(
+                                    javax.swing.GroupLayout.Alignment.BASELINE).addComponent(
+                                    jLabel7).addComponent(
+                                    MaxiumTimeUntillBreak,
+                                    javax.swing.GroupLayout.PREFERRED_SIZE,
+                                    javax.swing.GroupLayout.DEFAULT_SIZE,
+                                    javax.swing.GroupLayout.PREFERRED_SIZE)).addPreferredGap(
+                            javax.swing.LayoutStyle.ComponentPlacement.RELATED).addGroup(
+                            jPanel2Layout.createParallelGroup(
+                                    javax.swing.GroupLayout.Alignment.BASELINE).addComponent(
+                                    jLabel8).addComponent(
+                                    MinimiumTimeForBreak,
+                                    javax.swing.GroupLayout.PREFERRED_SIZE,
+                                    20,
+                                    javax.swing.GroupLayout.PREFERRED_SIZE)).addPreferredGap(
+                            javax.swing.LayoutStyle.ComponentPlacement.RELATED).addGroup(
+                            jPanel2Layout.createParallelGroup(
+                                    javax.swing.GroupLayout.Alignment.BASELINE).addComponent(
+                                    jLabel9).addComponent(
+                                    MaxiumTimeForBreak,
+                                    javax.swing.GroupLayout.PREFERRED_SIZE,
+                                    javax.swing.GroupLayout.DEFAULT_SIZE,
+                                    javax.swing.GroupLayout.PREFERRED_SIZE)).addPreferredGap(
+                            javax.swing.LayoutStyle.ComponentPlacement.RELATED,
+                            72, Short.MAX_VALUE).addComponent(
+                            jLabel10,
+                            javax.swing.GroupLayout.PREFERRED_SIZE,
+                            13,
+                            javax.swing.GroupLayout.PREFERRED_SIZE).addPreferredGap(
+                            javax.swing.LayoutStyle.ComponentPlacement.RELATED).addComponent(
+                            jLabel11,
+                            javax.swing.GroupLayout.PREFERRED_SIZE,
+                            13,
+                            javax.swing.GroupLayout.PREFERRED_SIZE).addPreferredGap(
+                            javax.swing.LayoutStyle.ComponentPlacement.RELATED).addComponent(jLabel12).addContainerGap()));
 
             jTabbedPane1.addTab("Break Handler", jPanel2);
 
@@ -2226,37 +2200,37 @@ public class DebaucherySoulWars extends Script implements MouseListener, Message
             layout.setHorizontalGroup(layout.createParallelGroup(
                     javax.swing.GroupLayout.Alignment.LEADING).addGroup(
                     layout.createSequentialGroup().addGroup(
-                    layout.createParallelGroup(
-                    javax.swing.GroupLayout.Alignment.LEADING).addGroup(
-                    layout.createSequentialGroup().addGap(91,
-                    91,
-                    91).addComponent(
-                    jLabel2)).addGroup(
-                    layout.createSequentialGroup().addContainerGap().addComponent(
-                    jLabel1,
-                    javax.swing.GroupLayout.DEFAULT_SIZE,
-                    309,
-                    Short.MAX_VALUE)).addGroup(
-                    javax.swing.GroupLayout.Alignment.TRAILING,
-                    layout.createSequentialGroup().addContainerGap(
-                    javax.swing.GroupLayout.DEFAULT_SIZE,
-                    Short.MAX_VALUE).addComponent(
-                    jTabbedPane1,
-                    javax.swing.GroupLayout.PREFERRED_SIZE,
-                    309,
-                    javax.swing.GroupLayout.PREFERRED_SIZE))).addContainerGap()));
+                            layout.createParallelGroup(
+                                    javax.swing.GroupLayout.Alignment.LEADING).addGroup(
+                                    layout.createSequentialGroup().addGap(91,
+                                            91,
+                                            91).addComponent(
+                                            jLabel2)).addGroup(
+                                    layout.createSequentialGroup().addContainerGap().addComponent(
+                                            jLabel1,
+                                            javax.swing.GroupLayout.DEFAULT_SIZE,
+                                            309,
+                                            Short.MAX_VALUE)).addGroup(
+                                    javax.swing.GroupLayout.Alignment.TRAILING,
+                                    layout.createSequentialGroup().addContainerGap(
+                                            javax.swing.GroupLayout.DEFAULT_SIZE,
+                                            Short.MAX_VALUE).addComponent(
+                                            jTabbedPane1,
+                                            javax.swing.GroupLayout.PREFERRED_SIZE,
+                                            309,
+                                            javax.swing.GroupLayout.PREFERRED_SIZE))).addContainerGap()));
             layout.setVerticalGroup(layout.createParallelGroup(
                     javax.swing.GroupLayout.Alignment.LEADING).addGroup(
                     layout.createSequentialGroup().addComponent(
-                    jLabel1,
-                    javax.swing.GroupLayout.PREFERRED_SIZE,
-                    javax.swing.GroupLayout.DEFAULT_SIZE,
-                    javax.swing.GroupLayout.PREFERRED_SIZE).addPreferredGap(
-                    javax.swing.LayoutStyle.ComponentPlacement.RELATED).addComponent(
-                    jTabbedPane1,
-                    javax.swing.GroupLayout.DEFAULT_SIZE,
-                    294, Short.MAX_VALUE).addPreferredGap(
-                    javax.swing.LayoutStyle.ComponentPlacement.RELATED).addComponent(jLabel2)));
+                            jLabel1,
+                            javax.swing.GroupLayout.PREFERRED_SIZE,
+                            javax.swing.GroupLayout.DEFAULT_SIZE,
+                            javax.swing.GroupLayout.PREFERRED_SIZE).addPreferredGap(
+                            javax.swing.LayoutStyle.ComponentPlacement.RELATED).addComponent(
+                            jTabbedPane1,
+                            javax.swing.GroupLayout.DEFAULT_SIZE,
+                            294, Short.MAX_VALUE).addPreferredGap(
+                            javax.swing.LayoutStyle.ComponentPlacement.RELATED).addComponent(jLabel2)));
 
             pack();
         }// </editor-fold>
@@ -2389,6 +2363,7 @@ public class DebaucherySoulWars extends Script implements MouseListener, Message
             } catch (Exception e) {
             }
         }
+
         // </editor-fold>
         // <editor-fold defaultstate="collapsed" desc="Variables declaration">
         private javax.swing.JCheckBox AttackAvatar;
@@ -2450,7 +2425,6 @@ public class DebaucherySoulWars extends Script implements MouseListener, Message
 
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="MessageListener">
-    @Override
     public void messageReceived(MessageEvent e) {
         String message = e.getMessage().toLowerCase();
         if (e.getID() == MessageEvent.MESSAGE_SERVER
@@ -2540,6 +2514,7 @@ public class DebaucherySoulWars extends Script implements MouseListener, Message
             return null;
         }
     }
+
     private final Image logo = getImage("http://img43.imageshack.us/img43/5479/logoym.png");
     private final Image hideImg = getImage("http://www.authorstream.com/images/close_icon.gif");
 
@@ -2555,7 +2530,6 @@ public class DebaucherySoulWars extends Script implements MouseListener, Message
         return "";
     }
 
-    @Override
     public void onRepaint(Graphics g1) {
         Graphics2D g = (Graphics2D) g1;
         g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
@@ -2573,7 +2547,7 @@ public class DebaucherySoulWars extends Script implements MouseListener, Message
             g.setColor(new Color(255, 255, 255, 200));
             g.drawString(
                     "Version: "
-                    + getClass().getAnnotation(ScriptManifest.class).version(), 119, 332);
+                            + getClass().getAnnotation(ScriptManifest.class).version(), 119, 332);
             g.setFont(new Font("SansSerif", 0, 10));
             g.drawString("Time:  " + run.toElapsedString(), 300, 219);
             g.drawString("Current Task:  " + task, 300, 234);
@@ -2613,7 +2587,6 @@ public class DebaucherySoulWars extends Script implements MouseListener, Message
 
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="MouseListener">
-    @Override
     public void mouseClicked(MouseEvent e) {
         Point p = e.getPoint();
         if (hideRect.contains(p)) {
@@ -2621,19 +2594,15 @@ public class DebaucherySoulWars extends Script implements MouseListener, Message
         }
     }
 
-    @Override
     public void mousePressed(MouseEvent e) {
     }
 
-    @Override
     public void mouseReleased(MouseEvent e) {
     }
 
-    @Override
     public void mouseEntered(MouseEvent e) {
     }
 
-    @Override
     public void mouseExited(MouseEvent e) {
     }
 
