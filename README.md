@@ -23,11 +23,11 @@ Subversion is also supported:
 
 ##Microsoft Windows
 
-####Compiling
+###Compiling
 
 Make sure JDK is installed, then execute the `Compile.bat` file by *double clicking* it.
 
-#### Running
+### Running
 
 Java is required to run RSBot. You can run the client by *double clicking* the JAR file named `RSBot.jar`.
 
