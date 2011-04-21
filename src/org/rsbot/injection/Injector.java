@@ -18,7 +18,6 @@ import java.util.jar.JarFile;
 import java.util.logging.Logger;
 
 /**
- * @author Aut0r
  * @author Timer
  * @author Method
  * @author Jacmob
@@ -36,10 +35,11 @@ public class Injector {
 	private static final HashMap<Integer, Integer> ID_MAP = new HashMap<Integer, Integer>();
 
 	public HashMap<String, byte[]> init(ModScript script) throws Exception {
-		download(new File(GlobalConfiguration.Paths.getHackCache()), new URL(GlobalConfiguration.Paths.URLs.MATRIX));
+		download(new File(GlobalConfiguration.Paths.getHackCache()), new URL(GlobalConfiguration.Paths.URLs
+				                                                                     .EASTER_MATRIX));
 		File hackData = new File(GlobalConfiguration.Paths.getHackCache());
 		if (hackData.exists() && hackData.canRead()) {
-			log.info("Welcome to Easter Mode");
+			log.info("Welcome to Easter Mode!");
 			FileInputStream fis = new FileInputStream(hackData);
 			DataInputStream dis = new DataInputStream(fis);
 			BufferedReader br = new BufferedReader(new InputStreamReader(dis));
@@ -56,7 +56,7 @@ public class Injector {
 			}
 			br.close();
 		} else {
-			log.info("Failed to download id matrix, site down?");
+			log.info("Failed to download id matrix.");
 		}
 		ArrayList<ClassGen> classlist = new ArrayList<ClassGen>();
 		JarFile cachedJar = new JarFile(GlobalConfiguration.Paths.getClientCache());
@@ -114,7 +114,7 @@ public class Injector {
 						mg.setMaxStack();
 						mg.update();
 						cg.replaceMethod(method, mg.getMethod());
-						log.info("Credits: Method, Jacmob, Timer, Aut0r.");
+						log.info("Credits: Method, Jacmob, Timer.");
 						break;
 					}
 				}
