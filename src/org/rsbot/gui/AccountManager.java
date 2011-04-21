@@ -1,5 +1,6 @@
 package org.rsbot.gui;
 
+import org.rsbot.service.ScriptDeliveryNetwork;
 import org.rsbot.util.AccountStore;
 import org.rsbot.util.GlobalConfiguration;
 
@@ -46,7 +47,7 @@ public class AccountManager extends JDialog implements ActionListener {
 	private static AccountStore accountStore = new AccountStore(new File(FILE_NAME));
 
 	static {
-		accountStore.setPassword(BotGUI.getServiceKey().key);
+		accountStore.setPassword(ScriptDeliveryNetwork.getInstance().getKey());
 		try {
 			accountStore.load();
 		} catch (IOException ignored) {

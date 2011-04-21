@@ -9,7 +9,7 @@ import org.rsbot.script.internal.ScriptHandler;
 import org.rsbot.script.internal.event.ScriptListener;
 import org.rsbot.script.methods.Environment;
 import org.rsbot.script.util.WindowUtil;
-import org.rsbot.service.ScriptBoxSource;
+import org.rsbot.service.ScriptDeliveryNetwork;
 import org.rsbot.util.GlobalConfiguration;
 import org.rsbot.util.Minimizer;
 import org.rsbot.util.ScreenshotUtil;
@@ -30,7 +30,6 @@ import java.util.logging.Logger;
 
 /**
  * @author Jacmob
- * @author Aut0r
  */
 public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 
@@ -49,11 +48,7 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 	private List<Bot> bots = new ArrayList<Bot>();
 	private boolean showAds = true;
 	private boolean disableConfirmationMessages = false;
-	private static ScriptBoxSource.Credentials serviceKey = new ScriptBoxSource.Credentials();
-
-	static {
-		serviceKey.key = "1234567890123456789012345678901234567890";
-	}
+	private static ScriptDeliveryNetwork sdn = ScriptDeliveryNetwork.getInstance();
 
 	public BotGUI() {
 		init();
@@ -293,20 +288,15 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 	}
 
 	private void serviceKeyQuery(String option) {
-		serviceKey.key = (String) JOptionPane.showInputDialog(this, null,
-				option, JOptionPane.QUESTION_MESSAGE, null, null,
-				serviceKey.key);
-		if (serviceKey == null || serviceKey.key.length() == 0) {
+		String key = (String) JOptionPane.showInputDialog(this, null,
+				option, JOptionPane.QUESTION_MESSAGE, null, null, sdn.getKey());
+		if (key == null || key.length() == 0) {
 			log.info("Services have been disabled");
-		} else if (serviceKey.key.length() != 40) {
+		} else if (key.length() != 40) {
 			log.warning("Invalid service key");
 		} else {
 			log.info("Services have been linked to {0}");
 		}
-	}
-
-	public static ScriptBoxSource.Credentials getServiceKey() {
-		return serviceKey;
 	}
 
 	public BotPanel getPanel() {
@@ -374,10 +364,7 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 	}
 
 	private void showScriptSelector(Bot bot) {
-		if (serviceKey == null || serviceKey.key == null || serviceKey.key.length() != 40) {
-			JOptionPane.showMessageDialog(this, "Please enter your service key before using the bot.");
-			serviceKeyQuery("Service Key");
-		} else if (AccountManager.getAccountNames() == null || AccountManager.getAccountNames().length == 0) {
+		if (AccountManager.getAccountNames() == null || AccountManager.getAccountNames().length == 0) {
 			JOptionPane
 					.showMessageDialog(this, "No accounts found! Please create one before using the bot.");
 			AccountManager.getInstance().showGUI();

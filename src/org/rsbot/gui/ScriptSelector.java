@@ -56,7 +56,7 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 			SRC_BUNDLED = new FileScriptSource(new File("." + File.separator + GlobalConfiguration.Paths
 					.SCRIPTS_NAME_SRC));
 		}
-		SRC_DRM = new ScriptBoxSource(BotGUI.getServiceKey());
+		SRC_DRM = ScriptDeliveryNetwork.getInstance();
 	}
 
 	public ScriptSelector(Frame frame, Bot bot) {
