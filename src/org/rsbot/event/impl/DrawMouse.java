@@ -32,10 +32,10 @@ public class DrawMouse implements PaintListener {
 	}
 
 	private double getRot() {
-		return System.currentTimeMillis() % 3600 / 10.0D;
+		return System.currentTimeMillis() % 3600 / 15.0D;
 	}
 
-	public void onRepaint(final Graphics render) {//TODO optimize.
+	public void onRepaint(final Graphics render) {
 		Mouse mouse = client.getMouse();
 		if (mouse != null) {
 			final Point location = new Point(mouse.getX(), mouse.getY());
@@ -58,15 +58,13 @@ public class DrawMouse implements PaintListener {
 				lastPoint = new Point(x, y);
 				synchronized (lock) {
 					for (int i = 0; i < 50; i++, p.add(new Particle(x, y, fadeArray[random(0, fadeArray.length)]))) {
-						;
 					}
 				}
 			}
 			if (mouse.isPressed()) {
 				lastPoint = new Point(x, y);
 				synchronized (lock) {
-					for (int i = 0; i < 200; i++, p.add(new Particle(x, y, fadeArray[random(0, fadeArray.length)]))) {
-						;
+					for (int i = 0; i < 20; i++, p.add(new Particle(x, y, Color.green.darker().darker()))) {
 					}
 				}
 			}

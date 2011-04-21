@@ -18,10 +18,9 @@ import java.util.*;
 import java.util.logging.Logger;
 
 public class BotStub implements AppletStub, AppletContext {
-
 	private final Map<URL, WeakReference<Image>> IMAGE_CACHE = new HashMap<URL, WeakReference<Image>>();
-	private final Map<String, InputStream> INPUT_CACHE = Collections
-			.synchronizedMap(new HashMap<String, InputStream>(2));
+	private final Map<String, InputStream> INPUT_CACHE = Collections.synchronizedMap(
+			new HashMap<String, InputStream>(2));
 
 	private final Logger log = Logger.getLogger(BotStub.class.getName());
 	private final Applet applet;
@@ -32,15 +31,12 @@ public class BotStub implements AppletStub, AppletContext {
 
 	public BotStub(final RSLoader applet) {
 		this.applet = applet;
-		Crawler c = new Crawler("http://www." + applet.getTargetName()
-				                        + ".com/");
+		Crawler c = new Crawler("http://www." + applet.getTargetName() + ".com/");
 		parameters = c.getParameters();
 		final String world_prefix = c.getWorldPrefix();
 		try {
-			codeBase = new URL("http://world" + world_prefix + "."
-					                   + applet.getTargetName() + ".com");
-			documentBase = new URL("http://world" + world_prefix + "."
-					                       + applet.getTargetName() + ".com/m0");
+			codeBase = new URL("http://world" + world_prefix + "." + applet.getTargetName() + ".com");
+			documentBase = new URL("http://world" + world_prefix + "." + applet.getTargetName() + ".com/m0");
 		} catch (final MalformedURLException e) {
 			throw new RuntimeException(e);
 		}
@@ -120,8 +116,7 @@ public class BotStub implements AppletStub, AppletContext {
 		this.isActive = isActive;
 	}
 
-	public void setStream(final String key, final InputStream stream)
-			throws IOException {
+	public void setStream(final String key, final InputStream stream) throws IOException {
 		INPUT_CACHE.put(key, stream);
 	}
 
@@ -131,19 +126,15 @@ public class BotStub implements AppletStub, AppletContext {
 
 	public void showDocument(final URL url, final String target) {
 		if (url.toString().contains("outofdate")) {
-			final String message = GlobalConfiguration.NAME
-					+ " is currently outdated, please wait patiently for a new version.";
+			final String message = GlobalConfiguration.NAME + " is currently outdated, please wait patiently for a new version.";
 			log.severe(message);
-			JOptionPane.showMessageDialog(null, message, "Outdated",
-			                              JOptionPane.WARNING_MESSAGE);
-			File versionFile = new File(
-					GlobalConfiguration.Paths.getVersionCache());
+			JOptionPane.showMessageDialog(null, message, "Outdated", JOptionPane.WARNING_MESSAGE);
+			File versionFile = new File(GlobalConfiguration.Paths.getVersionCache());
 			if (versionFile.exists() && !versionFile.delete()) {
 				log.warning("Unable to clear cache.");
 			}
 		} else if (!target.equals("tbi")) {
-			log.info("Attempting to show: " + url.toString() + " [" + target
-					         + "]");
+			log.info("Attempting to show: " + url.toString() + " [" + target + "]");
 		}
 	}
 
