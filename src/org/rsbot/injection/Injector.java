@@ -30,7 +30,7 @@ public class Injector {
 
 	private static final String CLASS_OBJECT_INTERACTIVE = "bj";
 
-	public static volatile boolean easterMode = true;
+	public static volatile boolean easterMode = false;
 
 	private static final HashMap<Integer, Integer> ID_MAP = new HashMap<Integer, Integer>();
 
