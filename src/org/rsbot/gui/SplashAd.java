@@ -35,6 +35,7 @@ public class SplashAd extends JDialog implements MouseListener {
 	private String image;
 	private String text;
 	private boolean popup = false;
+	private int display = 5000;
 	private int refresh = 60 * 60 * 24; // 1 day default
 	private long updated = 0;
 
@@ -148,6 +149,9 @@ public class SplashAd extends JDialog implements MouseListener {
 		if (keys.containsKey("text")) {
 			text = keys.get("text");
 		}
+		if (keys.containsKey("display")) {
+			display = Integer.parseInt(keys.get("display"));
+		}
 		if (keys.containsKey("popup")) {
 			popup = parseBool(keys.get("popup"));
 		}
@@ -179,7 +183,7 @@ public class SplashAd extends JDialog implements MouseListener {
 			public void run() {
 				dispose();
 			}
-		}, 5000);
+		}, display);
 	}
 
 	public void mouseClicked(MouseEvent e) {
