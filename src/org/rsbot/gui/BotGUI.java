@@ -57,13 +57,7 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 		setLocationRelativeTo(getOwner());
 		setMinimumSize(getSize());
 		setResizable(true);
-		menuBar.loadProps();
-		if (!menuBar.showAds) {
-			showAds = false;
-		}
-		if (!menuBar.disableConfirmations) {
-			disableConfirmations = false;
-		}
+		menuBar.loadPrefs();
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				JPopupMenu.setDefaultLightWeightPopupEnabled(false);
@@ -160,7 +154,6 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 				cleanExit();
 			}
 		} else if (menu.equals("Edit")) {
-			menuBar.saveProps();
 			if (option.equals("Accounts")) {
 				AccountManager.getInstance().showGUI();
 			} else if (option.equals("Enable Easter")) {
@@ -567,8 +560,10 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 				doExit = false;
 		}
 		
-		if (doExit)
+		if (doExit) {
+			menuBar.savePrefs();
 			System.exit(0);
+		}
 		
 		return doExit;
 	}

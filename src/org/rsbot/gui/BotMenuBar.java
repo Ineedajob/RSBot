@@ -7,15 +7,22 @@ import org.rsbot.event.listeners.TextPaintListener;
 import org.rsbot.util.GlobalConfiguration;
 
 import javax.swing.*;
+
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
+import java.util.Map.Entry;
+import java.util.logging.Logger;
 
 public class BotMenuBar extends JMenuBar {
-
+	private static final Logger log = Logger.getLogger(BotMenuBar.class.getName());
 	private static final long serialVersionUID = 971579975301998332L;
 	public static final Map<String, Class<?>> DEBUG_MAP = new LinkedHashMap<String, Class<?>>();
 	public static final String[] TITLES;
@@ -175,6 +182,65 @@ public class BotMenuBar extends JMenuBar {
 		commandCheckMap.get(item).setSelected(selected);
 		commandCheckMap.get(item).setEnabled(true);
 	}
+	
+	public void loadPrefs() {
+		String path = GlobalConfiguration.Paths.getMenuBarPrefs();
+		if (!new File(path).exists())
+			return;
+		FileReader freader = null;
+		BufferedReader in = null;
+		
+		try {
+			freader = new FileReader(path);
+			in = new BufferedReader(freader);
+			String line;
+			
+			while ((line = in.readLine()) != null) {
+				line = line.trim();
+				if (commandCheckMap.containsKey(line))
+					commandCheckMap.get(line).doClick();
+			}
+		} catch (IOException ioe) {
+			try {
+				if (in != null)
+					in.close();
+				if (freader != null)
+					freader.close();
+			} catch (IOException ioe1) { }
+		}
+	}
+	
+	public void savePrefs() {
+		String path = GlobalConfiguration.Paths.getMenuBarPrefs();
+		FileWriter fstream = null;
+		BufferedWriter out = null;
+		
+		try {
+			File f = new File(path);
+			if (f.exists())
+				f.delete();
+			
+			fstream = new FileWriter(path);
+			out = new BufferedWriter(fstream);
+			
+			for (Entry<String, JCheckBoxMenuItem> item : commandCheckMap.entrySet()) {
+				boolean checked = item.getValue().isSelected();
+				if (!checked)
+					continue;
+				out.write(item.getKey());
+				out.newLine();
+			}
+		} catch (IOException ioe) {
+			
+		} finally {
+			try {
+				if (out != null)
+					out.close();
+				if (fstream != null)
+					fstream.close();
+			} catch (IOException ioe1) { }
+		}
+	}
 
 	private JMenu constructMenu(String title, String[] elems) {
 		JMenu menu = new JMenu(title);
@@ -209,61 +275,5 @@ public class BotMenuBar extends JMenuBar {
 			}
 		}
 		return menu;
-	}
-
-	private String getValue(boolean b) {
-		if (b) {
-			return "true";
-		}
-		return "false";
-	}
-
-	public void saveProps() {
-		Properties props = new Properties();
-		props.setProperty("Advertisements",
-				getValue(commandCheckMap.get("Disable Advertisements")
-						.isSelected()));
-		props.setProperty("ExitMessages",
-				getValue(commandCheckMap.get("Disable Confirmations")
-						.isSelected()));
-		try {
-			props.store(
-					new FileOutputStream(GlobalConfiguration.Paths
-							.getHomeDirectory()
-							+ File.separator
-							+ "Settings"
-							+ File.separator + "menuBar.properties"),
-					"Menubar properties");
-		} catch (IOException e) {
-		}
-	}
-
-	public boolean showAds = true;
-	public boolean disableConfirmations = false;
-
-
-	public void loadProps() {
-		Properties props = new Properties();
-		File f = new File(GlobalConfiguration.Paths.getHomeDirectory()
-				+ File.separator + "Settings" + File.separator
-				+ "menuBar.properties");
-		if (f.exists()) {
-			try {
-				props.load(new FileInputStream(GlobalConfiguration.Paths
-						.getHomeDirectory()
-						+ File.separator
-						+ "Settings"
-						+ File.separator + "menuBar.properties"));
-			} catch (IOException e) {
-			}
-			if (props.contains("Advertisements") && props.getProperty("Advertisements").contains("true")) {
-				commandCheckMap.get("Disable Advertisements").setSelected(true);
-				showAds = false;
-			}
-			if (props.contains("ExitMessages") && props.getProperty("ExitMessages").contains("true")) {
-				commandCheckMap.get("Disable Confirmation").setSelected(true);
-				disableConfirmations = true;
-			}
-		}
 	}
 }

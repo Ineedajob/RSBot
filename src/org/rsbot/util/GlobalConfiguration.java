@@ -185,6 +185,10 @@ public class GlobalConfiguration {
 		public static String getSettingsDirectory() {
 			return Paths.getHomeDirectory() + File.separator + "Settings";
 		}
+		
+		public static String getMenuBarPrefs() {
+			return Paths.getSettingsDirectory() + File.separator + "Menu.txt";
+		}
 
 		public static String getUnixHome() {
 			final String home = System.getProperty("user.home");
