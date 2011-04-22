@@ -99,11 +99,34 @@ public class Walking extends MethodProvider {
 	public boolean walkTileMM(final RSTile t, final int x, final int y) {
 		RSTile dest = new RSTile(t.getX() + random(0, x), t.getY()
 				+ random(0, y));
+		if (!methods.calc.tileOnMap(dest)) {
+			dest = getClosestTileOnMap(dest);
+		}
 		Point p = methods.calc.tileToMinimap(dest);
 		if (p.x != -1 && p.y != -1) {
+			int x = p.x, y = p.y;
+			if (random(1, 2) == random(1, 2)) {
+				x += random(0, 50);
+			} else {
+				x -= random(0, 50);
+			}
+			if (random(1, 2) == random(1, 2)) {
+				y += random(0, 50);
+			} else {
+				y -= random(0, 50);
+			}
+			methods.mouse.move(x, y);
+			p = calc.tileToMinimap(dest);
+			if (p.x == -1 || p.y == -1) {
+				return false;
+			}
 			methods.mouse.move(p);
 			Point p2 = methods.calc.tileToMinimap(dest);
 			if (p2.x != -1 && p2.y != -1) {
+				methods.mouse.move(p2);
+				if (!methods.mouse.getLocation().equals(p2)) {
+					methods.mouse.hop(p2);
+				}
 				methods.mouse.click(p2, true);
 				return true;
 			}
@@ -119,26 +142,23 @@ public class Walking extends MethodProvider {
 	 * @return <tt>true</tt> if the tile was clicked; otherwise <tt>false</tt>.
 	 */
 	public boolean walkTileMM(final RSTile t, final int r) {
-		// Just a few ideas that could improve this method.
-		RSTile dest = r > 0 ? new RSTile(t.getX() + random(-r, r + 1), t.getY()
-				+ random(-r, r + 1)) : t;
+		int x = t.getX();
+		int y = t.getY();
+		if (random(1, 2) == random(1, 2)) {
+			x += random(0, r);
+		} else {
+			x -= random(0, r);
+		}
+		if (random(1, 2) == random(1, 2)) {
+			y += random(0, r);
+		} else {
+			y -= random(0, r);
+		}
+		RSTile dest = new RSTile(x, y);		
 		if (methods.players.getMyPlayer().getLocation().equals(dest)) {
 			return false;
 		}
-		Point p = methods.calc.tileToMinimap(dest);
-		if (p.x == -1) {
-			dest = getClosestTileOnMap(t);
-			p = methods.calc.tileToMinimap(dest);
-		}
-		if (p.x != -1) {
-			methods.mouse.move(p);
-			p = methods.calc.tileToMinimap(dest);
-			if (p.x != -1) {
-				methods.mouse.click(p, true);
-				return true;
-			}
-		}
-		return false;
+		return walkTileMM(dest, 0, 0);		
 	}
 
 	/**
