@@ -1,5 +1,5 @@
 CC=javac
-CFLAGS=-g
+CFLAGS=
 SRC=src
 LIB=lib
 RES=resources
@@ -11,19 +11,26 @@ VERSIONFILE=$(RES)/version.txt
 VERSION=`cat $(VERSIONFILE)`
 SCRIPTS=scripts
 DIST=RSBot.jar
+ACC=~/.rsbotacct
+INSTALLDIR=~/RSBot
 
-.PHONY: all Bot Scripts mostlyclean clean remove
+.PHONY: all Bot Scripts mostlyclean clean
 
-all: Bundle
+all: Bot Scripts Jar endclean
+	@echo "Build successful"
+	
+uninstall:
+	@if [ -e $(ACC) ]; then rm -rf $(ACC); fi
+	@if [ -d $(INSTALLDIR) ]; then rm -rf $(INSTALLDIR); fi
 
 Bot:
 	@if [ ! -d $(BINDIR) ]; then mkdir $(BINDIR); fi
 	$(CC) $(CFLAGS) -d $(BINDIR) `find $(SRC) -name *.java`
 
-Scripts: mostlyclean Bot
+Scripts: mostlyclean
 	$(CC) $(CFLAGS) -cp $(BINDIR) $(SCRIPTS)/*.java
 	
-Bundle: Bot
+Jar:
 	@rm -fv $(LSTF)
 	@cp $(MANIFEST) $(LSTF)
 	@echo "Specification-Version: \"$(VERSION)\"" >> $(LSTF)
@@ -33,11 +40,12 @@ Bundle: Bot
 	@rm -f $(LSTF)
 
 mostlyclean:
-	@rm -fv $(SCRIPTS)/*.class
+	@rm -f $(SCRIPTS)/*.class
+	
+endclean:
+	@rm -f $(SCRIPTS)/*.class
+	@rm -rf $(BINDIR)
 
 clean: mostlyclean
 	@rm -fv $(DIST)
 	@rm -rfv $(BINDIR)
-
-remove:
-	@echo "Removal tool not yet implemented"
