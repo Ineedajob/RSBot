@@ -10,6 +10,7 @@ import java.util.ArrayList;
  *
  * @Author Debauchery
  */
+@SuppressWarnings("unused")
 public class Lobby extends MethodProvider {
 
 	public Lobby(MethodContext ctx) {
@@ -27,12 +28,27 @@ public class Lobby extends MethodProvider {
 
 	private final static int PLAYER_INFO_INTERFACE = 906;
 	private final static int PLAYER_INFO_INTERFACE_PLAY_BUTTON = 106;
+	private final static int LOGOUT_COMPONENT = 195;
+
 	private final static int WORLD_SELECT_INTERFACE = 910;
 	private final static int WORLD_SELECT_INTERFACE_CURRENT_WORLD = 11;
 	private final static int WORLD_SELECT_INTERFACE_WORLD_LIST = 77;
 	private final static int WORLD_SELECT_INTERFACE_WORLD_NAME = 69;
 	private final static int WORLD_SELECT_INTERFACE_AMOUNT_OF_PLAYERS = 71;
+	private final static int WORLD_SELECT_INTERFACE_WORLD_ACTIVITY = 72;
+	private final static int WORLD_SELECT_INTERFACE_WORLD_TYPE = 74;
+	private final static int WORLD_SELECT_INTERFACE_WORLD_PING = 76;
 	private final static int WORLD_SELECT_INTERFACE_SCROLL_AREA = 86;
+	private final static int WORLD_SELECT_INTERFACE_SCROLL_BAR = 1;
+
+	private final static int FRIENDS_INTERFACE = 909;
+
+	private final static int FRIENDS_CHAT_INTERFACE = 589;
+
+	private final static int CLAN_CHAT_INTERFACE = 912;
+
+	private final static int OPTIONS_INTERFACE = 978;
+
 	private final static int[] TABS = new int[]{188, 189, 190, 191, 192, 193};
 
 	private final static Point[] TAB_POINTS = new Point[]{new Point(152, 42),

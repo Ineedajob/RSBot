@@ -3,13 +3,18 @@ package org.rsbot.script.methods;
 import org.rsbot.script.wrappers.RSInterface;
 import org.rsbot.script.wrappers.RSPlayer;
 
+import java.util.logging.Logger;
+
 /**
  * Trade handling.
  *
  * @author Timer
  * @author kyleshay
  */
+@SuppressWarnings("unused")
 public class Trade extends MethodProvider {
+	private static final Logger log = Logger.getLogger(Trade.class.getName());
+
 	public static final int INTERFACE_TRADE_MAIN = 335;
 	public static final int INTERFACE_TRADE_SECOND = 334;
 	public static final int INTERFACE_TRADE_MAIN_NAME = 15;
@@ -20,6 +25,8 @@ public class Trade extends MethodProvider {
 	public static final int INTERFACE_TRADE_MAIN_DECLINE = 19;
 	public static final int INTERFACE_TRADE_SECOND_ACCEPT = 36;
 	public static final int INTERFACE_TRADE_SECOND_DECLINE = 37;
+
+	private final static int INTERFACE_TRADE_MAIN_INV_SLOTS = 21;
 
 	public static final int TRADE_TYPE_MAIN = 0;
 	public static final int TRADE_TYPE_SECONDARY = 1;
@@ -214,6 +221,40 @@ public class Trade extends MethodProvider {
 	 */
 	private boolean isTradingWith(String name) {
 		return getTradingWith().equals(name);
+	}
+
+	/**
+	 * Returns the total number of items offered by another player
+	 *
+	 * @return The number of items offered.
+	 */
+	private int getNumberOfItemsOffered() {
+		int number = 0;
+		for (int i = 0; i < 28; i++) {
+			if (methods.interfaces.get(INTERFACE_TRADE_MAIN).getComponent(
+					INTERFACE_TRADE_MAIN_OUR).getComponent(i).getComponentStackSize() != 0) {
+				++number;
+			}
+		}
+		return number;
+	}
+
+	/**
+	 * Returns the total number of free slots the other player has
+	 *
+	 * @return The number of free slots.
+	 */
+	private int getFreeSlots() {
+		if (inTradeMain()) {
+			String text = methods.interfaces.get(INTERFACE_TRADE_MAIN).getComponent(
+					INTERFACE_TRADE_MAIN_INV_SLOTS).getText().substring(4, 6);
+			text = text.trim();
+			try {
+				return Integer.parseInt(text);
+			} catch (Exception e) {
+			}
+		}
+		return 0;
 	}
 
 }
