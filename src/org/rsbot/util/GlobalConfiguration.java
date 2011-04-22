@@ -52,16 +52,15 @@ public class GlobalConfiguration {
 		}
 
 		public static class URLs {
-			public static final String UPDATER = "http://links.powerbot.org/";
-			public static final String DOWNLOAD = UPDATER + "update";
-			public static final String UPDATE = UPDATER + "modscript";
-			public static final String WEB = UPDATER + "webwalker.gz";
-			public static final String EASTER_MATRIX = UPDATER + "matrix";
-			public static final String VERSION = UPDATER + "version.txt";
-			public static final String PROJECT = UPDATER + "git-project";
-			public static final String SITE = "http://www.powerbot.org";
-			//public static final String STATS = "http://stats.powerbot.org/sync/";
-			public static final String AD_INFO = UPDATER + "botad-info";
+			private static final String BASE = "http://links.powerbot.org/";
+			public static final String DOWNLOAD = BASE + "download";
+			public static final String UPDATE = BASE + "modscript";
+			public static final String WEB = BASE + "webwalker.gz";
+			public static final String EASTER_MATRIX = BASE + "matrix";
+			public static final String VERSION = BASE + "version.txt";
+			public static final String PROJECT = BASE + "git-project";
+			public static final String SITE = BASE + "site";
+			public static final String AD_INFO = BASE + "botad-info";
 		}
 
 		public static final String ROOT = "." + File.separator + "resources";
