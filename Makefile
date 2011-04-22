@@ -10,7 +10,10 @@ MANIFEST=$(RES)/Manifest.txt
 VERSIONFILE=$(RES)/version.txt
 VERSION=`cat $(VERSIONFILE)`
 SCRIPTS=scripts
+NAME=RSBot
 DIST=RSBot.jar
+ACCOUNTS=$(HOME)/.$(shell echo $(NAME) | tr '[A-Z]' '[a-z]')acct
+INSTALLDIR=$(HOME)/$(NAME)
 
 .PHONY: all Bot Scripts mostlyclean clean remove
 
@@ -23,7 +26,7 @@ Bot:
 Scripts: mostlyclean Bot
 	$(CC) $(CFLAGS) -cp $(BINDIR) $(SCRIPTS)/*.java
 	
-Bundle: Bot
+Bundle: Scripts
 	@rm -fv $(LSTF)
 	@cp $(MANIFEST) $(LSTF)
 	@echo "Specification-Version: \"$(VERSION)\"" >> $(LSTF)
@@ -40,4 +43,5 @@ clean: mostlyclean
 	@rm -rfv $(BINDIR)
 
 remove:
-	@echo "Removal tool not yet implemented"
+	@if [ -e "$(ACCOUNTS)" ]; then rm -fv "$(ACCOUNTS)"; fi
+	@if [ -d "$(INSTALLDIR)" ]; then rm -rfv "$(INSTALLDIR)"; fi
