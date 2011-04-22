@@ -1,6 +1,7 @@
 import org.rsbot.event.listeners.PaintListener;
 import org.rsbot.script.Script;
 import org.rsbot.script.ScriptManifest;
+import org.rsbot.script.methods.Game;
 import org.rsbot.script.methods.Skills;
 import org.rsbot.script.util.Timer;
 import org.rsbot.script.wrappers.RSArea;
@@ -474,6 +475,7 @@ public class VoltrexApeAtoll extends Script implements PaintListener {
 			sleep(100);
 	}
 
+	@SuppressWarnings("deprecation")
 	private void doRecover1() {
 		status = "Walking to start...";
 
@@ -490,6 +492,7 @@ public class VoltrexApeAtoll extends Script implements PaintListener {
 			sleep(100);
 	}
 
+	@SuppressWarnings("deprecation")
 	private void doTostart() {
 		status = "Walking to start... (2)";
 
@@ -644,16 +647,16 @@ public class VoltrexApeAtoll extends Script implements PaintListener {
 		if (game.isWelcomeScreen()) {
 			log("On Welcome Screen, logging in...");
 			sleep(random(2000, 3500));
-			interfaces.getComponent(game.INTERFACE_WELCOME_SCREEN_PLAY)
+			interfaces.getComponent(Game.INTERFACE_WELCOME_SCREEN_PLAY)
 					.doClick();
 			log("Clicked on login... Now waiting...");
 			sleep(random(5000, 7000));
 			return true;
-		} else if (interfaces.getComponent(game.INTERFACE_WELCOME_SCREEN)
+		} else if (interfaces.getComponent(Game.INTERFACE_WELCOME_SCREEN)
 				.isValid()) {
 			log("On Welcome Screen, logging in...");
 			sleep(random(2000, 3500));
-			interfaces.getComponent(game.INTERFACE_WELCOME_SCREEN_PLAY)
+			interfaces.getComponent(Game.INTERFACE_WELCOME_SCREEN_PLAY)
 					.doClick();
 			log("Clicked on login... Now waiting...");
 			sleep(random(5000, 7000));
@@ -753,12 +756,12 @@ public class VoltrexApeAtoll extends Script implements PaintListener {
 					if (timer.isRunning())
 						break;
 					timer.setEndIn(random(755, 2345));
-					final int[] tabs = {game.TAB_ATTACK, game.TAB_CLAN_CHAT,
-							game.TAB_CONTROLS, game.TAB_EQUIPMENT,
-							game.TAB_FRIENDS, game.TAB_FRIENDS_CHAT,
-							game.TAB_INVENTORY, game.TAB_MAGIC, game.TAB_MUSIC,
-							game.TAB_NOTES, game.TAB_OPTIONS, game.TAB_PRAYER,
-							game.TAB_QUESTS, game.TAB_STATS, game.TAB_SUMMONING};
+					final int[] tabs = {Game.TAB_ATTACK, Game.TAB_CLAN_CHAT,
+							Game.TAB_CONTROLS, Game.TAB_EQUIPMENT,
+							Game.TAB_FRIENDS, Game.TAB_FRIENDS_CHAT,
+							Game.TAB_INVENTORY, Game.TAB_MAGIC, Game.TAB_MUSIC,
+							Game.TAB_NOTES, Game.TAB_OPTIONS, Game.TAB_PRAYER,
+							Game.TAB_QUESTS, Game.TAB_STATS, Game.TAB_SUMMONING};
 
 					game.openTab(tabs[random(0, tabs.length)]);
 					currentAntiban = 0;

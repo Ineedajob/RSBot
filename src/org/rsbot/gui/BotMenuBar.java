@@ -1,28 +1,54 @@
 package org.rsbot.gui;
 
-import org.rsbot.bot.Bot;
-import org.rsbot.event.impl.*;
-import org.rsbot.event.listeners.PaintListener;
-import org.rsbot.event.listeners.TextPaintListener;
-import org.rsbot.util.GlobalConfiguration;
-
-import javax.swing.*;
-
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
 import java.util.Map.Entry;
-import java.util.logging.Logger;
+
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JSeparator;
+
+import org.rsbot.bot.Bot;
+import org.rsbot.event.impl.DrawBoundaries;
+import org.rsbot.event.impl.DrawInventory;
+import org.rsbot.event.impl.DrawItems;
+import org.rsbot.event.impl.DrawModel;
+import org.rsbot.event.impl.DrawMouse;
+import org.rsbot.event.impl.DrawNPCs;
+import org.rsbot.event.impl.DrawObjects;
+import org.rsbot.event.impl.DrawPlayers;
+import org.rsbot.event.impl.DrawSettings;
+import org.rsbot.event.impl.DrawWeb;
+import org.rsbot.event.impl.MessageLogger;
+import org.rsbot.event.impl.TAnimation;
+import org.rsbot.event.impl.TCamera;
+import org.rsbot.event.impl.TFPS;
+import org.rsbot.event.impl.TFloorHeight;
+import org.rsbot.event.impl.TLoginIndex;
+import org.rsbot.event.impl.TMenu;
+import org.rsbot.event.impl.TMenuActions;
+import org.rsbot.event.impl.TMousePosition;
+import org.rsbot.event.impl.TPlayerPosition;
+import org.rsbot.event.impl.TTab;
+import org.rsbot.event.impl.TUserInputAllowed;
+import org.rsbot.event.listeners.PaintListener;
+import org.rsbot.event.listeners.TextPaintListener;
+import org.rsbot.util.GlobalConfiguration;
 
 public class BotMenuBar extends JMenuBar {
-	private static final Logger log = Logger.getLogger(BotMenuBar.class.getName());
 	private static final long serialVersionUID = 971579975301998332L;
 	public static final Map<String, Class<?>> DEBUG_MAP = new LinkedHashMap<String, Class<?>>();
 	public static final String[] TITLES;

@@ -14,8 +14,6 @@ import java.util.logging.Logger;
 public class Application {
 
 	private static BotGUI gui;
-	private static long startTime;
-
 	public static void main(final String[] args) throws Exception {
 		bootstrap();
 		new Extractor(args).run();

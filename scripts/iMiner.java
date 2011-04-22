@@ -287,8 +287,6 @@ public class iMiner extends Script implements PaintListener,
 						&& BankBox != null)
 					BoxAngle();
 				if (!bank.isDepositOpen() && BankBox != null) {
-					if (BankBox == null)
-						;
 					status = "Banking";
 					bank.openDepositBox();
 					sleep(random(1500, 1700));

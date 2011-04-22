@@ -377,6 +377,7 @@ public class AccountManager extends JDialog implements ActionListener {
 	 * @param key The key
 	 * @return true if the object is supported, false if it isn't
 	 */
+	@SuppressWarnings("unused")
 	private static boolean isValidKey(final String key) {
 		for (String check : VALID_KEYS) {
 			if (key.equalsIgnoreCase(check)) {
@@ -392,6 +393,7 @@ public class AccountManager extends JDialog implements ActionListener {
 	 * @param pin The pin
 	 * @return true if the pin is valid, false if it isn't
 	 */
+	@SuppressWarnings("unused")
 	private static boolean isValidPin(final String pin) {
 		if (pin.length() == 4) {
 			for (int i = 0; i < pin.length(); i++) {

@@ -157,6 +157,7 @@ public class BloddyMasterFarmerStealer extends Script implements PaintListener,
 		return 0;
 	}
 
+	@SuppressWarnings("deprecation")
 	public int checkInventoryFull() {
 		if (!highLevelMode) {
 			if (bank.isOpen() && bank.getCount(FOODID) == 0
@@ -231,6 +232,7 @@ public class BloddyMasterFarmerStealer extends Script implements PaintListener,
 		stopScript();
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public int loop() {
 		if (logOut == false) {

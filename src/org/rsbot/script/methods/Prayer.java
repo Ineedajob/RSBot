@@ -159,7 +159,7 @@ public class Prayer extends MethodProvider {
 	 */
 	public int getPrayerLeft() {
 		return Integer.parseInt(methods.interfaces.getComponent(
-				methods.game.INTERFACE_PRAYER_ORB, 4).getText());
+				Game.INTERFACE_PRAYER_ORB, 4).getText());
 	}
 
 	/**
