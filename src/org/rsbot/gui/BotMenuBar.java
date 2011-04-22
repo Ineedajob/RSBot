@@ -224,7 +224,7 @@ public class BotMenuBar extends JMenuBar {
 				getValue(commandCheckMap.get("Disable Advertisements")
 						.isSelected()));
 		props.setProperty("ExitMessages",
-				getValue(commandCheckMap.get("Disable Confirmation")
+				getValue(commandCheckMap.get("Disable Confirmations")
 						.isSelected()));
 		try {
 			props.store(
