@@ -11,7 +11,6 @@ import org.rsbot.script.methods.Environment;
 import org.rsbot.script.util.WindowUtil;
 import org.rsbot.service.ScriptDeliveryNetwork;
 import org.rsbot.util.GlobalConfiguration;
-import org.rsbot.util.Minimizer;
 import org.rsbot.util.ScreenshotUtil;
 import org.rsbot.util.UpdateUtil;
 
@@ -126,24 +125,6 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 				Bot current = getCurrentBot();
 				if (current != null) {
 					pauseScript(current);
-				}
-			} else if (option.equals("Snap to Tray")) {
-				Bot current = getCurrentBot();
-				if (current != null) {
-					try {
-						if (!SystemTray.isSupported()) {
-							JOptionPane
-									.showMessageDialog(
-											this,
-											"System-Tray feature is not supported by your OS.",
-											"Error", JOptionPane.ERROR_MESSAGE);
-							return;
-						}
-						this.setVisible(false);
-						Minimizer.snapToTray(this);
-					} catch (Exception ignored) {
-					}
-
 				}
 			} else if (option.equals("Save Screenshot")) {
 				Bot current = getCurrentBot();
