@@ -3,6 +3,7 @@ package org.rsbot.script;
 import org.rsbot.event.listeners.PaintListener;
 import org.rsbot.script.methods.MethodContext;
 import org.rsbot.script.methods.Methods;
+import org.rsbot.service.StatisticHandler;
 
 import java.awt.*;
 import java.util.logging.Level;
@@ -22,7 +23,7 @@ public abstract class Random extends Methods implements PaintListener {
 	private long timeout = random(240, 300);
 
 	private Color[] fadeArray = {Color.red, Color.white, Color.green, new Color(128, 0, 128), Color.yellow,
-			Color.black, Color.orange, Color.pink};
+	                             Color.black, Color.orange, Color.pink};
 
 	private int currentIndex = 0;
 
@@ -102,6 +103,10 @@ public abstract class Random extends Methods implements PaintListener {
 		}
 		ctx.ctx.bot.getEventManager().addListener(this);
 		log("Random event started: " + name);
+		try {
+			StatisticHandler.ReportRandom(name, "Random has initiated.");
+		} catch (Exception ignored) {
+		}
 		long timeout = getTimeout();
 		if (timeout > 0) {
 			timeout *= 1000;
@@ -114,18 +119,26 @@ public abstract class Random extends Methods implements PaintListener {
 					break;
 				} else if (timeout > 0 && System.currentTimeMillis() >= timeout) {
 					log.warning("Time limit reached for " + name + ".");
+					try {
+						StatisticHandler.ReportRandom(name, "Random has failed, timeout was reached.");
+					} catch (Exception ignored) {
+					}
 					ctx.stopScript();
 				} else {
 					sleep(wait);
 				}
 			} catch (Exception ex) {
-				log.log(Level.SEVERE, "Uncatched exception: ", ex);
+				log.log(Level.SEVERE, "Uncaught exception: ", ex);
 				break;
 			}
 		}
 		script = null;
 		onFinish();
 		log("Random event finished: " + name);
+		try {
+			StatisticHandler.ReportRandom(name, "Random has been completed successfully.");
+		} catch (Exception ignored) {
+		}
 		ctx.ctx.bot.getEventManager().removeListener(this);
 		sleep(1000);
 		ctx.ctx.bot.getEventManager().addListener(ctx);
