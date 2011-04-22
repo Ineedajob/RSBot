@@ -12,19 +12,18 @@ VERSION=`cat $(VERSIONFILE)`
 SCRIPTS=scripts
 DIST=RSBot.jar
 
-.PHONY: all Bot Scripts mostlyclean clean
+.PHONY: all Bot Scripts mostlyclean clean remove
 
-all: Bot Scripts Jar endclean
-	@echo "Build successful"
+all: Bundle
 
 Bot:
 	@if [ ! -d $(BINDIR) ]; then mkdir $(BINDIR); fi
 	$(CC) $(CFLAGS) -d $(BINDIR) `find $(SRC) -name *.java`
 
-Scripts: mostlyclean
+Scripts: mostlyclean Bot
 	$(CC) $(CFLAGS) -cp $(BINDIR) $(SCRIPTS)/*.java
 	
-Jar:
+Bundle: Bot
 	@rm -fv $(LSTF)
 	@cp $(MANIFEST) $(LSTF)
 	@echo "Specification-Version: \"$(VERSION)\"" >> $(LSTF)
@@ -34,12 +33,11 @@ Jar:
 	@rm -f $(LSTF)
 
 mostlyclean:
-	@rm -f $(SCRIPTS)/*.class
-	
-endclean:
-	@rm -f $(SCRIPTS)/*.class
-	@rm -rf $(BINDIR)
+	@rm -fv $(SCRIPTS)/*.class
 
 clean: mostlyclean
 	@rm -fv $(DIST)
-	@rm -rfv $(BINDIR)/*
+	@rm -rfv $(BINDIR)
+
+remove:
+	@echo "Removal tool not yet implemented"
