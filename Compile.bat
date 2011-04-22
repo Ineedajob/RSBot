@@ -1,7 +1,7 @@
 @ECHO OFF
 
 SET cc=javac
-SET cflags=
+SET cflags=-g
 SET src=src
 SET lib=lib
 SET res=resources
