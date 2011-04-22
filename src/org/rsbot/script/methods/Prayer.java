@@ -115,9 +115,13 @@ public class Prayer extends MethodProvider {
 		}
 		RSComponent pray = methods.interfaces.getComponent(271, 7)
 				.getComponent(prayer.getIndex());
-		// Check that the background color == activate, otherwise click
-		return (pray.getBackgroundColor() == -1) == activate
-				&& pray.doAction(activate ? "Activate" : "Deactivate");
+		if ((pray.getBackgroundColor() != -1) == activate) {
+			return false;
+		}
+		if (methods.game.getCurrentTab() != Game.TAB_PRAYER && methods.game.openTab(Game.TAB_PRAYER)) {
+			sleep(random(100, 200));
+		}
+		return pray.doAction(activate ? "Activate" : "Deactivate");
 	}
 
 	/**
