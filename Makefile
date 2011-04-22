@@ -1,5 +1,5 @@
 CC=javac
-CFLAGS=-g
+CFLAGS=-g -Xlint:deprecation
 SRC=src
 LIB=lib
 RES=resources

@@ -1,7 +1,7 @@
 @ECHO OFF
 
 SET cc=javac
-SET cflags=-g
+SET cflags=-g -Xlint:deprecation
 SET src=src
 SET lib=lib
 SET res=resources
