@@ -49,6 +49,7 @@ public class CloseAllInterface extends Random {
 		addChild(742, 14); // Graphic
 		addChild(917, 69); // Task List
 		addChild(1107, 174); // Clan Vexillum
+		addChild(266, 1); // Tombstone
 	}
 
 	private void addChild(int parent, int idx) {
