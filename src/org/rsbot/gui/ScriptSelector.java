@@ -94,7 +94,6 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 		model.search(search.getText());
 	}
 
-	@SuppressWarnings("serial")
 	private void init() {
 		setLayout(new BorderLayout());
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -106,32 +105,7 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 				dispose();
 			}
 		});
-		table = new JTable(model) {
-			@Override
-			public String getToolTipText(MouseEvent e) {
-				int row = rowAtPoint(e.getPoint());
-				ScriptDefinition def = model.getDefinition(row);
-				if (def != null) {
-					StringBuilder b = new StringBuilder();
-					if (def.authors.length > 1) {
-						b.append("Authors: ");
-					} else {
-						b.append("Author: ");
-					}
-					boolean prefix = false;
-					for (String author : def.authors) {
-						if (prefix) {
-							b.append(", ");
-						} else {
-							prefix = true;
-						}
-						b.append(author);
-					}
-					return b.toString();
-				}
-				return super.getToolTipText(e);
-			}
-		};
+		table = new JTable(model);
 		table.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent e) {
 				if ((e.getModifiers() & InputEvent.BUTTON3_MASK) == InputEvent.BUTTON3_MASK) {
