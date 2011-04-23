@@ -326,7 +326,7 @@ public class BotToolBar extends JToolBar {
 			super.paintComponent(g);
 			((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 					RenderingHints.VALUE_ANTIALIAS_ON);
-			int RGB = getComponentIndex(this) == idx ? 150 : hovered ? 175 : 255;
+			int RGB = getComponentIndex(this) == idx ? 255 : hovered ? 230 : 215;
 			g.setColor(new Color(RGB, RGB, RGB, 200));
 			g.fillRoundRect(0, 0, getWidth() - 2, getHeight() - 1, 4, 4);
 			g.setColor(new Color(180, 180, 180, 200));
