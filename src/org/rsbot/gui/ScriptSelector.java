@@ -14,6 +14,7 @@ import javax.swing.table.AbstractTableModel;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -131,6 +132,40 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 				return super.getToolTipText(e);
 			}
 		};
+		table.addMouseListener(new MouseAdapter() {
+			public void mousePressed(MouseEvent e) {
+				if ((e.getModifiers() & InputEvent.BUTTON3_MASK) == InputEvent.BUTTON3_MASK) {
+					final int row = table.rowAtPoint(e.getPoint());
+					table.getSelectionModel().setSelectionInterval(row, row);
+					showMenu(e);
+				}
+			}
+			
+			private void showMenu(MouseEvent e) {
+				final int row = table.rowAtPoint(e.getPoint());
+				final ScriptDefinition def = model.getDefinition(row);
+				
+				JPopupMenu contextMenu = new JPopupMenu();
+				JMenuItem visit = new JMenuItem();
+				visit.setText("Visit Site");
+				try {
+				visit.setIcon(new ImageIcon(GlobalConfiguration.RUNNING_FROM_JAR ?
+						ScriptSelector.class.getResource(GlobalConfiguration.Paths.Resources.ICON_WEBLINK) :
+						new File(GlobalConfiguration.Paths.ICON_WEBLINK).toURI().toURL()));
+				} catch (IOException ioe) { }
+				visit.addMouseListener(new MouseAdapter() {
+					public void mousePressed(MouseEvent e) {
+						BotGUI.openURL(def.website);
+					}
+				});
+				contextMenu.add(visit);
+				
+				if (def.website == null || def.website.isEmpty())
+					visit.setEnabled(false);
+				
+				contextMenu.show(table, e.getX(), e.getY());
+			}
+		});
 		table.setRowHeight(20);
 		table.setIntercellSpacing(new Dimension(1, 1));
 		table.setShowGrid(false);
