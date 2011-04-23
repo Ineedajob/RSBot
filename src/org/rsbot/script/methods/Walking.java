@@ -104,19 +104,19 @@ public class Walking extends MethodProvider {
 		}
 		Point p = methods.calc.tileToMinimap(dest);
 		if (p.x != -1 && p.y != -1) {
-			int x = p.x, y = p.y;
+			int xx = p.x, yy = p.y;
 			if (random(1, 2) == random(1, 2)) {
-				x += random(0, 50);
+				xx += random(0, 50);
 			} else {
-				x -= random(0, 50);
+				xx -= random(0, 50);
 			}
 			if (random(1, 2) == random(1, 2)) {
-				y += random(0, 50);
+				yy += random(0, 50);
 			} else {
-				y -= random(0, 50);
+				yy -= random(0, 50);
 			}
-			methods.mouse.move(x, y);
-			p = calc.tileToMinimap(dest);
+			methods.mouse.move(xx, yy);
+			p = methods.calc.tileToMinimap(dest);
 			if (p.x == -1 || p.y == -1) {
 				return false;
 			}
