@@ -97,8 +97,24 @@ public class Walking extends MethodProvider {
 	 * @return <tt>true</tt> if the tile was clicked; otherwise <tt>false</tt>.
 	 */
 	public boolean walkTileMM(final RSTile t, final int x, final int y) {
-		RSTile dest = new RSTile(t.getX() + random(0, x), t.getY()
-				+ random(0, y));
+		/*RSTile dest = new RSTile(t.getX() + random(0, x), t.getY()
+				+ random(0, y)); You can't just add randomness to the tile, it should be subtracted.*/ 
+		int xx = dest.getX(), yy = dest.getY();
+		if (x > 0) {
+			if (random(1, 2) == random(1, 2)) {
+				xx += random(0, x);
+			} else {
+				xx -= random(0, x);
+			}
+		}
+		if (y > 0) {
+			if (random(1, 2) == random(1, 2)) {
+				yy += random(0, y);				
+			} else {
+				yy -= random(0, y);
+			}
+		}
+		RSTile dest = new RSTile(xx, yy);
 		if (!methods.calc.tileOnMap(dest)) {
 			dest = getClosestTileOnMap(dest);
 		}
