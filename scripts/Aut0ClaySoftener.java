@@ -16,6 +16,7 @@ import org.rsbot.script.Script;
 import org.rsbot.script.ScriptManifest;
 import org.rsbot.script.util.Filter;
 import org.rsbot.script.internal.MouseHandler;
+import org.rsbot.script.methods.Bank;
 import org.rsbot.script.methods.GrandExchange.GEItem;
 import org.rsbot.script.wrappers.*;
 import org.rsbot.event.listeners.*;
@@ -34,8 +35,6 @@ public class Aut0ClaySoftener extends Script implements PaintListener, MessageLi
     private int numDone;
     private int softClay = 1761, clay = 434;
     private int softClayPrice = -1, clayPrice = -1;
-    private long lastMessageTyped;
-    private ArrayList<String> sentTo = new ArrayList<String>();
     private Timekeeper timekeeper = new Timekeeper();
     private antiban Antiban;
     private CameraMovementChecker cameraCheck;
@@ -120,13 +119,12 @@ public class Aut0ClaySoftener extends Script implements PaintListener, MessageLi
         cameraCheck = new CameraMovementChecker();
         Antiban = new antiban();
         canAB = true;
-        lastMessageTyped = System.currentTimeMillis();
+        System.currentTimeMillis();
         return true;
     }
     private final RenderingHints antialiasing = new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
     private final BasicStroke stroke = new BasicStroke(1);
     private final Font calibri20 = new Font("Calibri", 0, 20);
-    private final Font calibri17bold = new Font("Calibri", 1, 17);
     private final Color color1 = new Color(0, 0, 0);
     private final Color color2 = new Color(0, 0, 255, 108);
     private final Color blue = Color.BLUE;
@@ -807,9 +805,9 @@ public class Aut0ClaySoftener extends Script implements PaintListener, MessageLi
                     mouse.moveSlightly();
                     sleep(random(40, 60));
                 }
-                RSObject bankBooth = objects.getNearest(bank.BANK_BOOTHS);
-                RSNPC banker = npcs.getNearest(bank.BANKERS);
-                RSObject bankChest = objects.getNearest(bank.BANK_CHESTS);
+                RSObject bankBooth = objects.getNearest(Bank.BANK_BOOTHS);
+                RSNPC banker = npcs.getNearest(Bank.BANKERS);
+                RSObject bankChest = objects.getNearest(Bank.BANK_CHESTS);
                 int dist = calc.distanceTo(bankBooth);
                 if (banker != null && bankBooth != null && calc.distanceTo(banker) < dist) {
                     if (calc.distanceBetween(banker.getLocation(), bankBooth.getLocation()) <= 1) {
@@ -984,26 +982,6 @@ public class Aut0ClaySoftener extends Script implements PaintListener, MessageLi
         if (!gui.isCanceled()) {
             sm.save();
         }
-    }
-
-    private boolean isIntOdd(int i) {
-        String[] odds = {"1", "3", "5", "7", "9"};
-        String s = Integer.toString(i);
-        String[] digits = s.split("");
-        boolean isodd = false;
-        for (String curr : digits) {
-            for (String check : odds) {
-                int checkint = Integer.parseInt(check);
-                int currint = Integer.parseInt(curr);
-                if (checkint == currint) {
-                    isodd = true;
-                    break;
-                } else {
-                    isodd = false;
-                }
-            }
-        }
-        return isodd;
     }
 
     private Point getLocation(RSObject obj) {
@@ -1203,10 +1181,10 @@ public class Aut0ClaySoftener extends Script implements PaintListener, MessageLi
             return false;
         }
         while (comp.getRelativeX() == 0 && bank.getCurrentTab() != 0) {
-            interfaces.getComponent(bank.INTERFACE_BANK, bank.INTERFACE_BANK_TAB[0]).doClick();
+            interfaces.getComponent(Bank.INTERFACE_BANK, Bank.INTERFACE_BANK_TAB[0]).doClick();
             sleep(random(600, 1100));
         }
-        if (!interfaces.scrollTo(comp, (bank.INTERFACE_BANK << 16) + bank.INTERFACE_BANK_SCROLLBAR)) {
+        if (!interfaces.scrollTo(comp, (Bank.INTERFACE_BANK << 16) + Bank.INTERFACE_BANK_SCROLLBAR)) {
             return false;
         }
         sleep(random(60, 200));
@@ -1370,7 +1348,7 @@ public class Aut0ClaySoftener extends Script implements PaintListener, MessageLi
         }
 
         private Point[] genControls(Point start, Point end) {
-            int rand = random(1, 8);
+            random(1, 8);
             ArrayList<Point> controls = new ArrayList<Point>();
             controls.add(start);
             /*Cubic Bezier*/
@@ -1419,7 +1397,7 @@ public class Aut0ClaySoftener extends Script implements PaintListener, MessageLi
             if (numofcontrols < 3 || numofcontrols > 4) { //Can't make a curve with 2 points. More than 4 points is not supported.
                 return null;
             }
-            double dist = calc.distanceBetween(start, end);
+            calc.distanceBetween(start, end);
             double angle = Math.atan2(end.y - start.y, end.x - start.x);
             ArrayList<Point> result = new ArrayList<Point>();
             result.add(start);
@@ -1667,17 +1645,6 @@ public class Aut0ClaySoftener extends Script implements PaintListener, MessageLi
             }
         }
 
-        public boolean walkTo(RSTile destination, int randomize) {
-            canAB = false;
-            if (Walker.walkTo(destination, randomize)) {
-                canAB = true;
-                return true;
-            } else {
-                canAB = true;
-                return false;
-            }
-        }
-
         private class utils {
 
             private RSTile[] clean(RSTile[] path) {
@@ -1865,14 +1832,13 @@ public class Aut0ClaySoftener extends Script implements PaintListener, MessageLi
             public static final int WALL_SOUTH_WEST = 0x40;
             public static final int WALL_WEST = 0x80;
             public static final int BLOCKED = 0x100;
-            protected RSTile end;
             protected RSTile base;
             protected int[][] flags;
             protected int offX, offY;
 
             protected class Node {
 
-                public int x, y, z;
+                public int x, y;
                 public Node prev;
                 public double g, f;
 
@@ -2252,7 +2218,11 @@ public class Aut0ClaySoftener extends Script implements PaintListener, MessageLi
 
     public class PaintOptions extends javax.swing.JFrame {
 
-        public PaintOptions(SettingsManager sm) {
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = -2632279993945486958L;
+		public PaintOptions(SettingsManager sm) {
             initComponents();
             sm.add("Show Mouse", showmouse);
             sm.add("Show Stats", showstats);
@@ -2370,7 +2340,11 @@ public class Aut0ClaySoftener extends Script implements PaintListener, MessageLi
 
     public class ABSettings extends javax.swing.JFrame {
 
-        public ABSettings(SettingsManager sm) {
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = 7138312375117656560L;
+		public ABSettings(SettingsManager sm) {
             initComponents();
             sm.add("Use Bezier Curves", beziercurves);
             sm.add("Use short splines to points on a linde", shortsplines);
@@ -2619,12 +2593,6 @@ public class Aut0ClaySoftener extends Script implements PaintListener, MessageLi
             final double elapsed_millis = this.getMillis();
             return (long) ((i / elapsed_millis) * 3600000);
         }
-
-        public double calcPerSecond(final long i) {
-            final double expToDouble = i;
-            final double elapsed_millis = this.getMillis();
-            return (expToDouble / elapsed_millis) * 1000;
-        }
     }
 
     /*A camera handler for Antiban purposes*/
@@ -2634,14 +2602,6 @@ public class Aut0ClaySoftener extends Script implements PaintListener, MessageLi
         private char down = KeyEvent.VK_DOWN;
         private char left = KeyEvent.VK_LEFT;
         private char right = KeyEvent.VK_RIGHT;
-
-        public void turnRight(long timeout) {
-            new Thread(new charpresser(timeout, right)).start();
-        }
-
-        public void turnLeft(long timeout) {
-            new Thread(new charpresser(timeout, left)).start();
-        }
 
         public void turnRandomly(long averageTimeout) {
             int sleep = Math.abs((int) (random(averageTimeout - 200, averageTimeout + 200)));
@@ -3043,7 +3003,7 @@ public class Aut0ClaySoftener extends Script implements PaintListener, MessageLi
                     switch (rand) {
                         case 1: {
                             if (canAB && !mouseCheck.movedRecently() && !cameraCheck.movedRecently()) {
-                                this.antiban();
+                                this.doAntiban();
                             }
                         }
                         break;
@@ -3378,7 +3338,7 @@ public class Aut0ClaySoftener extends Script implements PaintListener, MessageLi
             }
         }
 
-        private void antiban() {
+        private void doAntiban() {
             int rand = random(1, 6);
             if (rand <= 2 && !bank.isOpen()) {
                 antibancamera();
