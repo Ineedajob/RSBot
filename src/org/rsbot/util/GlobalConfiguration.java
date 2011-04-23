@@ -47,6 +47,7 @@ public class GlobalConfiguration {
 			public static final String ICON_SCRIPT_DRM = Resources.ROOT_IMG + "/script_drm.png";
 			public static final String ICON_SCRIPT_PRE = Resources.ROOT_IMG + "/script_pre.png";
 			public static final String ICON_SCRIPT_SRC = Resources.ROOT_IMG + "/script_src.png";
+			public static final String ICON_WEBLINK = Resources.ROOT_IMG + "/world_link.png";
 
 			public static final String VERSION = Resources.ROOT + "/version.txt";
 		}
@@ -91,6 +92,7 @@ public class GlobalConfiguration {
 		public static final String ICON_SCRIPT_DRM = Paths.ROOT_IMG + File.separator + "script_drm.png";
 		public static final String ICON_SCRIPT_PRE = Paths.ROOT_IMG + File.separator + "script_pre.png";
 		public static final String ICON_SCRIPT_SRC = Paths.ROOT_IMG + File.separator + "script_src.png";
+		public static final String ICON_WEBLINK = Paths.ROOT_IMG + File.separator + "world_link.png";
 
 		public static final String SCRIPTS_NAME_SRC = "scripts";
 		public static final String SCRIPTS_NAME_OUT = "Scripts";

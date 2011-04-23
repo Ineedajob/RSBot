@@ -14,6 +14,7 @@ import javax.swing.table.AbstractTableModel;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -93,7 +94,6 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 		model.search(search.getText());
 	}
 
-	@SuppressWarnings("serial")
 	private void init() {
 		setLayout(new BorderLayout());
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -105,32 +105,41 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 				dispose();
 			}
 		});
-		table = new JTable(model) {
-			@Override
-			public String getToolTipText(MouseEvent e) {
-				int row = rowAtPoint(e.getPoint());
-				ScriptDefinition def = model.getDefinition(row);
-				if (def != null) {
-					StringBuilder b = new StringBuilder();
-					if (def.authors.length > 1) {
-						b.append("Authors: ");
-					} else {
-						b.append("Author: ");
-					}
-					boolean prefix = false;
-					for (String author : def.authors) {
-						if (prefix) {
-							b.append(", ");
-						} else {
-							prefix = true;
-						}
-						b.append(author);
-					}
-					return b.toString();
+		table = new JTable(model);
+		table.addMouseListener(new MouseAdapter() {
+			public void mousePressed(MouseEvent e) {
+				if ((e.getModifiers() & InputEvent.BUTTON3_MASK) == InputEvent.BUTTON3_MASK) {
+					final int row = table.rowAtPoint(e.getPoint());
+					table.getSelectionModel().setSelectionInterval(row, row);
+					showMenu(e);
 				}
-				return super.getToolTipText(e);
 			}
-		};
+			
+			private void showMenu(MouseEvent e) {
+				final int row = table.rowAtPoint(e.getPoint());
+				final ScriptDefinition def = model.getDefinition(row);
+				
+				JPopupMenu contextMenu = new JPopupMenu();
+				JMenuItem visit = new JMenuItem();
+				visit.setText("Visit Site");
+				try {
+				visit.setIcon(new ImageIcon(GlobalConfiguration.RUNNING_FROM_JAR ?
+						ScriptSelector.class.getResource(GlobalConfiguration.Paths.Resources.ICON_WEBLINK) :
+						new File(GlobalConfiguration.Paths.ICON_WEBLINK).toURI().toURL()));
+				} catch (IOException ioe) { }
+				visit.addMouseListener(new MouseAdapter() {
+					public void mousePressed(MouseEvent e) {
+						BotGUI.openURL(def.website);
+					}
+				});
+				contextMenu.add(visit);
+				
+				if (def.website == null || def.website.isEmpty())
+					visit.setEnabled(false);
+				
+				contextMenu.show(table, e.getX(), e.getY());
+			}
+		});
 		table.setRowHeight(20);
 		table.setIntercellSpacing(new Dimension(1, 1));
 		table.setShowGrid(false);
