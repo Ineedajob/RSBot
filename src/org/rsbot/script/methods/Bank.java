@@ -413,7 +413,7 @@ public class Bank extends MethodProvider {
 							methods.camera.turnTo(bankBooth);
 						}
 					} else if (banker != null) {
-						if (banker.doAction("Bank ")) {
+						if (banker.doAction("Bank Banker")) {
 							int count = 0;
 							while (!isOpen() && ++count < 10) {
 								sleep(random(200, 400));
