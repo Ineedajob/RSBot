@@ -11,6 +11,7 @@ import java.util.logging.Logger;
  * @author Timer
  * @author kyleshay
  */
+@SuppressWarnings("unused")
 public class Trade extends MethodProvider {
 	private static final Logger log = Logger.getLogger(Trade.class.getName());
 

@@ -1,11 +1,19 @@
 package org.rsbot.script.wrappers;
 
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+
 import org.rsbot.script.methods.MethodContext;
 import org.rsbot.util.GlobalConfiguration;
-
-import java.io.*;
-import java.util.*;
-import java.util.logging.Logger;
 
 /**
  * The web generation and wrapper control.
@@ -50,8 +58,6 @@ public class Web extends WebSkeleton {
 	public boolean mapNeedsSet() {
 		return map == null;
 	}
-
-	private final Logger log = Logger.getLogger(Web.class.getName());
 
 	/**
 	 * Sets the map up.

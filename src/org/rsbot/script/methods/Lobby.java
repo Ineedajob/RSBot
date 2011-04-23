@@ -10,6 +10,7 @@ import java.util.ArrayList;
  *
  * @Author Debauchery
  */
+@SuppressWarnings("unused")
 public class Lobby extends MethodProvider {
 
 	public Lobby(MethodContext ctx) {
@@ -155,13 +156,11 @@ public class Lobby extends MethodProvider {
 				}
 			}
 		}
-		if (tempList != null) {
+		{
 			String[] temp = new String[tempList.size()];
 			tempList.toArray(temp);
 			return temp;
 		}
-		return null;
-		//TODO Convert this to an int array.
 	}
 
 

@@ -1,17 +1,15 @@
 package org.rsbot.service;
 
-import org.rsbot.script.Script;
-
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Logger;
+
+import org.rsbot.script.Script;
 
 /**
  * @author Timer
  * @author Paris
  */
 public class ScriptDeliveryNetwork implements ScriptSource {
-	private final Logger log = Logger.getLogger(getClass().getSimpleName());
 	private static ScriptDeliveryNetwork instance = new ScriptDeliveryNetwork();
 	private String key;
 	private final String defaultKey = "0000000000000000000000000000000000000000";

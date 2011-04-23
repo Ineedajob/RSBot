@@ -11,7 +11,6 @@ import org.rsbot.script.methods.Environment;
 import org.rsbot.script.util.WindowUtil;
 import org.rsbot.service.ScriptDeliveryNetwork;
 import org.rsbot.util.GlobalConfiguration;
-import org.rsbot.util.Minimizer;
 import org.rsbot.util.ScreenshotUtil;
 import org.rsbot.util.UpdateUtil;
 
@@ -57,13 +56,7 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 		setLocationRelativeTo(getOwner());
 		setMinimumSize(getSize());
 		setResizable(true);
-		menuBar.loadProps();
-		if (!menuBar.showAds) {
-			showAds = false;
-		}
-		if (!menuBar.disableConfirmations) {
-			disableConfirmations = false;
-		}
+		menuBar.loadPrefs();
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				JPopupMenu.setDefaultLightWeightPopupEnabled(false);
@@ -133,24 +126,6 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 				if (current != null) {
 					pauseScript(current);
 				}
-			} else if (option.equals("Snap to Tray")) {
-				Bot current = getCurrentBot();
-				if (current != null) {
-					try {
-						if (!SystemTray.isSupported()) {
-							JOptionPane
-									.showMessageDialog(
-											this,
-											"System-Tray feature is not supported by your OS.",
-											"Error", JOptionPane.ERROR_MESSAGE);
-							return;
-						}
-						this.setVisible(false);
-						Minimizer.snapToTray(this);
-					} catch (Exception ignored) {
-					}
-
-				}
 			} else if (option.equals("Save Screenshot")) {
 				Bot current = getCurrentBot();
 				if (current != null) {
@@ -160,13 +135,12 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 				cleanExit();
 			}
 		} else if (menu.equals("Edit")) {
-			menuBar.saveProps();
 			if (option.equals("Accounts")) {
 				AccountManager.getInstance().showGUI();
 			} else if (option.equals("Enable Easter")) {
 				Injector.easterMode = ((JCheckBoxMenuItem) evt.getSource()).isSelected();
 			} else if (option.equals("Disable Advertisements")) {
-				showAds = ((JCheckBoxMenuItem) evt.getSource()).isSelected();
+				showAds = !((JCheckBoxMenuItem) evt.getSource()).isSelected();
 			} else if (option.equals("Disable Confirmations")) {
 				disableConfirmations = ((JCheckBoxMenuItem) evt.getSource()).isSelected();
 			} else {
@@ -249,6 +223,7 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 				toolBar.setOverrideInput(false);
 				toolBar.setInputState(Environment.INPUT_KEYBOARD
 						| Environment.INPUT_MOUSE);
+				toolBar.updateInputButton();
 			} else {
 				setTitle(curr.getAccountName());
 				Map<Integer, Script> scriptMap = curr.getScriptHandler()
@@ -264,6 +239,7 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 				}
 				toolBar.setOverrideInput(curr.overrideInput);
 				toolBar.setInputState(curr.inputFlags);
+				toolBar.updateInputButton();
 			}
 		} else if (menu.equals("Run")) {
 			Bot current = getCurrentBot();
@@ -565,8 +541,10 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 				doExit = false;
 		}
 		
-		if (doExit)
+		if (doExit) {
+			menuBar.savePrefs();
 			System.exit(0);
+		}
 		
 		return doExit;
 	}

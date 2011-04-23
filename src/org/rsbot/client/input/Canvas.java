@@ -98,6 +98,7 @@ public class Canvas extends java.awt.Canvas {
 		this.focused = focused;
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public Image createImage(int width, int height) {
 		// Prevents NullPointerException when opening world map.

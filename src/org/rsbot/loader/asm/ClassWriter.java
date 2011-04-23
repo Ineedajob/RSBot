@@ -1183,6 +1183,7 @@ public class ClassWriter implements ClassVisitor {
 	 * @return the internal name of the common super class of the two given
 	 *         classes.
 	 */
+	@SuppressWarnings("rawtypes")
 	protected String getCommonSuperClass(final String type1, final String type2) {
 		Class c, d;
 		try {

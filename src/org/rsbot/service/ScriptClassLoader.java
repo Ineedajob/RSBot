@@ -17,6 +17,7 @@ class ScriptClassLoader extends ClassLoader {
 		this.base = url;
 	}
 
+	@SuppressWarnings("rawtypes")
 	public Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
 		Class clazz = findLoadedClass(name);
 

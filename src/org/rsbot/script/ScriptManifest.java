@@ -17,5 +17,7 @@ public @interface ScriptManifest {
 	String[] keywords() default {};
 
 	String website() default "";
+	
+	int requiresVersion() default 200;
 
 }

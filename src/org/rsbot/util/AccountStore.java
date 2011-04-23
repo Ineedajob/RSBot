@@ -91,10 +91,11 @@ public class AccountStore {
 
 	public static final String KEY_ALGORITHM = "DESede";
 	public static final String CIPHER_TRANSFORMATION = "DESede/CBC/PKCS5Padding";
-	public static final int FORMAT_VERSION = 1;
+	public static final int FORMAT_VERSION = 2;
 
 	private File file;
 	private byte[] digest;
+	private String[] protectedAttributes = { "pin" };
 
 	private Map<String, Account> accounts = new TreeMap<String, Account>();
 
@@ -146,17 +147,19 @@ public class AccountStore {
 				if (current != null) {
 					accounts.put(current.username, current);
 				}
-				String name = AccountStore.fixName(decrypt(line.trim().substring(1).substring(0, line.length() - 2)));
+				String name = AccountStore.fixName(line.trim().substring(1).substring(0, line.length() - 2));
 				current = new Account(name);
-				line = br.readLine();
-				if (!line.isEmpty()) {
-					current.password = decrypt(line);
-				}
 				continue;
 			}
 			if (current != null && line.matches("^\\w+=.+$")) {
 				String[] split = line.trim().split("=");
-				current.setAttribute(split[0], decrypt(split[1]));
+				if (split[0].equals("password"))
+					current.password = decrypt(split[1]);
+				else {
+					if (Arrays.asList(protectedAttributes).contains(split[0]))
+						split[1] = decrypt(split[1]);
+					current.setAttribute(split[0], split[1]);
+				}
 			}
 		}
 		if (current != null) {
@@ -170,15 +173,19 @@ public class AccountStore {
 		bw.write(Integer.toString(FORMAT_VERSION));
 		bw.newLine();
 		for (String name : accounts.keySet()) {
-			bw.append("[").append(encrypt(AccountStore.fixName(name.trim()))).append("]");
+			bw.append("[").append(AccountStore.fixName(name.trim())).append("]");
 			bw.newLine();
 			String password = accounts.get(name).password;
 			if (password != null) {
+				bw.append("password=");
 				bw.append(encrypt(password));
 			}
 			bw.newLine();
 			for (Map.Entry<String, String> entry : accounts.get(name).attributes.entrySet()) {
-				bw.append(entry.getKey()).append("=").append(encrypt(entry.getValue()));
+				String key = entry.getKey(), value = entry.getValue();
+				if (Arrays.asList(protectedAttributes).contains(key))
+					value = encrypt(value);
+				bw.append(key).append("=").append(value);
 				bw.newLine();
 			}
 		}
