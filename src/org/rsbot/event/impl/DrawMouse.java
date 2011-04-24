@@ -11,21 +11,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class DrawMouse implements PaintListener {
-
 	private final Client client;
 	private final List<Cross> clicks = new LinkedList<Cross>();
 	private final Object lock = new Object();
-//  *****Commented for future use.
-//	private final ArrayList<Particle> p = new ArrayList<Particle>();
-//	private Color[] fadeArray = {Color.red, Color.white, Color.green, new Color(128, 0, 128), Color.yellow,
-//	                             Color.black, Color.orange, Color.pink};
-//	private Point lastPoint = new Point(0, 0);
-//	static java.util.Random generator = new java.util.Random();
-//
-//	public static int random(int min, int max) {
-//		int n = Math.abs(max - min);
-//		return Math.min(min, max) + (n == 0 ? 0 : generator.nextInt(n));
-//	}
 
 	public DrawMouse(Bot bot) {
 		client = bot.getClient();
@@ -45,42 +33,12 @@ public class DrawMouse implements PaintListener {
 			g.rotate(Math.toRadians(getRot()), location.x, location.y);
 			g.drawLine(location.x, location.y - 5, location.x, location.y + 5);
 			g.drawLine(location.x - 5, location.y, location.x + 5, location.y);
-			if (mouse.isPressed() && ((clicks.size() > 0 && clicks.get(clicks.size() - 1).getAge() > 100 && clicks.get(
-					clicks.size() - 1).getStart() != mouse.getPressTime()) || clicks.size() == 0)) {
+			if (mouse.isPressed() && ((clicks.size() > 0 && clicks.get(clicks.size() - 1).getAge() > 100 && clicks.get(clicks.size() - 1).getStart() != mouse.getPressTime()) || clicks.size() == 0)) {
 				Cross newCross = new Cross(1500, mouse.getPressTime(), location, getRot());
 				if (!clicks.contains(newCross)) {
 					clicks.add(newCross);
 				}
 			}
-//            *****Commented for future use.
-//            if (Injector.easterMode) {
-//				int x = mouse.getX();
-//				int y = mouse.getY();
-//				if (Point.distance(x, y, lastPoint.x, lastPoint.y) > 15) {
-//					lastPoint = new Point(x, y);
-//					synchronized (lock) {
-//						for (int i = 0; i < 50;
-//						     i++, p.add(new Particle(x, y, fadeArray[random(0, fadeArray.length)], 0))) {
-//						}
-//					}
-//				}
-//				if (mouse.isPressed()) {
-//					lastPoint = new Point(x, y);
-//					synchronized (lock) {
-//						for (int i = 0; i < 50; i++, p.add(new Particle(x, y, Color.black, 3))) {
-//						}
-//					}
-//				}
-//				synchronized (lock) {
-//					Iterator<Particle> partIter = p.iterator();
-//					while (partIter.hasNext()) {
-//						Particle part = partIter.next();
-//						if (!part.handle(render)) {
-//							partIter.remove();
-//						}
-//					}
-//				}
-//			}
 			synchronized (lock) {
 				Iterator<Cross> clickIterator = clicks.listIterator();
 				while (clickIterator.hasNext()) {
@@ -104,7 +62,6 @@ public class DrawMouse implements PaintListener {
 	}
 
 	private class Cross {
-
 		private final long time, st;
 		private final Point location;
 		private final double rot;
@@ -148,40 +105,5 @@ public class DrawMouse implements PaintListener {
 			}
 			return false;
 		}
-
 	}
-
-//  *****Commented for future use.
-//	private static class Particle {
-//
-//		private double posX;
-//		private double posY;
-//		private double movX;
-//		private double movY;
-//		private int alpha = 255;
-//		private Color color;
-//		private int off = 0;
-//
-//		Particle(int pos_x, int pos_y, Color color, int off) {
-//			posX = (double) pos_x;
-//			posY = (double) pos_y;
-//			movX = ((double) generator.nextInt(40) - 20) / 16;
-//			movY = ((double) generator.nextInt(40) - 20) / 16;
-//			this.color = color;
-//			this.off = off;
-//		}
-//
-//		public boolean handle(Graphics page) {
-//			alpha -= random(1, 7);
-//			if (alpha <= 0) {
-//				return false;
-//			}
-//			page.setColor(new Color(color.getRed(), color.getBlue(), color.getGreen(), alpha));
-//			page.drawLine((int) posX, (int) posY, (int) posX + off, (int) posY + off);
-//			posX += movX;
-//			posY += movY;
-//			return true;
-//		}
-//	}
-
 }
