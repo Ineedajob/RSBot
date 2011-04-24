@@ -43,8 +43,20 @@ public class Menu extends MethodProvider {
 	 *         <tt>false</tt>.
 	 */
 	public boolean doAction(String action) {
-		action = action.toLowerCase();
-		int idx = getIndex(action);
+		return doAction(action, null);
+	}
+	 
+	/**
+	 * Clicks the menu option. Will left-click if the menu item is the first,
+	 * otherwise open menu and click the option.
+	 *
+	 * @param action The action (or action substring) to click.
+	 * @param option The option (or option substring) of the action to click.
+	 * @return <tt>true</tt> if the menu item was clicked; otherwise
+	 *         <tt>false</tt>.
+	 */
+	public boolean doAction(String action, String option) {
+		final int idx = getIndex(action, option);
 		if (!isOpen()) {
 			if (idx == -1) {
 				return false;
@@ -74,6 +86,18 @@ public class Menu extends MethodProvider {
 	 */
 	public boolean contains(final String action) {
 		return getIndex(action) != -1;
+	}
+
+	/**
+	 * Checks whether or not a given action with given option is present in
+	 * the menu.
+	 *
+	 * @param action The action or action substring.
+	 * @param option The option or action substring.
+	 * @return <tt>true</tt> if present, otherwise <tt>false</tt>.
+	 */
+	public boolean contains(final String action, final String option) {
+		return getIndex(action, option) != -1;
 	}
 
 	/**
@@ -202,6 +226,32 @@ public class Menu extends MethodProvider {
 		String[] items = getItems();
 		for (int i = 0; i < items.length; i++) {
 			if (items[i].toLowerCase().contains(action)) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	/**
+	 * Returns the index in the menu for a given action with a given option. Starts at 0.
+	 *
+	 * @param action The action of the menu entry of which you want the index.
+	 * @param option The option of the menu entry of which you want the index. 
+	 	If option is null, operates like getIndex(String action).
+	 * @return The index of the given option in the context menu; otherwise -1.
+	 */
+	public int getIndex(String action, String option) {
+		if (option == null) {
+			return getIndex(action);
+		}
+		action = action.toLowerCase();
+		option = option.toLowerCase();
+		String[] actions = getActions();
+		String[] options = getOptions();
+		/* Throw exception if lenghts unequal? */
+		for (int i = 0; i < Math.min(actions.length, options.length); i++) {
+			if (actions[i].toLowerCase().contains(action) &&
+					options[i].toLowerCase().contains(option)) {
 				return i;
 			}
 		}

@@ -99,23 +99,32 @@ public abstract class RSModel extends MethodProvider {
 	 * Clicks the RSModel and clicks the menu action
 	 *
 	 * @param action the action to be clicked in the menu
+	 * @param option the options of the action to be clicked in the menu
 	 * @return true if clicked, false if failed.
 	 */
-	public boolean doAction(String action) {
+	public boolean doAction(String action, String option) {
 		try {
 			for (int i = 0; i < 10; i++) {
 				methods.mouse.move(getPoint());
 				if (this.contains(methods.mouse.getLocation())) {
-					if (methods.menu.contains(action)) {
-						if (methods.menu.doAction(action)) {
-							return true;
-						}
+					if (methods.menu.doAction(action, option)) {
+						return true;
 					}
 				}
 			}
 		} catch (Exception ignored) {
 		}
 		return false;
+	}
+
+	/**
+	 * Clicks the RSModel and clicks the menu action
+	 *
+	 * @param action the action to be clicked in the menu
+	 * @return true if clicked, false if failed.
+	 */
+	public boolean doAction(String action) {
+		return doAction(action, null);
 	}
 
 	/**
