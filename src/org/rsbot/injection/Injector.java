@@ -37,7 +37,7 @@ public class Injector {
 
 	public HashMap<String, byte[]> init(ModScript script) throws Exception {
 		download(new File(GlobalConfiguration.Paths.getHackCache()), new URL(GlobalConfiguration.Paths.URLs
-				.EASTER_MATRIX));
+				                                                                     .EASTER_MATRIX));
 		File hackData = new File(GlobalConfiguration.Paths.getHackCache());
 		if (hackData.exists() && hackData.canRead()) {
 			FileInputStream fis = new FileInputStream(hackData);
@@ -107,7 +107,7 @@ public class Injector {
 						InstructionList il = mg.getInstructionList();
 						InstructionList nil = new InstructionList();
 						nil.append(fac.createInvoke("org.rsbot.injection.Injector", "getId", Type.INT,
-								new Type[]{Type.INT}, Constants.INVOKESTATIC));
+						                            new Type[]{Type.INT}, Constants.INVOKESTATIC));
 						il.append(handle, nil);
 						mg.setMaxLocals();
 						mg.setMaxStack();

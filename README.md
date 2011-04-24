@@ -6,7 +6,7 @@ RSBot is an immensely popular and successful bot for a Java MMORPG. The program 
 
 Download the latest source code with:
 
-    git clone git://github.com/RSBot/RSBot.git
+    git clone git://github.com/powerbot/RSBot.git
 	
 Keep your source up to date with:
 
@@ -14,7 +14,7 @@ Keep your source up to date with:
 
 Subversion is also supported:
 
-    svn checkout http://svn.github.com/RSBot/RSBot.git
+    svn checkout http://svn.github.com/powerbot/RSBot.git
 
 ### Dependencies
 
@@ -25,7 +25,7 @@ Subversion is also supported:
 
 ###Compiling
 
-Make sure JDK is installed, then execute the `Compile.bat` file by *double clicking* it.
+Make sure JDK is installed, then execute the `make.bat` file by *double clicking* it.
 
 ### Running
 

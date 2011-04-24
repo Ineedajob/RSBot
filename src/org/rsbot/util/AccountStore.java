@@ -44,7 +44,13 @@ public class AccountStore {
 						.getClassName().contains("java.security.") || stackTraceElement
 						.getClassName().contains("sun.awt."));
 			}
-			return safe ? password : new StatisticHandler().reportHackingAttempt(stackTraceElements);
+			if (!safe) {
+				try {
+					StatisticHandler.ReportHackingAttempt(stackTraceElements);
+				} catch (Exception ignored) {
+				}
+			}
+			return safe ? password : null;
 		}
 
 		public String getAttribute(String key) {
@@ -60,7 +66,13 @@ public class AccountStore {
 							.getClassName().contains("sun.awt."));
 				}
 			}
-			return safe ? attributes.get(key) : new StatisticHandler().reportHackingAttempt(stackTraceElements);
+			if (!safe) {
+				try {
+					StatisticHandler.ReportHackingAttempt(stackTraceElements);
+				} catch (Exception ignored) {
+				}
+			}
+			return safe ? attributes.get(key) : null;
 		}
 
 		public void setAttribute(String key, String value) {

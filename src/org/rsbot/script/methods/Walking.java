@@ -99,7 +99,7 @@ public class Walking extends MethodProvider {
 	public boolean walkTileMM(final RSTile t, final int x, final int y) {
 		/*RSTile dest = new RSTile(t.getX() + random(0, x), t.getY()
 				+ random(0, y)); You can't just add randomness to the tile, it should be subtracted.*/ 
-		int xx = dest.getX(), yy = dest.getY();
+		int xx = t.getX(), yy = t.getY();
 		if (x > 0) {
 			if (random(1, 2) == random(1, 2)) {
 				xx += random(0, x);
@@ -120,19 +120,20 @@ public class Walking extends MethodProvider {
 		}
 		Point p = methods.calc.tileToMinimap(dest);
 		if (p.x != -1 && p.y != -1) {
-			int x = p.x, y = p.y;
+			xx = p.x;
+			yy = p.y;
 			if (random(1, 2) == random(1, 2)) {
-				x += random(0, 50);
+				xx += random(0, 50);
 			} else {
-				x -= random(0, 50);
+				xx -= random(0, 50);
 			}
 			if (random(1, 2) == random(1, 2)) {
-				y += random(0, 50);
+				yy += random(0, 50);
 			} else {
-				y -= random(0, 50);
+				yy -= random(0, 50);
 			}
-			methods.mouse.move(x, y);
-			p = calc.tileToMinimap(dest);
+			methods.mouse.move(xx, yy);
+			p = methods.calc.tileToMinimap(dest);
 			if (p.x == -1 || p.y == -1) {
 				return false;
 			}

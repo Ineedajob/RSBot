@@ -1,5 +1,6 @@
 package org.rsbot.script.methods;
 
+import org.rsbot.script.util.Filter;
 import org.rsbot.script.wrappers.*;
 
 import java.awt.*;
@@ -16,6 +17,9 @@ public class Bank extends MethodProvider {
 	public static final int[] BANK_CHESTS = {4483, 12308, 21301, 27663, 42192};
 	public static final int[] BANK_DEPOSIT_BOX = {9398, 20228, 26969, 36788};
 	public static final int[] DO_NOT_DEPOSIT = new int[]{1265, 1267, 1269, 1273, 1271, 1275, 1351, 590, 303};
+	public static final RSTile[] UNREACHABLE_BANKERS = {
+		new RSTile(3191, 3445), new RSTile(3180, 3433) // VARROCK EAST
+	};
 
 	public static final int INTERFACE_BANK = 762;
 	public static final int INTERFACE_BANK_BUTTON_CLOSE = 43;
@@ -379,7 +383,24 @@ public class Bank extends MethodProvider {
 					sleep(random(20, 30));
 				}
 				RSObject bankBooth = methods.objects.getNearest(BANK_BOOTHS);
-				RSNPC banker = methods.npcs.getNearest(BANKERS);
+				RSNPC banker = methods.npcs.getNearest(new Filter<RSNPC>() {
+					@Override
+					public boolean accept(RSNPC npc) {
+						int id = npc.getID();
+						for (int banker : BANKERS) {
+							if (banker == id) {
+								RSTile location = npc.getLocation();
+								for (RSTile unreachableBanker : UNREACHABLE_BANKERS) {
+									if (unreachableBanker.equals(location)) {
+										return false;
+									}
+								}
+								return true;
+							}
+						}
+						return false;
+					}
+				});
 				final RSObject bankChest = methods.objects.getNearest(
 						BANK_CHESTS);
 				int lowestDist = methods.calc.distanceTo(bankBooth);
@@ -618,58 +639,63 @@ public class Bank extends MethodProvider {
 	 * @return <tt>true</tt> on success.
 	 */
 	public boolean withdraw(final int itemID, final int count) {
-		if (isOpen()) {
-			if (count < 0) {
-				throw new IllegalArgumentException("count (" + count + ") < 0");
-			}
-			RSItem rsi = getItem(itemID);
-			if (rsi == null) {
-				return false;
-			}
-			RSComponent item = rsi.getComponent();
-			if (item == null) {
-				return false;
-			}
-			while (item.getRelativeX() == 0 && methods.bank.getCurrentTab() != 0) {
-				methods.interfaces.getComponent(Bank.INTERFACE_BANK, Bank.INTERFACE_BANK_TAB[0]).doClick();
+		if (!isOpen()) {
+			return false;
+		}
+		if (count < 0) {
+			throw new IllegalArgumentException("count (" + count + ") < 0");
+		}
+		RSItem rsi = getItem(itemID);
+		if (rsi == null) {
+			return false;
+		}
+		RSComponent item = rsi.getComponent();
+		if (item == null) {
+			return false;
+		}
+		while (item.getRelativeX() == 0 && methods.bank.getCurrentTab() != 0) {
+			if (methods.interfaces.getComponent(Bank.INTERFACE_BANK, Bank.INTERFACE_BANK_TAB[0]).doClick()) {
 				sleep(random(800, 1300));
 			}
-			if (!methods.interfaces.scrollTo(item, (Bank.INTERFACE_BANK << 16) + Bank.INTERFACE_BANK_SCROLLBAR)) {
-				return false;
-			}
-			int invCount = methods.inventory.getCount(true);
-			item.doClick(false);
-			StringBuffer result = new StringBuffer();
-			String amt = result.append(item.getActions()[3]).toString().toLowerCase().trim().toString();
-			int i = Integer.parseInt(amt.replaceAll("\\D", ""));
-			switch (count) {
-				case 0:
-					item.doAction("Withdraw-All");
-					break;
-				case 1:
-					item.doAction("Withdraw-" + count);
-					break;
-				case 5:
-					item.doAction("Withdraw-" + count);
-					break;
-				case 10:
-					item.doAction("Withdraw-" + count);
-					break;
-				default:
-					if (String.valueOf(count).trim().length() != String.valueOf(i).trim().length()) {
-						if (item.doAction("Withdraw-X")) {
-							sleep(random(1000, 1300));
-							methods.keyboard.sendText(String.valueOf(count), true);
-						}
-					} else if (String.valueOf(count).trim().length() == String.valueOf(i).trim().length()) {
-						item.doAction("Withdraw-" + count);
-					}
-			}
-			sleep(random(1000, 1300));
-			int newInvCount = methods.inventory.getCount(true);
-			return newInvCount > invCount || newInvCount == 28;
 		}
-		return false;
+		if (!methods.interfaces.scrollTo(item, (Bank.INTERFACE_BANK << 16) + Bank.INTERFACE_BANK_SCROLLBAR)) {
+			return false;
+		}
+		int invCount = methods.inventory.getCount(true);
+		item.doClick(count == 1 ? true : false);
+		String defaultAction = "Withdraw-" + count;
+		String action = null;
+		switch (count) {
+			case 0:
+				action = "Withdraw-All";
+				break;
+			case 1:
+				break;
+			case 5:
+				action = defaultAction;
+				break;
+			case 10:
+				action = defaultAction;
+				break;
+			default:
+				int i = -1;
+				try {
+					i = Integer.parseInt(item.getActions()[3].toLowerCase().trim().replaceAll("\\D", ""));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				if (i == count) {
+					action = defaultAction;
+				}else if (item.doAction("Withdraw-X")) {
+					sleep(random(1000, 1300));
+					methods.keyboard.sendText(String.valueOf(count), true);
+				}
+		}
+		if (action != null && item.doAction(action)) {
+			sleep(random(1000, 1300));
+		}
+		int newInvCount = methods.inventory.getCount(true);
+		return newInvCount > invCount || newInvCount == 28;
 	}
 
 	/**

@@ -16,6 +16,8 @@ public class ScriptDefinition {
 	public String[] authors;
 
 	public String[] keywords;
+	
+	public String website;
 
 	public ScriptSource source;
 

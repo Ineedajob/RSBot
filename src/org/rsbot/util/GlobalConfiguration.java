@@ -47,6 +47,7 @@ public class GlobalConfiguration {
 			public static final String ICON_SCRIPT_DRM = Resources.ROOT_IMG + "/script_drm.png";
 			public static final String ICON_SCRIPT_PRE = Resources.ROOT_IMG + "/script_pre.png";
 			public static final String ICON_SCRIPT_SRC = Resources.ROOT_IMG + "/script_src.png";
+			public static final String ICON_WEBLINK = Resources.ROOT_IMG + "/world_link.png";
 
 			public static final String VERSION = Resources.ROOT + "/version.txt";
 		}
@@ -60,6 +61,7 @@ public class GlobalConfiguration {
 			public static final String VERSION = BASE + "version.txt";
 			public static final String PROJECT = BASE + "git-project";
 			public static final String SITE = BASE + "site";
+			public static final String SDN_CONTROL = BASE + "sdn-control";
 			public static final String AD_INFO = BASE + "botad-info";
 		}
 
@@ -91,6 +93,7 @@ public class GlobalConfiguration {
 		public static final String ICON_SCRIPT_DRM = Paths.ROOT_IMG + File.separator + "script_drm.png";
 		public static final String ICON_SCRIPT_PRE = Paths.ROOT_IMG + File.separator + "script_pre.png";
 		public static final String ICON_SCRIPT_SRC = Paths.ROOT_IMG + File.separator + "script_src.png";
+		public static final String ICON_WEBLINK = Paths.ROOT_IMG + File.separator + "world_link.png";
 
 		public static final String SCRIPTS_NAME_SRC = "scripts";
 		public static final String SCRIPTS_NAME_OUT = "Scripts";
@@ -152,6 +155,10 @@ public class GlobalConfiguration {
 
 		public static String getScriptsPrecompiledDirectory() {
 			return Paths.getScriptsDirectory() + File.separator + "Precompiled";
+		}
+
+		public static String getScriptsNetworkDirectory() {
+			return Paths.getScriptsDirectory() + File.separator + "Network";
 		}
 
 		public static String getCacheDirectory() {
@@ -347,5 +354,23 @@ public class GlobalConfiguration {
 			}
 		}
 		return -1;
+	}
+	
+	public static String getVersionFormatted() {
+		return getVersionFormatted(getVersion());
+	}
+	
+	public static String getVersionFormatted(final int version) {
+		final float v = (float) version / 100;
+		String s = Float.toString(v);
+		final int z = s.indexOf('.');
+		if (z == -1) {
+			s += ".00";
+		} else {
+			final String exp = s.substring(z + 1);
+			if (exp.length() == 1)
+				s += "0";
+		}
+		return s;
 	}
 }

@@ -1,24 +1,29 @@
 package org.rsbot.gui;
 
-import org.rsbot.util.GlobalConfiguration;
-
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Cursor;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.URL;
-import java.net.URLConnection;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.TimeZone;
 import java.util.Timer;
+import java.util.TimerTask;
 import java.util.logging.Logger;
+
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+
+import org.rsbot.util.GlobalConfiguration;
+import org.rsbot.util.IniParser;
 
 /**
  * @author Paris
@@ -92,48 +97,16 @@ public class SplashAd extends JDialog implements MouseListener {
 	}
 
 	private boolean sync() {
-		HashMap<String, String> keys = new HashMap<String, String>(7);
-		InputStreamReader stream = null;
-		BufferedReader reader = null;
+		HashMap<String, String> keys = null;
 
 		try {
-			URLConnection connection = new URL(GlobalConfiguration.Paths.URLs.AD_INFO).openConnection();
-			stream = new InputStreamReader(connection.getInputStream());
-			reader = new BufferedReader(stream);
-			String line;
-			while ((line = reader.readLine()) != null) {
-				line = line.trim();
-				if (line.startsWith("#")) {
-					continue;
-				}
-				int z;
-				z = line.indexOf('#');
-				if (z != -1) {
-					line = line.substring(0, z);
-				}
-				z = line.indexOf('=');
-				if (z == -1) {
-					continue;
-				}
-				String key = line.substring(0, z).trim(), value =
-						z == line.length() ? "" : line.substring(z + 1).trim();
-				keys.put(key, value);
-			}
+			URL source = new URL(GlobalConfiguration.Paths.URLs.AD_INFO);
+			keys = IniParser.deserialise(source).get(IniParser.emptySection);
 		} catch (Exception e) {
 			return false;
-		} finally {
-			try {
-				if (stream != null) {
-					stream.close();
-				}
-				if (reader != null) {
-					reader.close();
-				}
-			} catch (IOException e) {
-			}
 		}
 
-		if (keys.isEmpty() || !keys.containsKey("enabled") || !parseBool(keys.get("enabled"))) {
+		if (keys == null || keys.isEmpty() || !keys.containsKey("enabled") || !parseBool(keys.get("enabled"))) {
 			return false;
 		}
 		if (!keys.containsKey("link")) {

@@ -326,25 +326,12 @@ public class BotToolBar extends JToolBar {
 			super.paintComponent(g);
 			((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 					RenderingHints.VALUE_ANTIALIAS_ON);
-			if (getComponentIndex(this) == idx) {
-				g.setColor(new Color(255, 255, 255, 200));
-				g.fillRoundRect(0, 0, getWidth() - 2, getHeight() - 1, 4, 4);
-				g.setColor(new Color(180, 180, 180, 200));
-				g.drawRoundRect(0, 0, getWidth() - 2, getHeight() - 1, 4, 4);
-			} else if (hovered) {
-				g.setColor(new Color(255, 255, 255, 150));
-				g.fillRoundRect(0, 0, getWidth() - 2, getHeight() - 1, 4, 4);
-				g.setColor(new Color(180, 180, 180, 150));
-				g.drawRoundRect(0, 0, getWidth() - 2, getHeight() - 1, 4, 4);
-			} else {
-				g.setColor(new Color(180, 180, 180, 150));
-				g.drawRoundRect(0, 0, getWidth() - 2, getHeight() - 1, 4, 4);
-			}
-			if (hovered && close) {
-				g.drawImage(IMAGE_CLOSE_OVER, 90, 3, null);
-			} else {
-				g.drawImage(IMAGE_CLOSE, 90, 3, null);
-			}
+			int RGB = getComponentIndex(this) == idx ? 255 : hovered ? 230 : 215;
+			g.setColor(new Color(RGB, RGB, RGB, 200));
+			g.fillRoundRect(0, 0, getWidth() - 2, getHeight() - 1, 4, 4);
+			g.setColor(new Color(180, 180, 180, 200));
+			g.drawRoundRect(0, 0, getWidth() - 2, getHeight() - 1, 4, 4);
+			g.drawImage(hovered && close ? IMAGE_CLOSE_OVER : IMAGE_CLOSE, 90, 3, null);
 		}
 	}
 

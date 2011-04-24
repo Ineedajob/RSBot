@@ -149,10 +149,11 @@ public class RSObject extends MethodProvider {
 	 */
 	public boolean doAction(String action) {
 		RSModel model = this.getModel();
+		final String name = this.getName(this);
 		if (model != null) {
-			return model.doAction(action);
+			return model.doAction(action, name);
 		}
-		return methods.tiles.doAction(getLocation(), action);
+		return methods.tiles.doAction(getLocation(), action, name);
 	}
 
 	/**
