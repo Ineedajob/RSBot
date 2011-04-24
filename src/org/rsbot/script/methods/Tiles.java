@@ -40,12 +40,12 @@ public class Tiles extends MethodProvider {
 
 	/**
 	 * Clicks a tile if it is on screen. It will left-click if the action is
-	 * available as the default option, otherwise it will right-click and check
+	 * available as the default menu action, otherwise it will right-click and check
 	 * for the action in the context methods.menu.
 	 *
 	 * @param tile   The RSTile that you want to click.
-	 * @param action Action command to use on the Character (e.g "Attack" or
-	 *               "Trade").
+	 * @param action Action of the menu entry to click
+	 * @param option Option of the menu entry to click
 	 * @return <tt>true</tt> if the tile was clicked; otherwise
 	 *         <tt>false</tt>.
 	 */
