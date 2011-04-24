@@ -99,7 +99,7 @@ public abstract class RSModel extends MethodProvider {
 	 * Clicks the RSModel and clicks the menu action
 	 *
 	 * @param action the action to be clicked in the menu
-	 * @param option the options of the action to be clicked in the menu
+	 * @param option the option of the action to be clicked in the menu
 	 * @return true if clicked, false if failed.
 	 */
 	public boolean doAction(String action, String option) {

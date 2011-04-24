@@ -50,15 +50,16 @@ public class Tiles extends MethodProvider {
 	 *         <tt>false</tt>.
 	 */
 	public boolean doAction(final RSTile tile, final String action, final String option) {
-		int counter = 0;
 		try {
 			Point location = methods.calc.tileToScreen(tile);
 			if (location.x == -1 || location.y == -1) {
 				return false;
 			}
 			methods.mouse.move(location, 5, 5);
-			while (!methods.menu.doAction(action, option)
-					&& counter++ < 5) {
+			for (int i = 0; i++ < 5; ) {
+				if (methods.menu.doAction(action, option)) {
+					return true;
+				}
 				location = methods.calc.tileToScreen(tile);
 				methods.mouse.move(location, 5, 5);
 			}
