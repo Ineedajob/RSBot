@@ -45,7 +45,7 @@ public class Menu extends MethodProvider {
 	public boolean doAction(String action) {
 		return doAction(action, null);
 	}
-	 
+
 	/**
 	 * Clicks the menu option. Will left-click if the menu item is the first,
 	 * otherwise open menu and click the option.
@@ -237,8 +237,8 @@ public class Menu extends MethodProvider {
 	 * Starts at 0.
 	 *
 	 * @param action The action of the menu entry of which you want the index.
-	 * @param option The option of the menu entry of which you want the index. 
-	 	If option is null, operates like getIndex(String action).
+	 * @param option The option of the menu entry of which you want the index.
+	 *               If option is null, operates like getIndex(String action).
 	 * @return The index of the given option in the context menu; otherwise -1.
 	 */
 	public int getIndex(String action, String option) {

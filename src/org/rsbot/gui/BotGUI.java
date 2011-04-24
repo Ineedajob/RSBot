@@ -528,7 +528,7 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 				}
 			}
 		}
-		
+
 		boolean doExit = true;
 		if (!disableConfirmations) {
 			final String message = "Are you sure you want to exit?";
@@ -537,12 +537,12 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 			if (result != JOptionPane.OK_OPTION)
 				doExit = false;
 		}
-		
+
 		if (doExit) {
 			menuBar.savePrefs();
 			System.exit(0);
 		}
-		
+
 		return doExit;
 	}
 }
