@@ -49,10 +49,6 @@ public class RSPlayer extends RSCharacter {
 
 	@Override
 	public boolean doAction(String action) {
-                final RSModel model = getModel();
-                if (model != null && isValid()) {
-                        return model.doAction(action, getName());
-                }
 		try {
 			Point screenLoc;
 			for (int i = 0; i < 20; i++) {
