@@ -613,58 +613,63 @@ public class Bank extends MethodProvider {
 	 * @return <tt>true</tt> on success.
 	 */
 	public boolean withdraw(final int itemID, final int count) {
-		if (isOpen()) {
-			if (count < 0) {
-				throw new IllegalArgumentException("count (" + count + ") < 0");
-			}
-			RSItem rsi = getItem(itemID);
-			if (rsi == null) {
-				return false;
-			}
-			RSComponent item = rsi.getComponent();
-			if (item == null) {
-				return false;
-			}
-			while (item.getRelativeX() == 0 && methods.bank.getCurrentTab() != 0) {
-				methods.interfaces.getComponent(Bank.INTERFACE_BANK, Bank.INTERFACE_BANK_TAB[0]).doClick();
+		if (!isOpen()) {
+			return false;
+		}
+		if (count < 0) {
+			throw new IllegalArgumentException("count (" + count + ") < 0");
+		}
+		RSItem rsi = getItem(itemID);
+		if (rsi == null) {
+			return false;
+		}
+		RSComponent item = rsi.getComponent();
+		if (item == null) {
+			return false;
+		}
+		while (item.getRelativeX() == 0 && methods.bank.getCurrentTab() != 0) {
+			if (methods.interfaces.getComponent(Bank.INTERFACE_BANK, Bank.INTERFACE_BANK_TAB[0]).doClick()) {
 				sleep(random(800, 1300));
 			}
-			if (!methods.interfaces.scrollTo(item, (Bank.INTERFACE_BANK << 16) + Bank.INTERFACE_BANK_SCROLLBAR)) {
-				return false;
-			}
-			int invCount = methods.inventory.getCount(true);
-			item.doClick(false);
-			StringBuffer result = new StringBuffer();
-			String amt = result.append(item.getActions()[3]).toString().toLowerCase().trim().toString();
-			int i = Integer.parseInt(amt.replaceAll("\\D", ""));
-			switch (count) {
-				case 0:
-					item.doAction("Withdraw-All");
-					break;
-				case 1:
-					item.doAction("Withdraw-" + count);
-					break;
-				case 5:
-					item.doAction("Withdraw-" + count);
-					break;
-				case 10:
-					item.doAction("Withdraw-" + count);
-					break;
-				default:
-					if (String.valueOf(count).trim().length() != String.valueOf(i).trim().length()) {
-						if (item.doAction("Withdraw-X")) {
-							sleep(random(1000, 1300));
-							methods.keyboard.sendText(String.valueOf(count), true);
-						}
-					} else if (String.valueOf(count).trim().length() == String.valueOf(i).trim().length()) {
-						item.doAction("Withdraw-" + count);
-					}
-			}
-			sleep(random(1000, 1300));
-			int newInvCount = methods.inventory.getCount(true);
-			return newInvCount > invCount || newInvCount == 28;
 		}
-		return false;
+		if (!methods.interfaces.scrollTo(item, (Bank.INTERFACE_BANK << 16) + Bank.INTERFACE_BANK_SCROLLBAR)) {
+			return false;
+		}
+		int invCount = methods.inventory.getCount(true);
+		item.doClick(count == 1 ? true : false);
+		String defaultAction = "Withdraw-" + count;
+		String action = null;
+		switch (count) {
+			case 0:
+				action = "Withdraw-All";
+				break;
+			case 1:
+				break;
+			case 5:
+				action = defaultAction;
+				break;
+			case 10:
+				action = defaultAction;
+				break;
+			default:
+				int i = -1;
+				try {
+					i = Integer.parseInt(item.getActions()[3].toLowerCase().trim().replaceAll("\\D", ""));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				if (i == count) {
+					action = defaultAction;
+				}else if (item.doAction("Withdraw-X")) {
+					sleep(random(1000, 1300));
+					methods.keyboard.sendText(String.valueOf(count), true);
+				}
+		}
+		if (action != null && item.doAction(action)) {
+			sleep(random(1000, 1300));
+		}
+		int newInvCount = methods.inventory.getCount(true);
+		return newInvCount > invCount || newInvCount == 28;
 	}
 
 	/**
