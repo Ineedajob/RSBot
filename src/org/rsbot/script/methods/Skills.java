@@ -233,9 +233,10 @@ public class Skills extends MethodProvider {
 		return methods.interfaces.getComponent(INTERFACE_TAB_STATS, component)
 				.doHover();
 	}
-	
+
 	/**
 	 * Creates a new SkillTracker.
+	 *
 	 * @param skills Skills to track.
 	 * @return New instance of SkillTracker.
 	 * @see SkillTracker
