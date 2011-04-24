@@ -82,33 +82,27 @@ public class Inventory extends MethodProvider {
 	 */
 	public void dropAllExcept(final boolean leftToRight, final int... items) {
 		RSTile startLocation = methods.players.getMyPlayer().getLocation();
-		while (getCountExcept(items) != 0) {
+		boolean found_droppable = true;
+		while (found_droppable && getCountExcept(items) != 0) {
 			if (methods.calc.distanceTo(startLocation) > 100) {
 				break;
 			}
-			if (!leftToRight) {
-				for (int c = 0; c < 4; c++) {
-					for (int r = 0; r < 7; r++) {
-
-						boolean found = false;
-						for (int i = 0; i < items.length && !found; ++i) {
-							found = items[i] == getItems()[c + r * 4].getID();
-						}
-						if (!found) {
-							dropItem(c, r);
-						}
+			found_droppable = false;
+			for (int j = 0; j < 28; j++) {
+				int c = leftToRight ? j % 4 : j / 7;
+				int r = leftToRight ? j / 4 : j % 7;
+				RSItem curItem = getItems()[c + r * 4];
+				int id;
+				if (curItem != null 
+						&& (id = curItem.getID()) != -1 
+						&& itemHasAction(curItem, "Drop")) {
+					boolean isInItems = false;
+				        for (int i : items) {
+				        	isInItems |= (i == id);
 					}
-				}
-			} else {
-				for (int r = 0; r < 7; r++) {
-					for (int c = 0; c < 4; c++) {
-						boolean found = false;
-						for (int i = 0; i < items.length && !found; ++i) {
-							found = items[i] == getItems()[c + r * 4].getID();
-						}
-						if (!found) {
-							dropItem(c, r);
-						}
+					if (!isInItems) {
+						found_droppable = true;
+						dropItem(c, r);
 					}
 				}
 			}
@@ -133,7 +127,7 @@ public class Inventory extends MethodProvider {
 		RSItemDef itemDef = item.getDefinition();
 		if (itemDef != null) {
 			for (String a : itemDef.getActions()) {
-				if (a.equalsIgnoreCase(action)) {
+				if (a != null && a.equalsIgnoreCase(action)) {
 					return true;
 				}
 			}
