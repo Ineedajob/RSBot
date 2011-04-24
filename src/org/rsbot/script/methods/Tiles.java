@@ -56,7 +56,7 @@ public class Tiles extends MethodProvider {
 				return false;
 			}
 			methods.mouse.move(location, 5, 5);
-			for (int i = 0; i++ < 5; ) {
+			for (int i = 0; i++ < 5;) {
 				if (methods.menu.doAction(action, option)) {
 					return true;
 				}
@@ -76,7 +76,6 @@ public class Tiles extends MethodProvider {
 	 *
 	 * @param tile   The RSTile that you want to click.
 	 * @param action Action command to use click
-	 * 
 	 * @return <tt>true</tt> if the tile was clicked; otherwise
 	 *         <tt>false</tt>.
 	 */

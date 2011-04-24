@@ -51,7 +51,7 @@ public class DrawMouse implements PaintListener {
 				if (!clicks.contains(newCross)) {
 					clicks.add(newCross);
 				}
-            }
+			}
 //            *****Commented for future use.
 //            if (Injector.easterMode) {
 //				int x = mouse.getX();

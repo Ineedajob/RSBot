@@ -114,29 +114,30 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 					showMenu(e);
 				}
 			}
-			
+
 			private void showMenu(MouseEvent e) {
 				final int row = table.rowAtPoint(e.getPoint());
 				final ScriptDefinition def = model.getDefinition(row);
-				
+
 				JPopupMenu contextMenu = new JPopupMenu();
 				JMenuItem visit = new JMenuItem();
 				visit.setText("Visit Site");
 				try {
-				visit.setIcon(new ImageIcon(GlobalConfiguration.RUNNING_FROM_JAR ?
-						ScriptSelector.class.getResource(GlobalConfiguration.Paths.Resources.ICON_WEBLINK) :
-						new File(GlobalConfiguration.Paths.ICON_WEBLINK).toURI().toURL()));
-				} catch (IOException ioe) { }
+					visit.setIcon(new ImageIcon(GlobalConfiguration.RUNNING_FROM_JAR ?
+							ScriptSelector.class.getResource(GlobalConfiguration.Paths.Resources.ICON_WEBLINK) :
+							new File(GlobalConfiguration.Paths.ICON_WEBLINK).toURI().toURL()));
+				} catch (IOException ioe) {
+				}
 				visit.addMouseListener(new MouseAdapter() {
 					public void mousePressed(MouseEvent e) {
 						BotGUI.openURL(def.website);
 					}
 				});
 				contextMenu.add(visit);
-				
+
 				if (def.website == null || def.website.isEmpty())
 					visit.setEnabled(false);
-				
+
 				contextMenu.show(table, e.getX(), e.getY());
 			}
 		});

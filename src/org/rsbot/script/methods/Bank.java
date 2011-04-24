@@ -18,7 +18,7 @@ public class Bank extends MethodProvider {
 	public static final int[] BANK_DEPOSIT_BOX = {9398, 20228, 26969, 36788};
 	public static final int[] DO_NOT_DEPOSIT = new int[]{1265, 1267, 1269, 1273, 1271, 1275, 1351, 590, 303};
 	public static final RSTile[] UNREACHABLE_BANKERS = {
-		new RSTile(3191, 3445), new RSTile(3180, 3433) // VARROCK EAST
+			new RSTile(3191, 3445), new RSTile(3180, 3433) // VARROCK EAST
 	};
 
 	public static final int INTERFACE_BANK = 762;
@@ -686,7 +686,7 @@ public class Bank extends MethodProvider {
 				}
 				if (i == count) {
 					action = defaultAction;
-				}else if (item.doAction("Withdraw-X")) {
+				} else if (item.doAction("Withdraw-X")) {
 					sleep(random(1000, 1300));
 					methods.keyboard.sendText(String.valueOf(count), true);
 				}

@@ -13,15 +13,16 @@ import java.util.Map.Entry;
  * @author Paris
  */
 public class IniParser {
-	
+
 	private static final char sectionOpen = '[';
 	private static final char sectionClose = ']';
 	private static final char keyBound = '=';
-	private static final char[] comments = { '#', ';' };
+	private static final char[] comments = {'#', ';'};
 	public static final String emptySection = "";
-	
-	private IniParser() { }
-	
+
+	private IniParser() {
+	}
+
 	public static void serialise(HashMap<String, HashMap<String, String>> data, BufferedWriter out) throws IOException {
 		if (data.containsKey(emptySection)) {
 			writeSection(emptySection, data.get(emptySection), out);
@@ -35,7 +36,7 @@ public class IniParser {
 			out.newLine();
 		}
 	}
-	
+
 	private static void writeSection(String section, HashMap<String, String> map, BufferedWriter out) throws IOException {
 		if (!(section == null || section.isEmpty())) {
 			out.write(sectionOpen);
@@ -50,12 +51,12 @@ public class IniParser {
 			out.newLine();
 		}
 	}
-	
+
 
 	public static HashMap<String, HashMap<String, String>> deserialise(URL source) throws IOException {
 		InputStreamReader stream = null;
 		BufferedReader reader = null;
-		
+
 		try {
 			URLConnection connection = source.openConnection();
 			stream = new InputStreamReader(connection.getInputStream());
@@ -67,15 +68,16 @@ public class IniParser {
 					reader.close();
 				if (stream != null)
 					stream.close();
-			} catch (final IOException ioe1) { }
+			} catch (final IOException ioe1) {
+			}
 			throw ioe;
 		}
 	}
-	
+
 	public static HashMap<String, HashMap<String, String>> deserialise(BufferedReader input) throws IOException {
 		HashMap<String, HashMap<String, String>> data = new HashMap<String, HashMap<String, String>>();
 		String line, section = emptySection;
-		
+
 		while ((line = input.readLine()) != null) {
 			line = line.trim();
 			if (line.isEmpty())
@@ -107,7 +109,7 @@ public class IniParser {
 				data.get(section).put(key, value);
 			}
 		}
-		
+
 		return data;
 	}
 }

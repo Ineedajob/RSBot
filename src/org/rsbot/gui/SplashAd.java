@@ -1,6 +1,11 @@
 package org.rsbot.gui;
 
-import java.awt.Cursor;
+import org.rsbot.util.GlobalConfiguration;
+import org.rsbot.util.IniParser;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
@@ -9,21 +14,9 @@ import java.io.IOException;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.TimeZone;
+import java.util.*;
 import java.util.Timer;
-import java.util.TimerTask;
 import java.util.logging.Logger;
-
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-
-import org.rsbot.util.GlobalConfiguration;
-import org.rsbot.util.IniParser;
 
 /**
  * @author Paris

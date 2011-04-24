@@ -1,18 +1,18 @@
 package org.rsbot.script.util;
 
-import java.util.Arrays;
-
 import org.rsbot.bot.Bot;
 import org.rsbot.script.methods.MethodContext;
 import org.rsbot.script.methods.Skills;
 
+import java.util.Arrays;
+
 
 /**
- * A class for tracking experience gains in specified skills. 
- * 
+ * A class for tracking experience gains in specified skills.
+ * <p/>
  * The three arrays (skills, startExp, currentExp) are constantly congruent, and
  * updated as such.
- * 
+ *
  * @author LastCoder
  * @version 1.0
  * @see ArrayList
@@ -21,13 +21,13 @@ import org.rsbot.script.methods.Skills;
 public class SkillTracker {
 	public int[] skills;
 	public int[] startExp, currentExp;
-		
+
 	private Bot bot;
 	private MethodContext context;
 
 	public transient int firstIndex;
 	public transient int lastIndex;
-	
+
 	public long start;
 	public boolean started;
 
@@ -47,32 +47,32 @@ public class SkillTracker {
 		lastIndex = size;
 		start();
 	}
-	
+
 	/**
-	 * Updates all the skills within the current array and starts the time at the currentTimeMillis. 
+	 * Updates all the skills within the current array and starts the time at the currentTimeMillis.
 	 */
 	public void start() {
-		if(started)
+		if (started)
 			return;
 		updateAll();
 		start = System.currentTimeMillis();
 		started = true;
 	}
-	
-	/** 
+
+	/**
 	 * Determines if the current SkillTracker is started.
 	 */
 	public boolean isStarted() {
 		return started;
 	}
-	
+
 	/**
 	 * Calculates the current runtime.
 	 */
 	public long getRuntime() {
 		return (long) (System.currentTimeMillis() - start);
 	}
-	
+
 	/**
 	 * Updates all skills within the skills array.
 	 */
@@ -98,7 +98,7 @@ public class SkillTracker {
 	/**
 	 * Removes an item using index (of item in array). Recommended to use
 	 * removeItem to remove via skill index.
-	 * 
+	 *
 	 * @param index
 	 */
 	public void remove(final int index) {
@@ -143,9 +143,8 @@ public class SkillTracker {
 
 	/**
 	 * Removes an item from the current array.
-	 * 
-	 * @param index
-	 *            Of the skill to remove.
+	 *
+	 * @param index Of the skill to remove.
 	 * @return <tt>true</tt> If removed.
 	 */
 	public boolean removeSkill(final int index) {
@@ -160,10 +159,8 @@ public class SkillTracker {
 	/**
 	 * Adds a skill into the skills array and updates it. Start experience will
 	 * be calculated during the the exact time the item is added into the array.
-	 * 
-	 * @param skill
-	 *            To add.
-	 * 
+	 *
+	 * @param skill To add.
 	 */
 	public boolean add(final int skill) {
 		if (lastIndex == skills.length) {
@@ -176,7 +173,7 @@ public class SkillTracker {
 		update(skill);
 		return true;
 	}
-    
+
 	/**
 	 * Determines if an array contains the specified index.
 	 */
@@ -187,7 +184,7 @@ public class SkillTracker {
 		}
 		return false;
 	}
-    
+
 	/**
 	 * Determines the true index for an item within the specificed array.
 	 */
@@ -198,9 +195,9 @@ public class SkillTracker {
 		}
 		return 0;
 	}
-    
+
 	/**
-	 * Expands the current array (skillsList) by the specified growth. 
+	 * Expands the current array (skillsList) by the specified growth.
 	 */
 	public void growAtEnd(final int growth) {
 		int size = lastIndex - firstIndex;
@@ -251,20 +248,20 @@ public class SkillTracker {
 		}
 		return gains;
 	}
-	
+
 	/**
 	 * Calculates the experience gained per hour. (Updates current experience)
 	 */
 	public int[] getHourlyGains() {
 		int size = skills.length;
 		int[] gains = new int[size];
-		for(int i = 0; i < size; i++) {
+		for (int i = 0; i < size; i++) {
 			update(skills[i]);
 			gains[i] = (int) (3600 * (currentExp[i] - startExp[i]) / getRuntime());
 		}
 		return gains;
 	}
-	
+
 	/**
 	 * Retrieves the name of the indicated skill.
 	 */
@@ -272,5 +269,5 @@ public class SkillTracker {
 		final int index = getArrayIndex(skill, skills);
 		return Skills.SKILL_NAMES[index];
 	}
-	
+
 }
