@@ -372,80 +372,71 @@ public class Bank extends MethodProvider {
 	 * @return <tt>true</tt> if the bank was opened; otherwise <tt>false</tt>.
 	 */
 	public boolean open() {
+		if (isOpen()) {
+			return true;
+		}
 		try {
-			if (!isOpen()) {
-				if (methods.menu.isOpen()) {
-					methods.mouse.moveSlightly();
-					sleep(random(20, 30));
-				}
-				RSObject bankBooth = methods.objects.getNearest(BANK_BOOTHS);
-				RSNPC banker = methods.npcs.getNearest(BANKERS);
-				final RSObject bankChest = methods.objects.getNearest(
-						BANK_CHESTS);
-				int lowestDist = methods.calc.distanceTo(bankBooth);
-				if ((banker != null) && (methods.calc.distanceTo(banker) < lowestDist)) {
-					lowestDist = methods.calc.distanceTo(banker);
-					bankBooth = null;
-				}
-				if ((bankChest != null) && (methods.calc.distanceTo(bankChest) < lowestDist)) {
-					bankBooth = null;
-					banker = null;
-				}
-				if (((bankBooth != null) && (methods.calc.distanceTo(bankBooth) < 5) && methods.calc.tileOnMap(
-						bankBooth.getLocation()) && methods.calc.canReach(
-						bankBooth.getLocation(),
-						true)) || ((banker != null) && (methods.calc.distanceTo(banker) < 8) && methods.calc.tileOnMap(
-						banker.getLocation()) && methods.calc.canReach(
-						banker.getLocation(),
-						true)) || ((bankChest != null) && (methods.calc.distanceTo(
-						bankChest) < 8) && methods.calc.tileOnMap(bankChest.getLocation()) && methods.calc.canReach(
-						bankChest.getLocation(), true) && !isOpen())) {
-					if (bankBooth != null) {
-						if (bankBooth.doAction("Use-Quickly")) {
-							int count = 0;
-							while (!isOpen() && ++count < 10) {
-								sleep(random(200, 400));
-								if (methods.players.getMyPlayer().isMoving()) {
-									count = 0;
-								}
-							}
-						} else {
-							methods.camera.turnTo(bankBooth);
-						}
-					} else if (banker != null) {
-						if (banker.doAction("Bank Banker")) {
-							int count = 0;
-							while (!isOpen() && ++count < 10) {
-								sleep(random(200, 400));
-								if (methods.players.getMyPlayer().isMoving()) {
-									count = 0;
-								}
-							}
-						} else {
-							methods.camera.turnTo(banker, 20);
-						}
-					} else if (bankChest != null) {
-						if (bankChest.doAction("Bank") || methods.menu.doAction("Use")) {
-							int count = 0;
-							while (!isOpen() && ++count < 10) {
-								sleep(random(200, 400));
-								if (methods.players.getMyPlayer().isMoving()) {
-									count = 0;
-								}
-							}
-						} else {
-							methods.camera.turnTo(bankChest);
+			if (methods.menu.isOpen()) {
+				methods.mouse.moveSlightly();
+				sleep(random(20, 30));
+			}
+			RSObject bankBooth = methods.objects.getNearest(BANK_BOOTHS);
+			RSNPC banker = methods.npcs.getNearest(BANKERS);
+			final RSObject bankChest = methods.objects.getNearest(
+					BANK_CHESTS);
+			if (bankBooth == null && banker == null && bankChest == null) {
+				return false;
+			}
+
+			/* Find out which of the three is the closest one. 
+			   Remember the best distance and location. */
+			final int NODIST = 2147483647;
+			int boothDist = (bankBooth == null) 
+				? NODIST : methods.calc.distanceTo(bankBooth);
+			int bankerDist = (banker == null) 
+				? NODIST : methods.calc.distanceTo(banker);
+			int chestDist = (bankChest == null) 
+				? NODIST : methods.calc.distanceTo(bankChest);
+
+			RSTile bestLocation = (bankBooth == null) 
+				? null : bankBooth.getLocation();
+			int lowestDist = boothDist;
+			if (bankerDist < lowestDist) {
+				lowestDist = bankerDist;
+				bestLocation = banker.getLocation();
+				bankBooth = null;
+				boothDist = NODIST;
+			}
+			if (chestDist < lowestDist) {
+				lowestDist = chestDist;
+				bestLocation = bankChest.getLocation();
+				bankBooth = null;
+				boothDist = NODIST;
+				banker = null;
+				bankerDist = NODIST;
+			}
+			
+			/* If best one is close enough and reachable, open bank.
+			   Otherwise walk closer */
+			if (lowestDist < 5 && 
+					methods.calc.tileOnMap(bestLocation) &&
+					methods.calc.canReach(bestLocation,true)) {
+				if (bankBooth != null && bankBooth.doAction("Use-Quickly") ||
+						banker != null && banker.doAction("Bank Banker") ||
+						bankChest != null && (bankChest.doAction("Bank") || 
+							methods.menu.doAction("Use"))) {
+					int count = 0;
+					while (!isOpen() && ++count < 10) {
+						sleep(random(200, 400));
+						if (methods.players.getMyPlayer().isMoving()) {
+							count = 0;
 						}
 					}
 				} else {
-					if (bankBooth != null) {
-						methods.walking.walkTo(bankBooth.getLocation());
-					} else if (banker != null) {
-						methods.walking.walkTo(banker.getLocation());
-					} else if (bankChest != null) {
-						methods.walking.walkTo(bankChest.getLocation());
-					}
+					methods.camera.turnTo(bankBooth);
 				}
+			} else {
+				methods.walking.walkTileOnScreen(bestLocation);
 			}
 			return isOpen();
 		} catch (final Exception e) {
