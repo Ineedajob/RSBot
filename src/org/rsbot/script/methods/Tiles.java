@@ -46,10 +46,10 @@ public class Tiles extends MethodProvider {
 	 * @param tile   The RSTile that you want to click.
 	 * @param action Action command to use on the Character (e.g "Attack" or
 	 *               "Trade").
-	 * @return <tt>true</tt> if the Character was clicked; otherwise
+	 * @return <tt>true</tt> if the tile was clicked; otherwise
 	 *         <tt>false</tt>.
 	 */
-	public boolean doAction(final RSTile tile, final String action) {
+	public boolean doAction(final RSTile tile, final String action, final String option) {
 		int counter = 0;
 		try {
 			Point location = methods.calc.tileToScreen(tile);
@@ -57,24 +57,30 @@ public class Tiles extends MethodProvider {
 				return false;
 			}
 			methods.mouse.move(location, 5, 5);
-			while (!methods.menu.getItems()[0].toLowerCase().contains(
-					action.toLowerCase())
-					&& counter < 5) {
+			while (!methods.menu.doAction(action, option)
+					&& counter++ < 5) {
 				location = methods.calc.tileToScreen(tile);
 				methods.mouse.move(location, 5, 5);
-				counter++;
 			}
-			if (methods.menu.getItems()[0].toLowerCase().contains(
-					action.toLowerCase())) {
-				methods.mouse.click(true);
-			} else {
-				methods.mouse.click(false);
-				methods.menu.doAction(action);
-			}
-			return true;
+			return false;
 		} catch (Exception e) {
 			return false;
 		}
+	}
+
+	/**
+	 * Clicks a tile if it is on screen. It will left-click if the action is
+	 * available as the default option, otherwise it will right-click and check
+	 * for the action in the context methods.menu.
+	 *
+	 * @param tile   The RSTile that you want to click.
+	 * @param action Action command to use click
+	 * 
+	 * @return <tt>true</tt> if the tile was clicked; otherwise
+	 *         <tt>false</tt>.
+	 */
+	public boolean doAction(final RSTile tile, final String action) {
+		return doAction(tile, action, null);
 	}
 
 	/**

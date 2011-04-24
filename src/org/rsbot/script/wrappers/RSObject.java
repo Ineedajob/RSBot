@@ -149,10 +149,21 @@ public class RSObject extends MethodProvider {
 	 */
 	public boolean doAction(String action) {
 		RSModel model = this.getModel();
+		final String name = this.getName(this);
 		if (model != null) {
-			return model.doAction(action);
+			return model.doAction(action, name);
 		}
-		return methods.tiles.doAction(getLocation(), action);
+
+		RSTile tile = getLocation();
+		for (int counter = 0; counter < 5; counter++) {
+			Point location = methods.calc.tileToScreen(tile);
+			if (location.x == -1 || location.y == -1) {
+				return false;
+			}
+			methods.mouse.move(location, 5, 5);
+			return methods.menu.doAction(action, name);
+		}
+		return false;
 	}
 
 	/**
