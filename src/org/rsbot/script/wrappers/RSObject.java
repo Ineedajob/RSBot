@@ -153,17 +153,7 @@ public class RSObject extends MethodProvider {
 		if (model != null) {
 			return model.doAction(action, name);
 		}
-
-		RSTile tile = getLocation();
-		for (int counter = 0; counter < 5; counter++) {
-			Point location = methods.calc.tileToScreen(tile);
-			if (location.x == -1 || location.y == -1) {
-				return false;
-			}
-			methods.mouse.move(location, 5, 5);
-			return methods.menu.doAction(action, name);
-		}
-		return false;
+		return methods.tiles.doAction(getLocation(), action, name);
 	}
 
 	/**
