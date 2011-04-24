@@ -355,4 +355,22 @@ public class GlobalConfiguration {
 		}
 		return -1;
 	}
+	
+	public static String getVersionFormatted() {
+		return getVersionFormatted(getVersion());
+	}
+	
+	public static String getVersionFormatted(final int version) {
+		final float v = (float) version / 100;
+		String s = Float.toString(v);
+		final int z = s.indexOf('.');
+		if (z == -1) {
+			s += ".00";
+		} else {
+			final String exp = s.substring(z + 1);
+			if (exp.length() == 1)
+				s += "0";
+		}
+		return s;
+	}
 }
