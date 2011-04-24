@@ -55,7 +55,7 @@ public class Menu extends MethodProvider {
 	 * @return <tt>true</tt> if the menu item was clicked; otherwise
 	 *         <tt>false</tt>.
 	 */
-	public boolean doAction(String action, String option) {
+	public boolean doAction(final String action, final String option) {
 		final int idx = getIndex(action, option);
 		if (!isOpen()) {
 			if (idx == -1) {
@@ -89,11 +89,11 @@ public class Menu extends MethodProvider {
 	}
 
 	/**
-	 * Checks whether or not a given action with given option is present in
-	 * the menu.
+	 * Checks whether or not a given action with given option is present
+	 * in the menu.
 	 *
 	 * @param action The action or action substring.
-	 * @param option The option or action substring.
+	 * @param option The option or option substring.
 	 * @return <tt>true</tt> if present, otherwise <tt>false</tt>.
 	 */
 	public boolean contains(final String action, final String option) {
@@ -233,7 +233,8 @@ public class Menu extends MethodProvider {
 	}
 
 	/**
-	 * Returns the index in the menu for a given action with a given option. Starts at 0.
+	 * Returns the index in the menu for a given action with a given option.
+	 * Starts at 0.
 	 *
 	 * @param action The action of the menu entry of which you want the index.
 	 * @param option The option of the menu entry of which you want the index. 
