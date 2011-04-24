@@ -61,6 +61,7 @@ public class GlobalConfiguration {
 			public static final String VERSION = BASE + "version.txt";
 			public static final String PROJECT = BASE + "git-project";
 			public static final String SITE = BASE + "site";
+			public static final String SDN_CONTROL = BASE + "sdn-control";
 			public static final String AD_INFO = BASE + "botad-info";
 		}
 
@@ -154,6 +155,10 @@ public class GlobalConfiguration {
 
 		public static String getScriptsPrecompiledDirectory() {
 			return Paths.getScriptsDirectory() + File.separator + "Precompiled";
+		}
+
+		public static String getScriptsNetworkDirectory() {
+			return Paths.getScriptsDirectory() + File.separator + "Network";
 		}
 
 		public static String getCacheDirectory() {
