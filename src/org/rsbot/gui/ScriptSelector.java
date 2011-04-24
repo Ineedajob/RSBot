@@ -43,7 +43,7 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 	private final ScriptTableModel model;
 	private final List<ScriptDefinition> scripts;
 	private JButton submit;
-	private boolean connected = false;
+	private boolean connected = true;
 
 	static {
 		SRC_SOURCES = new FileScriptSource(new File(

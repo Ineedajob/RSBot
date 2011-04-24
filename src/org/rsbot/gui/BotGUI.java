@@ -77,13 +77,13 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 
 	@Override
 	public void setTitle(String title) {
-		if (title != null) {
-			super.setTitle(title + " - " + GlobalConfiguration.NAME + " v"
-					+ ((float) GlobalConfiguration.getVersion() / 100));
-		} else {
-			super.setTitle(GlobalConfiguration.NAME + " v"
-					+ ((float) GlobalConfiguration.getVersion() / 100));
-		}
+		String t = GlobalConfiguration.NAME + " v" + GlobalConfiguration.getVersionFormatted();
+		final int v = GlobalConfiguration.getVersion(), l = UpdateUtil.getLatestVersion();
+		if (v > l)
+			t += " beta";
+		if (title != null)
+			t = title + " - " + t;
+		super.setTitle(t);
 	}
 
 	public void actionPerformed(ActionEvent evt) {

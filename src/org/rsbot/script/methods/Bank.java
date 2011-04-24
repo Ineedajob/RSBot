@@ -1,5 +1,6 @@
 package org.rsbot.script.methods;
 
+import org.rsbot.script.util.Filter;
 import org.rsbot.script.wrappers.*;
 
 import java.awt.*;
@@ -16,6 +17,9 @@ public class Bank extends MethodProvider {
 	public static final int[] BANK_CHESTS = {4483, 12308, 21301, 27663, 42192};
 	public static final int[] BANK_DEPOSIT_BOX = {9398, 20228, 26969, 36788};
 	public static final int[] DO_NOT_DEPOSIT = new int[]{1265, 1267, 1269, 1273, 1271, 1275, 1351, 590, 303};
+	public static final RSTile[] UNREACHABLE_BANKERS = {
+		new RSTile(3191, 3445), new RSTile(3180, 3433) // VARROCK EAST
+	};
 
 	public static final int INTERFACE_BANK = 762;
 	public static final int INTERFACE_BANK_BUTTON_CLOSE = 43;
