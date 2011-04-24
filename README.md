@@ -25,7 +25,7 @@ Subversion is also supported:
 
 ###Compiling
 
-Make sure JDK is installed, then execute the `Compile.bat` file by *double clicking* it.
+Make sure JDK is installed, then execute the `make.bat` file by *double clicking* it.
 
 ### Running
 
