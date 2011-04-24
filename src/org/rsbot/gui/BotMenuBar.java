@@ -92,7 +92,7 @@ public class BotMenuBar extends JMenuBar {
 				{"Accounts", "-", "ToggleF Force Input", "ToggleF Less CPU",
 						"-", "ToggleF Disable Anti-Randoms",
 						"ToggleF Disable Auto Login", "-",
-						"ToggleF Disable Advertisements", "ToggleF Disable Confirmations", "ToggleF Enable Easter"}, constructDebugs(),
+						"ToggleF Disable Advertisements", "ToggleF Disable Confirmations"}, constructDebugs(),
 				{"Site", "Project", "About"}};
 	}
 
