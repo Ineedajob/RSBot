@@ -1,8 +1,0 @@
-Main-Class: org.rsbot.Boot
-
-Name: org/rsbot
-Sealed: true
-Specification-Title: "RSBot"
-Specification-Vendor:  "org.rsbot"
-Implementation-Title: "RSBot"
-Implementation-Vendor: "org.rsbot"
