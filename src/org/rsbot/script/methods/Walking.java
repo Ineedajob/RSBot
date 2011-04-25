@@ -98,7 +98,7 @@ public class Walking extends MethodProvider {
 	 */
 	public boolean walkTileMM(final RSTile t, final int x, final int y) {
 		/*RSTile dest = new RSTile(t.getX() + random(0, x), t.getY()
-				+ random(0, y)); You can't just add randomness to the tile, it should be subtracted.*/ 
+				+ random(0, y)); You can't just add randomness to the tile, it should be subtracted.*/
 		int xx = t.getX(), yy = t.getY();
 		if (x > 0) {
 			if (random(1, 2) == random(1, 2)) {
@@ -109,7 +109,7 @@ public class Walking extends MethodProvider {
 		}
 		if (y > 0) {
 			if (random(1, 2) == random(1, 2)) {
-				yy += random(0, y);				
+				yy += random(0, y);
 			} else {
 				yy -= random(0, y);
 			}
@@ -171,11 +171,11 @@ public class Walking extends MethodProvider {
 		} else {
 			y -= random(0, r);
 		}
-		RSTile dest = new RSTile(x, y);		
+		RSTile dest = new RSTile(x, y);
 		if (methods.players.getMyPlayer().getLocation().equals(dest)) {
 			return false;
 		}
-		return walkTileMM(dest, 0, 0);		
+		return walkTileMM(dest, 0, 0);
 	}
 
 	/**

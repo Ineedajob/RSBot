@@ -57,7 +57,6 @@ public class GlobalConfiguration {
 			public static final String DOWNLOAD = BASE + "download";
 			public static final String UPDATE = BASE + "modscript";
 			public static final String WEB = BASE + "webwalker.gz";
-			public static final String EASTER_MATRIX = BASE + "matrix";
 			public static final String VERSION = BASE + "version.txt";
 			public static final String PROJECT = BASE + "git-project";
 			public static final String SITE = BASE + "site";
@@ -192,7 +191,7 @@ public class GlobalConfiguration {
 		public static String getSettingsDirectory() {
 			return Paths.getHomeDirectory() + File.separator + "Settings";
 		}
-		
+
 		public static String getMenuBarPrefs() {
 			return Paths.getSettingsDirectory() + File.separator + "Menu.txt";
 		}
@@ -355,11 +354,11 @@ public class GlobalConfiguration {
 		}
 		return -1;
 	}
-	
+
 	public static String getVersionFormatted() {
 		return getVersionFormatted(getVersion());
 	}
-	
+
 	public static String getVersionFormatted(final int version) {
 		final float v = (float) version / 100;
 		String s = Float.toString(v);

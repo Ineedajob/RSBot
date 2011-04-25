@@ -1,7 +1,6 @@
 package org.rsbot.gui;
 
 import org.rsbot.bot.Bot;
-import org.rsbot.injection.Injector;
 import org.rsbot.log.TextAreaLogHandler;
 import org.rsbot.script.Script;
 import org.rsbot.script.ScriptManifest;
@@ -137,8 +136,6 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 		} else if (menu.equals("Edit")) {
 			if (option.equals("Accounts")) {
 				AccountManager.getInstance().showGUI();
-			} else if (option.equals("Enable Easter")) {
-				Injector.easterMode = ((JCheckBoxMenuItem) evt.getSource()).isSelected();
 			} else if (option.equals("Disable Advertisements")) {
 				showAds = !((JCheckBoxMenuItem) evt.getSource()).isSelected();
 			} else if (option.equals("Disable Confirmations")) {
@@ -531,7 +528,7 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 				}
 			}
 		}
-		
+
 		boolean doExit = true;
 		if (!disableConfirmations) {
 			final String message = "Are you sure you want to exit?";
@@ -540,12 +537,12 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 			if (result != JOptionPane.OK_OPTION)
 				doExit = false;
 		}
-		
+
 		if (doExit) {
 			menuBar.savePrefs();
 			System.exit(0);
 		}
-		
+
 		return doExit;
 	}
 }

@@ -26,10 +26,10 @@ public abstract class Random extends Methods implements PaintListener {
 
 	private long timeout = random(240, 300);
 
-	private Color[] fadeArray = {Color.red, Color.white, Color.green, new Color(128, 0, 128), Color.yellow,
-	                             Color.black, Color.orange, Color.pink};
-
-	private int currentIndex = 0;
+//	private Color[] fadeArray = {Color.red, Color.white, Color.green, new Color(128, 0, 128), Color.yellow,
+//	                             Color.black, Color.orange, Color.pink};
+//
+//	private int currentIndex = 0;
 
 	/**
 	 * Detects whether or not this anti-random should
@@ -201,19 +201,22 @@ public abstract class Random extends Methods implements PaintListener {
 		} else {
 			i++;
 			up = i < 130;
-			if (!up) {
-				currentIndex++;
-				if (currentIndex >= fadeArray.length) {
-					currentIndex = 0;
-				}
-			}
+//			if (!up) {
+//				currentIndex++;
+//				if (currentIndex >= fadeArray.length) {
+//					currentIndex = 0;
+//				}
+//			}
 		}
-		Color cur = fadeArray[currentIndex];
-		g.setColor(new Color(cur.getRed(), cur.getBlue(), cur.getGreen(), i));
+		g.setColor(new Color(0, 255, 0, i));
+//		Color cur = fadeArray[currentIndex];
+//		g.setColor(new Color(cur.getRed(), cur.getBlue(), cur.getGreen(), i));
 		g.fillRect(0, 0, p.x - 1, p.y - 1);
 		g.fillRect(p.x + 1, 0, w - (p.x + 1), p.y - 1);
 		g.fillRect(0, p.y + 1, p.x - 1, h - (p.y - 1));
 		g.fillRect(p.x + 1, p.y + 1, w - (p.x + 1), h - (p.y - 1));
+		g.setColor(Color.RED);
+		g.drawString("Random Active: " + name, 540, 20);
 	}
 
 }

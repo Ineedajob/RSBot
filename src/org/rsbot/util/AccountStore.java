@@ -95,7 +95,7 @@ public class AccountStore {
 
 	private File file;
 	private byte[] digest;
-	private String[] protectedAttributes = { "pin" };
+	private String[] protectedAttributes = {"pin"};
 
 	private Map<String, Account> accounts = new TreeMap<String, Account>();
 
