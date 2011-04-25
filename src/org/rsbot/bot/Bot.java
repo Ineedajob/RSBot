@@ -71,7 +71,8 @@ public class Bot {
 			public void run() {
 				try {
 					setClient((Client) loader.getClient());
-					resize(size.width, size.height);
+					if (!disableRendering)
+						resize(size.width, size.height);
 					methods.menu.setupListener();
 				} catch (Exception ignored) {
 				}

@@ -168,8 +168,19 @@ public class BotPanel extends JPanel {
 		super.paintComponent(g);
 		if (bot == null) {
 			home.paint(g);
-		} else {
+		} else if (!bot.disableRendering) {
 			g.drawImage(bot.getImage(), offX, 0, null);
+		}else{
+			Font font = new Font("Helvetica", 1, 13);
+			FontMetrics fontMetrics = getFontMetrics(font);
+			g.setColor(Color.black);
+			g.fillRect(0, 0, 768, 503);
+			g.setColor(new Color(150, 0, 0));
+			g.drawRect(230, 233, 303, 33);
+			String s = "Render disabled!";
+			g.setFont(font);
+			g.setColor(Color.WHITE);
+			g.drawString(s, (768 - fontMetrics.stringWidth(s)) / 2, 255);
 		}
 	}
 
@@ -196,8 +207,8 @@ public class BotPanel extends JPanel {
 						MouseWheelEvent mwe = (MouseWheelEvent) e;
 						c.dispatchEvent(new MouseWheelEvent(c, e.getID(),
 								System.currentTimeMillis(), 0, e.getX(), e
-								.getY(), 0, e.isPopupTrigger(), mwe
-								.getScrollType(),
+										.getY(), 0, e.isPopupTrigger(), mwe
+										.getScrollType(),
 								mwe.getScrollAmount(), mwe.getWheelRotation()));
 					} else {
 						c.dispatchEvent(new MouseEvent(c, e.getID(), System
