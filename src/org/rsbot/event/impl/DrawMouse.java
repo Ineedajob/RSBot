@@ -15,6 +15,7 @@ public class DrawMouse implements PaintListener {
 	private final Client client;
 	private final List<Cross> clicks = new LinkedList<Cross>();
 	private final Object lock = new Object();
+//  *****Commented for future use.
 //	private final ArrayList<Particle> p = new ArrayList<Particle>();
 //	private Color[] fadeArray = {Color.red, Color.white, Color.green, new Color(128, 0, 128), Color.yellow,
 //	                             Color.black, Color.orange, Color.pink};
@@ -34,7 +35,7 @@ public class DrawMouse implements PaintListener {
 		return System.currentTimeMillis() % 3600 / 10.0D;
 	}
 
-	public void onRepaint(final Graphics render) {//TODO optimize.
+	public void onRepaint(final Graphics render) {
 		Mouse mouse = client.getMouse();
 		if (mouse != null) {
 			final Point location = new Point(mouse.getX(), mouse.getY());
@@ -51,6 +52,35 @@ public class DrawMouse implements PaintListener {
 					clicks.add(newCross);
 				}
             }
+//            *****Commented for future use.
+//            if (Injector.easterMode) {
+//				int x = mouse.getX();
+//				int y = mouse.getY();
+//				if (Point.distance(x, y, lastPoint.x, lastPoint.y) > 15) {
+//					lastPoint = new Point(x, y);
+//					synchronized (lock) {
+//						for (int i = 0; i < 50;
+//						     i++, p.add(new Particle(x, y, fadeArray[random(0, fadeArray.length)], 0))) {
+//						}
+//					}
+//				}
+//				if (mouse.isPressed()) {
+//					lastPoint = new Point(x, y);
+//					synchronized (lock) {
+//						for (int i = 0; i < 50; i++, p.add(new Particle(x, y, Color.black, 3))) {
+//						}
+//					}
+//				}
+//				synchronized (lock) {
+//					Iterator<Particle> partIter = p.iterator();
+//					while (partIter.hasNext()) {
+//						Particle part = partIter.next();
+//						if (!part.handle(render)) {
+//							partIter.remove();
+//						}
+//					}
+//				}
+//			}
 			synchronized (lock) {
 				Iterator<Cross> clickIterator = clicks.listIterator();
 				while (clickIterator.hasNext()) {
@@ -121,6 +151,7 @@ public class DrawMouse implements PaintListener {
 
 	}
 
+//  *****Commented for future use.
 //	private static class Particle {
 //
 //		private double posX;
