@@ -99,7 +99,17 @@ public class RSObject extends MethodProvider {
 	 * @author Aut0r
 	 */
 	public String getName(final RSObject object) {
-		RSObjectDef objectDef = object.getDef();
+		return object.getName();
+	}
+
+	/**
+	 * Returns the name of the object.
+	 *
+	 * @return The object name if the definition is available; otherwise "".
+	 * @author Aut0r
+	 */
+	public String getName() {
+		RSObjectDef objectDef = getDef();
 		return objectDef != null ? objectDef.getName() : "";
 	}
 
@@ -147,13 +157,24 @@ public class RSObject extends MethodProvider {
 	 * @return returns true if clicked, false if object does not contain the
 	 *         desired action
 	 */
-	public boolean doAction(String action) {
+	public boolean doAction(final String action) {
+		return doAction(action, null);
+	}
+
+	/**
+	 * Performs the specified action on this object.
+	 *
+	 * @param action the action of the menu item to search and click
+	 * @param action the option of the menu item to search and click
+	 * @return returns true if clicked, false if object does not contain the
+	 *         desired action
+	 */
+	public boolean doAction(final String action, final String option) {
 		RSModel model = this.getModel();
-		final String name = this.getName(this);
 		if (model != null) {
-			return model.doAction(action, name);
+			return model.doAction(action, option);
 		}
-		return methods.tiles.doAction(getLocation(), action, name);
+		return methods.tiles.doAction(getLocation(), action, option);
 	}
 
 	/**
