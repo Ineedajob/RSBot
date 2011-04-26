@@ -21,7 +21,7 @@ all: Bundle
 
 Bot:
 	@if [ ! -d $(BINDIR) ]; then mkdir $(BINDIR); fi
-	$(CC) $(CFLAGS) -d $(BINDIR) `find $(SRC) -name *.java`
+	$(CC) $(CFLAGS) -d $(BINDIR) `find $(SRC) -name \*.java`
 
 Scripts: mostlyclean Bot
 	$(CC) $(CFLAGS) -cp $(BINDIR) $(SCRIPTS)/*.java
