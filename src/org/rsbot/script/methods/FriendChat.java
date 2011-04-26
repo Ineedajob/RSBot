@@ -18,7 +18,6 @@ public class FriendChat extends MethodProvider {
 
 	private static final Pattern HTML_TAG = Pattern.compile("(^[^<]+>|<[^>]+>|<[^>]+$)");
 	public static final int INTERFACE_FRIEND_CHAT = 1109;
-	public static final int INTERFACE_FRIEND_CHAT_CHECK = 16;
 	public static final int INTERFACE_FRIEND_CHAT_JOIN_BUTTON = 30;
 	public static final int INTERFACE_FRIEND_CHAT_CHANNEL_INFO = 1;
 	public static final int INTERFACE_FRIEND_CHAT_USERS_LIST = 5;
@@ -36,6 +35,9 @@ public class FriendChat extends MethodProvider {
 	public boolean join(String channel) {
 		methods.game.openTab(Game.TAB_FRIENDS_CHAT);
 		if (isInChannel()) {
+            if(getChannelName() == channel){
+                return true;
+            }
 			if (!leave()) {
 				return false;
 			}
@@ -44,7 +46,7 @@ public class FriendChat extends MethodProvider {
 		sleep(random(500, 800));
 		if (methods.interfaces.get(INTERFACE_JOIN_FRIEND_CHAT).isValid()) {
 			String lastChatCompText = methods.interfaces.getComponent(INTERFACE_JOIN_FRIEND_CHAT,
-					INTERFACE_JOIN_FRIEND_CHAT_LAST_CHANNEL).getText();
+					INTERFACE_JOIN_FRIEND_CHAT_LAST_CHANNEL).getComponent(0).getText();
 			lastCachedChannel = lastChatCompText.substring(lastChatCompText.indexOf(": ") + 2);
 			methods.keyboard.sendText(channel, true);
 			sleep(random(1550, 1800));
@@ -65,15 +67,13 @@ public class FriendChat extends MethodProvider {
 	public boolean joinLastChannel() {
 		methods.game.openTab(Game.TAB_FRIENDS_CHAT);
 		if (isInChannel()) {
-			if (!leave()) {
-				return false;
-			}
+			return true;
 		}
 		methods.interfaces.getComponent(INTERFACE_FRIEND_CHAT, INTERFACE_FRIEND_CHAT_JOIN_BUTTON).doClick();
 		sleep(random(500, 800));
 		if (methods.interfaces.get(INTERFACE_JOIN_FRIEND_CHAT).isValid()) {
 			String lastChatCompText = methods.interfaces.getComponent(INTERFACE_JOIN_FRIEND_CHAT,
-					INTERFACE_JOIN_FRIEND_CHAT_LAST_CHANNEL).getText();
+					INTERFACE_JOIN_FRIEND_CHAT_LAST_CHANNEL).getComponent(0).getText();
 			lastCachedChannel = lastChatCompText.substring(lastChatCompText.indexOf(": ") + 2);
 			methods.interfaces.getComponent(INTERFACE_JOIN_FRIEND_CHAT,
 					INTERFACE_JOIN_FRIEND_CHAT_LAST_CHANNEL).doClick();

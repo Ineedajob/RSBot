@@ -18,20 +18,22 @@ public abstract class RSCharacter extends MethodProvider {
 	 * Retrieves a reference to the client accessor. For internal use. The
 	 * reference should be stored in a SoftReference by subclasses to allow for
 	 * garbage collection when appropriate.
-	 *
+	 * 
 	 * @return The client accessor.
 	 */
 	protected abstract org.rsbot.client.RSCharacter getAccessor();
 
 	/**
 	 * Clicks a humanoid character (tall and skinny).
-	 *
-	 * @param action The option to be clicked (if available).
+	 * 
+	 * @param action
+	 *            The option to be clicked (if available).
 	 * @return <tt>true</tt> if the option was found; otherwise <tt>false</tt>.
 	 */
 	public boolean doAction(final String action) {
 		RSModel model = this.getModel();
-		return model != null && this.isValid() && this.getModel().doAction(action);
+		return model != null && this.isValid()
+				&& this.getModel().doAction(action);
 	}
 
 	public RSModel getModel() {
@@ -93,7 +95,7 @@ public abstract class RSCharacter extends MethodProvider {
 		}
 		int x = methods.client.getBaseX() + (c.getX() >> 9);
 		int y = methods.client.getBaseY() + (c.getY() >> 9);
-		return new RSTile(x, y);
+		return new RSTile(x, y, methods.game.getPlane());
 	}
 
 	public String getMessage() {
@@ -103,7 +105,7 @@ public abstract class RSCharacter extends MethodProvider {
 	/**
 	 * Gets the minimap location, of the character. Note: This does work when
 	 * it's walking!
-	 *
+	 * 
 	 * @return The location of the character on the minimap.
 	 */
 	public Point getMinimapLocation() {
@@ -146,7 +148,7 @@ public abstract class RSCharacter extends MethodProvider {
 	public boolean isInCombat() {
 		return methods.game.isLoggedIn()
 				&& methods.client.getLoopCycle() < getAccessor()
-				.getLoopCycleStatus();
+						.getLoopCycleStatus();
 	}
 
 	public boolean isInteractingWithLocalPlayer() {
@@ -194,7 +196,7 @@ public abstract class RSCharacter extends MethodProvider {
 				+ getMessage()
 				+ ",interact="
 				+ (inter == null ? "null" : inter.isValid() ? inter
-				.getMessage() : "Invalid") + "]";
+						.getMessage() : "Invalid") + "]";
 	}
 
 }

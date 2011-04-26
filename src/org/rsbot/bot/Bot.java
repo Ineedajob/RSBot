@@ -1,5 +1,17 @@
 package org.rsbot.bot;
 
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
+import java.lang.reflect.Constructor;
+import java.util.EventListener;
+import java.util.Map;
+import java.util.TreeMap;
+
 import org.rsbot.Application;
 import org.rsbot.client.Client;
 import org.rsbot.client.input.Canvas;
@@ -12,13 +24,6 @@ import org.rsbot.script.internal.InputManager;
 import org.rsbot.script.internal.ScriptHandler;
 import org.rsbot.script.methods.Environment;
 import org.rsbot.script.methods.MethodContext;
-
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.lang.reflect.Constructor;
-import java.util.EventListener;
-import java.util.Map;
-import java.util.TreeMap;
 
 public class Bot {
 
@@ -123,9 +128,12 @@ public class Bot {
 		image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		// client reads size of loader applet for drawing
 		loader.setSize(width, height);
-		// simulate loader repaint awt event dispatch
-		loader.update(backBuffer.getGraphics());
-		loader.paint(backBuffer.getGraphics());
+		Graphics g = backBuffer.getGraphics();
+		if (!disableRendering) {
+			// simulate loader repaint awt event dispatch
+			loader.update(g);
+			loader.paint(g);
+		}
 	}
 
 	public boolean setAccount(final String name) {
@@ -179,7 +187,25 @@ public class Bot {
 	}
 
 	public Graphics getBufferGraphics() {
+		if (disableRendering) {
+			int width = backBuffer.getWidth(), height = backBuffer.getHeight();
+			backBuffer = new BufferedImage(width, height,
+					BufferedImage.TYPE_INT_RGB);
+			image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+		}
 		Graphics back = backBuffer.getGraphics();
+		if (disableRendering) {
+			Font font = new Font("Helvetica", 1, 13);
+			FontMetrics fontMetrics = back.getFontMetrics(font);
+			back.setColor(Color.black);
+			back.fillRect(0, 0, 768, 503);
+			back.setColor(new Color(150, 0, 0));
+			back.drawRect(230, 233, 303, 33);
+			String s = "Render disabled!";
+			back.setFont(font);
+			back.setColor(Color.WHITE);
+			back.drawString(s, (768 - fontMetrics.stringWidth(s)) / 2, 255);
+		}
 		paintEvent.graphics = back;
 		textPaintEvent.graphics = back;
 		textPaintEvent.idx = 0;
