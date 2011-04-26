@@ -8,7 +8,6 @@ import org.rsbot.script.util.SkillTracker;
  * Example usage: skills.getRealLevel(Skills.ATTACK);
  */
 public class Skills extends MethodProvider {
-
 	public static final String[] SKILL_NAMES = {"attack", "defence",
 			"strength", "constitution", "range", "prayer", "magic", "cooking",
 			"woodcutting", "fletching", "fishing", "firemaking", "crafting",
@@ -244,5 +243,4 @@ public class Skills extends MethodProvider {
 	public SkillTracker createTracker(final int... skills) {
 		return new SkillTracker(methods.bot, skills);
 	}
-
 }
