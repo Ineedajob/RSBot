@@ -30,13 +30,9 @@ import java.util.logging.Logger;
  * @author Jacmob
  */
 public class BotGUI extends JFrame implements ActionListener, ScriptListener {
-
-	public static final int PANEL_WIDTH = 765, PANEL_HEIGHT = 503,
-			LOG_HEIGHT = 120;
-
+	public static final int PANEL_WIDTH = 765, PANEL_HEIGHT = 503, LOG_HEIGHT = 120;
 	private static final long serialVersionUID = -5411033752001988794L;
 	private static final Logger log = Logger.getLogger(BotGUI.class.getName());
-
 	private BotPanel panel;
 	private JScrollPane scrollableBotPanel;
 	private BotToolBar toolBar;
@@ -46,8 +42,7 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 	private List<Bot> bots = new ArrayList<Bot>();
 	private boolean showAds = true;
 	private boolean disableConfirmations = false;
-	private static ScriptDeliveryNetwork sdn = ScriptDeliveryNetwork
-			.getInstance();
+	private static ScriptDeliveryNetwork sdn = ScriptDeliveryNetwork.getInstance();
 
 	public BotGUI() {
 		init();
@@ -60,13 +55,10 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				JPopupMenu.setDefaultLightWeightPopupEnabled(false);
-				ToolTipManager.sharedInstance().setLightWeightPopupEnabled(
-						false);
-
+				ToolTipManager.sharedInstance().setLightWeightPopupEnabled(false);
 				if (showAds) {
 					new SplashAd(BotGUI.this).display();
 				}
-
 				if (GlobalConfiguration.RUNNING_FROM_JAR) {
 					UpdateUtil updater = new UpdateUtil(BotGUI.this);
 					updater.checkUpdate(false);
@@ -77,14 +69,14 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 
 	@Override
 	public void setTitle(String title) {
-		String t = GlobalConfiguration.NAME + " v"
-				+ GlobalConfiguration.getVersionFormatted();
-		final int v = GlobalConfiguration.getVersion(), l = UpdateUtil
-				.getLatestVersion();
-		if (v > l)
+		String t = GlobalConfiguration.NAME + " v" + GlobalConfiguration.getVersionFormatted();
+		final int v = GlobalConfiguration.getVersion(), l = UpdateUtil.getLatestVersion();
+		if (v > l) {
 			t += " beta";
-		if (title != null)
+		}
+		if (title != null) {
 			t = title + " - " + t;
+		}
 		super.setTitle(t);
 	}
 
@@ -131,8 +123,7 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 			} else if (option.equals("Save Screenshot")) {
 				Bot current = getCurrentBot();
 				if (current != null) {
-					ScreenshotUtil.saveScreenshot(current,
-							current.getMethodContext().game.isLoggedIn());
+					ScreenshotUtil.saveScreenshot(current, current.getMethodContext().game.isLoggedIn());
 				}
 			} else if (option.equals("Exit")) {
 				cleanExit();
@@ -143,35 +134,26 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 			} else if (option.equals("Disable Advertisements")) {
 				showAds = !((JCheckBoxMenuItem) evt.getSource()).isSelected();
 			} else if (option.equals("Disable Confirmations")) {
-				disableConfirmations = ((JCheckBoxMenuItem) evt.getSource())
-						.isSelected();
+				disableConfirmations = ((JCheckBoxMenuItem) evt.getSource()).isSelected();
 			} else {
 				Bot current = getCurrentBot();
 				if (current != null) {
 					if (option.equals("Force Input")) {
-						boolean selected = ((JCheckBoxMenuItem) evt.getSource())
-								.isSelected();
+						boolean selected = ((JCheckBoxMenuItem) evt.getSource()).isSelected();
 						current.overrideInput = selected;
 						toolBar.setOverrideInput(selected);
 					} else if (option.equals("Less CPU")) {
-						current.lowerFrameRate = ((JCheckBoxMenuItem) evt
-								.getSource()).isSelected();
-					} else if (option.equals("Render Canvas")) {
-						current.disableRendering = ((JCheckBoxMenuItem) evt
-								.getSource()).isSelected();
+						current.disableRendering = ((JCheckBoxMenuItem) evt.getSource()).isSelected();
 					} else if (option.equals("Disable Anti-Randoms")) {
-						current.disableRandoms = ((JCheckBoxMenuItem) evt
-								.getSource()).isSelected();
+						current.disableRandoms = ((JCheckBoxMenuItem) evt.getSource()).isSelected();
 					} else if (option.equals("Disable Auto Login")) {
-						current.disableAutoLogin = ((JCheckBoxMenuItem) evt
-								.getSource()).isSelected();
+						current.disableAutoLogin = ((JCheckBoxMenuItem) evt.getSource()).isSelected();
 					}
 				}
 			}
 		} else if (menu.equals("View")) {
 			Bot current = getCurrentBot();
-			boolean selected = ((JCheckBoxMenuItem) evt.getSource())
-					.isSelected();
+			boolean selected = ((JCheckBoxMenuItem) evt.getSource()).isSelected();
 			if (option.equals("Hide Toolbar")) {
 				toggleViewState(toolBar, selected);
 			} else if (option.equals("Hide Log Window")) {
@@ -180,8 +162,7 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 				if (option.equals("All Debugging")) {
 					for (String key : BotMenuBar.DEBUG_MAP.keySet()) {
 						Class<?> el = BotMenuBar.DEBUG_MAP.get(key);
-						boolean wasSelected = menuBar.getCheckBox(key)
-								.isSelected();
+						boolean wasSelected = menuBar.getCheckBox(key).isSelected();
 						menuBar.getCheckBox(key).setSelected(selected);
 						if (selected) {
 							if (!wasSelected) {
@@ -210,11 +191,7 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 			} else if (option.equals("Project")) {
 				openURL(GlobalConfiguration.Paths.URLs.PROJECT);
 			} else if (option.equals("About")) {
-				JOptionPane.showMessageDialog(this, new String[] {
-						"An open source bot developed by the community.",
-						"Visit " + GlobalConfiguration.Paths.URLs.SITE
-								+ "/ for more information." }, "About",
-						JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.showMessageDialog(this, new String[]{"An open source bot developed by the community.", "Visit " + GlobalConfiguration.Paths.URLs.SITE + "/ for more information."}, "About", JOptionPane.INFORMATION_MESSAGE);
 			}
 		} else if (menu.equals("Tab")) {
 			Bot curr = getCurrentBot();
@@ -226,13 +203,11 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 				setTitle(null);
 				toolBar.setScriptButton(BotToolBar.RUN_SCRIPT);
 				toolBar.setOverrideInput(false);
-				toolBar.setInputState(Environment.INPUT_KEYBOARD
-						| Environment.INPUT_MOUSE);
+				toolBar.setInputState(Environment.INPUT_KEYBOARD | Environment.INPUT_MOUSE);
 				toolBar.updateInputButton();
 			} else {
 				setTitle(curr.getAccountName());
-				Map<Integer, Script> scriptMap = curr.getScriptHandler()
-						.getRunningScripts();
+				Map<Integer, Script> scriptMap = curr.getScriptHandler().getRunningScripts();
 				if (scriptMap.size() > 0) {
 					if (scriptMap.values().iterator().next().isPaused()) {
 						toolBar.setScriptButton(BotToolBar.RESUME_SCRIPT);
@@ -269,8 +244,7 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 	}
 
 	private void serviceKeyQuery(String option) {
-		String key = (String) JOptionPane.showInputDialog(this, null, option,
-				JOptionPane.QUESTION_MESSAGE, null, null, sdn.getKey());
+		String key = (String) JOptionPane.showInputDialog(this, null, option, JOptionPane.QUESTION_MESSAGE, null, null, sdn.getKey());
 		if (key == null || key.length() == 0) {
 			log.info("Services have been disabled");
 		} else if (key.length() != 40) {
@@ -301,7 +275,6 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 		toolBar.addTab();
 		bot.getScriptHandler().addScriptListener(this);
 		new Thread(new Runnable() {
-
 			public void run() {
 				bot.start();
 				home.setBots(bots);
@@ -319,7 +292,6 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 		bot.getScriptHandler().removeScriptListener(this);
 		home.setBots(bots);
 		new Thread(new Runnable() {
-
 			public void run() {
 				bot.stop();
 				System.gc();
@@ -345,16 +317,11 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 	}
 
 	private void showScriptSelector(Bot bot) {
-		if (AccountManager.getAccountNames() == null
-				|| AccountManager.getAccountNames().length == 0) {
-			JOptionPane
-					.showMessageDialog(this,
-							"No accounts found! Please create one before using the bot.");
+		if (AccountManager.getAccountNames() == null || AccountManager.getAccountNames().length == 0) {
+			JOptionPane.showMessageDialog(this, "No accounts found! Please create one before using the bot.");
 			AccountManager.getInstance().showGUI();
 		} else if (bot.getMethodContext() == null) {
-			JOptionPane.showMessageDialog(this,
-					"The client is not currently loaded!");
-
+			JOptionPane.showMessageDialog(this, "The client is not currently loaded!");
 		} else {
 			new ScriptSelector(this, bot).showGUI();
 		}
@@ -366,12 +333,8 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 		if (running.size() > 0) {
 			int id = running.keySet().iterator().next();
 			Script s = running.get(id);
-			ScriptManifest prop = s.getClass().getAnnotation(
-					ScriptManifest.class);
-			int result = JOptionPane.showConfirmDialog(this,
-					"Would you like to stop the script " + prop.name() + "?",
-					"Script", JOptionPane.OK_CANCEL_OPTION,
-					JOptionPane.QUESTION_MESSAGE);
+			ScriptManifest prop = s.getClass().getAnnotation(ScriptManifest.class);
+			int result = JOptionPane.showConfirmDialog(this, "Would you like to stop the script " + prop.name() + "?", "Script", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 			if (result == JOptionPane.OK_OPTION) {
 				sh.stopScript(id);
 				toolBar.setScriptButton(BotToolBar.RUN_SCRIPT);
@@ -391,29 +354,20 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 
 	private void init() {
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-
 		addWindowListener(new WindowAdapter() {
-
 			public void windowClosing(WindowEvent e) {
 				if (cleanExit()) {
 					dispose();
 				}
 			}
 		});
-
-		setIconImage(GlobalConfiguration.getImage(
-				GlobalConfiguration.Paths.Resources.ICON,
-				GlobalConfiguration.Paths.ICON));
-
+		setIconImage(GlobalConfiguration.getImage(GlobalConfiguration.Paths.Resources.ICON, GlobalConfiguration.Paths.ICON));
 		JPopupMenu.setDefaultLightWeightPopupEnabled(false);
-
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (final Exception ignored) {
 		}
-
 		WindowUtil.setFrame(this);
-
 		home = new BotHome();
 		panel = new BotPanel(home);
 		toolBar = new BotToolBar(this);
@@ -422,14 +376,11 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 		toolBar.setHome(true);
 		menuBar.setBot(null);
 		setJMenuBar(menuBar);
-		textScroll = new JScrollPane(TextAreaLogHandler.TEXT_AREA,
-				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		textScroll = new JScrollPane(TextAreaLogHandler.TEXT_AREA, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		textScroll.setBorder(null);
 		textScroll.setPreferredSize(new Dimension(PANEL_WIDTH, LOG_HEIGHT));
 		textScroll.setVisible(true);
 		scrollableBotPanel = new JScrollPane(panel);
-
 		add(toolBar, BorderLayout.NORTH);
 		add(scrollableBotPanel, BorderLayout.CENTER);
 		add(textScroll, BorderLayout.SOUTH);
@@ -447,8 +398,7 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 					toolBar.setOverrideInput(false);
 					menuBar.setOverrideInput(false);
 					String acct = bot.getAccountName();
-					toolBar.setTabLabel(bots.indexOf(bot) + 1,
-							acct == null ? "RuneScape" : acct);
+					toolBar.setTabLabel(bots.indexOf(bot) + 1, acct == null ? "RuneScape" : acct);
 					toolBar.updateInputButton();
 					setTitle(acct);
 				}
@@ -459,8 +409,7 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 	public void scriptStopped(ScriptHandler handler, Script script) {
 		Bot bot = handler.getBot();
 		if (bot == getCurrentBot()) {
-			bot.inputFlags = Environment.INPUT_KEYBOARD
-					| Environment.INPUT_MOUSE;
+			bot.inputFlags = Environment.INPUT_KEYBOARD | Environment.INPUT_MOUSE;
 			bot.overrideInput = false;
 			toolBar.setScriptButton(BotToolBar.RUN_SCRIPT);
 			toolBar.setInputState(bot.inputFlags);
@@ -494,34 +443,26 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 	}
 
 	public static void openURL(final String url) {
-		GlobalConfiguration.OperatingSystem os = GlobalConfiguration
-				.getCurrentOperatingSystem();
+		GlobalConfiguration.OperatingSystem os = GlobalConfiguration.getCurrentOperatingSystem();
 		try {
 			if (os == GlobalConfiguration.OperatingSystem.MAC) {
 				Class<?> fileMgr = Class.forName("com.apple.eio.FileManager");
-				Method openURL = fileMgr.getDeclaredMethod("openURL",
-						new Class[] { String.class });
+				Method openURL = fileMgr.getDeclaredMethod("openURL", new Class[]{String.class});
 				openURL.invoke(null, url);
 			} else if (os == GlobalConfiguration.OperatingSystem.WINDOWS) {
-				Runtime.getRuntime().exec(
-						"rundll32 url.dll,FileProtocolHandler " + url);
-			} else { // assume Unix or Linux
-				String[] browsers = { "firefox", "opera", "konqueror",
-						"epiphany", "mozilla", "netscape", "google-chrome",
-						"chromium-browser" };
+				Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + url);
+			} else {
+				String[] browsers = {"firefox", "opera", "konqueror", "epiphany", "mozilla", "netscape", "google-chrome", "chromium-browser"};
 				String browser = null;
-				for (int count = 0; (count < browsers.length)
-						&& (browser == null); count++) {
-					if (Runtime.getRuntime()
-							.exec(new String[] { "which", browsers[count] })
-							.waitFor() == 0) {
+				for (int count = 0; (count < browsers.length) && (browser == null); count++) {
+					if (Runtime.getRuntime().exec(new String[]{"which", browsers[count]}).waitFor() == 0) {
 						browser = browsers[count];
 					}
 				}
 				if (browser == null) {
 					throw new Exception("Could not find web browser");
 				} else {
-					Runtime.getRuntime().exec(new String[] { browser, url });
+					Runtime.getRuntime().exec(new String[]{browser, url});
 				}
 			}
 		} catch (Exception e) {
@@ -531,9 +472,7 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 
 	private boolean confirmRemoveBot() {
 		if (!disableConfirmations) {
-			int result = JOptionPane.showConfirmDialog(this,
-					"Are you sure you want to close this bot?", "Close Bot",
-					JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+			int result = JOptionPane.showConfirmDialog(this, "Are you sure you want to close this bot?", "Close Bot", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 			return (result == JOptionPane.OK_OPTION);
 		} else {
 			return true;
@@ -550,21 +489,18 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 				}
 			}
 		}
-
 		boolean doExit = true;
 		if (!disableConfirmations) {
 			final String message = "Are you sure you want to exit?";
-			int result = JOptionPane.showConfirmDialog(this, message, "Exit",
-					JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
-			if (result != JOptionPane.OK_OPTION)
+			int result = JOptionPane.showConfirmDialog(this, message, "Exit", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+			if (result != JOptionPane.OK_OPTION) {
 				doExit = false;
+			}
 		}
-
 		if (doExit) {
 			menuBar.savePrefs();
 			System.exit(0);
 		}
-
 		return doExit;
 	}
 }
