@@ -29,13 +29,33 @@ public class Tiles extends MethodProvider {
 	 */
 	public boolean doAction(final RSTile tile, final double xd,
 	                        final double yd, final int h, final String action) {
+		return methods.tiles.doAction(tile, xd, yd, h, action, null);
+	}
+
+	public boolean doAction(final RSTile tile, final double xd,
+				final double yd, final int h, final String action, final String option) {
 		Point location = methods.calc.tileToScreen(tile, xd, yd, h);
 		if (location.x != -1 && location.y != -1) {
 			methods.mouse.move(location, 3, 3);
 			sleep(random(20, 100));
-			return methods.menu.doAction(action);
+			return methods.menu.doAction(action, option);
 		}
 		return false;
+	}
+
+	/**
+	 * Clicks a tile if it is on screen. It will left-click if the action is
+	 * available as the default option, otherwise it will right-click and check
+	 * for the action in the context methods.menu.
+	 *
+	 * @param tile   The RSTile that you want to click.
+	 * @param action Action command to use click
+	 * 
+	 * @return <tt>true</tt> if the tile was clicked; otherwise
+	 *         <tt>false</tt>.
+	 */
+	public boolean doAction(final RSTile tile, final String action) {
+		return methods.tiles.doAction(tile, action, null);
 	}
 
 	/**
@@ -51,36 +71,20 @@ public class Tiles extends MethodProvider {
 	 */
 	public boolean doAction(final RSTile tile, final String action, final String option) {
 		try {
-			Point location = methods.calc.tileToScreen(tile);
-			if (location.x == -1 || location.y == -1) {
-				return false;
-			}
-			methods.mouse.move(location, 5, 5);
 			for (int i = 0; i++ < 5;) {
+				Point location = methods.calc.tileToScreen(tile);
+				if (location.x == -1 || location.y == -1) {
+					return false;
+				}
+				methods.mouse.move(location, 5, 5);
 				if (methods.menu.doAction(action, option)) {
 					return true;
 				}
-				location = methods.calc.tileToScreen(tile);
-				methods.mouse.move(location, 5, 5);
 			}
 			return false;
 		} catch (Exception e) {
 			return false;
 		}
-	}
-
-	/**
-	 * Clicks a tile if it is on screen. It will left-click if the action is
-	 * available as the default option, otherwise it will right-click and check
-	 * for the action in the context methods.menu.
-	 *
-	 * @param tile   The RSTile that you want to click.
-	 * @param action Action command to use click
-	 * @return <tt>true</tt> if the tile was clicked; otherwise
-	 *         <tt>false</tt>.
-	 */
-	public boolean doAction(final RSTile tile, final String action) {
-		return doAction(tile, action, null);
 	}
 
 	/**

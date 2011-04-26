@@ -76,7 +76,7 @@ public class Trade extends MethodProvider {
 		if (!inTrade()) {
 			RSPlayer targetPlayer = methods.players.getNearest(playerName);
 			if (targetPlayer != null) {
-				if (targetPlayer.doAction("Trade with " + targetPlayer.getName())) {
+				if (targetPlayer.doAction("Trade with", targetPlayer.getName())) {
 					return waitForTrade(TRADE_TYPE_MAIN, tradeWait);
 				} else {
 					return false;
@@ -109,7 +109,7 @@ public class Trade extends MethodProvider {
 	public boolean tradePlayer(final RSPlayer targetPlayer, final int tradeWait) {
 		if (!inTrade()) {
 			if (targetPlayer != null) {
-				if (targetPlayer.doAction("Trade with " + targetPlayer.getName())) {
+				if (targetPlayer.doAction("Trade with", targetPlayer.getName())) {
 					return waitForTrade(TRADE_TYPE_MAIN, tradeWait);
 				} else {
 					return false;

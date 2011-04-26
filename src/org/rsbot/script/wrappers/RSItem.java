@@ -132,8 +132,21 @@ public class RSItem extends MethodProvider {
 	 * @return <tt>true</tt> if the component was clicked
 	 *         successfully; otherwise <tt>false</tt>.
 	 */
-	public boolean doAction(String action) {
-		return component != null && component.doAction(action);
+	public boolean doAction(final String action) {
+		return doAction(action, null);
+	}
+
+	/**
+	 * Performs the given action on the component wrapped by
+	 * this RSItem if possible.
+	 *
+	 * @param action The action to perform.
+	 * @param option The option of the action to perform.
+	 * @return <tt>true</tt> if the component was clicked
+	 *         successfully; otherwise <tt>false</tt>.
+	 */
+	public boolean doAction(final String action, final String option) {
+		return component != null && component.doAction(action, option);
 	}
 
 	/**

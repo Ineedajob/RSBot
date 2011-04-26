@@ -48,10 +48,15 @@ public class RSPlayer extends RSCharacter {
 	}
 
 	@Override
-	public boolean doAction(String action) {
+	public boolean doAction(final String action) {
+		return doAction(action, null);
+	}
+
+	@Override
+	public boolean doAction(final String action, final String option) {
 		final RSModel model = getModel();
 		if (model != null && isValid()) {
-			return model.doAction(action, getName());
+			return model.doAction(action, option);
 		}
 		try {
 			Point screenLoc;
@@ -74,7 +79,7 @@ public class RSPlayer extends RSCharacter {
 				return true;
 			} else {
 				methods.mouse.click(false);
-				return methods.menu.doAction(action);
+				return methods.menu.doAction(action, option);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

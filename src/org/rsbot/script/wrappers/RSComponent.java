@@ -72,7 +72,19 @@ public class RSComponent extends MethodProvider {
 	 * @param action The menu action to click.
 	 * @return <tt>true</tt> if the action was clicked; otherwise <tt>false</tt>.
 	 */
-	public boolean doAction(String action) {
+	public boolean doAction(final String action) {
+		return doAction(action, null);
+	}
+
+	/**
+	 * Performs the given action on this RSInterfaceChild if it is
+	 * showing (valid).
+	 *
+	 * @param action The menu action to click.
+	 * @param option The option of the menu action to click.
+	 * @return <tt>true</tt> if the action was clicked; otherwise <tt>false</tt>.
+	 */
+	public boolean doAction(final String action, final String option) {
 		if (!isValid()) {
 			return false;
 		}
@@ -80,17 +92,15 @@ public class RSComponent extends MethodProvider {
 		if (rect.x == -1 || rect.y == -1 || rect.width == -1 || rect.height == -1) {
 			return false;
 		}
-		if (rect.contains(methods.mouse.getLocation())) {
-			return methods.menu.doAction(action);
+		if (!rect.contains(methods.mouse.getLocation())) {
+			int min_x = rect.x + 1, min_y = rect.y + 1;
+			int max_x = min_x + rect.width - 2, max_y = min_y + rect.height - 2;
+
+			methods.mouse.move(random(min_x, max_x, rect.width / 3),
+					random(min_y, max_y, rect.height / 3));
+			sleep(random(40, 80));
 		}
-
-		int min_x = rect.x + 1, min_y = rect.y + 1;
-		int max_x = min_x + rect.width - 2, max_y = min_y + rect.height - 2;
-
-		methods.mouse.move(random(min_x, max_x, rect.width / 3),
-				random(min_y, max_y, rect.height / 3));
-		sleep(random(40, 80));
-		return methods.menu.doAction(action);
+		return methods.menu.doAction(action, option);
 	}
 
 	/**
