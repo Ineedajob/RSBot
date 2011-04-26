@@ -52,8 +52,9 @@ public class SkillTracker {
 	 * Updates all the skills within the current array and starts the time at the currentTimeMillis.
 	 */
 	public void start() {
-		if (started)
+		if (started) {
 			return;
+		}
 		updateAll();
 		start = System.currentTimeMillis();
 		started = true;
@@ -91,8 +92,9 @@ public class SkillTracker {
 		if (index >= 0 && index <= size) {
 			currentExp[getArrayIndex(index, skills)] = context.skills
 					.getCurrentExp(index);
-		} else
+		} else {
 			throw new IndexOutOfBoundsException();
+		}
 	}
 
 	/**
@@ -179,8 +181,9 @@ public class SkillTracker {
 	 */
 	public boolean arrayContains(final int index, final int[] array) {
 		for (final int i : array) {
-			if (index == i)
+			if (index == i) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -190,8 +193,9 @@ public class SkillTracker {
 	 */
 	public int getArrayIndex(final int secondaryIndex, final int[] array) {
 		for (int i = 0; i < array.length; i++) {
-			if (array[i] == secondaryIndex)
+			if (array[i] == secondaryIndex) {
 				return i;
+			}
 		}
 		return 0;
 	}
@@ -272,7 +276,7 @@ public class SkillTracker {
 	}
 
 	/**
-	 *  Calculates number of seconds until level gain
+	 * Calculates number of seconds until level gain
 	 */
 	public int[] getSecTNL() {
 		final int[] gains = getHourlyGains();
@@ -280,7 +284,7 @@ public class SkillTracker {
 		int[] secTNL = new int[size];
 		for (int i = 0; i < size; i++) {
 			long xpTNL = context.skills.getExpToNextLevel(skills[i]);
-			secTNL[i] = (gains[i] == 0) ? 0 : (int)((3600L * xpTNL) / (long)gains[i]);
+			secTNL[i] = (gains[i] == 0) ? 0 : (int) ((3600L * xpTNL) / (long) gains[i]);
 		}
 		return secTNL;
 	}

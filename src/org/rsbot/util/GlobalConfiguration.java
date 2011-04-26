@@ -367,8 +367,9 @@ public class GlobalConfiguration {
 			s += ".00";
 		} else {
 			final String exp = s.substring(z + 1);
-			if (exp.length() == 1)
+			if (exp.length() == 1) {
 				s += "0";
+			}
 		}
 		return s;
 	}

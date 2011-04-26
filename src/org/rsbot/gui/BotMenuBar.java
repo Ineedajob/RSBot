@@ -175,8 +175,9 @@ public class BotMenuBar extends JMenuBar {
 
 	public void loadPrefs() {
 		String path = GlobalConfiguration.Paths.getMenuBarPrefs();
-		if (!new File(path).exists())
+		if (!new File(path).exists()) {
 			return;
+		}
 		FileReader freader = null;
 		BufferedReader in = null;
 
@@ -187,15 +188,18 @@ public class BotMenuBar extends JMenuBar {
 
 			while ((line = in.readLine()) != null) {
 				line = line.trim();
-				if (commandCheckMap.containsKey(line))
+				if (commandCheckMap.containsKey(line)) {
 					commandCheckMap.get(line).doClick();
+				}
 			}
 		} catch (IOException ioe) {
 			try {
-				if (in != null)
+				if (in != null) {
 					in.close();
-				if (freader != null)
+				}
+				if (freader != null) {
 					freader.close();
+				}
 			} catch (IOException ioe1) {
 			}
 		}
@@ -208,16 +212,18 @@ public class BotMenuBar extends JMenuBar {
 
 		try {
 			File f = new File(path);
-			if (f.exists())
+			if (f.exists()) {
 				f.delete();
+			}
 
 			fstream = new FileWriter(path);
 			out = new BufferedWriter(fstream);
 
 			for (Entry<String, JCheckBoxMenuItem> item : commandCheckMap.entrySet()) {
 				boolean checked = item.getValue().isSelected();
-				if (!checked)
+				if (!checked) {
 					continue;
+				}
 				out.write(item.getKey());
 				out.newLine();
 			}
@@ -225,10 +231,12 @@ public class BotMenuBar extends JMenuBar {
 
 		} finally {
 			try {
-				if (out != null)
+				if (out != null) {
 					out.close();
-				if (fstream != null)
+				}
+				if (fstream != null) {
 					fstream.close();
+				}
 			} catch (IOException ioe1) {
 			}
 		}

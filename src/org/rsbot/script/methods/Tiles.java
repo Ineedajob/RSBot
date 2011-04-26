@@ -33,7 +33,7 @@ public class Tiles extends MethodProvider {
 	}
 
 	public boolean doAction(final RSTile tile, final double xd,
-				final double yd, final int h, final String action, final String option) {
+	                        final double yd, final int h, final String action, final String option) {
 		Point location = methods.calc.tileToScreen(tile, xd, yd, h);
 		if (location.x != -1 && location.y != -1) {
 			methods.mouse.move(location, 3, 3);
@@ -50,7 +50,6 @@ public class Tiles extends MethodProvider {
 	 *
 	 * @param tile   The RSTile that you want to click.
 	 * @param action Action command to use click
-	 * 
 	 * @return <tt>true</tt> if the tile was clicked; otherwise
 	 *         <tt>false</tt>.
 	 */
