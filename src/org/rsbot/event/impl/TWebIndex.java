@@ -1,22 +1,11 @@
 package org.rsbot.event.impl;
 
 import java.awt.Graphics;
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.rsbot.bot.Bot;
 import org.rsbot.event.listeners.TextPaintListener;
-import org.rsbot.script.wrappers.RSTile;
 import org.rsbot.script.wrappers.Web;
-import org.rsbot.script.wrappers.WebLadder;
-import org.rsbot.script.wrappers.WebMap;
 import org.rsbot.script.wrappers.WebTile;
-import org.rsbot.util.GlobalConfiguration;
 import org.rsbot.util.StringUtil;
 
 public class TWebIndex implements TextPaintListener {

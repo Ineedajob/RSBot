@@ -1,6 +1,5 @@
 package org.rsbot.script.wrappers;
 
-import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -45,12 +44,6 @@ public class RSAdvancedPath extends RSPath {
 		}
 		RSDoor door = methods.doors.getDoorAt(tiles[Math.min(nIdx + 1,
 				tiles.length - 1)]);
-		/*
-		 * RSLadder ladder = methods.ladders.getLadderAt(tiles[Math.min(nIdx +
-		 * 1, tiles.length - 1)]);
-		 */
-		boolean dir = tiles[Math.min(nIdx + 2, tiles.length - 1)].getZ() > tiles[Math
-				.min(nIdx + 1, tiles.length - 1)].getZ();
 		if (door != null && door.isOnScreen() && door.isClosed()) {
 			return door.open();
 			/*
