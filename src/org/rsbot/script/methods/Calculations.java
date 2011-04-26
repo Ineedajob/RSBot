@@ -558,20 +558,10 @@ public class Calculations extends MethodProvider {
 			curr_x = path_x[step_ptr];
 			curr_y = path_y[step_ptr];
 
-			if (isObject) {
-				if (((curr_x == destX) && (curr_y == destY + 1))
-						|| ((curr_x == destX) && (curr_y == destY - 1))
-						|| ((curr_x == destX + 1) && (curr_y == destY))
-						|| ((curr_x == destX - 1) && (curr_y == destY))) {
-					foundPath = true;
-					break;
-				}
-				/*
-				 * ^This can be simplified to: if (Math.abs(curr_x - destX) +
-				 * Math.abs(curr_y - destY) == 1) { foundPath = true; break; }
-				 */
-			} else if ((curr_x == destX) && (curr_y == destY)) {
+			if (Math.abs(curr_x - destX) + Math.abs(curr_y - destY) 
+					== (isObject ? 1 : 0)) {
 				foundPath = true;
+				break;
 			}
 
 			step_ptr = (step_ptr + 1) % pathLength;
