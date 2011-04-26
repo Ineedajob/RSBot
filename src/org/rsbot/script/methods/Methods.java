@@ -19,7 +19,7 @@ public class Methods {
 	/**
 	 * The instance of {@link java.util.Random} for random number generation.
 	 */
-	protected java.util.Random random = new java.util.Random();
+	protected static java.util.Random random = new java.util.Random();
 	/**
 	 * The singleton of Skills
 	 */
@@ -198,7 +198,7 @@ public class Methods {
 	 * @param max The exclusive upper bound.
 	 * @return Random integer min <= n < max.
 	 */
-	public int random(int min, int max) {
+	public static int random(int min, int max) {
 		int n = Math.abs(max - min);
 		return Math.min(min, max) + (n == 0 ? 0 : random.nextInt(n));
 	}
@@ -251,7 +251,7 @@ public class Methods {
 	 * @param max The exclusive upper bound.
 	 * @return Random double min <= n < max.
 	 */
-	public double random(double min, double max) {
+	public static double random(double min, double max) {
 		return Math.min(min, max) + random.nextDouble() * Math.abs(max - min);
 	}
 
@@ -263,7 +263,7 @@ public class Methods {
 	 * @see #sleep(int)
 	 * @see #random(int, int)
 	 */
-	public void sleep(int minSleep, int maxSleep) {
+	public static void sleep(int minSleep, int maxSleep) {
 		sleep(random(minSleep, maxSleep));
 	}
 
@@ -272,7 +272,7 @@ public class Methods {
 	 *
 	 * @param toSleep The time to sleep in milliseconds.
 	 */
-	public void sleep(int toSleep) {
+	public static void sleep(int toSleep) {
 		try {
 			long start = System.currentTimeMillis();
 			Thread.sleep(toSleep);
