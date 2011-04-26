@@ -6,7 +6,7 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 
 public class Hooks {
-	public static HashMap<String, Hook> hooks = new HashMap<String, Hook>();
+	private static final HashMap<String, Hook> hooks = new HashMap<String, Hook>();
 	private final Bot bot;
 
 	public Hooks(Bot bot) {
@@ -14,7 +14,7 @@ public class Hooks {
 	}
 
 
-	protected Object getHookValue(Object parent, String hookName) {
+	Object getHookValue(Object parent, String hookName) {
 		Field field = getHookField(hookName);
 		if (field == null) {
 			return null;
@@ -39,7 +39,6 @@ public class Hooks {
 			Class<?> theClass = this.bot.getLoader().getClassLoader().loadClass(className);
 			Field theField = theClass.getDeclaredField(fieldName);
 			theField.setAccessible(true);
-			theClass = null;
 			return theField;
 		} catch (Exception e) {
 			return null;

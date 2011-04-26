@@ -5,11 +5,9 @@ import org.rsbot.bot.Bot;
 import java.awt.*;
 
 public class Reflection {
-	private Hooks hooks;
-	private Bot bot;
+	private final Hooks hooks;
 
 	public Reflection(Bot bot) {
-		this.bot = bot;
 		hooks = new Hooks(bot);
 	}
 
