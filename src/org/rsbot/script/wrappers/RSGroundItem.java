@@ -66,8 +66,8 @@ public class RSGroundItem extends MethodProvider {
 		if (model != null) {
 			return model.doAction(action, option);
 		}
-		return methods.tiles.doAction(getLocation(), random(0.45, 0.55), random(0.45, 0.55), 0, 
-			action, option);
+		return methods.tiles.doAction(getLocation(), random(0.45, 0.55), random(0.45, 0.55), 0,
+				action, option);
 	}
 
 	public RSItem getItem() {

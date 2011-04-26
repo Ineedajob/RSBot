@@ -35,9 +35,9 @@ public class FriendChat extends MethodProvider {
 	public boolean join(String channel) {
 		methods.game.openTab(Game.TAB_FRIENDS_CHAT);
 		if (isInChannel()) {
-            if(getChannelName() == channel){
-                return true;
-            }
+			if (getChannelName() == channel) {
+				return true;
+			}
 			if (!leave()) {
 				return false;
 			}

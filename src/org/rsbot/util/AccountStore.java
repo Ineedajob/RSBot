@@ -153,11 +153,12 @@ public class AccountStore {
 			}
 			if (current != null && line.matches("^\\w+=.+$")) {
 				String[] split = line.trim().split("=");
-				if (split[0].equals("password"))
+				if (split[0].equals("password")) {
 					current.password = decrypt(split[1]);
-				else {
-					if (Arrays.asList(protectedAttributes).contains(split[0]))
+				} else {
+					if (Arrays.asList(protectedAttributes).contains(split[0])) {
 						split[1] = decrypt(split[1]);
+					}
 					current.setAttribute(split[0], split[1]);
 				}
 			}
@@ -183,8 +184,9 @@ public class AccountStore {
 			bw.newLine();
 			for (Map.Entry<String, String> entry : accounts.get(name).attributes.entrySet()) {
 				String key = entry.getKey(), value = entry.getValue();
-				if (Arrays.asList(protectedAttributes).contains(key))
+				if (Arrays.asList(protectedAttributes).contains(key)) {
 					value = encrypt(value);
+				}
 				bw.append(key).append("=").append(value);
 				bw.newLine();
 			}

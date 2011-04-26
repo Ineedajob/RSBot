@@ -558,7 +558,7 @@ public class Calculations extends MethodProvider {
 			curr_x = path_x[step_ptr];
 			curr_y = path_y[step_ptr];
 
-			if (Math.abs(curr_x - destX) + Math.abs(curr_y - destY) 
+			if (Math.abs(curr_x - destX) + Math.abs(curr_y - destY)
 					== (isObject ? 1 : 0)) {
 				foundPath = true;
 				break;
