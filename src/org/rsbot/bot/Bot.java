@@ -6,18 +6,23 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.List;
 import java.awt.image.BufferedImage;
 import java.lang.reflect.Constructor;
+import java.util.ArrayList;
 import java.util.EventListener;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.logging.Logger;
 
 import org.rsbot.Application;
 import org.rsbot.client.Client;
 import org.rsbot.client.input.Canvas;
 import org.rsbot.event.EventManager;
+import org.rsbot.event.events.MessageEvent;
 import org.rsbot.event.events.PaintEvent;
 import org.rsbot.event.events.TextPaintEvent;
+import org.rsbot.event.listeners.MessageListener;
 import org.rsbot.gui.AccountManager;
 import org.rsbot.script.internal.BreakHandler;
 import org.rsbot.script.internal.InputManager;
@@ -62,6 +67,11 @@ public class Bot {
 	 * Whether or not rendering is enabled.
 	 */
 	public volatile boolean disableRendering = false;
+
+	/**
+	 * Lowers the frame rate
+	 */
+	public volatile boolean lowerFrameRate = false;
 
 	/**
 	 * Defines what types of input are enabled when overrideInput is false.
@@ -187,8 +197,8 @@ public class Bot {
 	}
 
 	public Graphics getBufferGraphics() {
+		int width = backBuffer.getWidth(), height = backBuffer.getHeight();
 		if (disableRendering) {
-			int width = backBuffer.getWidth(), height = backBuffer.getHeight();
 			backBuffer = new BufferedImage(width, height,
 					BufferedImage.TYPE_INT_RGB);
 			image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);

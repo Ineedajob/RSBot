@@ -96,7 +96,8 @@ public class BotMenuBar extends JMenuBar {
 				"Run Script", "Stop Script", "Pause Script", "-",
 						"Save Screenshot", "-", "Exit" },
 				{ "Accounts", "-", "ToggleF Force Input", "ToggleF Less CPU",
-						"-", "ToggleF Disable Anti-Randoms",
+						"ToggleF Render Canvas", "-",
+						"ToggleF Disable Anti-Randoms",
 						"ToggleF Disable Auto Login", "-",
 						"ToggleF Disable Advertisements",
 						"ToggleF Disable Confirmations" }, constructDebugs(),
@@ -174,7 +175,8 @@ public class BotMenuBar extends JMenuBar {
 				item.setEnabled(false);
 			}
 			disable("All Debugging", "Force Input", "Less CPU",
-					"Disable Anti-Randoms", "Disable Auto Login");
+					"Render Canvas", "Disable Anti-Randoms",
+					"Disable Auto Login");
 		} else {
 			commandMenuItem.get("Close Bot").setEnabled(true);
 			commandMenuItem.get("Run Script").setEnabled(true);
@@ -194,9 +196,10 @@ public class BotMenuBar extends JMenuBar {
 			}
 			enable("All Debugging", selections == eventCheckMap.size());
 			enable("Force Input", bot.overrideInput);
-			enable("Less CPU", bot.disableRendering);
+			enable("Less CPU", bot.lowerFrameRate);
 			enable("Disable Anti-Randoms", bot.disableRandoms);
 			enable("Disable Auto Login", bot.disableAutoLogin);
+			enable("Render Canvas",bot.disableRendering);
 		}
 	}
 
