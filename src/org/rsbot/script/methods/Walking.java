@@ -46,18 +46,6 @@ public class Walking extends MethodProvider {
 	}
 
 	/**
-	 * Generates a path from the player's current location to a destination tile
-	 * using doors.
-	 * 
-	 * @param destination
-	 *            The destination tile.
-	 * @return The path as an RSPath.
-	 */
-	public RSPath getAdvancedPath(final RSTile destination) {
-		return new RSAdvancedPath(methods, destination);
-	}
-
-	/**
 	 * Determines whether or not a given tile is in the loaded map area.
 	 * 
 	 * @param tile
