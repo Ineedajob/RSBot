@@ -460,11 +460,11 @@ public class Bank extends MethodProvider {
 					}
 				} else {
 					if (bankBooth != null) {
-						methods.walking.walkTo(bankBooth.getLocation());
+						methods.walking.walkTileMM(bankBooth.getLocation());
 					} else if (banker != null) {
-						methods.walking.walkTo(banker.getLocation());
+						methods.walking.walkTileMM(banker.getLocation());
 					} else if (bankChest != null) {
-						methods.walking.walkTo(bankChest.getLocation());
+						methods.walking.walkTileMM(bankChest.getLocation());
 					}
 				}
 			}
