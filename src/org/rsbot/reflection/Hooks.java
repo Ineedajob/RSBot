@@ -27,8 +27,14 @@ public class Hooks {
 		}
 	}
 
-	public boolean isHookValid(String hookName) {
+	public static boolean isHookValid(String hookName) {
 		return Hooks.hooks.containsKey(hookName);
+	}
+
+	public static void addHook(Hook hook) {
+		if (!isHookValid(hook.getHookName())) {
+			hooks.put(hook.getHookName(), hook);
+		}
 	}
 
 	private Field getHookField(String className, String fieldName) {
