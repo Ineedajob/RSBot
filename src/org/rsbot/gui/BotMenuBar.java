@@ -1,16 +1,55 @@
 package org.rsbot.gui;
 
+import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JSeparator;
+
 import org.rsbot.bot.Bot;
-import org.rsbot.event.impl.*;
+import org.rsbot.event.impl.DrawBoundaries;
+import org.rsbot.event.impl.DrawDoors;
+import org.rsbot.event.impl.DrawInventory;
+import org.rsbot.event.impl.DrawItems;
+import org.rsbot.event.impl.DrawModel;
+import org.rsbot.event.impl.DrawMouse;
+import org.rsbot.event.impl.DrawNPCs;
+import org.rsbot.event.impl.DrawObjects;
+import org.rsbot.event.impl.DrawPlayers;
+import org.rsbot.event.impl.DrawSettings;
+import org.rsbot.event.impl.DrawWeb;
+import org.rsbot.event.impl.MessageLogger;
+import org.rsbot.event.impl.TAnimation;
+import org.rsbot.event.impl.TCamera;
+import org.rsbot.event.impl.TFPS;
+import org.rsbot.event.impl.TFloorHeight;
+import org.rsbot.event.impl.TLoginIndex;
+import org.rsbot.event.impl.TMenu;
+import org.rsbot.event.impl.TMenuActions;
+import org.rsbot.event.impl.TMousePosition;
+import org.rsbot.event.impl.TPlayerPosition;
+import org.rsbot.event.impl.TTab;
+import org.rsbot.event.impl.TUserInputAllowed;
+import org.rsbot.event.impl.TWebIndex;
+import org.rsbot.event.impl.TWebPosition;
 import org.rsbot.event.listeners.PaintListener;
 import org.rsbot.event.listeners.TextPaintListener;
 import org.rsbot.util.GlobalConfiguration;
-
-import javax.swing.*;
-import java.awt.event.ActionListener;
-import java.io.*;
-import java.util.*;
-import java.util.Map.Entry;
 
 public class BotMenuBar extends JMenuBar {
 	private static final long serialVersionUID = 971579975301998332L;
@@ -32,6 +71,8 @@ public class BotMenuBar extends JMenuBar {
 		DEBUG_MAP.put("Menu Actions", TMenuActions.class);
 		DEBUG_MAP.put("Menu", TMenu.class);
 		DEBUG_MAP.put("FPS", TFPS.class);
+		DEBUG_MAP.put("Web Index", TWebIndex.class);
+		DEBUG_MAP.put("Web Position", TWebPosition.class);
 
 		// Paint
 		DEBUG_MAP.put("Players", DrawPlayers.class);
@@ -44,20 +85,22 @@ public class BotMenuBar extends JMenuBar {
 		DEBUG_MAP.put("Calc Test", DrawBoundaries.class);
 		DEBUG_MAP.put("Settings", DrawSettings.class);
 		DEBUG_MAP.put("Web", DrawWeb.class);
+		DEBUG_MAP.put("Doors", DrawDoors.class);
 
 		// Other
 		DEBUG_MAP.put("Log Messages", MessageLogger.class);
 
-		TITLES = new String[]{"File", "Edit", "View", "Help"};
-		ELEMENTS = new String[][]{
-				{"New Bot", "Close Bot", "-", /*"Service Key", "-",*/ "Run Script", "Stop Script",
-						"Pause Script", "-", "Save Screenshot",
-						"-", "Exit"},
-				{"Accounts", "-", "ToggleF Force Input", "ToggleF Less CPU",
+		TITLES = new String[] { "File", "Edit", "View", "Help" };
+		ELEMENTS = new String[][] {
+				{ "New Bot", "Close Bot", "-", /* "Service Key", "-", */
+				"Run Script", "Stop Script", "Pause Script", "-",
+						"Save Screenshot", "-", "Exit" },
+				{ "Accounts", "-", "ToggleF Force Input", "ToggleF Less CPU",
 						"-", "ToggleF Disable Anti-Randoms",
 						"ToggleF Disable Auto Login", "-",
-						"ToggleF Disable Advertisements", "ToggleF Disable Confirmations"}, constructDebugs(),
-				{"Site", "Project", "About"}};
+						"ToggleF Disable Advertisements",
+						"ToggleF Disable Confirmations" }, constructDebugs(),
+				{ "Site", "Project", "About" } };
 	}
 
 	private static String[] constructDebugs() {
@@ -214,7 +257,8 @@ public class BotMenuBar extends JMenuBar {
 			fstream = new FileWriter(path);
 			out = new BufferedWriter(fstream);
 
-			for (Entry<String, JCheckBoxMenuItem> item : commandCheckMap.entrySet()) {
+			for (Entry<String, JCheckBoxMenuItem> item : commandCheckMap
+					.entrySet()) {
 				boolean checked = item.getValue().isSelected();
 				if (!checked)
 					continue;

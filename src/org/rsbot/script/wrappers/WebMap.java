@@ -2,7 +2,7 @@ package org.rsbot.script.wrappers;
 
 /**
  * The web map data.
- *
+ * 
  * @author Timer
  * @author Aut0r
  */
@@ -19,8 +19,9 @@ public class WebMap {
 
 	/**
 	 * Gets a web tile by index.
-	 *
-	 * @param index The index of the tile in the map.
+	 * 
+	 * @param index
+	 *            The index of the tile in the map.
 	 * @return The tile.
 	 */
 	public WebTile getWebTile(final int index) {
@@ -33,7 +34,7 @@ public class WebMap {
 
 	/**
 	 * Returns this maps tile array;
-	 *
+	 * 
 	 * @return The tile array.
 	 */
 	public WebTile[] getTiles() {
@@ -42,8 +43,9 @@ public class WebMap {
 
 	/**
 	 * The nearest web tile.
-	 *
-	 * @param tile The web tile from a tile.
+	 * 
+	 * @param tile
+	 *            The web tile from a tile.
 	 * @return The resulting web tile.
 	 */
 	public WebTile getWebTile(final RSTile tile) {
@@ -53,13 +55,15 @@ public class WebMap {
 			if (maxDist == 0.0) {
 				break;
 			}
-			double sqrt = Math.sqrt((ctrl.getX() - tile.getX())
-					* (ctrl.getX() - tile.getX())
-					+ (ctrl.getY() - tile.getY())
-					* (ctrl.getY() - tile.getY()));
-			if (sqrt < maxDist) {
-				webTile = ctrl;
-				maxDist = sqrt;
+			if (tile.getZ() == ctrl.getZ()) {
+				double sqrt = Math.sqrt((ctrl.getX() - tile.getX())
+						* (ctrl.getX() - tile.getX())
+						+ (ctrl.getY() - tile.getY())
+						* (ctrl.getY() - tile.getY()));
+				if (sqrt < maxDist) {
+					webTile = ctrl;
+					maxDist = sqrt;
+				}
 			}
 		}
 		return webTile;
@@ -67,28 +71,36 @@ public class WebMap {
 
 	/**
 	 * Finds the heuristic.
-	 *
-	 * @param start The starting tile.
-	 * @param end   The ending tile.
+	 * 
+	 * @param start
+	 *            The starting tile.
+	 * @param end
+	 *            The ending tile.
 	 * @return The heuristic.
 	 */
 	public double heuristic(WebTile start, WebTile end) {
 		double dx = start.getX() - end.getX();
 		double dy = start.getY() - end.getY();
+		double dz = start.getZ() - end.getZ();
 		if (dx < 0) {
 			dx = -dx;
 		}
 		if (dy < 0) {
 			dy = -dy;
 		}
-		return dx < dy ? dy : dx;
+		if (dz < 0) {
+			dz = -dz;
+		}
+		return dx < dy ? dy < dz ? dz : dy : dx < dz ? dz : dx;
 	}
 
 	/**
 	 * Gets the dist.
-	 *
-	 * @param start Starting web tile.
-	 * @param end   Ending web tile.
+	 * 
+	 * @param start
+	 *            Starting web tile.
+	 * @param end
+	 *            Ending web tile.
 	 * @return The dist.
 	 */
 	public double dist(WebTile start, WebTile end) {
@@ -96,9 +108,9 @@ public class WebMap {
 			RSTile curr = start.tile();
 			RSTile dest = end.tile();
 			return Math.sqrt((curr.getX() - dest.getX())
-					* (curr.getX() - dest.getX())
-					+ (curr.getY() - dest.getY())
-					* (curr.getY() - dest.getY()));
+					* (curr.getX() - dest.getX()) + (curr.getY() - dest.getY())
+					* (curr.getY() - dest.getY()) + (curr.getZ() - dest.getZ())
+					* (curr.getZ() - dest.getZ()));
 		} else {
 			return 1.0;
 		}
