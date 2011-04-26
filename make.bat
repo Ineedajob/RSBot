@@ -31,8 +31,8 @@ CALL :Bot
 ECHO Compiling scripts
 CALL :Scripts 2>NUL
 ECHO Packing JAR
-GOTO :pack
-GOTO :end
+CALL :pack
+CALL :end
 GOTO :eof
 
 :Bot
