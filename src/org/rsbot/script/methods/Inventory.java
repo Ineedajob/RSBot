@@ -324,7 +324,7 @@ public class Inventory extends MethodProvider {
 		if (methods.game.getCurrentTab() != Game.TAB_INVENTORY) {
 			methods.game.openTab(Game.TAB_INVENTORY);
 		}
-		return item.doAction("Use") && targetObject.doAction("Use");
+		return item.doAction("Use") && targetObject.doAction("Use", targetObject.getName());
 	}
 
 	/**

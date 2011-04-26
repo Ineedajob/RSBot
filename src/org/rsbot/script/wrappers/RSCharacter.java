@@ -24,16 +24,25 @@ public abstract class RSCharacter extends MethodProvider {
 	protected abstract org.rsbot.client.RSCharacter getAccessor();
 
 	/**
-	 * Clicks a humanoid character (tall and skinny).
-	 * 
-	 * @param action
-	 *            The option to be clicked (if available).
+	 * Performs an action on a humanoid character (tall and skinny).
+	 *
+	 * @param action The action of the menu entry to be clicked (if available).
 	 * @return <tt>true</tt> if the option was found; otherwise <tt>false</tt>.
 	 */
 	public boolean doAction(final String action) {
+		return doAction(action, null);
+	}
+
+	/**
+	 * Performs an action on a humanoid character (tall and skinny).
+	 *
+	 * @param action The action of the menu entry to be clicked (if available).
+	 * @param option The option of the menu entry to be clicked (if available).
+	 * @return <tt>true</tt> if the option was found; otherwise <tt>false</tt>.
+	 */
+	public boolean doAction(final String action, final String option) {
 		RSModel model = this.getModel();
-		return model != null && this.isValid()
-				&& this.getModel().doAction(action);
+		return model != null && this.isValid() && this.getModel().doAction(action, option);
 	}
 
 	public RSModel getModel() {

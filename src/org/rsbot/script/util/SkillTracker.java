@@ -257,7 +257,8 @@ public class SkillTracker {
 		int[] gains = new int[size];
 		for (int i = 0; i < size; i++) {
 			update(skills[i]);
-			gains[i] = (int) (3600 * (currentExp[i] - startExp[i]) / getRuntime());
+			long time = getRuntime();
+			gains[i] = (time == 0L) ? 0 : (int) (3600L * (currentExp[i] - startExp[i]) / time);
 		}
 		return gains;
 	}
@@ -270,4 +271,28 @@ public class SkillTracker {
 		return Skills.SKILL_NAMES[index];
 	}
 
+	/**
+	 *  Calculates number of seconds until level gain
+	 */
+	public int[] getSecTNL() {
+		final int[] gains = getHourlyGains();
+		final int size = skills.length;
+		int[] secTNL = new int[size];
+		for (int i = 0; i < size; i++) {
+			long xpTNL = context.skills.getExpToNextLevel(skills[i]);
+			secTNL[i] = (gains[i] == 0) ? 0 : (int)((3600L * xpTNL) / (long)gains[i]);
+		}
+		return secTNL;
+	}
+
+	/**
+	 * Converts a number of seconds into a string of form hh:mm:ss
+	 */
+	public static String SecToHMS(int sec) {
+		int min = sec / 60;
+		sec %= 60;
+		int hour = min / 60;
+		min %= 60;
+		return "" + hour + ":" + min + ":" + sec;
+	}
 }

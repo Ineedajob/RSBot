@@ -415,11 +415,11 @@ public class Bank extends MethodProvider {
 				if (((bankBooth != null) && (methods.calc.distanceTo(bankBooth) < 5) && methods.calc.tileOnMap(
 						bankBooth.getLocation()) && methods.calc.canReach(
 						bankBooth.getLocation(),
-						true)) || ((banker != null) && (methods.calc.distanceTo(banker) < 8) && methods.calc.tileOnMap(
+						true)) || ((banker != null) && (methods.calc.distanceTo(banker) < 5) && methods.calc.tileOnMap(
 						banker.getLocation()) && methods.calc.canReach(
 						banker.getLocation(),
 						true)) || ((bankChest != null) && (methods.calc.distanceTo(
-						bankChest) < 8) && methods.calc.tileOnMap(bankChest.getLocation()) && methods.calc.canReach(
+						bankChest) < 5) && methods.calc.tileOnMap(bankChest.getLocation()) && methods.calc.canReach(
 						bankChest.getLocation(), true) && !isOpen())) {
 					if (bankBooth != null) {
 						if (bankBooth.doAction("Use-Quickly")) {
