@@ -95,15 +95,13 @@ public class Inventory extends MethodProvider {
 				RSItem curItem = getItems()[c + r * 4];
 				int id;
 				if (curItem != null
-						&& (id = curItem.getID()) != -1
-						&& itemHasAction(curItem, "Drop")) {
+						&& (id = curItem.getID()) != -1) {
 					boolean isInItems = false;
 					for (int i : items) {
 						isInItems |= (i == id);
 					}
 					if (!isInItems) {
-						found_droppable = true;
-						dropItem(c, r);
+						found_droppable |= dropItem(c, r);
 					}
 				}
 			}
@@ -154,8 +152,10 @@ public class Inventory extends MethodProvider {
 	 *
 	 * @param col The column the item is in.
 	 * @param row The row the item is in.
+	 * @return <tt>true</tt> if we tried to drop the item, 
+	 *         <tt>false</tt> if not (e.g., if item is undroppable)
 	 */
-	public void dropItem(final int col, final int row) {
+	public boolean dropItem(final int col, final int row) {
 		if (methods.interfaces.canContinue()) {
 			methods.interfaces.clickContinue();
 			sleep(random(800, 1300));
@@ -166,23 +166,10 @@ public class Inventory extends MethodProvider {
 			methods.game.openTab(Game.TAB_INVENTORY);
 		}
 		if (col < 0 || col > 3 || row < 0 || row > 6) {
-			return;
+			return false;
 		}
-		if (getItems()[col + row * 4].getID() == -1) {
-			return;
-		}
-		Point p;
-		p = methods.mouse.getLocation();
-		if (p.x < 563 + col * 42 || p.x >= 563 + col * 42 + 32
-				|| p.y < 213 + row * 36 || p.y >= 213 + row * 36 + 32) {
-			methods.mouse.move(
-					getInterface().getComponents()[row * 4 + col].getCenter(),
-					10, 10);
-		}
-		methods.mouse.click(false);
-		sleep(random(10, 25));
-		methods.menu.doAction("drop");
-		sleep(random(25, 50));
+		RSItem item = getItems()[col + row * 4];
+		return item != null && item.getID() != -1 && item.doAction("Drop");
 	}
 
 	/**
@@ -264,17 +251,29 @@ public class Inventory extends MethodProvider {
 	 * @return <tt>true</tt> if the item was selected; otherwise <tt>false</tt>.
 	 */
 	public boolean selectItem(final int itemID) {
-		RSItem selItem = getSelectedItem(), iItem = getItem(itemID);
+		final RSItem item = getItem(itemID);
+		return item != null && selectItem(item);
+	}
+
+	/**
+	 * Selects the specified item in the inventory
+	 *
+	 * @param item The item to select.
+	 * @return <tt>true</tt> if the item was selected; otherwise <tt>false</tt>.
+	 */
+	public boolean selectItem(RSItem item) {
+		final int itemID = item.getID();
+		if (itemID == -1) {
+			return false;
+		}
+		RSItem selItem = getSelectedItem();
 		if (selItem != null && selItem.getID() == itemID) {
 			return true;
 		}
-		if (!iItem.doAction("Use")) {
+		if (!item.doAction("Use")) {
 			return false;
 		}
-		for (int c = 0; c < 5; c++) {
-			if (getSelectedItem() != null) {
-				break;
-			}
+		for (int c = 0; c < 5 && getSelectedItem() == null; c++) {
 			sleep(random(200, 300));
 		}
 		selItem = getSelectedItem();
@@ -293,7 +292,7 @@ public class Inventory extends MethodProvider {
 		if (methods.game.getCurrentTab() != Game.TAB_INVENTORY) {
 			methods.game.openTab(Game.TAB_INVENTORY);
 		}
-		return item.doAction("Use") && targetItem.doAction("Use");
+		return selectItem(item) && targetItem.doAction("Use");
 	}
 
 	/**
@@ -305,11 +304,9 @@ public class Inventory extends MethodProvider {
 	 *         otherwise <tt>false</tt>.
 	 */
 	public boolean useItem(final int itemID, final int targetID) {
-		if (methods.game.getCurrentTab() != Game.TAB_INVENTORY) {
-			methods.game.openTab(Game.TAB_INVENTORY);
-		}
+		RSItem item = getItem(itemID);
 		RSItem target = getItem(targetID);
-		return target != null && selectItem(itemID) && target.doAction("Use");
+		return item != null && target != null && useItem(item, target);
 	}
 
 	/**
@@ -324,7 +321,7 @@ public class Inventory extends MethodProvider {
 		if (methods.game.getCurrentTab() != Game.TAB_INVENTORY) {
 			methods.game.openTab(Game.TAB_INVENTORY);
 		}
-		return item.doAction("Use") && targetObject.doAction("Use", targetObject.getName());
+		return selectItem(item) && targetObject.doAction("Use", targetObject.getName());
 	}
 
 	/**
@@ -336,23 +333,8 @@ public class Inventory extends MethodProvider {
 	 *         RSItem and RSObject; otherwise <tt>false</tt>.
 	 */
 	public boolean useItem(final int itemID, final RSObject object) {
-		if (methods.game.getCurrentTab() != Game.TAB_INVENTORY) {
-			methods.game.openTab(Game.TAB_INVENTORY);
-		}
 		RSItem item = getItem(itemID);
-		if (item == null) {
-			return false;
-		}
-		RSTile objTile = object.getLocation();
-		String iName = item.getName(), oName = object.getName(object);
-		if (!selectItem(itemID)) {
-			return false;
-		}
-		if (oName.isEmpty()) {
-			methods.camera.turnTo(objTile, random(5, 15));
-		}
-		return object.doAction(!iName.isEmpty() ? "Use " + iName + " -> "
-				+ oName : "Use");
+		return item != null && useItem(item, object);
 	}
 
 	/**
