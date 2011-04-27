@@ -12,7 +12,7 @@ public class Bank extends MethodProvider {
 
 	public static final int[] BANKERS = {44, 45, 494, 495, 499, 553, 958, 1036, 2271, 2354, 2355, 2759, 3824, 5488,
 			5901, 5912, 5913, 6362, 6532, 6533, 6534, 6535, 7605, 8948, 9710, 14367};
-	public static final int[] BANK_BOOTHS = {2213, 4483, 6084, 11402, 11758, 12759, 14367, 19230, 24914, 25808, 26972,
+	public static final int[] BANK_BOOTHS = {782, 2213, 4483, 6084, 11402, 11758, 12759, 14367, 19230, 24914, 25808, 26972,
 			27663, 29085, 34752, 35647, 36786};
 	public static final int[] BANK_CHESTS = {4483, 12308, 21301, 27663, 42192};
 	public static final int[] BANK_DEPOSIT_BOX = {9398, 20228, 26969, 36788};
