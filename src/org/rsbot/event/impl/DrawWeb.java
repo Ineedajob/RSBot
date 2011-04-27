@@ -1,11 +1,17 @@
 package org.rsbot.event.impl;
 
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Point;
+
 import org.rsbot.bot.Bot;
 import org.rsbot.event.listeners.PaintListener;
 import org.rsbot.script.methods.MethodContext;
-import org.rsbot.script.wrappers.*;
-
-import java.awt.*;
+import org.rsbot.script.wrappers.RSPlayer;
+import org.rsbot.script.wrappers.RSTile;
+import org.rsbot.script.wrappers.Web;
+import org.rsbot.script.wrappers.WebMap;
+import org.rsbot.script.wrappers.WebTile;
 
 public class DrawWeb implements PaintListener {
 
