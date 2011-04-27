@@ -11,7 +11,7 @@ public class Reflection {
 		hooks = new Hooks(bot);
 	}
 
-	public int getFieldInt(Object parent, String hookName) {
+	public int invokeInt(Object parent, String hookName) {
 		try {
 			return (Integer) hooks.getHookValue(parent, hookName);
 		} catch (Exception e) {
@@ -19,7 +19,7 @@ public class Reflection {
 		}
 	}
 
-	public long getFieldLong(Object parent, String hookName) {
+	public long invokeLong(Object parent, String hookName) {
 		try {
 			return (Long) hooks.getHookValue(parent, hookName);
 		} catch (Exception e) {
@@ -27,7 +27,7 @@ public class Reflection {
 		}
 	}
 
-	public float getFieldFloat(Object parent, String hookName) {
+	public float invokeFloat(Object parent, String hookName) {
 		try {
 			return (Float) hooks.getHookValue(parent, hookName);
 		} catch (Exception e) {
@@ -35,7 +35,7 @@ public class Reflection {
 		}
 	}
 
-	public int[] getFieldIntArray(Object parent, String hookName) {
+	public int[] invokeIntArray(Object parent, String hookName) {
 		try {
 			return (int[]) hooks.getHookValue(parent, hookName);
 		} catch (Exception e) {
@@ -43,7 +43,7 @@ public class Reflection {
 		}
 	}
 
-	public int[][] getFieldInt2DArray(Object parent, String hookName) {
+	public int[][] invokeInt2DArray(Object parent, String hookName) {
 		try {
 			return (int[][]) hooks.getHookValue(parent, hookName);
 		} catch (Exception e) {
@@ -51,7 +51,7 @@ public class Reflection {
 		}
 	}
 
-	public String getFieldString(Object parent, String hookName) {
+	public String invokeString(Object parent, String hookName) {
 		try {
 			return (String) hooks.getHookValue(parent, hookName);
 		} catch (Exception e) {
@@ -59,7 +59,7 @@ public class Reflection {
 		}
 	}
 
-	public String[] getFieldStringArray(Object parent, String hookName) {
+	public String[] invokeStringArray(Object parent, String hookName) {
 		try {
 			return (String[]) hooks.getHookValue(parent, hookName);
 		} catch (Exception e) {
@@ -67,7 +67,7 @@ public class Reflection {
 		}
 	}
 
-	public short getFieldShort(Object parent, String hookName) {
+	public short invokeShort(Object parent, String hookName) {
 		try {
 			return (Short) hooks.getHookValue(parent, hookName);
 		} catch (Exception e) {
@@ -75,7 +75,7 @@ public class Reflection {
 		}
 	}
 
-	public short[] getFieldShortArray(Object parent, String hookName) {
+	public short[] invokeShortArray(Object parent, String hookName) {
 		try {
 			return (short[]) hooks.getHookValue(parent, hookName);
 		} catch (Exception e) {
@@ -83,7 +83,7 @@ public class Reflection {
 		}
 	}
 
-	public byte getFieldByte(Object parent, String hookName) {
+	public byte invokeByte(Object parent, String hookName) {
 		try {
 			return (Byte) hooks.getHookValue(parent, hookName);
 		} catch (Exception e) {
@@ -91,7 +91,7 @@ public class Reflection {
 		}
 	}
 
-	public boolean getFieldBoolean(Object parent, String hookName) {
+	public boolean invokeBoolean(Object parent, String hookName) {
 		try {
 			return (Boolean) hooks.getHookValue(parent, hookName);
 		} catch (Exception e) {
@@ -99,7 +99,7 @@ public class Reflection {
 		}
 	}
 
-	public boolean[] getFieldBooleanArray(Object parent, String hookName) {
+	public boolean[] invokeBooleanArray(Object parent, String hookName) {
 		try {
 			return (boolean[]) hooks.getHookValue(parent, hookName);
 		} catch (Exception e) {
@@ -107,7 +107,7 @@ public class Reflection {
 		}
 	}
 
-	public Object getFieldObject(Object parent, String hookName) {
+	public Object invokeObject(Object parent, String hookName) {
 		try {
 			return hooks.getHookValue(parent, hookName);
 		} catch (Exception e) {
@@ -115,7 +115,7 @@ public class Reflection {
 		}
 	}
 
-	public Object[] getFieldObjectArray(Object parent, String hookName) {
+	public Object[] invokeObjectArray(Object parent, String hookName) {
 		try {
 			return (Object[]) hooks.getHookValue(parent, hookName);
 		} catch (Exception e) {
@@ -123,7 +123,7 @@ public class Reflection {
 		}
 	}
 
-	public Object[][] getFieldObject2DArray(Object parent, String hookName) {
+	public Object[][] invokeObject2DArray(Object parent, String hookName) {
 		try {
 			return (Object[][]) hooks.getHookValue(parent, hookName);
 		} catch (Exception e) {
@@ -131,7 +131,7 @@ public class Reflection {
 		}
 	}
 
-	public Object[][][] getFieldObject3DArray(Object parent, String hookName) {
+	public Object[][][] invokeObject3DArray(Object parent, String hookName) {
 		try {
 			return (Object[][][]) hooks.getHookValue(parent, hookName);
 		} catch (Exception e) {
@@ -139,7 +139,7 @@ public class Reflection {
 		}
 	}
 
-	public Rectangle[] getFieldRectangleArray(Object parent, String hookName) {
+	public Rectangle[] invokeRectangleArray(Object parent, String hookName) {
 		try {
 			return (Rectangle[]) hooks.getHookValue(parent, hookName);
 		} catch (Exception e) {

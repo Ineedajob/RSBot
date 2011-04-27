@@ -13,7 +13,6 @@ public class Hooks {
 		this.bot = bot;
 	}
 
-
 	Object getHookValue(Object parent, String hookName) {
 		Field field = getHookField(hookName);
 		if (field == null) {
@@ -33,7 +32,7 @@ public class Hooks {
 
 	public static void addHook(Hook hook) {
 		if (!isHookValid(hook.getHookName())) {
-			hooks.put(hook.getHookName(), hook);
+			Hooks.hooks.put(hook.getHookName(), hook);
 		}
 	}
 
@@ -42,10 +41,10 @@ public class Hooks {
 			if (className == null || fieldName == null) {
 				return null;
 			}
-			Class<?> theClass = this.bot.getLoader().getClassLoader().loadClass(className);
-			Field theField = theClass.getDeclaredField(fieldName);
-			theField.setAccessible(true);
-			return theField;
+			Class<?> clazz = this.bot.getLoader().getClassLoader().loadClass(className);
+			Field field = clazz.getDeclaredField(fieldName);
+			field.setAccessible(true);
+			return field;
 		} catch (Exception e) {
 			return null;
 		}
@@ -55,10 +54,10 @@ public class Hooks {
 		if (hookName == null || !isHookValid(hookName)) {
 			return null;
 		}
-		Hook data = Hooks.hooks.get(hookName);
-		if (data == null) {
+		Hook hook = Hooks.hooks.get(hookName);
+		if (hook == null) {
 			return null;
 		}
-		return getHookField(data.getClassName(), data.getFieldName());
+		return getHookField(hook.getClassName(), hook.getFieldName());
 	}
 }
