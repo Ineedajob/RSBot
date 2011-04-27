@@ -197,13 +197,11 @@ public class Camera extends MethodProvider {
 		} else if (curAlt < percent) {
 			methods.inputManager.pressKey((char) KeyEvent.VK_UP);
 			long start = System.currentTimeMillis();
-			while (curAlt < percent
-					&& System.currentTimeMillis() - start < random(50, 100)) {
+			while (curAlt < percent && System.currentTimeMillis() - start < random(50, 100)) {
 				if (lastAlt != curAlt) {
 					start = System.currentTimeMillis();
 				}
 				lastAlt = curAlt;
-
 				sleep(random(5, 10));
 				curAlt = getPitch();
 			}
@@ -212,8 +210,7 @@ public class Camera extends MethodProvider {
 		} else {
 			methods.inputManager.pressKey((char) KeyEvent.VK_DOWN);
 			long start = System.currentTimeMillis();
-			while (curAlt > percent
-					&& System.currentTimeMillis() - start < random(50, 100)) {
+			while (curAlt > percent && System.currentTimeMillis() - start < random(50, 100)) {
 				if (lastAlt != curAlt) {
 					start = System.currentTimeMillis();
 				}
@@ -235,16 +232,14 @@ public class Camera extends MethodProvider {
 		Timer timeToHold = new Timer(timeOut);
 		int lowestCamAltPossible = random(75, 100);
 		int vertical = random(0, 20) < 15 ? KeyEvent.VK_UP : KeyEvent.VK_DOWN;
-		int horizontal = random(0, 20) < 5 ? KeyEvent.VK_LEFT
-				: KeyEvent.VK_RIGHT;
+		int horizontal = random(0, 20) < 5 ? KeyEvent.VK_LEFT : KeyEvent.VK_RIGHT;
 		if (random(0, 10) < 8) {
 			methods.inputManager.pressKey((char) vertical);
 		}
 		if (random(0, 10) < 8) {
 			methods.inputManager.pressKey((char) horizontal);
 		}
-		while (timeToHold.isRunning()
-				&& methods.client.getCamPosZ() >= lowestCamAltPossible) {
+		while (timeToHold.isRunning() && methods.client.getCamPosZ() >= lowestCamAltPossible) {
 			sleep(10);
 		}
 		methods.inputManager.releaseKey((char) vertical);
@@ -302,8 +297,7 @@ public class Camera extends MethodProvider {
 	 * Uses the compass component to set the camera to face north.
 	 */
 	public void setNorth() {
-		methods.interfaces.getComponent(methods.gui.getCompass().getID())
-				.doClick();
+		methods.interfaces.getComponent(methods.gui.getCompass().getID()).doClick();
 	}
 
 	/**
