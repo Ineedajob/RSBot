@@ -10,6 +10,7 @@ import java.awt.image.BufferedImage;
  * Bot environment related operations.
  *
  * @author Jacmob
+ * Modified by Aut0r, Timer, and Iscream
  */
 public class Environment extends MethodProvider {
 
@@ -115,7 +116,7 @@ public class Environment extends MethodProvider {
 	/**
 	 * Disables all random event solvers.
 	 */
-	public void disbleRandoms() {
+	public void disableRandoms() {
 		for (final Random random : methods.bot.getScriptHandler().getRandoms()) {
 			if (random.isEnabled()) {
 				random.setEnabled(false);
