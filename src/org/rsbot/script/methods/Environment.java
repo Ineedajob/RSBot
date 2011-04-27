@@ -110,17 +110,6 @@ public class Environment extends MethodProvider {
 	}
 
 	/**
-	 * Disables all random event solvers.
-	 */
-	public void disbleRandoms() {
-		for (final Random random : methods.bot.getScriptHandler().getRandoms()) {
-			if (random.isEnabled()) {
-				random.setEnabled(false);
-			}
-		}
-	}
-
-	/**
 	 * Disables all randoms.
 	 *
 	 * @deprecated Use {@link org.rsbot.script.methods.Environment#disableRandoms()}
