@@ -6,7 +6,7 @@ import org.rsbot.script.internal.InputManager;
 
 /**
  * For internal use to link MethodProviders.
- * 
+ *
  * @author Jacmob
  */
 public class MethodContext {
@@ -119,8 +119,7 @@ public class MethodContext {
 	/**
 	 * The singleton of Calculations
 	 */
-	public final org.rsbot.script.methods.Calculations calc = new Calculations(
-			this);
+	public final org.rsbot.script.methods.Calculations calc = new Calculations(this);
 
 	/**
 	 * The singleton of Inventory
@@ -181,11 +180,6 @@ public class MethodContext {
 	 * The singleton of Trade
 	 */
 	public final Lobby lobby = new Lobby(this);
-
-	/**
-	 * The singleton of Doors
-	 */
-	public final Doors doors = new Doors(this);
 
 	/**
 	 * The Bot's input manager

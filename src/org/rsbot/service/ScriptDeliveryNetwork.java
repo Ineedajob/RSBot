@@ -43,14 +43,17 @@ public class ScriptDeliveryNetwork implements ScriptSource {
 			enabled = false;
 		}
 
-		if (keys == null || keys.isEmpty() || (keys.containsKey("enabled") && !parseBool(keys.get("enabled"))))
+		if (keys == null || keys.isEmpty() || (keys.containsKey("enabled") && !parseBool(keys.get("enabled")))) {
 			enabled = false;
+		}
 
-		if (keys.containsKey("error"))
+		if (keys.containsKey("error")) {
 			error = keys.get("error");
+		}
 
-		if (!enabled)
+		if (!enabled) {
 			log.warning("Service disabled: " + error);
+		}
 
 		File cache = new File(GlobalConfiguration.Paths.getScriptsNetworkDirectory());
 

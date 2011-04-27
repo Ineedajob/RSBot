@@ -30,8 +30,9 @@ public class IniParser {
 		}
 		for (Entry<String, HashMap<String, String>> entry : data.entrySet()) {
 			String section = entry.getKey();
-			if (section.equals(emptySection))
+			if (section.equals(emptySection)) {
 				continue;
+			}
 			writeSection(section, entry.getValue(), out);
 			out.newLine();
 		}
@@ -64,10 +65,12 @@ public class IniParser {
 			return deserialise(reader);
 		} catch (final IOException ioe) {
 			try {
-				if (reader != null)
+				if (reader != null) {
 					reader.close();
-				if (stream != null)
+				}
+				if (stream != null) {
 					stream.close();
+				}
 			} catch (final IOException ioe1) {
 			}
 			throw ioe;
@@ -80,8 +83,9 @@ public class IniParser {
 
 		while ((line = input.readLine()) != null) {
 			line = line.trim();
-			if (line.isEmpty())
+			if (line.isEmpty()) {
 				continue;
+			}
 			int z, l = line.length();
 			char t = line.charAt(0);
 			if (t == sectionOpen) {
@@ -96,16 +100,19 @@ public class IniParser {
 						break;
 					}
 				}
-				if (skip)
+				if (skip) {
 					continue;
+				}
 				z = line.indexOf(keyBound);
 				z = z == -1 ? l : z;
 				String key, value = "";
 				key = line.substring(0, z).trim();
-				if (++z < l)
+				if (++z < l) {
 					value = line.substring(z).trim();
-				if (!data.containsKey(section))
+				}
+				if (!data.containsKey(section)) {
 					data.put(section, new HashMap<String, String>());
+				}
 				data.get(section).put(key, value);
 			}
 		}

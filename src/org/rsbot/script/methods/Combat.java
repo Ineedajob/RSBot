@@ -16,30 +16,19 @@ public class Combat extends MethodProvider {
 	 */
 	@Deprecated
 	public static enum Prayer {
-
-		THICK_SKIN(0, 1), BURST_OF_STRENGTH(1, 4), CLARITY_OF_THOUGHT(2, 7), SHARP_EYE(
-				3, 8), MYSTIC_WILL(4, 9), ROCK_SKIN(5, 10), SUPERHUMAN_STRENGTH(
-				6, 13), IMPROVED_REFLEXES(7, 16), RAPID_RESTORE(8, 19), RAPID_HEAL(
-				9, 22), PROTECT_ITEM(10, 25), HAWK_EYE(11, 26), MYSTIC_LORE(12,
-				27), STEEL_SKIN(13, 28), ULTIMATE_STRENGTH(
-				14, 31), INCREDIBLE_REFLEXES(
-				15, 34), PROTECT_FROM_SUMMONING(16, 35), PROTECT_FROM_MAGIC(17,
-				37), PROTECT_FROM_MISSILES(18,
-				40), PROTECT_FROM_MELEE(
-				19, 43), EAGLE_EYE(
-				20, 44), MYSTIC_MIGHT(21, 45), RETRIBUTION(22, 46), REDEMPTION(
-				23, 49), SMITE(24, 52), CHIVALRY(25, 60), RAPID_RENEWAL(26, 65), PIETY(
-				27, 70), RIGOUR(28, 74), AUGURY(29, 77),
-
-		// New curse prayer book?
-		PROTECT_ITEM2(0, 50), SAP_WARRIOR(1, 50), SAP_RANGER(2, 52), SAP_MAGE(
-				3, 54), SAP_SPIRIT(4, 56), BERSERKER(5, 59), DEFLECT_SUMMONING(
-				6, 62), DEFLECT_MAGIC(7, 65), DEFLECT_MISSLE(8, 68), DEFLECT_MELEE(
-				9, 71), LEECH_ATTACK(10, 74), LEECH_RANGE(11, 76), LEECH_MAGIC(
-				12, 78), LEECH_DEFENCE(13, 80), LEECH_STRENGTH(14, 82), LEECH_ENERGY(
-				15, 84), LEECH_SPECIAL_ATTACK(16, 86), WRATH(17, 89), SOUL_SPLIT(
-				18, 92), TURMOIL(19, 95);
-
+		THICK_SKIN(0, 1), BURST_OF_STRENGTH(1, 4), CLARITY_OF_THOUGHT(2, 7), SHARP_EYE(3, 8), MYSTIC_WILL(4, 9),
+		ROCK_SKIN(5, 10), SUPERHUMAN_STRENGTH(6, 13), IMPROVED_REFLEXES(7, 16), RAPID_RESTORE(8, 19),
+		RAPID_HEAL(9, 22),
+		PROTECT_ITEM(10, 25), HAWK_EYE(11, 26), MYSTIC_LORE(12, 27), STEEL_SKIN(13, 28), ULTIMATE_STRENGTH(14, 31),
+		INCREDIBLE_REFLEXES(15, 34), PROTECT_FROM_SUMMONING(16, 35), PROTECT_FROM_MAGIC(17, 37),
+		PROTECT_FROM_MISSILES(18, 40), PROTECT_FROM_MELEE(19, 43), EAGLE_EYE(20, 44), MYSTIC_MIGHT(21, 45),
+		RETRIBUTION(22, 46), REDEMPTION(23, 49), SMITE(24, 52), CHIVALRY(25, 60), RAPID_RENEWAL(26, 65), PIETY(27,
+				70),
+		RIGOUR(28, 74), AUGURY(29, 77), PROTECT_ITEM2(0, 50), SAP_WARRIOR(1, 50), SAP_RANGER(2, 52), SAP_MAGE(3, 54),
+		SAP_SPIRIT(4, 56), BERSERKER(5, 59), DEFLECT_SUMMONING(6, 62), DEFLECT_MAGIC(7, 65), DEFLECT_MISSLE(8, 68),
+		DEFLECT_MELEE(9, 71), LEECH_ATTACK(10, 74), LEECH_RANGE(11, 76), LEECH_MAGIC(12, 78), LEECH_DEFENCE(13, 80),
+		LEECH_STRENGTH(14, 82), LEECH_ENERGY(15, 84), LEECH_SPECIAL_ATTACK(16, 86), WRATH(17, 89), SOUL_SPLIT(18, 92),
+		TURMOIL(19, 95);
 		private int index;
 		private int level;
 
@@ -58,7 +47,6 @@ public class Combat extends MethodProvider {
 		public int getRequiredLevel() {
 			return level;
 		}
-
 	}
 
 	public Combat(MethodContext ctx) {
@@ -162,8 +150,7 @@ public class Combat extends MethodProvider {
 				return methods.interfaces.getComponent(884, 11).doClick();
 			} else if (fightMode == 1) {
 				return methods.interfaces.getComponent(884, 12).doClick();
-			} else if (fightMode == 2
-					|| (fightMode == 3 && methods.interfaces.getComponent(884,
+			} else if (fightMode == 2 || (fightMode == 3 && methods.interfaces.getComponent(884,
 					14).getActions() == null)) {
 				return methods.interfaces.getComponent(884, 13).doClick();
 			} else if (fightMode == 3) {
@@ -179,9 +166,8 @@ public class Combat extends MethodProvider {
 	 * @return The current wilderness level otherwise, 0.
 	 */
 	public int getWildernessLevel() {
-		return methods.interfaces.get(381).getComponent(2).isValid() ? Integer
-				.parseInt(methods.interfaces.get(381).getComponent(2).getText()
-						.replace("Level: ", "").trim()) : 0;
+		return methods.interfaces.get(381).getComponent(2).isValid() ? Integer.parseInt(methods.interfaces.get(381)
+				.getComponent(2).getText().replace("Level: ", "").trim()) : 0;
 	}
 
 	/**
@@ -191,8 +177,7 @@ public class Combat extends MethodProvider {
 	 */
 	public int getLifePoints() {
 		try {
-			return Integer.parseInt(methods.interfaces.get(748).getComponent(8)
-					.getText());
+			return Integer.parseInt(methods.interfaces.get(748).getComponent(8).getText());
 		} catch (NumberFormatException ex) {
 			return 0;
 		}
@@ -206,11 +191,9 @@ public class Combat extends MethodProvider {
 	 */
 	@Deprecated
 	public boolean isPrayerOn(Prayer prayer) {
-		RSComponent[] prayers = methods.interfaces.getComponent(271, 7)
-				.getComponents();
+		RSComponent[] prayers = methods.interfaces.getComponent(271, 7).getComponents();
 		for (RSComponent c : prayers) {
-			if (c.getComponentIndex() == prayer.getIndex()
-					&& c.getBackgroundColor() != -1) {
+			if (c.getComponentIndex() == prayer.getIndex() && c.getBackgroundColor() != -1) {
 				return true;
 			}
 		}
@@ -240,11 +223,9 @@ public class Combat extends MethodProvider {
 	@Deprecated
 	public boolean setPrayer(Prayer prayer, boolean activate) {
 		methods.game.openTab(Game.TAB_PRAYER);
-		return methods.interfaces.getComponent(271, 7).getComponents()[prayer
-				.getIndex()].getBackgroundColor() == -1
-				&& methods.interfaces.getComponent(271, 7).getComponents()[prayer
-				.getIndex()].doAction(activate ? "Activate"
-				: "Deactivate");
+		return methods.interfaces.getComponent(271, 7).getComponents()[prayer.getIndex()].getBackgroundColor() ==
+				-1 && methods.interfaces.getComponent(271, 7).getComponents()[prayer.getIndex()].doAction(activate
+				? "Activate" : "Deactivate");
 	}
 
 	/**
@@ -257,8 +238,7 @@ public class Combat extends MethodProvider {
 	@Deprecated
 	public RSComponent[] getSelectedPrayers() {
 		ArrayList<RSComponent> selected = new ArrayList<RSComponent>();
-		RSComponent[] prayers = methods.interfaces.getComponent(271, 7)
-				.getComponents();
+		RSComponent[] prayers = methods.interfaces.getComponent(271, 7).getComponents();
 		for (RSComponent prayer : prayers) {
 			if (prayer.getBackgroundColor() != -1) {
 				selected.add(prayer);
@@ -273,8 +253,8 @@ public class Combat extends MethodProvider {
 	 * @return <tt>true</tt> if poisoned; otherwise <tt>false</tt>.
 	 */
 	public boolean isPoisoned() {
-		return methods.settings.getSetting(102) > 0
-				|| methods.interfaces.getComponent(748, 4).getBackgroundColor() == 1801;
+		return methods.settings.getSetting(102) > 0 || methods.interfaces.getComponent(748,
+				4).getBackgroundColor() == 1801;
 	}
 
 	/**
@@ -283,8 +263,7 @@ public class Combat extends MethodProvider {
 	 * @return <tt>true</tt> if special is enabled; otherwise <tt>false</tt>.
 	 */
 	public boolean isSpecialEnabled() {
-		return methods.settings
-				.getSetting(Settings.SETTING_SPECIAL_ATTACK_ENABLED) == 1;
+		return methods.settings.getSetting(Settings.SETTING_SPECIAL_ATTACK_ENABLED) == 1;
 	}
 
 	/**
@@ -303,8 +282,7 @@ public class Combat extends MethodProvider {
 	 */
 	public int getPrayerPoints() {
 		try {
-			return Integer.parseInt(methods.interfaces
-					.get(Game.INTERFACE_PRAYER_ORB).getComponent(4).getText()
+			return Integer.parseInt(methods.interfaces.get(Game.INTERFACE_PRAYER_ORB).getComponent(4).getText()
 					.trim());
 		} catch (NumberFormatException ex) {
 			return 0;
@@ -317,8 +295,7 @@ public class Combat extends MethodProvider {
 	 * @return The current percentage health remaining.
 	 */
 	public int getHealth() {
-		return ((getLifePoints() * 10) / methods.skills
-				.getRealLevel(Skills.CONSTITUTION));
+		return ((getLifePoints() * 10) / methods.skills.getRealLevel(Skills.CONSTITUTION));
 	}
 
 	/**
@@ -346,10 +323,7 @@ public class Combat extends MethodProvider {
 		// false positives)
 		// getInteracting() confirms because it will no longer interact if
 		// dead/dying
-		return npc == null
-				|| !npc.isValid()
-				|| (npc.getHPPercent() == 0 && npc.getAnimation() != -1 && npc
+		return npc == null || !npc.isValid() || (npc.getHPPercent() == 0 && npc.getAnimation() != -1 && npc
 				.getInteracting() == null);
 	}
-
 }

@@ -1,5 +1,6 @@
 package org.rsbot.script;
 
+import org.rsbot.bot.Bot;
 import org.rsbot.event.EventMulticaster;
 import org.rsbot.event.listeners.PaintListener;
 import org.rsbot.gui.AccountManager;
@@ -350,4 +351,7 @@ public abstract class Script extends Methods implements EventListener, Runnable 
 		ctx.bot.getEventManager().addListener(this);
 	}
 
+	public Bot getBot() {
+		return ctx.bot;
+	}
 }

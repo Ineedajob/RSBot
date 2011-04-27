@@ -196,8 +196,8 @@ public class BotPanel extends JPanel {
 						MouseWheelEvent mwe = (MouseWheelEvent) e;
 						c.dispatchEvent(new MouseWheelEvent(c, e.getID(),
 								System.currentTimeMillis(), 0, e.getX(), e
-										.getY(), 0, e.isPopupTrigger(), mwe
-										.getScrollType(),
+								.getY(), 0, e.isPopupTrigger(), mwe
+								.getScrollType(),
 								mwe.getScrollAmount(), mwe.getWheelRotation()));
 					} else {
 						c.dispatchEvent(new MouseEvent(c, e.getID(), System

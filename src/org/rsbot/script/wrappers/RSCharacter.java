@@ -18,7 +18,7 @@ public abstract class RSCharacter extends MethodProvider {
 	 * Retrieves a reference to the client accessor. For internal use. The
 	 * reference should be stored in a SoftReference by subclasses to allow for
 	 * garbage collection when appropriate.
-	 * 
+	 *
 	 * @return The client accessor.
 	 */
 	protected abstract org.rsbot.client.RSCharacter getAccessor();
@@ -114,7 +114,7 @@ public abstract class RSCharacter extends MethodProvider {
 	/**
 	 * Gets the minimap location, of the character. Note: This does work when
 	 * it's walking!
-	 * 
+	 *
 	 * @return The location of the character on the minimap.
 	 */
 	public Point getMinimapLocation() {
@@ -157,7 +157,7 @@ public abstract class RSCharacter extends MethodProvider {
 	public boolean isInCombat() {
 		return methods.game.isLoggedIn()
 				&& methods.client.getLoopCycle() < getAccessor()
-						.getLoopCycleStatus();
+				.getLoopCycleStatus();
 	}
 
 	public boolean isInteractingWithLocalPlayer() {
@@ -205,7 +205,7 @@ public abstract class RSCharacter extends MethodProvider {
 				+ getMessage()
 				+ ",interact="
 				+ (inter == null ? "null" : inter.isValid() ? inter
-						.getMessage() : "Invalid") + "]";
+				.getMessage() : "Invalid") + "]";
 	}
 
 }
