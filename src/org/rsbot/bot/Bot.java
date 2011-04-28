@@ -21,7 +21,6 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class Bot {
-
 	private String account;
 	private BotStub botStub;
 	private Client client;
@@ -62,8 +61,7 @@ public class Bot {
 	 * Defines what types of input are enabled when overrideInput is false.
 	 * Defaults to 'keyboard only' whenever a script is started.
 	 */
-	public volatile int inputFlags = Environment.INPUT_KEYBOARD
-			| Environment.INPUT_MOUSE;
+	public volatile int inputFlags = Environment.INPUT_KEYBOARD | Environment.INPUT_MOUSE;
 
 	public Bot() {
 		im = new InputManager(this);
@@ -81,10 +79,8 @@ public class Bot {
 		});
 		sh = new ScriptHandler(this);
 		bh = new BreakHandler(this);
-		backBuffer = new BufferedImage(size.width, size.height,
-				BufferedImage.TYPE_INT_RGB);
-		image = new BufferedImage(size.width, size.height,
-				BufferedImage.TYPE_INT_RGB);
+		backBuffer = new BufferedImage(size.width, size.height, BufferedImage.TYPE_INT_RGB);
+		image = new BufferedImage(size.width, size.height, BufferedImage.TYPE_INT_RGB);
 		paintEvent = new PaintEvent();
 		textPaintEvent = new TextPaintEvent();
 		eventManager = new EventManager();
@@ -118,8 +114,7 @@ public class Bot {
 	}
 
 	public void resize(int width, int height) {
-		backBuffer = new BufferedImage(width, height,
-				BufferedImage.TYPE_INT_RGB);
+		backBuffer = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		// client reads size of loader applet for drawing
 		loader.setSize(width, height);

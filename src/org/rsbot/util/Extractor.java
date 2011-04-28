@@ -9,11 +9,9 @@ import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
 
 public class Extractor implements Runnable {
-
 	private static void saveTo(InputStream in, String outPath) {
 		try {
 			OutputStream out = new FileOutputStream(new File(outPath));
-
 			byte[] buf = new byte[1024];
 			int len;
 			while ((len = in.read(buf)) > 0) {
@@ -34,25 +32,16 @@ public class Extractor implements Runnable {
 	public void run() {
 		ClassLoader loader = getClass().getClassLoader();
 		String root = GlobalConfiguration.Paths.Resources.ROOT + "/";
-
 		if (GlobalConfiguration.RUNNING_FROM_JAR) {
 			try {
-				// extract compile scripts
 				if (GlobalConfiguration.getCurrentOperatingSystem() == GlobalConfiguration.OperatingSystem.WINDOWS) {
-					Extractor.saveTo(loader.getResourceAsStream(root + GlobalConfiguration.Paths.COMPILE_SCRIPTS_BAT),
-							GlobalConfiguration.Paths.getHomeDirectory() + File.separator + GlobalConfiguration.Paths.COMPILE_SCRIPTS_BAT);
-					Extractor.saveTo(loader.getResourceAsStream(root + GlobalConfiguration.Paths.COMPILE_FIND_JDK),
-							GlobalConfiguration.Paths.getHomeDirectory() + File.separator + GlobalConfiguration.Paths.COMPILE_FIND_JDK);
+					Extractor.saveTo(loader.getResourceAsStream(root + GlobalConfiguration.Paths.COMPILE_SCRIPTS_BAT), GlobalConfiguration.Paths.getHomeDirectory() + File.separator + GlobalConfiguration.Paths.COMPILE_SCRIPTS_BAT);
+					Extractor.saveTo(loader.getResourceAsStream(root + GlobalConfiguration.Paths.COMPILE_FIND_JDK), GlobalConfiguration.Paths.getHomeDirectory() + File.separator + GlobalConfiguration.Paths.COMPILE_FIND_JDK);
 				} else {
-					Extractor.saveTo(loader.getResourceAsStream(root + GlobalConfiguration.Paths.COMPILE_SCRIPTS_SH),
-							GlobalConfiguration.Paths.getHomeDirectory() + File.separator + GlobalConfiguration.Paths.COMPILE_SCRIPTS_SH);
+					Extractor.saveTo(loader.getResourceAsStream(root + GlobalConfiguration.Paths.COMPILE_SCRIPTS_SH), GlobalConfiguration.Paths.getHomeDirectory() + File.separator + GlobalConfiguration.Paths.COMPILE_SCRIPTS_SH);
 				}
-
-				// extract bot scripts
-				URL version = GlobalConfiguration.class.getClassLoader().getResource(
-						GlobalConfiguration.Paths.Resources.VERSION);
-				String p = version.toString().replace("jar:file:", "").replace(
-						"!/" + GlobalConfiguration.Paths.Resources.VERSION, "");
+				URL version = GlobalConfiguration.class.getClassLoader().getResource(GlobalConfiguration.Paths.Resources.VERSION);
+				String p = version.toString().replace("jar:file:", "").replace("!/" + GlobalConfiguration.Paths.Resources.VERSION, "");
 				try {
 					p = URLDecoder.decode(p, "UTF-8");
 				} catch (final UnsupportedEncodingException ignored) {
@@ -105,5 +94,4 @@ public class Extractor implements Runnable {
 			}
 		}
 	}
-
 }

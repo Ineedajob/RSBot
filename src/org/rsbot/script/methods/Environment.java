@@ -98,6 +98,7 @@ public class Environment extends MethodProvider {
 		}
 		return false;
 	}
+
 	/**
 	 * Enables all random event solvers.
 	 */
@@ -116,11 +117,14 @@ public class Environment extends MethodProvider {
 	 */
 	@Deprecated
 	public void disbleRandoms() {
+		disableRandoms();
+	}
+
+	public void disableRandoms() {
 		for (final Random random : methods.bot.getScriptHandler().getRandoms()) {
 			if (random.isEnabled()) {
 				random.setEnabled(false);
 			}
 		}
 	}
-
 }
