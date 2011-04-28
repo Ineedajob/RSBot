@@ -48,11 +48,12 @@ public class RSNPC extends RSCharacter {
 
 	@Override
 	public int getLevel() {
-		org.rsbot.client.RSNPCDef def = getDefInternal();
-		if (def != null) {
-			return def.getLevel();
+		org.rsbot.client.RSNPC c = npc.get();
+		if (c == null) {
+			return -1;
+		} else {
+			return c.getLevel();
 		}
-		return -1;
 	}
 
 	/**
