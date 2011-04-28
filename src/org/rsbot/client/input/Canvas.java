@@ -10,9 +10,9 @@ import java.awt.image.*;
 import java.util.Hashtable;
 
 public class Canvas extends java.awt.Canvas {
-
 	public static final int GRAPHICS_DELAY = 6;
 	public static final int SLOW_GRAPHICS_DELAY = 50;
+	public static final int DISABLE_GRAPHICS_DELAY = 2000;
 
 	private static final long serialVersionUID = -2276037172265300477L;
 
@@ -42,7 +42,7 @@ public class Canvas extends java.awt.Canvas {
 			}
 		}
 		try {
-			Thread.sleep(bot.disableRendering ? SLOW_GRAPHICS_DELAY : GRAPHICS_DELAY);
+			Thread.sleep(bot.disableRendering ? SLOW_GRAPHICS_DELAY : bot.disableCanvas ? DISABLE_GRAPHICS_DELAY : GRAPHICS_DELAY);
 		} catch (InterruptedException ignored) {
 		}
 		return bot.getBufferGraphics();
@@ -86,13 +86,11 @@ public class Canvas extends java.awt.Canvas {
 		if (focused && !this.focused) {
 			// null opposite; permanent gain, as expected when entire Applet
 			// regains focus
-			super.processEvent(new FocusEvent(this, FocusEvent.FOCUS_GAINED,
-					false, null));
+			super.processEvent(new FocusEvent(this, FocusEvent.FOCUS_GAINED, false, null));
 		} else if (this.focused) {
 			// null opposite; temporary loss, as expected when entire Applet
 			// loses focus
-			super.processEvent(new FocusEvent(this, FocusEvent.FOCUS_LOST,
-					true, null));
+			super.processEvent(new FocusEvent(this, FocusEvent.FOCUS_LOST, true, null));
 		}
 		this.focused = focused;
 	}
@@ -106,13 +104,9 @@ public class Canvas extends java.awt.Canvas {
 		// null as long as this canvas is not really displayed).
 		int[] pixels = new int[height * width];
 		DataBufferInt databufferint = new DataBufferInt(pixels, pixels.length);
-		DirectColorModel directcolormodel = new DirectColorModel(32, 0xff0000,
-				0xff00, 255);
-		WritableRaster writableraster = Raster.createWritableRaster(
-				directcolormodel.createCompatibleSampleModel(width, height),
-				databufferint, null);
-		return new BufferedImage(directcolormodel, writableraster, false,
-				new Hashtable());
+		DirectColorModel directcolormodel = new DirectColorModel(32, 0xff0000, 0xff00, 255);
+		WritableRaster writableraster = Raster.createWritableRaster(directcolormodel.createCompatibleSampleModel(width, height), databufferint, null);
+		return new BufferedImage(directcolormodel, writableraster, false, new Hashtable());
 	}
 
 	@Override
@@ -129,5 +123,4 @@ public class Canvas extends java.awt.Canvas {
 			}
 		});
 	}
-
 }

@@ -18,7 +18,6 @@ import java.util.logging.Logger;
  * @author Qauters
  */
 public class RSLoader extends Applet implements Runnable, Loader {
-
 	private final Logger log = Logger.getLogger(RSLoader.class.getName());
 
 	private static final long serialVersionUID = 6288499508495040201L;

@@ -15,11 +15,9 @@ import static org.rsbot.script.methods.Environment.INPUT_MOUSE;
  * @author Jacmob
  */
 public class BotPanel extends JPanel {
-
 	private static final long serialVersionUID = 2269767882075468055L;
 
 	private class HomeUpdater implements Runnable {
-
 		private boolean running;
 
 		public void run() {
@@ -52,7 +50,6 @@ public class BotPanel extends JPanel {
 				running = false;
 			}
 		}
-
 	}
 
 	private Bot bot;
@@ -80,7 +77,6 @@ public class BotPanel extends JPanel {
 			}
 		});
 		addMouseListener(new MouseListener() {
-
 			public void mouseClicked(MouseEvent e) {
 				redispatch(e);
 				if (!hasFocus()) {
@@ -89,7 +85,6 @@ public class BotPanel extends JPanel {
 			}
 
 			public void mouseEntered(MouseEvent e) {
-
 			}
 
 			public void mouseExited(MouseEvent e) {
@@ -103,10 +98,8 @@ public class BotPanel extends JPanel {
 			public void mouseReleased(MouseEvent e) {
 				redispatch(e);
 			}
-
 		});
 		addMouseMotionListener(new MouseMotionListener() {
-
 			public void mouseDragged(MouseEvent e) {
 				redispatch(e);
 			}
@@ -114,17 +107,13 @@ public class BotPanel extends JPanel {
 			public void mouseMoved(MouseEvent e) {
 				redispatch(e);
 			}
-
 		});
 		addMouseWheelListener(new MouseWheelListener() {
-
 			public void mouseWheelMoved(MouseWheelEvent e) {
 				redispatch(e);
 			}
-
 		});
 		addKeyListener(new KeyListener() {
-
 			public void keyPressed(KeyEvent e) {
 				redispatch(e);
 			}
@@ -136,7 +125,6 @@ public class BotPanel extends JPanel {
 			public void keyTyped(KeyEvent e) {
 				redispatch(e);
 			}
-
 		});
 	}
 
@@ -168,16 +156,16 @@ public class BotPanel extends JPanel {
 		super.paintComponent(g);
 		if (bot == null) {
 			home.paint(g);
-		} else if (!bot.disableRendering) {
+		} else if (!bot.disableCanvas) {
 			g.drawImage(bot.getImage(), offX, 0, null);
-		}else{
+		} else {
 			Font font = new Font("Helvetica", 1, 13);
 			FontMetrics fontMetrics = getFontMetrics(font);
 			g.setColor(Color.black);
 			g.fillRect(0, 0, 768, 503);
 			g.setColor(new Color(150, 0, 0));
 			g.drawRect(230, 233, 303, 33);
-			String s = "Render disabled!";
+			String s = "The canvas has been disabled!";
 			g.setFont(font);
 			g.setColor(Color.WHITE);
 			g.drawString(s, (768 - fontMetrics.stringWidth(s)) / 2, 255);
@@ -199,31 +187,19 @@ public class BotPanel extends JPanel {
 			if (!bot.overrideInput && (bot.inputFlags & INPUT_MOUSE) == 0) {
 				return;
 			}
-			if (e.getX() > 0 && e.getX() < c.getWidth()
-					&& e.getY() < c.getHeight() // account for edges
-					&& e.getID() != MouseEvent.MOUSE_EXITED) {
+			if (e.getX() > 0 && e.getX() < c.getWidth() && e.getY() < c.getHeight() && e.getID() != MouseEvent.MOUSE_EXITED) {
 				if (present) {
 					if (e instanceof MouseWheelEvent) {
 						MouseWheelEvent mwe = (MouseWheelEvent) e;
-						c.dispatchEvent(new MouseWheelEvent(c, e.getID(),
-								System.currentTimeMillis(), 0, e.getX(), e
-										.getY(), 0, e.isPopupTrigger(), mwe
-										.getScrollType(),
-								mwe.getScrollAmount(), mwe.getWheelRotation()));
+						c.dispatchEvent(new MouseWheelEvent(c, e.getID(), System.currentTimeMillis(), 0, e.getX(), e.getY(), 0, e.isPopupTrigger(), mwe.getScrollType(), mwe.getScrollAmount(), mwe.getWheelRotation()));
 					} else {
-						c.dispatchEvent(new MouseEvent(c, e.getID(), System
-								.currentTimeMillis(), 0, e.getX(), e.getY(), 0,
-								e.isPopupTrigger(), e.getButton()));
+						c.dispatchEvent(new MouseEvent(c, e.getID(), System.currentTimeMillis(), 0, e.getX(), e.getY(), 0, e.isPopupTrigger(), e.getButton()));
 					}
 				} else {
-					c.dispatchEvent(new MouseEvent(c, MouseEvent.MOUSE_ENTERED,
-							System.currentTimeMillis(), 0, e.getX(), e.getY(),
-							0, false));
+					c.dispatchEvent(new MouseEvent(c, MouseEvent.MOUSE_ENTERED, System.currentTimeMillis(), 0, e.getX(), e.getY(), 0, false));
 				}
 			} else if (present) {
-				c.dispatchEvent(new MouseEvent(c, MouseEvent.MOUSE_EXITED,
-						System.currentTimeMillis(), 0, e.getX(), e.getY(), 0,
-						false));
+				c.dispatchEvent(new MouseEvent(c, MouseEvent.MOUSE_EXITED, System.currentTimeMillis(), 0, e.getX(), e.getY(), 0, false));
 			}
 		}
 	}
@@ -234,8 +210,7 @@ public class BotPanel extends JPanel {
 			if (m != null) {
 				m.dispatchEvent(e);
 			}
-			if ((bot.overrideInput || (bot.inputFlags & INPUT_KEYBOARD) != 0)
-					&& bot.getLoader().getComponentCount() > 0) {
+			if ((bot.overrideInput || (bot.inputFlags & INPUT_KEYBOARD) != 0) && bot.getLoader().getComponentCount() > 0) {
 				Component c = bot.getLoader().getComponent(0);
 				c.dispatchEvent(e);
 			}
@@ -243,24 +218,16 @@ public class BotPanel extends JPanel {
 	}
 
 	private void dispatchHuman(Component c, MouseEvent e) {
-		if (e.getX() > 0 && e.getX() < c.getWidth() && e.getY() < c.getHeight()
-				&& e.getID() != MouseEvent.MOUSE_EXITED) {
+		if (e.getX() > 0 && e.getX() < c.getWidth() && e.getY() < c.getHeight() && e.getID() != MouseEvent.MOUSE_EXITED) {
 			if (present) {
 				bot.getEventManager().dispatchEvent(e);
 			} else {
 				present = true;
-				bot.getEventManager().dispatchEvent(
-						new MouseEvent(c, MouseEvent.MOUSE_ENTERED, System
-								.currentTimeMillis(), 0, e.getX(), e.getY(), 0,
-								false));
+				bot.getEventManager().dispatchEvent(new MouseEvent(c, MouseEvent.MOUSE_ENTERED, System.currentTimeMillis(), 0, e.getX(), e.getY(), 0, false));
 			}
 		} else if (present) {
 			present = false;
-			bot.getEventManager().dispatchEvent(
-					new MouseEvent(c, MouseEvent.MOUSE_EXITED, System
-							.currentTimeMillis(), 0, e.getX(), e.getY(), 0,
-							false));
+			bot.getEventManager().dispatchEvent(new MouseEvent(c, MouseEvent.MOUSE_EXITED, System.currentTimeMillis(), 0, e.getX(), e.getY(), 0, false));
 		}
 	}
-
 }
