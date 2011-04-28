@@ -39,10 +39,10 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 	private BotMenuBar menuBar;
 	private JScrollPane textScroll;
 	private BotHome home;
-	private List<Bot> bots = new ArrayList<Bot>();
+	private final List<Bot> bots = new ArrayList<Bot>();
 	private boolean showAds = true;
 	private boolean disableConfirmations = false;
-	private static ScriptDeliveryNetwork sdn = ScriptDeliveryNetwork.getInstance();
+	private static final ScriptDeliveryNetwork sdn = ScriptDeliveryNetwork.getInstance();
 
 	public BotGUI() {
 		init();

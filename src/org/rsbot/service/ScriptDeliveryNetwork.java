@@ -17,8 +17,8 @@ import java.util.logging.Logger;
  * @author Paris
  */
 public class ScriptDeliveryNetwork implements ScriptSource {
-	private static Logger log = Logger.getLogger("ScriptDelivery");
-	private static ScriptDeliveryNetwork instance = new ScriptDeliveryNetwork();
+	private static final Logger log = Logger.getLogger("ScriptDelivery");
+	private static final ScriptDeliveryNetwork instance = new ScriptDeliveryNetwork();
 	private String key;
 	private final String defaultKey = "0000000000000000000000000000000000000000";
 

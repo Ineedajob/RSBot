@@ -16,9 +16,9 @@ public class CloseAllInterface extends Random {
 
 	static class ComponentDef {
 
-		int parent;
-		int child;
-		boolean text;
+		final int parent;
+		final int child;
+		final boolean text;
 
 		public ComponentDef(int parent, int child, boolean text) {
 			this.parent = parent;

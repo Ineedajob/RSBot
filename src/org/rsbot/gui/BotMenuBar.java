@@ -96,10 +96,10 @@ public class BotMenuBar extends JMenuBar {
 		return debugItems.toArray(new String[debugItems.size()]);
 	}
 
-	private Map<String, JCheckBoxMenuItem> eventCheckMap = new HashMap<String, JCheckBoxMenuItem>();
-	private Map<String, JCheckBoxMenuItem> commandCheckMap = new HashMap<String, JCheckBoxMenuItem>();
-	private Map<String, JMenuItem> commandMenuItem = new HashMap<String, JMenuItem>();
-	private ActionListener listener;
+	private final Map<String, JCheckBoxMenuItem> eventCheckMap = new HashMap<String, JCheckBoxMenuItem>();
+	private final Map<String, JCheckBoxMenuItem> commandCheckMap = new HashMap<String, JCheckBoxMenuItem>();
+	private final Map<String, JMenuItem> commandMenuItem = new HashMap<String, JMenuItem>();
+	private final ActionListener listener;
 
 	public BotMenuBar(ActionListener listener) {
 		this.listener = listener;

@@ -155,10 +155,7 @@ public class Walking extends MethodProvider {
 			y -= random(0, r);
 		}
 		RSTile dest = new RSTile(x, y);
-		if (methods.players.getMyPlayer().getLocation().equals(dest)) {
-			return false;
-		}
-		return walkTileMM(dest, 0, 0);
+		return !methods.players.getMyPlayer().getLocation().equals(dest) && walkTileMM(dest, 0, 0);
 	}
 
 	/**
@@ -170,8 +167,7 @@ public class Walking extends MethodProvider {
 	 * @return True if successful.
 	 */
 	public boolean walkTileOnScreen(final RSTile tileToWalk) {
-		return methods.tiles.doAction(methods.calc.getTileOnScreen(tileToWalk),
-				"Walk ");
+		return methods.tiles.doAction(methods.calc.getTileOnScreen(tileToWalk), "Walk ");
 	}
 
 	/**
@@ -193,13 +189,11 @@ public class Walking extends MethodProvider {
 	public boolean rest(final int stopEnergy) {
 		int energy = getEnergy();
 		for (int d = 0; d < 5; d++) {
-			methods.interfaces.getComponent(INTERFACE_RUN_ORB, 1).doAction(
-					"Rest");
+			methods.interfaces.getComponent(INTERFACE_RUN_ORB, 1).doAction("Rest");
 			methods.mouse.moveSlightly();
 			sleep(random(400, 600));
 			int anim = methods.players.getMyPlayer().getAnimation();
-			if (anim == 12108 || anim == 2033 || anim == 2716 || anim == 11786
-					|| anim == 5713) {
+			if (anim == 12108 || anim == 2033 || anim == 2716 || anim == 11786 || anim == 5713) {
 				break;
 			}
 			if (d == 4) {

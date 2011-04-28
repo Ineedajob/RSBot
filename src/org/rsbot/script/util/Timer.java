@@ -6,8 +6,8 @@ package org.rsbot.script.util;
 public class Timer {
 
 	private long end;
-	private long start;
-	private long period;
+	private final long start;
+	private final long period;
 
 	/**
 	 * Instantiates a new Timer with a given time

@@ -138,12 +138,12 @@ public class Summoning extends MethodProvider {
 				"Pack yak", 96, 58, 12, "Winter Storage", 30), STEEL_TITAN(
 				"Steel titan", 99, 64, 12, "Steel of Legends", 0);
 
-		private String name;
-		private int requiredLevel;
-		private int time;
-		private int requiredSpecialPoints;
-		private String scrollName;
-		private int bobSpace;
+		private final String name;
+		private final int requiredLevel;
+		private final int time;
+		private final int requiredSpecialPoints;
+		private final String scrollName;
+		private final int bobSpace;
 		private RSNPC npcObject;
 
 		Familiar(String name, int requiredLevel, int time, int sp,

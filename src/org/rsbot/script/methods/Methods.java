@@ -15,11 +15,11 @@ public class Methods {
 	/**
 	 * The logger instance
 	 */
-	protected Logger log = Logger.getLogger(getClass().getName());
+	protected final Logger log = Logger.getLogger(getClass().getName());
 	/**
 	 * The instance of {@link java.util.Random} for random number generation.
 	 */
-	protected static java.util.Random random = new java.util.Random();
+	protected static final java.util.Random random = new java.util.Random();
 	/**
 	 * The singleton of Skills
 	 */

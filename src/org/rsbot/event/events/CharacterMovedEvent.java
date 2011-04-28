@@ -51,6 +51,8 @@ public class CharacterMovedEvent extends RSEvent {
 	 * 5 = SW
 	 * 6 = S
 	 * 7 = SE
+	 *
+	 * @return Returns the direction of the character movement event.
 	 */
 	public int getDirection() {
 		return direction;

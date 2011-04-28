@@ -10,8 +10,8 @@ import java.util.ArrayList;
  */
 public class RSArea {
 
-	private Polygon area;
-	private int plane;
+	private final Polygon area;
+	private final int plane;
 
 	/**
 	 * @param tiles An Array containing of <b>RSTiles</b> forming a polygon shape.
@@ -113,6 +113,7 @@ public class RSArea {
 	}
 
 	/**
+	 * @param base The base tile to measure the closest tile off of.
 	 * @return The nearest <b>RSTile</b> in the <b>RSArea</b>
 	 *         to the given <b>RSTile</b>.
 	 */

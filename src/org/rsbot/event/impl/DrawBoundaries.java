@@ -12,7 +12,7 @@ public class DrawBoundaries implements PaintListener {
 	private final Point[][] minimapPoints = new Point[105][105];
 	private final Point[][] screenPoints = new Point[105][105];
 
-	private MethodContext ctx;
+	private final MethodContext ctx;
 
 	public DrawBoundaries(Bot bot) {
 		this.ctx = bot.getMethodContext();

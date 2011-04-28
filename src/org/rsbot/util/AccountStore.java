@@ -21,9 +21,9 @@ public class AccountStore {
 
 	public static class Account {
 
-		private String username;
+		private final String username;
 		private String password;
-		private Map<String, String> attributes = new TreeMap<String, String>();
+		private final Map<String, String> attributes = new TreeMap<String, String>();
 
 		public Account(String username) {
 			this.username = username;
@@ -93,11 +93,11 @@ public class AccountStore {
 	public static final String CIPHER_TRANSFORMATION = "DESede/CBC/PKCS5Padding";
 	public static final int FORMAT_VERSION = 2;
 
-	private File file;
+	private final File file;
 	private byte[] digest;
-	private String[] protectedAttributes = {"pin"};
+	private final String[] protectedAttributes = {"pin"};
 
-	private Map<String, Account> accounts = new TreeMap<String, Account>();
+	private final Map<String, Account> accounts = new TreeMap<String, Account>();
 
 	public AccountStore(File file) {
 		this.file = file;

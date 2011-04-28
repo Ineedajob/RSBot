@@ -147,8 +147,8 @@ public class Exam extends Random {
 	}
 
 	public class SimilarObjectQuestion {
-		String question;
-		int[] Answers;
+		final String question;
+		final int[] Answers;
 
 		public SimilarObjectQuestion(final String q, final int[] Answers) {
 			question = q.toLowerCase();
@@ -245,7 +245,7 @@ public class Exam extends Random {
 			Firemaking, Hats, Drinks, Woodcutting, Boots, Crafting, Mining,
 			Smithing};
 
-	public SimilarObjectQuestion[] simObjects = {
+	public final SimilarObjectQuestion[] simObjects = {
 			new SimilarObjectQuestion("I never leave the house without some sort of jewellery.", Jewellery),
 			new SimilarObjectQuestion("There is no better feeling than", Jewellery2),
 			new SimilarObjectQuestion("I'm feeling dehydrated", Drinks),

@@ -12,8 +12,8 @@ import org.rsbot.script.wrappers.*;
 @ScriptManifest(authors = "Arbiter", name = "ScapeRuneIsland", version = 2.2)
 public class ScapeRuneIsland extends Random {
 
-	public int[] STATUE_IDS = {8992, 8993, 8990, 8991};
-	public RSTile CENTER_TILE = new RSTile(3421, 4777);
+	public final int[] STATUE_IDS = {8992, 8993, 8990, 8991};
+	public final RSTile CENTER_TILE = new RSTile(3421, 4777);
 
 	public RSObject direction;
 	public boolean finished;

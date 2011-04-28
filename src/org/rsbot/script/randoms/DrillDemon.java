@@ -9,7 +9,7 @@ import org.rsbot.script.wrappers.RSTile;
 @ScriptManifest(authors = {"Keilgo"}, name = "DrillDemon", version = 0.2)
 public class DrillDemon extends Random {
 
-	public int demonID = 2790;
+	public final int demonID = 2790;
 	public int sign1;
 	public int sign2;
 	public int sign3;

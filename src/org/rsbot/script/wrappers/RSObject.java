@@ -14,9 +14,9 @@ public class RSObject extends MethodProvider {
 		INTERACTABLE, FLOOR_DECORATION, BOUNDARY, WALL_DECORATION
 	}
 
-	private org.rsbot.client.RSObject obj;
-	private Type type;
-	private int plane;
+	private final org.rsbot.client.RSObject obj;
+	private final Type type;
+	private final int plane;
 
 	public RSObject(final MethodContext ctx,
 	                final org.rsbot.client.RSObject obj, final Type type,
@@ -96,7 +96,6 @@ public class RSObject extends MethodProvider {
 	 *
 	 * @param object The object to look up.
 	 * @return The object name if the definition is available; otherwise "".
-	 * @author Aut0r
 	 */
 	public String getName(final RSObject object) {
 		return object.getName();
@@ -106,7 +105,6 @@ public class RSObject extends MethodProvider {
 	 * Returns the name of the object.
 	 *
 	 * @return The object name if the definition is available; otherwise "".
-	 * @author Aut0r
 	 */
 	public String getName() {
 		RSObjectDef objectDef = getDef();
@@ -145,6 +143,8 @@ public class RSObject extends MethodProvider {
 
 	/**
 	 * Returns this object's type.
+	 *
+	 * @return The type of the object.
 	 */
 	public Type getType() {
 		return type;
@@ -165,7 +165,7 @@ public class RSObject extends MethodProvider {
 	 * Performs the specified action on this object.
 	 *
 	 * @param action the action of the menu item to search and click
-	 * @param action the option of the menu item to search and click
+	 * @param option the option of the menu item to search and click
 	 * @return returns true if clicked, false if object does not contain the
 	 *         desired action
 	 */
@@ -189,7 +189,7 @@ public class RSObject extends MethodProvider {
 	/**
 	 * Clicks this object.
 	 *
-	 * @param left <tt>true</tt> to left-click; <tt>false</tt> to right-click.
+	 * @param leftClick <tt>true</tt> to left-click; <tt>false</tt> to right-click.
 	 * @return <tt>true</tt> if clicked.
 	 */
 	public boolean doClick(boolean leftClick) {
@@ -218,8 +218,6 @@ public class RSObject extends MethodProvider {
 
 	/**
 	 * Moves the mouse over this object.
-	 *
-	 * @return <tt>true</tt> if the mouse was moved.
 	 */
 	public void doHover() {
 		RSModel model = getModel();

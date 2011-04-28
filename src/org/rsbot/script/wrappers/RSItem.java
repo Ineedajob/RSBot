@@ -11,8 +11,8 @@ import org.rsbot.script.methods.MethodProvider;
  */
 public class RSItem extends MethodProvider {
 
-	private int id;
-	private int stack;
+	private final int id;
+	private final int stack;
 	private RSComponent component;
 
 	public RSItem(final MethodContext ctx, final int id, final int stack) {

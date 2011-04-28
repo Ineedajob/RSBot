@@ -29,8 +29,8 @@ public class Combat extends MethodProvider {
 		DEFLECT_MELEE(9, 71), LEECH_ATTACK(10, 74), LEECH_RANGE(11, 76), LEECH_MAGIC(12, 78), LEECH_DEFENCE(13, 80),
 		LEECH_STRENGTH(14, 82), LEECH_ENERGY(15, 84), LEECH_SPECIAL_ATTACK(16, 86), WRATH(17, 89), SOUL_SPLIT(18, 92),
 		TURMOIL(19, 95);
-		private int index;
-		private int level;
+		private final int index;
+		private final int level;
 
 		@Deprecated
 		Prayer(int index, int level) {
@@ -60,7 +60,6 @@ public class Combat extends MethodProvider {
 	 * @param foods   Array of Foods we can eat.
 	 * @return <tt>true</tt> once we eaten to the health % (percent); otherwise
 	 *         <tt>false</tt>.
-	 * @author Pervy Shuya
 	 */
 	@Deprecated
 	public boolean Eat(final int percent, final int... foods) {
@@ -74,7 +73,6 @@ public class Combat extends MethodProvider {
 	 * @param foods   Array of Foods we can eat.
 	 * @return <tt>true</tt> once we eaten to the health % (percent); otherwise
 	 *         <tt>false</tt>.
-	 * @author Pervy Shuya
 	 */
 	public boolean eat(final int percent, final int... foods) {
 		int firstPercent = getHealth();

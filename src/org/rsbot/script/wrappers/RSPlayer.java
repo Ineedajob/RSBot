@@ -11,7 +11,7 @@ import java.lang.ref.SoftReference;
  */
 public class RSPlayer extends RSCharacter {
 
-	private SoftReference<org.rsbot.client.RSPlayer> p;
+	private final SoftReference<org.rsbot.client.RSPlayer> p;
 
 	public RSPlayer(final MethodContext ctx, final org.rsbot.client.RSPlayer p) {
 		super(ctx);

@@ -36,6 +36,8 @@ public class EventManager implements Runnable {
 	 * Adds the event to the queue for the EventManager to process.
 	 * <p/>
 	 * Events are processed with the default mask.
+	 *
+	 * @param e The event object to dispatch.
 	 */
 	public void dispatchEvent(EventObject e) {
 		synchronized (queue) {
@@ -57,6 +59,8 @@ public class EventManager implements Runnable {
 	/**
 	 * Dispatches the given event. Calling this avoids the use
 	 * of the event queue.
+	 *
+	 * @param event The event to fire.
 	 */
 	public void processEvent(EventObject event) {
 		multicaster.fireEvent(event);
@@ -64,6 +68,8 @@ public class EventManager implements Runnable {
 
 	/**
 	 * Is this thread the event thread?
+	 *
+	 * @return <tt>true</tt> if the thread is an event thread; otherwise <tt>false</tt>.
 	 */
 	public boolean isEventThread() {
 		synchronized (threadLock) {
@@ -73,6 +79,8 @@ public class EventManager implements Runnable {
 
 	/**
 	 * Is the event thread alive?
+	 *
+	 * @return <tt>true</tt> if the thread is alive; otherwise <tt>false</tt>.
 	 */
 	public boolean isEventThreadAlive() {
 		synchronized (threadLock) {
