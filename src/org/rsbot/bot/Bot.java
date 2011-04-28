@@ -58,6 +58,11 @@ public class Bot {
 	public volatile boolean disableRendering = false;
 
 	/**
+	 * Whether or not rendering is enabled.
+	 */
+	public volatile boolean disableCanvas = false;
+
+	/**
 	 * Defines what types of input are enabled when overrideInput is false.
 	 * Defaults to 'keyboard only' whenever a script is started.
 	 */
@@ -71,8 +76,9 @@ public class Bot {
 			public void run() {
 				try {
 					setClient((Client) loader.getClient());
-					if (!disableRendering)
+					if (!disableRendering) {
 						resize(size.width, size.height);
+					}
 					methods.menu.setupListener();
 				} catch (Exception ignored) {
 				}

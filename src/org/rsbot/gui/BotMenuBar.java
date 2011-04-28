@@ -50,12 +50,14 @@ public class BotMenuBar extends JMenuBar {
 
 		TITLES = new String[]{"File", "Edit", "View", "Help"};
 		ELEMENTS = new String[][]{
-				{"New Bot", "Close Bot", "-", /*"Service Key", "-",*/ "Run Script", "Stop Script",
-						"Pause Script", "-", "Save Screenshot",
-						"-", "Exit"},
-				{"Accounts", "-", "ToggleF Force Input", "ToggleF Less CPU",
-						"-", "ToggleF Disable Anti-Randoms",
-						"ToggleF Disable Auto Login", "-",
+				{"New Bot", "Close Bot", "-",
+						/*"Service Key", "-",*/
+						"Run Script", "Stop Script", "Pause Script", "-",
+						"Save Screenshot", "-",
+						"Exit"},
+				{"Accounts", "-",
+						"ToggleF Force Input", "ToggleF Disable Rendering", "ToggleF Disable Canvas", "-",
+						"ToggleF Disable Anti-Randoms", "ToggleF Disable Auto Login", "-",
 						"ToggleF Disable Advertisements", "ToggleF Disable Confirmations"}, constructDebugs(),
 				{"Site", "Project", "About"}};
 	}
@@ -151,7 +153,8 @@ public class BotMenuBar extends JMenuBar {
 			}
 			enable("All Debugging", selections == eventCheckMap.size());
 			enable("Force Input", bot.overrideInput);
-			enable("Less CPU", bot.disableRendering);
+			enable("Disable Rendering", bot.disableRendering);
+			enable("Disable Canvas", bot.disableCanvas);
 			enable("Disable Anti-Randoms", bot.disableRandoms);
 			enable("Disable Auto Login", bot.disableAutoLogin);
 		}
