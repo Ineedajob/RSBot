@@ -42,7 +42,7 @@ public class Canvas extends java.awt.Canvas {
 			}
 		}
 		try {
-			Thread.sleep(bot.disableRendering ? SLOW_GRAPHICS_DELAY : bot.disableCanvas ? DISABLE_GRAPHICS_DELAY : GRAPHICS_DELAY);
+			Thread.sleep(bot.disableCanvas ? DISABLE_GRAPHICS_DELAY : bot.disableRendering ? SLOW_GRAPHICS_DELAY : GRAPHICS_DELAY);
 		} catch (InterruptedException ignored) {
 		}
 		return bot.getBufferGraphics();
