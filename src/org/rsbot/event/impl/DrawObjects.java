@@ -12,7 +12,7 @@ import java.util.HashMap;
 
 public class DrawObjects implements PaintListener {
 
-	private MethodContext ctx;
+	private final MethodContext ctx;
 
 	public DrawObjects(Bot bot) {
 		ctx = bot.getMethodContext();

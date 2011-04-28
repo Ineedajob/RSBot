@@ -201,7 +201,6 @@ public abstract class RSModel extends MethodProvider {
 	 * point that is actually on the RSModel.
 	 *
 	 * @return The rough central point.
-	 * @author !@!@!
 	 */
 	public Point getCentralPoint() {
 		try {

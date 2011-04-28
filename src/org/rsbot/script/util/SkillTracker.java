@@ -15,15 +15,14 @@ import java.util.Arrays;
  *
  * @author LastCoder
  * @version 1.0
- * @see ArrayList
  */
 @SuppressWarnings("unused")
 public class SkillTracker {
 	public int[] skills;
 	public int[] startExp, currentExp;
 
-	private Bot bot;
-	private MethodContext context;
+	private final Bot bot;
+	private final MethodContext context;
 
 	public transient int firstIndex;
 	public transient int lastIndex;

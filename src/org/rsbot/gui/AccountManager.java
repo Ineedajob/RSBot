@@ -44,7 +44,7 @@ public class AccountManager extends JDialog implements ActionListener {
 
 	private static final Logger log = Logger.getLogger(AccountManager.class.getName());
 
-	private static AccountStore accountStore = new AccountStore(new File(FILE_NAME));
+	private static final AccountStore accountStore = new AccountStore(new File(FILE_NAME));
 
 	static {
 		accountStore.setPassword(ScriptDeliveryNetwork.getInstance().getKey());
@@ -280,15 +280,16 @@ public class AccountManager extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * Access the list of names for loaded accounts	 *	 * @return Array of the names
+	 * Access the list of names for loaded accounts
+	 *
+	 * @return Array of the names.
 	 */
 	public static String[] getAccountNames() {
 		try {
 			List<String> theList = new ArrayList<String>();
 			Collection<AccountStore.Account> accountCollection = AccountManager.accountStore.list();
-			Iterator<AccountStore.Account> accountIterator = accountCollection.iterator();
-			while (accountIterator.hasNext()) {
-				AccountStore.Account account = accountIterator.next();
+			for (AccountStore.Account anAccountCollection : accountCollection) {
+				AccountStore.Account account = anAccountCollection;
 				theList.add(account.getUsername());
 			}
 			return theList.toArray(new String[theList.size()]);

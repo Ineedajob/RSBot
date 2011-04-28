@@ -156,6 +156,7 @@ public class GrandExchange extends MethodProvider {
 	/**
 	 * Will check a slot for to see if an item has completed.
 	 *
+	 * @param slot The slot to check.
 	 * @return <tt>true</tt> if Complete, otherwise <tt>false</tt>
 	 */
 	public boolean checkCompleted(int slot) {

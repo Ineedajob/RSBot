@@ -15,7 +15,7 @@ import java.util.ArrayList;
 @ScriptManifest(authors = {"Zenzie", "Iscream"}, name = "Maze", version = 1.6)
 public class Maze extends Random {
 
-	public ArrayList<Door> paths = new ArrayList<Door>();
+	public final ArrayList<Door> paths = new ArrayList<Door>();
 
 	String usePath = "None";
 
@@ -120,8 +120,8 @@ public class Maze extends Random {
 
 	public class Door {
 
-		public RSTile doorTile;
-		public char doorDir;
+		public final RSTile doorTile;
+		public final char doorDir;
 		public int doorID;
 
 		public Door(final RSTile doorTile, final char doorDir, int doorID) {

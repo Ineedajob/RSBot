@@ -45,8 +45,8 @@ public class Prayer extends MethodProvider {
 				15, 84), LEECH_SPECIAL_ATTACK(16, 86), WRATH(17, 89), SOUL_SPLIT(
 				18, 92), TURMOIL(19, 95);
 
-		private int index;
-		private int level;
+		private final int index;
+		private final int level;
 
 		Book(int index, int level) {
 			this.index = index;

@@ -255,8 +255,9 @@ public class Game extends MethodProvider {
 	/**
 	 * Opens the specified tab at the specified index.
 	 *
-	 * @param tab The tab to open, functionKey if wanting to use function keys
-	 *            to switch.
+	 * @param tab         The tab to open, functionKey if wanting to use function keys
+	 *                    to switch.
+	 * @param functionKey Use a function key for fast switching?
 	 * @return <tt>true</tt> if tab successfully selected; otherwise
 	 *         <tt>false</tt>.
 	 */
@@ -268,8 +269,7 @@ public class Game extends MethodProvider {
 		if (tab == getCurrentTab()) {
 			return true;
 		}
-		if (functionKey && tab < TAB_FUNCTION_KEYS.length
-				&& TAB_FUNCTION_KEYS[tab] != 0) {
+		if (functionKey && tab < TAB_FUNCTION_KEYS.length && TAB_FUNCTION_KEYS[tab] != 0) {
 			methods.keyboard.pressKey((char) TAB_FUNCTION_KEYS[tab]);
 			sleep(random(80, 200));
 			methods.keyboard.releaseKey((char) TAB_FUNCTION_KEYS[tab]);
@@ -342,10 +342,10 @@ public class Game extends MethodProvider {
 	 *
 	 * @param button Which button? One of CHAT_OPTION
 	 * @param left   Left or right button? Left = true. Right = false.
+	 * @return <tt>true</tt> if it was clicked.
 	 */
 	public boolean mouseChatButton(int button, boolean left) {
-		RSComponent chatButton = methods.interfaces.get(CHAT_OPTION)
-				.getComponent(button);
+		RSComponent chatButton = methods.interfaces.get(CHAT_OPTION).getComponent(button);
 		return chatButton.isValid() && chatButton.doClick(left);
 	}
 

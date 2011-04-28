@@ -61,11 +61,11 @@ public class Hiscores extends MethodProvider {
 	 */
 	public static class Stats {
 
-		private String username;
+		private final String username;
 
-		private int[] exps;
-		private int[] lvls;
-		private int[] ranks;
+		private final int[] exps;
+		private final int[] lvls;
+		private final int[] ranks;
 
 		Stats(String username, int[] exps, int[] lvls, int[] ranks) {
 			this.username = username;

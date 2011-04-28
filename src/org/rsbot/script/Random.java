@@ -24,7 +24,7 @@ public abstract class Random extends Methods implements PaintListener {
 
 	private Script script;
 
-	private long timeout = random(240, 300);
+	private final long timeout = random(240, 300);
 
 //	private Color[] fadeArray = {Color.red, Color.white, Color.green, new Color(128, 0, 128), Color.yellow,
 //	                             Color.black, Color.orange, Color.pink};

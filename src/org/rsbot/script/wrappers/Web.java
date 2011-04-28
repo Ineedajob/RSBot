@@ -31,8 +31,9 @@ public class Web extends WebSkeleton {
 	private WebMap map = null;
 
 	/**
-	 * @param ctx The MethodContext.
-	 * @param end The end tile you wish to result at.
+	 * @param ctx   The MethodContext.
+	 * @param start The tile you wish to start the web at.
+	 * @param end   The end tile you wish to result at.
 	 */
 	public Web(final MethodContext ctx, final RSTile start, final RSTile end) {
 		super(ctx);
@@ -138,8 +139,6 @@ public class Web extends WebSkeleton {
 
 	/**
 	 * Gets the path between two tiles.
-	 *
-	 * @return The web tile path.
 	 */
 	public void getPath() {
 		try {

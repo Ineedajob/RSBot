@@ -5,8 +5,8 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 
 public class PreferenceData {
-	private int type;
-	private File file;
+	private final int type;
+	private final File file;
 
 	public PreferenceData(int type) {
 		this.type = type;

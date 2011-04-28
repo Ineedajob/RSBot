@@ -10,13 +10,13 @@ import java.util.*;
 
 public class ScriptHandler {
 
-	private ArrayList<org.rsbot.script.Random> randoms = new ArrayList<org.rsbot.script.Random>();
-	private HashMap<Integer, Script> scripts = new HashMap<Integer, Script>();
-	private HashMap<Integer, Thread> scriptThreads = new HashMap<Integer, Thread>();
+	private final ArrayList<org.rsbot.script.Random> randoms = new ArrayList<org.rsbot.script.Random>();
+	private final HashMap<Integer, Script> scripts = new HashMap<Integer, Script>();
+	private final HashMap<Integer, Thread> scriptThreads = new HashMap<Integer, Thread>();
 
-	private Set<ScriptListener> listeners = Collections.synchronizedSet(new HashSet<ScriptListener>());
+	private final Set<ScriptListener> listeners = Collections.synchronizedSet(new HashSet<ScriptListener>());
 
-	private Bot bot;
+	private final Bot bot;
 
 	public ScriptHandler(Bot bot) {
 		this.bot = bot;
@@ -120,10 +120,7 @@ public class ScriptHandler {
 
 	public boolean onBreak(int id) {
 		Script script = scripts.get(id);
-		if (script != null) {
-			return script.onBreakStart();
-		}
-		return false;
+		return script != null && script.onBreakStart();
 	}
 
 	public void onBreakConclude(int id) {

@@ -11,7 +11,7 @@ public class BreakHandler {
 	private long nextBreak;
 	private long breakEnd;
 	private int ticks = 0;
-	private Bot bot;
+	private final Bot bot;
 	private boolean checked = false;
 	private boolean result = false;
 
