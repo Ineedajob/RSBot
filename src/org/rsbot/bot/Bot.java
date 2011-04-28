@@ -58,7 +58,7 @@ public class Bot {
 	public volatile boolean disableRendering = false;
 
 	/**
-	 * Whether or not rendering is enabled.
+	 * Whether or not the canvas is enabled.
 	 */
 	public volatile boolean disableCanvas = false;
 
