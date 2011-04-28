@@ -12,8 +12,8 @@ import org.rsbot.script.methods.MethodProvider;
  */
 public class RSGroundItem extends MethodProvider {
 
-	private RSItem groundItem;
-	private RSTile location;
+	private final RSItem groundItem;
+	private final RSTile location;
 
 	public RSGroundItem(final MethodContext ctx, final RSTile location, final RSItem groundItem) {
 		super(ctx);
@@ -66,8 +66,8 @@ public class RSGroundItem extends MethodProvider {
 		if (model != null) {
 			return model.doAction(action, option);
 		}
-		return methods.tiles.doAction(getLocation(), random(0.45, 0.55), random(0.45, 0.55), 0, 
-			action, option);
+		return methods.tiles.doAction(getLocation(), random(0.45, 0.55), random(0.45, 0.55), 0,
+				action, option);
 	}
 
 	public RSItem getItem() {

@@ -38,7 +38,8 @@ public class Nodes extends MethodProvider {
 	}
 
 	/**
-	 * @param id The id of the node
+	 * @param loader The node's loader.
+	 * @param id     The id of the node
 	 * @return A <tt>Node</tt> object corresponding to the ID in the loader.
 	 */
 	public Node lookup(final DefLoader loader, final long id) {

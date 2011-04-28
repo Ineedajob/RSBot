@@ -20,7 +20,7 @@ public class Interfaces extends MethodProvider {
 	// client's cache.
 	private RSInterface[] mainCache = new RSInterface[0];
 	// If it doesn't fit in the above cache.
-	private Map<Integer, RSInterface> sparseMap = new HashMap<Integer, RSInterface>();
+	private final Map<Integer, RSInterface> sparseMap = new HashMap<Integer, RSInterface>();
 
 	/**
 	 * @return <code>RSInterface</code> array containing all valid interfaces.

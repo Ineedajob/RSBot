@@ -32,7 +32,7 @@ public class MouseHandler {
 	 */
 	public static final int reactionTime = 0;
 
-	private static java.util.Random staticRandom = new java.util.Random();
+	private static final java.util.Random staticRandom = new java.util.Random();
 
 	/**
 	 * Applies a midpoint algorithm to the Vector of points to ensure pixel to

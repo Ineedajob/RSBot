@@ -26,7 +26,7 @@ public class RSInterface extends MethodProvider implements Iterable<RSComponent>
 	/**
 	 * The index of this interface.
 	 */
-	private int index;
+	private final int index;
 
 	public RSInterface(final MethodContext ctx, final int iface) {
 		super(ctx);

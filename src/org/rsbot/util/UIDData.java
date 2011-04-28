@@ -8,10 +8,10 @@ import java.util.HashMap;
 
 public class UIDData {
 
-	private static String newline = System.getProperty("line.separator");
-	private static String separator = "#";
+	private static final String newline = System.getProperty("line.separator");
+	private static final String separator = "#";
 
-	private HashMap<String, byte[]> uids = new HashMap<String, byte[]>();
+	private final HashMap<String, byte[]> uids = new HashMap<String, byte[]>();
 	private String lastUsed = "";
 
 	public UIDData() {

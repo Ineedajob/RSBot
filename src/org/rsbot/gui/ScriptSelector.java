@@ -135,8 +135,9 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 				});
 				contextMenu.add(visit);
 
-				if (def.website == null || def.website.isEmpty())
+				if (def.website == null || def.website.isEmpty()) {
 					visit.setEnabled(false);
+				}
 
 				contextMenu.show(table, e.getX(), e.getY());
 			}

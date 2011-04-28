@@ -66,8 +66,7 @@ public class Environment extends MethodProvider {
 	 */
 	public boolean enableRandom(String name) {
 		for (final Random random : methods.bot.getScriptHandler().getRandoms()) {
-			if (random.getClass().getAnnotation(ScriptManifest.class).name()
-					.toLowerCase().equals(name.toLowerCase())) {
+			if (random.getClass().getAnnotation(ScriptManifest.class).name().toLowerCase().equals(name.toLowerCase())) {
 				if (random.isEnabled()) {
 					return true;
 				} else {
@@ -88,8 +87,7 @@ public class Environment extends MethodProvider {
 	 */
 	public boolean disableRandom(String name) {
 		for (final Random random : methods.bot.getScriptHandler().getRandoms()) {
-			if (random.getClass().getAnnotation(ScriptManifest.class).name()
-					.toLowerCase().equals(name.toLowerCase())) {
+			if (random.getClass().getAnnotation(ScriptManifest.class).name().toLowerCase().equals(name.toLowerCase())) {
 				if (!random.isEnabled()) {
 					return true;
 				} else {
@@ -113,14 +111,20 @@ public class Environment extends MethodProvider {
 	}
 
 	/**
-	 * Disables all random event solvers.
+	 * Disables all randoms.
+	 *
+	 * @deprecated Use {@link org.rsbot.script.methods.Environment#disableRandoms()}
 	 */
+	@Deprecated
 	public void disbleRandoms() {
+		disableRandoms();
+	}
+
+	public void disableRandoms() {
 		for (final Random random : methods.bot.getScriptHandler().getRandoms()) {
 			if (random.isEnabled()) {
 				random.setEnabled(false);
 			}
 		}
 	}
-
 }

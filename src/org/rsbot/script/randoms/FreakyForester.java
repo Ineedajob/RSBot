@@ -22,8 +22,7 @@ public class FreakyForester extends Random implements MessageListener {
 	private static final RSTile WALK_TO_TILE = new RSTile(2610, 4775);
 	private boolean unequip = false;
 	short[] phe = {};
-	Filter<RSNPC> pheasantFilter = new Filter<RSNPC>() {
-		@Override
+	final Filter<RSNPC> pheasantFilter = new Filter<RSNPC>() {
 		public boolean accept(RSNPC npc) {
 			// log("phe.length = " + phe.length);
 			Filter<RSModel> modelFilter = RSModel.newVertexFilter(phe);
@@ -325,7 +324,6 @@ public class FreakyForester extends Random implements MessageListener {
 		return false;
 	}
 
-	@Override
 	public void messageReceived(final MessageEvent e) {
 		final String serverString = e.getMessage();
 		if (serverString.contains("no ammo left")) {

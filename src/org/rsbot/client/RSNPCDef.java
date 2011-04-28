@@ -8,6 +8,4 @@ public interface RSNPCDef {
 
 	int getType();
 
-	int getLevel();
-
 }

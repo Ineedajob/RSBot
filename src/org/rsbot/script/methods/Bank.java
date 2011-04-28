@@ -12,7 +12,7 @@ public class Bank extends MethodProvider {
 
 	public static final int[] BANKERS = {44, 45, 494, 495, 499, 553, 958, 1036, 2271, 2354, 2355, 2759, 3824, 5488,
 			5901, 5912, 5913, 6362, 6532, 6533, 6534, 6535, 7605, 8948, 9710, 14367};
-	public static final int[] BANK_BOOTHS = {2213, 4483, 6084, 11402, 11758, 12759, 14367, 19230, 24914, 25808, 26972,
+	public static final int[] BANK_BOOTHS = {782, 2213, 4483, 6084, 11402, 11758, 12759, 14367, 19230, 24914, 25808, 26972,
 			27663, 29085, 34752, 35647, 36786};
 	public static final int[] BANK_CHESTS = {4483, 12308, 21301, 27663, 42192};
 	public static final int[] BANK_DEPOSIT_BOX = {9398, 20228, 26969, 36788};
@@ -384,7 +384,6 @@ public class Bank extends MethodProvider {
 				}
 				RSObject bankBooth = methods.objects.getNearest(BANK_BOOTHS);
 				RSNPC banker = methods.npcs.getNearest(new Filter<RSNPC>() {
-					@Override
 					public boolean accept(RSNPC npc) {
 						int id = npc.getID();
 						for (int banker : BANKERS) {
@@ -460,11 +459,11 @@ public class Bank extends MethodProvider {
 					}
 				} else {
 					if (bankBooth != null) {
-						methods.walking.walkTo(bankBooth.getLocation());
+						methods.walking.walkTileMM(bankBooth.getLocation());
 					} else if (banker != null) {
-						methods.walking.walkTo(banker.getLocation());
+						methods.walking.walkTileMM(banker.getLocation());
 					} else if (bankChest != null) {
-						methods.walking.walkTo(bankChest.getLocation());
+						methods.walking.walkTileMM(bankChest.getLocation());
 					}
 				}
 			}
@@ -745,7 +744,6 @@ public class Bank extends MethodProvider {
 	 * Gets the equipment items from the bank interface.
 	 *
 	 * @return All equipment items that are being worn.
-	 * @author LastCoder
 	 */
 	public RSItem[] getEquipmentItems() {
 		if (methods.interfaces.get(INTERFACE_EQUIPMENT).getComponent(

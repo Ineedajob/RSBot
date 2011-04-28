@@ -19,7 +19,7 @@ public class RSLocalPath extends RSPath {
 	public static final int WALL_WEST = 0x80;
 	public static final int BLOCKED = 0x100;
 
-	protected RSTile end;
+	protected final RSTile end;
 	protected RSTile base;
 	protected int[][] flags;
 	protected int offX, offY;
@@ -91,7 +91,8 @@ public class RSLocalPath extends RSPath {
 
 	protected class Node {
 
-		public int x, y;
+		public final int x;
+		public final int y;
 		public Node prev;
 		public double g, f;
 		public boolean border;

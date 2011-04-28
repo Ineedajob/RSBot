@@ -21,9 +21,8 @@ public class Walking extends MethodProvider {
 
 	/**
 	 * Creates a new path based on a provided array of tile waypoints.
-	 * 
-	 * @param tiles
-	 *            The waypoint tiles.
+	 *
+	 * @param tiles The waypoint tiles.
 	 * @return An RSTilePath.
 	 */
 	public RSTilePath newTilePath(final RSTile[] tiles) {
@@ -36,9 +35,8 @@ public class Walking extends MethodProvider {
 	/**
 	 * Generates a path from the player's current location to a destination
 	 * tile.
-	 * 
-	 * @param destination
-	 *            The destination tile.
+	 *
+	 * @param destination The destination tile.
 	 * @return The path as an RSPath.
 	 */
 	public RSPath getPath(final RSTile destination) {
@@ -46,22 +44,9 @@ public class Walking extends MethodProvider {
 	}
 
 	/**
-	 * Generates a path from the player's current location to a destination tile
-	 * using doors.
-	 * 
-	 * @param destination
-	 *            The destination tile.
-	 * @return The path as an RSPath.
-	 */
-	public RSPath getAdvancedPath(final RSTile destination) {
-		return new RSAdvancedPath(methods, destination);
-	}
-
-	/**
 	 * Determines whether or not a given tile is in the loaded map area.
-	 * 
-	 * @param tile
-	 *            The tile to check.
+	 *
+	 * @param tile The tile to check.
 	 * @return <tt>true</tt> if local; otherwise <tt>false</tt>.
 	 */
 	public boolean isLocal(final RSTile tile) {
@@ -73,9 +58,8 @@ public class Walking extends MethodProvider {
 
 	/**
 	 * Walks one tile towards the given destination using a generated path.
-	 * 
-	 * @param destination
-	 *            The destination tile.
+	 *
+	 * @param destination The destination tile.
 	 * @return <tt>true</tt> if the next tile was walked to; otherwise
 	 *         <tt>false</tt>.
 	 */
@@ -95,9 +79,8 @@ public class Walking extends MethodProvider {
 
 	/**
 	 * Walks to the given tile using the minimap with 1 tile randomness.
-	 * 
-	 * @param t
-	 *            The tile to walk to.
+	 *
+	 * @param t The tile to walk to.
 	 * @return <tt>true</tt> if the tile was clicked; otherwise <tt>false</tt>.
 	 * @see #walkTileMM(RSTile, int, int)
 	 */
@@ -107,13 +90,10 @@ public class Walking extends MethodProvider {
 
 	/**
 	 * Walks to the given tile using the minimap with given randomness.
-	 * 
-	 * @param t
-	 *            The tile to walk to.
-	 * @param x
-	 *            The x randomness (between 0 and x-1).
-	 * @param y
-	 *            The y randomness (between 0 and y-1).
+	 *
+	 * @param t The tile to walk to.
+	 * @param x The x randomness (between 0 and x-1).
+	 * @param y The y randomness (between 0 and y-1).
 	 * @return <tt>true</tt> if the tile was clicked; otherwise <tt>false</tt>.
 	 */
 	public boolean walkTileMM(final RSTile t, final int x, final int y) {
@@ -156,11 +136,9 @@ public class Walking extends MethodProvider {
 
 	/**
 	 * Walks to the given tile using the minimap with given randomness.
-	 * 
-	 * @param t
-	 *            The tile to walk to.
-	 * @param r
-	 *            The maximum deviation from the tile to allow.
+	 *
+	 * @param t The tile to walk to.
+	 * @param r The maximum deviation from the tile to allow.
 	 * @return <tt>true</tt> if the tile was clicked; otherwise <tt>false</tt>.
 	 */
 	public boolean walkTileMM(final RSTile t, final int r) {
@@ -177,29 +155,24 @@ public class Walking extends MethodProvider {
 			y -= random(0, r);
 		}
 		RSTile dest = new RSTile(x, y);
-		if (methods.players.getMyPlayer().getLocation().equals(dest)) {
-			return false;
-		}
-		return walkTileMM(dest, 0, 0);
+		return !methods.players.getMyPlayer().getLocation().equals(dest) && walkTileMM(dest, 0, 0);
 	}
 
 	/**
 	 * Walks to a tile using onScreen clicks and not the MiniMap. If the tile is
 	 * not on the screen, it will find the closest tile that is on screen and it
 	 * will walk there instead.
-	 * 
-	 * @param tileToWalk
-	 *            Tile to walk.
+	 *
+	 * @param tileToWalk Tile to walk.
 	 * @return True if successful.
 	 */
 	public boolean walkTileOnScreen(final RSTile tileToWalk) {
-		return methods.tiles.doAction(methods.calc.getTileOnScreen(tileToWalk),
-				"Walk ");
+		return methods.tiles.doAction(methods.calc.getTileOnScreen(tileToWalk), "Walk ");
 	}
 
 	/**
 	 * Rests until 100% energy
-	 * 
+	 *
 	 * @return <tt>true</tt> if rest was enabled; otherwise false.
 	 * @see #rest(int)
 	 */
@@ -209,21 +182,18 @@ public class Walking extends MethodProvider {
 
 	/**
 	 * Rests until a certain amount of energy is reached.
-	 * 
-	 * @param stopEnergy
-	 *            Amount of energy at which it should stop resting.
+	 *
+	 * @param stopEnergy Amount of energy at which it should stop resting.
 	 * @return <tt>true</tt> if rest was enabled; otherwise false.
 	 */
 	public boolean rest(final int stopEnergy) {
 		int energy = getEnergy();
 		for (int d = 0; d < 5; d++) {
-			methods.interfaces.getComponent(INTERFACE_RUN_ORB, 1).doAction(
-					"Rest");
+			methods.interfaces.getComponent(INTERFACE_RUN_ORB, 1).doAction("Rest");
 			methods.mouse.moveSlightly();
 			sleep(random(400, 600));
 			int anim = methods.players.getMyPlayer().getAnimation();
-			if (anim == 12108 || anim == 2033 || anim == 2716 || anim == 11786
-					|| anim == 5713) {
+			if (anim == 12108 || anim == 2033 || anim == 2716 || anim == 11786 || anim == 5713) {
 				break;
 			}
 			if (d == 4) {
@@ -239,9 +209,8 @@ public class Walking extends MethodProvider {
 
 	/**
 	 * Turns run on or off using the game GUI controls.
-	 * 
-	 * @param enable
-	 *            <tt>true</tt> to enable run, <tt>false</tt> to disable it.
+	 *
+	 * @param enable <tt>true</tt> to enable run, <tt>false</tt> to disable it.
 	 */
 	public void setRun(final boolean enable) {
 		if (isRunEnabled() != enable) {
@@ -252,9 +221,8 @@ public class Walking extends MethodProvider {
 	/**
 	 * Generates a path from the player's current location to a destination
 	 * tile.
-	 * 
-	 * @param destination
-	 *            The destination tile.
+	 *
+	 * @param destination The destination tile.
 	 * @return The path as an RSTile array.
 	 */
 	@Deprecated
@@ -271,13 +239,10 @@ public class Walking extends MethodProvider {
 
 	/**
 	 * Randomizes a single tile.
-	 * 
-	 * @param tile
-	 *            The RSTile to randomize.
-	 * @param maxXDeviation
-	 *            Max X distance from tile.getX().
-	 * @param maxYDeviation
-	 *            Max Y distance from tile.getY().
+	 *
+	 * @param tile          The RSTile to randomize.
+	 * @param maxXDeviation Max X distance from tile.getX().
+	 * @param maxYDeviation Max Y distance from tile.getY().
 	 * @return The randomized tile.
 	 * @deprecated Use
 	 *             {@link org.rsbot.script.wrappers.RSTile#randomize(int, int)}.
@@ -289,9 +254,8 @@ public class Walking extends MethodProvider {
 
 	/**
 	 * Returns the closest tile on the minimap to a given tile.
-	 * 
-	 * @param tile
-	 *            The destination tile.
+	 *
+	 * @param tile The destination tile.
 	 * @return Returns the closest tile to the destination on the minimap.
 	 */
 	public RSTile getClosestTileOnMap(final RSTile tile) {
@@ -307,7 +271,7 @@ public class Walking extends MethodProvider {
 
 	/**
 	 * Returns whether or not run is enabled.
-	 * 
+	 *
 	 * @return <tt>true</tt> if run mode is enabled; otherwise <tt>false</tt>.
 	 */
 	public boolean isRunEnabled() {
@@ -316,7 +280,7 @@ public class Walking extends MethodProvider {
 
 	/**
 	 * Returns the player's current run energy.
-	 * 
+	 *
 	 * @return The player's current run energy.
 	 */
 	public int getEnergy() {
@@ -331,7 +295,7 @@ public class Walking extends MethodProvider {
 	/**
 	 * Gets the destination tile (where the flag is on the minimap). If there is
 	 * no destination currently, null will be returned.
-	 * 
+	 *
 	 * @return The current destination tile, or null.
 	 */
 	public RSTile getDestination() {
@@ -345,9 +309,8 @@ public class Walking extends MethodProvider {
 
 	/**
 	 * Gets the collision flags for a given floor level in the loaded region.
-	 * 
-	 * @param plane
-	 *            The floor level (0, 1, 2 or 3).
+	 *
+	 * @param plane The floor level (0, 1, 2 or 3).
 	 * @return the collision flags.
 	 */
 	public int[][] getCollisionFlags(final int plane) {
@@ -357,9 +320,8 @@ public class Walking extends MethodProvider {
 	/**
 	 * Returns the collision map offset from the current region base on a given
 	 * plane.
-	 * 
-	 * @param plane
-	 *            The floor level.
+	 *
+	 * @param plane The floor level.
 	 * @return The offset as an RSTile.
 	 */
 	public RSTile getCollisionOffset(final int plane) {
@@ -372,13 +334,10 @@ public class Walking extends MethodProvider {
 
 	/**
 	 * Randomizes a single tile.
-	 * 
-	 * @param tile
-	 *            The RSTile to randomize.
-	 * @param maxXDeviation
-	 *            Max X distance from tile.getX().
-	 * @param maxYDeviation
-	 *            Max Y distance from tile.getY().
+	 *
+	 * @param tile          The RSTile to randomize.
+	 * @param maxXDeviation Max X distance from tile.getX().
+	 * @param maxYDeviation Max Y distance from tile.getY().
 	 * @return The randomized tile.
 	 * @deprecated Use
 	 *             {@link #randomize(org.rsbot.script.wrappers.RSTile, int, int)}
@@ -386,15 +345,14 @@ public class Walking extends MethodProvider {
 	 */
 	@Deprecated
 	public RSTile randomizeTile(RSTile tile, int maxXDeviation,
-			int maxYDeviation) {
+	                            int maxYDeviation) {
 		return randomize(tile, maxXDeviation, maxYDeviation);
 	}
 
 	/**
 	 * Walks towards the end of a path. This method should be looped.
-	 * 
-	 * @param path
-	 *            The path to walk along.
+	 *
+	 * @param path The path to walk along.
 	 * @return <tt>true</tt> if the next tile was reached; otherwise
 	 *         <tt>false</tt>.
 	 * @see #walkPathMM(RSTile[], int)
@@ -406,11 +364,9 @@ public class Walking extends MethodProvider {
 
 	/**
 	 * Walks towards the end of a path. This method should be looped.
-	 * 
-	 * @param path
-	 *            The path to walk along.
-	 * @param maxDist
-	 *            See {@link #nextTile(RSTile[], int)}.
+	 *
+	 * @param path    The path to walk along.
+	 * @param maxDist See {@link #nextTile(RSTile[], int)}.
 	 * @return <tt>true</tt> if the next tile was reached; otherwise
 	 *         <tt>false</tt>.
 	 * @see #walkPathMM(RSTile[], int, int)
@@ -422,13 +378,10 @@ public class Walking extends MethodProvider {
 
 	/**
 	 * Walks towards the end of a path. This method should be looped.
-	 * 
-	 * @param path
-	 *            The path to walk along.
-	 * @param randX
-	 *            The X value to randomize each tile in the path by.
-	 * @param randY
-	 *            The Y value to randomize each tile in the path by.
+	 *
+	 * @param path  The path to walk along.
+	 * @param randX The X value to randomize each tile in the path by.
+	 * @param randY The Y value to randomize each tile in the path by.
 	 * @return <tt>true</tt> if the next tile was reached; otherwise
 	 *         <tt>false</tt>.
 	 * @see #walkPathMM(RSTile[], int, int, int)
@@ -440,15 +393,11 @@ public class Walking extends MethodProvider {
 
 	/**
 	 * Walks towards the end of a path. This method should be looped.
-	 * 
-	 * @param path
-	 *            The path to walk along.
-	 * @param maxDist
-	 *            See {@link #nextTile(RSTile[], int)}.
-	 * @param randX
-	 *            The X value to randomize each tile in the path by.
-	 * @param randY
-	 *            The Y value to randomize each tile in the path by.
+	 *
+	 * @param path    The path to walk along.
+	 * @param maxDist See {@link #nextTile(RSTile[], int)}.
+	 * @param randX   The X value to randomize each tile in the path by.
+	 * @param randY   The Y value to randomize each tile in the path by.
 	 * @return <tt>true</tt> if the next tile was reached; otherwise
 	 *         <tt>false</tt>.
 	 */
@@ -464,9 +413,8 @@ public class Walking extends MethodProvider {
 
 	/**
 	 * Walks to the end of a path via the screen. This method should be looped.
-	 * 
-	 * @param path
-	 *            The path to walk along.
+	 *
+	 * @param path The path to walk along.
 	 * @return <tt>true</tt> if the next tile was reached; otherwise
 	 *         <tt>false</tt>.
 	 * @see #walkPathOnScreen(RSTile[], int)
@@ -480,11 +428,9 @@ public class Walking extends MethodProvider {
 	 * Walks a path using onScreen clicks and not the MiniMap. If the next tile
 	 * is not on the screen, it will find the closest tile that is on screen and
 	 * it will walk there instead.
-	 * 
-	 * @param path
-	 *            Path to walk.
-	 * @param maxDist
-	 *            Max distance between tiles in the path.
+	 *
+	 * @param path    Path to walk.
+	 * @param maxDist Max distance between tiles in the path.
 	 * @return True if successful.
 	 */
 	@Deprecated
@@ -499,9 +445,8 @@ public class Walking extends MethodProvider {
 
 	/**
 	 * Reverses an array of tiles.
-	 * 
-	 * @param other
-	 *            The <tt>RSTile</tt> path array to reverse.
+	 *
+	 * @param other The <tt>RSTile</tt> path array to reverse.
 	 * @return The reverse <tt>RSTile</tt> path for the given <tt>RSTile</tt>
 	 *         path.
 	 */
@@ -516,9 +461,8 @@ public class Walking extends MethodProvider {
 
 	/**
 	 * Returns the next tile to walk to on a path.
-	 * 
-	 * @param path
-	 *            The path.
+	 *
+	 * @param path The path.
 	 * @return The next <tt>RSTile</tt> to walk to on the provided path; or
 	 *         <code>null</code> if far from path or at destination.
 	 * @see #nextTile(RSTile[], int)
@@ -530,14 +474,12 @@ public class Walking extends MethodProvider {
 
 	/**
 	 * Returns the next tile to walk to in a path.
-	 * 
-	 * @param path
-	 *            The path.
-	 * @param skipDist
-	 *            If the distance to the tile after the next in the path is less
-	 *            than or equal to this distance, the tile after next will be
-	 *            returned rather than the next tile, skipping one. This
-	 *            interlacing aids continuous walking.
+	 *
+	 * @param path     The path.
+	 * @param skipDist If the distance to the tile after the next in the path is less
+	 *                 than or equal to this distance, the tile after next will be
+	 *                 returned rather than the next tile, skipping one. This
+	 *                 interlacing aids continuous walking.
 	 * @return The next <tt>RSTile</tt> to walk to on the provided path; or
 	 *         <code>null</code> if far from path or at destination.
 	 */
@@ -574,18 +516,15 @@ public class Walking extends MethodProvider {
 
 	/**
 	 * Randomizes a path of tiles.
-	 * 
-	 * @param path
-	 *            The RSTiles to randomize.
-	 * @param maxXDeviation
-	 *            Max X distance from tile.getX().
-	 * @param maxYDeviation
-	 *            Max Y distance from tile.getY().
+	 *
+	 * @param path          The RSTiles to randomize.
+	 * @param maxXDeviation Max X distance from tile.getX().
+	 * @param maxYDeviation Max Y distance from tile.getY().
 	 * @return The new, randomized path.
 	 */
 	@Deprecated
 	public RSTile[] randomizePath(RSTile[] path, int maxXDeviation,
-			int maxYDeviation) {
+	                              int maxYDeviation) {
 		RSTile[] rez = new RSTile[path.length];
 		for (int i = 0; i < path.length; i++) {
 			rez[i] = randomize(path[i], maxXDeviation, maxYDeviation);
@@ -595,9 +534,8 @@ public class Walking extends MethodProvider {
 
 	/**
 	 * Returns the web of a path.
-	 * 
-	 * @param to
-	 *            The tile to walk to.
+	 *
+	 * @param to The tile to walk to.
 	 * @return Returns the web allocation.
 	 */
 	public Web getWebPath(final RSTile to) {

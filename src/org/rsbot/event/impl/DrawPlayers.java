@@ -42,9 +42,9 @@ public class DrawPlayers implements PaintListener {
 			boolean raised = false;
 			if (player.getAnimation() != -1 || player.getGraphic() != -1 || player.getNPCID() != -1) {
 				if (player.getNPCID() != -1) {
-					s = "(NPC: " + player.getNPCID() + " | A: " + player.getAnimation() + " | G: " + player.getGraphic() + ")";
+					s = "(NPC: " + player.getNPCID() + " | L: " + player.getLevel() + " | A: " + player.getAnimation() + " | G: " + player.getGraphic() + ")";
 				} else {
-					s = "(A: " + player.getAnimation() + " | G: " + player.getGraphic() + ")";
+					s = "(A: " + player.getAnimation() + " | L: " + player.getLevel() + " | G: " + player.getGraphic() + ")";
 				}
 				render.drawString(s, location.x - metrics.stringWidth(s) / 2, location.y - metrics.getHeight() * 3 / 2);
 				raised = true;

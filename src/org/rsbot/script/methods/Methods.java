@@ -6,6 +6,7 @@ import java.awt.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+
 /**
  * Provides access to methods that can be used by RSBot scripts.
  */
@@ -14,11 +15,11 @@ public class Methods {
 	/**
 	 * The logger instance
 	 */
-	protected Logger log = Logger.getLogger(getClass().getName());
+	protected final Logger log = Logger.getLogger(getClass().getName());
 	/**
 	 * The instance of {@link java.util.Random} for random number generation.
 	 */
-	protected static java.util.Random random = new java.util.Random();
+	protected static final java.util.Random random = new java.util.Random();
 	/**
 	 * The singleton of Skills
 	 */
@@ -139,16 +140,12 @@ public class Methods {
 	 * The singleton of Trade
 	 */
 	protected Trade trade;
-	/**
-	 * The singleton of Doors
-	 */
-	protected Doors doors;
+
 
 	/**
 	 * For internal use only: initializes the method providers.
-	 * 
-	 * @param ctx
-	 *            The MethodContext.
+	 *
+	 * @param ctx The MethodContext.
 	 */
 	public void init(MethodContext ctx) {
 		this.skills = ctx.skills;
@@ -181,12 +178,11 @@ public class Methods {
 		this.prayer = ctx.prayer;
 		this.friendChat = ctx.friendChat;
 		this.trade = ctx.trade;
-		this.doors = ctx.doors;
 	}
 
 	/**
 	 * Returns the current client's local player.
-	 * 
+	 *
 	 * @return The current client's <tt>RSPlayer</tt>.
 	 * @see Players#getMyPlayer()
 	 */
@@ -197,11 +193,9 @@ public class Methods {
 	/**
 	 * Returns a random integer with min as the inclusive lower bound and max as
 	 * the exclusive upper bound.
-	 * 
-	 * @param min
-	 *            The inclusive lower bound.
-	 * @param max
-	 *            The exclusive upper bound.
+	 *
+	 * @param min The inclusive lower bound.
+	 * @param max The exclusive upper bound.
 	 * @return Random integer min <= n < max.
 	 */
 	public static int random(int min, int max) {
@@ -211,9 +205,8 @@ public class Methods {
 
 	/**
 	 * Checks for the existence of a NPC.
-	 * 
-	 * @param npc
-	 *            The NPC to check for.
+	 *
+	 * @param npc The NPC to check for.
 	 * @return <tt>true</tt> if found.
 	 */
 	public boolean verify(RSNPC npc) {
@@ -222,9 +215,8 @@ public class Methods {
 
 	/**
 	 * Checks for the existence of a RSObject.
-	 * 
-	 * @param o
-	 *            The RSObject to check for.
+	 *
+	 * @param o The RSObject to check for.
 	 * @return <tt>true</tt> if found.
 	 */
 	public boolean verify(RSObject o) {
@@ -233,9 +225,8 @@ public class Methods {
 
 	/**
 	 * Checks for the existence of a RSTile.
-	 * 
-	 * @param t
-	 *            The RSTile to check for.
+	 *
+	 * @param t The RSTile to check for.
 	 * @return <tt>true</tt> if found.
 	 */
 	public boolean verify(RSTile t) {
@@ -244,9 +235,8 @@ public class Methods {
 
 	/**
 	 * Checks for the existence of a RSGroundItem.
-	 * 
-	 * @param i
-	 *            The RSGroundItem to check for.
+	 *
+	 * @param i The RSGroundItem to check for.
 	 * @return <tt>true</tt> if found.
 	 */
 	public boolean verify(RSGroundItem i) {
@@ -256,11 +246,9 @@ public class Methods {
 	/**
 	 * Returns a random double with min as the inclusive lower bound and max as
 	 * the exclusive upper bound.
-	 * 
-	 * @param min
-	 *            The inclusive lower bound.
-	 * @param max
-	 *            The exclusive upper bound.
+	 *
+	 * @param min The inclusive lower bound.
+	 * @param max The exclusive upper bound.
 	 * @return Random double min <= n < max.
 	 */
 	public static double random(double min, double max) {
@@ -269,11 +257,9 @@ public class Methods {
 
 	/**
 	 * Pauses execution for a random amount of time between two values.
-	 * 
-	 * @param minSleep
-	 *            The minimum time to sleep.
-	 * @param maxSleep
-	 *            The maximum time to sleep.
+	 *
+	 * @param minSleep The minimum time to sleep.
+	 * @param maxSleep The maximum time to sleep.
 	 * @see #sleep(int)
 	 * @see #random(int, int)
 	 */
@@ -283,9 +269,8 @@ public class Methods {
 
 	/**
 	 * Pauses execution for a given number of milliseconds.
-	 * 
-	 * @param toSleep
-	 *            The time to sleep in milliseconds.
+	 *
+	 * @param toSleep The time to sleep in milliseconds.
 	 */
 	public static void sleep(int toSleep) {
 		try {
@@ -304,9 +289,8 @@ public class Methods {
 
 	/**
 	 * Prints to the RSBot log.
-	 * 
-	 * @param message
-	 *            Object to log.
+	 *
+	 * @param message Object to log.
 	 */
 	public void log(Object message) {
 		log.info(message.toString());
@@ -314,14 +298,12 @@ public class Methods {
 
 	/**
 	 * Prints to the RSBot log with a font color
-	 * 
-	 * @param color
-	 *            The color of the font
-	 * @param message
-	 *            Object to log
+	 *
+	 * @param color   The color of the font
+	 * @param message Object to log
 	 */
 	public void log(Color color, Object message) {
-		Object[] parameters = { color };
+		Object[] parameters = {color};
 		log.log(Level.INFO, message.toString(), parameters);
 	}
 }

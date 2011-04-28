@@ -14,9 +14,9 @@ import org.rsbot.script.wrappers.RSNPC;
 public class QuizSolver extends Random {
 
 	public class QuizQuestion {
-		int ID_One;
-		int ID_Two;
-		int ID_Three;
+		final int ID_One;
+		final int ID_Two;
+		final int ID_Three;
 		int answer;
 
 		public QuizQuestion(final int One, final int Two, final int Three) {
@@ -101,14 +101,14 @@ public class QuizSolver extends Random {
 		}
 	}
 
-	public int quizInterface = 191;
-	public int[] Fish = {6190, 6189};
-	public int[] Jewelry = {6198, 6197};
-	public int[] Weapons = {6192, 6194};
-	public int[] Farming = {6195, 6196};
-	public int[][] items = {Fish, Jewelry, Weapons, Farming};
+	public final int quizInterface = 191;
+	public final int[] Fish = {6190, 6189};
+	public final int[] Jewelry = {6198, 6197};
+	public final int[] Weapons = {6192, 6194};
+	public final int[] Farming = {6195, 6196};
+	public final int[][] items = {Fish, Jewelry, Weapons, Farming};
 
-	public String[] names = {"Fish", "Jewelry", "Weapons", "Farming"};
+	public final String[] names = {"Fish", "Jewelry", "Weapons", "Farming"};
 
 	@Override
 	public boolean activateCondition() {

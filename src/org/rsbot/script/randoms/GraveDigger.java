@@ -32,8 +32,8 @@ public class GraveDigger extends Random {
 		int graveID = -1;
 
 		// General group data
-		int graveStoneModelID;
-		int[] coffinModelIDs;
+		final int graveStoneModelID;
+		final int[] coffinModelIDs;
 
 		public Group(final int graveStoneModelID, final int[] coffinModelIDs) {
 			this.graveStoneModelID = graveStoneModelID;

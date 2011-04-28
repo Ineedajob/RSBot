@@ -8,7 +8,7 @@ import java.util.*;
 
 /**
  * The web generation and wrapper control.
- * 
+ *
  * @author Timer
  * @author Aut0r
  */
@@ -31,10 +31,9 @@ public class Web extends WebSkeleton {
 	private WebMap map = null;
 
 	/**
-	 * @param ctx
-	 *            The MethodContext.
-	 * @param end
-	 *            The end tile you wish to result at.
+	 * @param ctx   The MethodContext.
+	 * @param start The tile you wish to start the web at.
+	 * @param end   The end tile you wish to result at.
 	 */
 	public Web(final MethodContext ctx, final RSTile start, final RSTile end) {
 		super(ctx);
@@ -45,7 +44,7 @@ public class Web extends WebSkeleton {
 
 	/**
 	 * Returns if the map needs set.
-	 * 
+	 *
 	 * @return <tt>true</tt> if the map needs set, otherwise false.
 	 */
 	public boolean mapNeedsSet() {
@@ -64,16 +63,13 @@ public class Web extends WebSkeleton {
 				final int yOff = 4168;
 				FileInputStream fis = new FileInputStream(mapData);
 				DataInputStream dis = new DataInputStream(fis);
-				BufferedReader br = new BufferedReader(new InputStreamReader(
-						dis));
+				BufferedReader br = new BufferedReader(new InputStreamReader(dis));
 				String strLine = "";
 				while ((strLine = br.readLine()) != null) {
 					try {
 						String[] strArr = strLine.split("=");
-						if (strArr != null && strArr.length == 3) { // Normal Z
-							String[] spl = strArr[2] != null
-									&& strArr[2].length() > 0 ? strArr[2]
-									.split(",") : new String[] {};
+						if (strArr != null && strArr.length == 3) {
+							String[] spl = strArr[2].split(",");
 							int[] nA = new int[spl.length];
 							int i = 0;
 							for (String iSPL : spl) {
@@ -90,15 +86,11 @@ public class Web extends WebSkeleton {
 									break;
 								}
 							}
-							teTiles.add(new WebTile(new RSTile(xOff
-									+ Integer.parseInt(strArr[0]), yOff
-									- Integer.parseInt(strArr[1]), 0), teTiles
-									.size(), nAA, null));
-						} else if (strArr != null && strArr.length == 4) { // Modified
-																			// Plane
-							String[] spl = strArr[3] != null
-									&& strArr[3].length() > 0 ? strArr[3]
-									.split(",") : new String[] {};
+							teTiles.add(new WebTile(new RSTile(xOff + Integer
+									.parseInt(strArr[0]), yOff - Integer
+									.parseInt(strArr[1])), nAA, null));
+						} else if (strArr != null && strArr.length == 5) {
+							String[] spl = strArr[4].split(",");
 							int[] nA = new int[spl.length];
 							int i = 0;
 							for (String iSPL : spl) {
@@ -115,37 +107,9 @@ public class Web extends WebSkeleton {
 									break;
 								}
 							}
-							teTiles.add(new WebTile(new RSTile(xOff
-									+ Integer.parseInt(strArr[0]), yOff
-									- Integer.parseInt(strArr[1]), Integer
-									.parseInt(strArr[2])), teTiles.size(), nAA,
-									null));
-						} else if (strArr != null && strArr.length == 6) { // Ladder
-							String[] spl = strArr[5] != null
-									&& strArr[5].length() > 0 ? strArr[5]
-									.split(",") : new String[] {};
-							int[] nA = new int[spl.length];
-							int i = 0;
-							for (String iSPL : spl) {
-								if (iSPL.length() > 0) {
-									nA[i] = Integer.parseInt(iSPL);
-									i++;
-								}
-							}
-							int[] nAA = new int[i];
-							for (int na : nA) {
-								i--;
-								nAA[i] = na;
-								if (i == 0) {
-									break;
-								}
-							}
-							teTiles.add(new WebLadder(new RSTile(xOff
-									+ Integer.parseInt(strArr[0]), yOff
-									- Integer.parseInt(strArr[1]), Integer
-									.parseInt(strArr[2])), teTiles.size(),
-									Integer.parseInt(strArr[3]), Integer
-											.parseInt(strArr[4]), nAA));
+							teTiles.add(new WebTile(new RSTile(xOff + Integer
+									.parseInt(strArr[0]), yOff - Integer
+									.parseInt(strArr[1])), nAA, null));
 						}
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -165,9 +129,8 @@ public class Web extends WebSkeleton {
 
 	/**
 	 * Traverses on the web path.
-	 * 
-	 * @param options
-	 *            The flags to take into account while traversing the path.
+	 *
+	 * @param options The flags to take into account while traversing the path.
 	 * @return <tt>true</tt> if walked, otherwise false.
 	 */
 	public boolean traverse(EnumSet<TraversalOption> options) {
@@ -176,8 +139,6 @@ public class Web extends WebSkeleton {
 
 	/**
 	 * Gets the path between two tiles.
-	 * 
-	 * @return The web tile path.
 	 */
 	public void getPath() {
 		try {
@@ -195,7 +156,7 @@ public class Web extends WebSkeleton {
 				return;
 			}
 			if (start.equals(end)) {
-				path = new WebPath(methods, new WebTile[] { end });
+				path = new WebPath(methods, new WebTile[]{end});
 				return;
 			}
 			HashSet<WebTile> open = new HashSet<WebTile>();
@@ -247,9 +208,8 @@ public class Web extends WebSkeleton {
 
 	/**
 	 * Gets the lowest f score.
-	 * 
-	 * @param open
-	 *            The set of web tiles.
+	 *
+	 * @param open The set of web tiles.
 	 * @return The lowest f score tile.
 	 */
 	private WebTile lowest_f(Set<WebTile> open) {
@@ -264,7 +224,7 @@ public class Web extends WebSkeleton {
 
 	/**
 	 * Returns the array of tiles in the web.
-	 * 
+	 *
 	 * @return The array of tiles.
 	 */
 	private RSTile[] path() {
@@ -273,7 +233,7 @@ public class Web extends WebSkeleton {
 
 	/**
 	 * Returns a map.
-	 * 
+	 *
 	 * @return The web map.
 	 */
 	public WebMap map() {
@@ -285,9 +245,8 @@ public class Web extends WebSkeleton {
 
 	/**
 	 * Reconstructs the path.
-	 * 
-	 * @param end
-	 *            The final web tile.
+	 *
+	 * @param end The final web tile.
 	 * @return The path.
 	 */
 	private WebTile[] path(WebTile end) {
@@ -302,7 +261,7 @@ public class Web extends WebSkeleton {
 
 	/**
 	 * Gets the next start tile.
-	 * 
+	 *
 	 * @return The start tile.
 	 */
 	public RSTile getStart() {
@@ -311,7 +270,7 @@ public class Web extends WebSkeleton {
 
 	/**
 	 * The end tile.
-	 * 
+	 *
 	 * @return The end tile.
 	 */
 	public RSTile getEnd() {
@@ -321,7 +280,7 @@ public class Web extends WebSkeleton {
 
 	/**
 	 * Returns if you're at your destination.
-	 * 
+	 *
 	 * @return <tt>true</tt> if at destination, otherwise false.
 	 */
 	public boolean atDestination() {
