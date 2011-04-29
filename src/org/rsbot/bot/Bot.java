@@ -76,9 +76,7 @@ public class Bot {
 			public void run() {
 				try {
 					setClient((Client) loader.getClient());
-					if (!disableCanvas) {
-						resize(size.width, size.height);
-					}
+					resize(size.width, size.height);
 					methods.menu.setupListener();
 				} catch (Exception ignored) {
 				}
