@@ -47,21 +47,17 @@ public class GraveDigger extends Random {
 		public boolean isGroup(final int[] coffinModelIDs) {
 			for (final int modelID : this.coffinModelIDs) {
 				boolean found = false;
-
 				for (final int coffinModelID : coffinModelIDs) {
 					if (modelID == coffinModelID) {
 						found = true;
 					}
 				}
-
 				if (!found) {
 					return false;
 				}
 			}
-
 			return true;
 		}
-
 	}
 
 	private static final int[] coffinIDs = {7587, 7588, 7589, 7590, 7591};
@@ -103,8 +99,7 @@ public class GraveDigger extends Random {
 
 	@Override
 	public boolean activateCondition() {
-		if ((settings.getSetting(696) != 0)
-				&& (objects.getNearest(12731) != null)) {
+		if ((settings.getSetting(696) != 0) && (objects.getNearest(12731) != null)) {
 			tmpID = tmpStatus = -1;
 			return true;
 		}
@@ -132,31 +127,23 @@ public class GraveDigger extends Random {
 			}
 			if (interfaces.get(Bank.INTERFACE_DEPOSIT_BOX).isValid()) {
 				sleep(random(700, 1200));
-				interfaces.get(11).getComponent(17).getComponent(27)
-						.doAction("Dep");
+				interfaces.get(11).getComponent(17).getComponent(27).doAction("Dep");
 				sleep(random(700, 1200));
-				interfaces.get(11).getComponent(17).getComponent(26)
-						.doAction("Dep");
+				interfaces.get(11).getComponent(17).getComponent(26).doAction("Dep");
 				sleep(random(700, 1200));
-				interfaces.get(11).getComponent(17).getComponent(25)
-						.doAction("Dep");
+				interfaces.get(11).getComponent(17).getComponent(25).doAction("Dep");
 				sleep(random(700, 1200));
-				interfaces.get(11).getComponent(17).getComponent(24)
-						.doAction("Dep");
+				interfaces.get(11).getComponent(17).getComponent(24).doAction("Dep");
 				sleep(random(700, 1200));
-				interfaces.get(11).getComponent(17).getComponent(23)
-						.doAction("Dep");
+				interfaces.get(11).getComponent(17).getComponent(23).doAction("Dep");
 				sleep(random(700, 1200));
 				interfaces.getComponent(11, 15).doClick();
 				return random(500, 700);
 			}
 			return (random(2000, 3000));
 		}
-
 		if (getMyPlayer().isMoving()) {
-
 		} else if (getMyPlayer().getAnimation() == 827) {
-
 		} else if (interfaces.get(242).isValid()) {
 			// Check if we finished before
 			if (interfaces.get(242).containsText("ready to leave")) {
@@ -180,17 +167,11 @@ public class GraveDigger extends Random {
 		} else if (interfaces.get(GraveDigger.INTERFACE_CHECK_COFFIN).isValid()) {
 			if (tmpID >= 0) {
 				final int[] items = new int[GraveDigger.INTERFACE_CHECK_COFFIN_ITEMS.length];
-
-				RSInterface inters = interfaces
-						.get(GraveDigger.INTERFACE_CHECK_COFFIN);
+				RSInterface inters = interfaces.get(GraveDigger.INTERFACE_CHECK_COFFIN);
 				for (int i = 0; i < GraveDigger.INTERFACE_CHECK_COFFIN_ITEMS.length; i++) {
-					items[i] = inters.getComponent(
-							GraveDigger.INTERFACE_CHECK_COFFIN_ITEMS[i])
-							.getComponentID();
+					items[i] = inters.getComponent(GraveDigger.INTERFACE_CHECK_COFFIN_ITEMS[i]).getComponentID();
 				}
-
-				for (final Iterator<Group> it = groups.iterator(); it.hasNext()
-						&& (tmpID >= 0);) {
+				for (final Iterator<Group> it = groups.iterator(); it.hasNext() && (tmpID >= 0);) {
 					final Group g = it.next();
 					if (g.isGroup(items)) {
 						g.coffinID = tmpID;
@@ -198,21 +179,15 @@ public class GraveDigger extends Random {
 					}
 				}
 			}
-			atCloseInterface(GraveDigger.INTERFACE_CHECK_COFFIN,
-					GraveDigger.INTERFACE_CHECK_COFFIN_CLOSE);
-		} else if (interfaces.get(GraveDigger.INTERFACE_READ_GRAVESTONE)
-				.isValid()) {
-			final int modelID = interfaces
-					.get(GraveDigger.INTERFACE_READ_GRAVESTONE)
-					.getComponent(GraveDigger.INTERFACE_READ_GRAVESTONE_MODEL)
-					.getComponentID();
+			atCloseInterface(GraveDigger.INTERFACE_CHECK_COFFIN, GraveDigger.INTERFACE_CHECK_COFFIN_CLOSE);
+		} else if (interfaces.get(GraveDigger.INTERFACE_READ_GRAVESTONE).isValid()) {
+			final int modelID = interfaces.get(GraveDigger.INTERFACE_READ_GRAVESTONE).getComponent(GraveDigger.INTERFACE_READ_GRAVESTONE_MODEL).getComponentID();
 			for (final Group g : groups) {
 				if (g.isGroup(modelID)) {
 					g.graveID = tmpID;
 				}
 			}
-			atCloseInterface(GraveDigger.INTERFACE_READ_GRAVESTONE,
-					GraveDigger.INTERFACE_READ_GRAVESTONE_CLOSE);
+			atCloseInterface(GraveDigger.INTERFACE_READ_GRAVESTONE, GraveDigger.INTERFACE_READ_GRAVESTONE_CLOSE);
 		} else if ((tmpStatus == 0) && (tmpID != -1)) {
 			for (final Group g : groups) {
 				if (g.graveID == tmpID) {
@@ -222,33 +197,26 @@ public class GraveDigger extends Random {
 						game.logout(false);
 						return -1;
 					}
-
 					// if (isItemSelected() > 0) {
 					// inventory.atItem(GraveDigger.coffinIDs[g.coffinID],
 					// "Cancel");
 					// }
 
-					inventory.useItem(inventory
-							.getItem(GraveDigger.coffinIDs[g.coffinID]), obj);
+					inventory.useItem(inventory.getItem(GraveDigger.coffinIDs[g.coffinID]), obj);
 
 					// Wait for about 10s to finish
 					final long cTime = System.currentTimeMillis();
 					while (System.currentTimeMillis() - cTime < 10000) {
-						if (inventory
-								.getItem(GraveDigger.coffinIDs[g.coffinID]) == null) {
+						if (inventory.getItem(GraveDigger.coffinIDs[g.coffinID]) == null) {
 							break;
 						}
-
 						sleep(random(400, 700));
 					}
-
 					break;
 				}
 			}
-
 			tmpID = -1;
-		} else if ((tmpStatus == -1)
-				&& (objects.getNearest(GraveDigger.filledGraveIDs) != null)) {
+		} else if ((tmpStatus == -1) && (objects.getNearest(GraveDigger.filledGraveIDs) != null)) {
 			final RSObject obj = objects.getNearest(GraveDigger.filledGraveIDs);
 			if ((obj == null) || !setObjectInScreen(obj)) {
 				log.severe("Couldn't find grave, shutting down.");
@@ -256,26 +224,21 @@ public class GraveDigger extends Random {
 				return -1;
 			}
 			obj.doAction("Take-coffin");
-		} else if ((tmpStatus == 0)
-				&& (objects.getNearest(GraveDigger.emptyGraveIDs) != null)) {
+		} else if ((tmpStatus == 0) && (objects.getNearest(GraveDigger.emptyGraveIDs) != null)) {
 			final RSObject obj = objects.getNearest(GraveDigger.emptyGraveIDs);
 			final int id = obj.getID();
 			for (int i = 0; i < GraveDigger.emptyGraveIDs.length; i++) {
 				if (GraveDigger.emptyGraveIDs[i] == id) {
-					final RSObject objGS = objects
-							.getNearest(GraveDigger.graveStoneIDs[i]);
+					final RSObject objGS = objects.getNearest(GraveDigger.graveStoneIDs[i]);
 					if ((objGS == null) || !setObjectInScreen(objGS)) {
 						log.severe("Couldn't find grave stone, shutting down.");
 						game.logout(false);
 						return -1;
 					}
-
 					tmpID = obj.getID();
-
 					// if (Bot.getClient().isItemSelected() == 1) {
 					// objects.atObject(objGS, "Use");
 					// }
-
 					objGS.doAction("Read");
 				}
 			}
@@ -284,23 +247,19 @@ public class GraveDigger extends Random {
 			for (int i = 0; i < GraveDigger.coffinIDs.length; i++) {
 				agc.add(i);
 			}
-
 			for (final Group g : groups) {
 				if (g.coffinID != -1) {
 					agc.remove(new Integer(g.coffinID));
 				}
 			}
-
 			if ((tmpStatus == -1) && (agc.size() == 0)) {
 				tmpStatus++;
 			}
-
 			while (tmpStatus == -1) {
 				final int i = random(0, agc.size());
 				if (inventory.getCount(GraveDigger.coffinIDs[agc.get(i)]) > 0) {
 					tmpID = agc.get(i);
-					inventory.getItem(GraveDigger.coffinIDs[agc.get(i)])
-							.doAction("Check");
+					inventory.getItem(GraveDigger.coffinIDs[agc.get(i)]).doAction("Check");
 
 					return random(1800, 2400); // We are looking at the model
 				}
@@ -346,16 +305,11 @@ public class GraveDigger extends Random {
 				switch (i) {
 					case 0:
 						camera.turnTo(ch);
-
 						sleep(random(200, 500));
-
 						break;
 					case 1:
-						walking.walkTileMM(walking.getClosestTileOnMap(ch
-								.getLocation().randomize(2, 2)));
-
+						walking.walkTileMM(walking.getClosestTileOnMap(ch.getLocation().randomize(2, 2)));
 						sleep(random(1800, 2000));
-
 						while (getMyPlayer().isMoving()) {
 							sleep(random(200, 500));
 						}
@@ -363,10 +317,8 @@ public class GraveDigger extends Random {
 					default:
 						return false;
 				}
-
 			}
 		}
-
 		return true;
 	}
 
@@ -378,13 +330,10 @@ public class GraveDigger extends Random {
 				switch (i) {
 					case 0:
 						camera.turnTo(obj);
-
 						sleep(random(200, 500));
-
 						break;
 					case 1:
-						walking.walkTileMM(walking.getClosestTileOnMap(obj
-								.getLocation().randomize(2, 2)));
+						walking.walkTileMM(walking.getClosestTileOnMap(obj.getLocation().randomize(2, 2)));
 						sleep(random(1800, 2000));
 						while (getMyPlayer().isMoving()) {
 							sleep(random(200, 500));
@@ -393,10 +342,8 @@ public class GraveDigger extends Random {
 					default:
 						return false;
 				}
-
 			}
 		}
-
 		return true;
 	}
 }
