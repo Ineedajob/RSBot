@@ -12,7 +12,7 @@ import java.util.Hashtable;
 public class Canvas extends java.awt.Canvas {
 	public static final int GRAPHICS_DELAY = 6;
 	public static final int SLOW_GRAPHICS_DELAY = 50;
-	public static final int DISABLE_GRAPHICS_DELAY = 2000;
+	public static final int DISABLE_GRAPHICS_DELAY = 100;
 
 	private static final long serialVersionUID = -2276037172265300477L;
 
