@@ -15,11 +15,7 @@ import org.rsbot.util.UpdateUtil;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowStateListener;
+import java.awt.event.*;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -44,6 +40,7 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 	private boolean showAds = true;
 	private boolean disableConfirmations = false;
 	private static final ScriptDeliveryNetwork sdn = ScriptDeliveryNetwork.getInstance();
+	private final List<Bot> noModificationBots = new ArrayList<Bot>();
 
 	public BotGUI() {
 		init();
@@ -143,8 +140,10 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 						boolean selected = ((JCheckBoxMenuItem) evt.getSource()).isSelected();
 						current.overrideInput = selected;
 						toolBar.setOverrideInput(selected);
-					} else if (option.equals("Less CPU")) {
-						log.info("Minimize the window to significantly reduce CPU usage.");
+					} else if (option.equals("Disable Rendering")) {
+						current.disableRendering = ((JCheckBoxMenuItem) evt.getSource()).isSelected();
+					} else if (option.equals("Disable Canvas")) {
+						current.disableCanvas = ((JCheckBoxMenuItem) evt.getSource()).isSelected();
 					} else if (option.equals("Disable Anti-Randoms")) {
 						current.disableRandoms = ((JCheckBoxMenuItem) evt.getSource()).isSelected();
 					} else if (option.equals("Disable Auto Login")) {
@@ -354,12 +353,23 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 	}
 
 	private void lessCpu(final boolean enable) {
+		if (enable) {
+			noModificationBots.clear();
+			for (final Bot bot : bots) {
+				if (bot.disableCanvas || bot.disableRendering) {
+					noModificationBots.add(bot);
+				}
+			}
+		}
 		for (final Bot bot : bots) {
-			bot.disableCanvas = enable;
-			bot.disableRendering = enable;
+			boolean restore = !enable && noModificationBots.contains(bot);
+			int botIndex = noModificationBots.indexOf(bot);
+			Bot rBot = restore ? noModificationBots.get(botIndex) : null;
+			bot.disableCanvas = rBot != null ? rBot.disableCanvas : enable;
+			bot.disableRendering = rBot != null ? rBot.disableRendering : enable;
 		}
 	}
-	
+
 	private void init() {
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		addWindowListener(new WindowAdapter() {
@@ -370,15 +380,14 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 			}
 		});
 		addWindowStateListener(new WindowStateListener() {
-			@Override
 			public void windowStateChanged(WindowEvent arg0) {
-				switch (arg0.getID()){
-				case WindowEvent.WINDOW_ICONIFIED:
-					lessCpu(true);
-					break;
-				case WindowEvent.WINDOW_DEICONIFIED:
-					lessCpu(false);
-					break;
+				switch (arg0.getID()) {
+					case WindowEvent.WINDOW_ICONIFIED:
+						lessCpu(true);
+						break;
+					case WindowEvent.WINDOW_DEICONIFIED:
+						lessCpu(false);
+						break;
 				}
 			}
 		});
