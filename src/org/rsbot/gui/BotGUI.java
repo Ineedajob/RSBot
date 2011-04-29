@@ -362,11 +362,10 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 			}
 		}
 		for (final Bot bot : bots) {
-			boolean restore = !enable && noModificationBots.contains(bot);
-			int botIndex = noModificationBots.indexOf(bot);
-			Bot rBot = restore ? noModificationBots.get(botIndex) : null;
-			bot.disableCanvas = rBot != null ? rBot.disableCanvas : enable;
-			bot.disableRendering = rBot != null ? rBot.disableRendering : enable;
+			if (!noModificationBots.contains(bot)) {
+				bot.disableCanvas = enable;
+				bot.disableRendering = enable;
+			}
 		}
 	}
 
