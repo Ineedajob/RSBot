@@ -13,11 +13,11 @@ import java.util.List;
 import java.util.logging.Logger;
 
 /**
- * @author Timer
  * @author Paris
  */
 public class ScriptDeliveryNetwork implements ScriptSource {
 	private static final Logger log = Logger.getLogger("ScriptDelivery");
+	private final boolean silent = true;
 	private static final ScriptDeliveryNetwork instance = new ScriptDeliveryNetwork();
 	private String key;
 	private final String defaultKey = "0000000000000000000000000000000000000000";
@@ -31,6 +31,7 @@ public class ScriptDeliveryNetwork implements ScriptSource {
 		return instance;
 	}
 
+	@SuppressWarnings("unused")
 	private void load() {
 		HashMap<String, String> keys = null;
 		boolean enabled = true;
@@ -51,7 +52,7 @@ public class ScriptDeliveryNetwork implements ScriptSource {
 			error = keys.get("error");
 		}
 
-		if (!enabled) {
+		if (!enabled && !silent) {
 			log.warning("Service disabled: " + error);
 		}
 
