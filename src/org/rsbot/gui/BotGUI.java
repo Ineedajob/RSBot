@@ -273,6 +273,11 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 	}
 
 	public void addBot() {
+		final int max = 6;
+		if (bots.size() >= max) {
+			log.warning("Cannot run more than " + Integer.toString(max) + " bots");
+			return;
+		}
 		final Bot bot = new Bot();
 		bots.add(bot);
 		toolBar.addTab();
