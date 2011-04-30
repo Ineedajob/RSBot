@@ -200,12 +200,12 @@ public class AccountManager extends JDialog implements ActionListener {
 				try {
 					accountStore.save();
 				} catch (IOException ioe) {
-					log.info("Failed to save accounts... FUCK!");
+					ioe.printStackTrace();
+					log.info("Failed to save accounts...  Please report this.");
 				}
 				dispose();
 			} else if (label.equals("Add")) {
-				String str = JOptionPane.showInputDialog(getParent(), "Enter the account username.", "New Account",
-						JOptionPane.QUESTION_MESSAGE);
+				String str = JOptionPane.showInputDialog(getParent(), "Enter the account username.", "New Account", JOptionPane.QUESTION_MESSAGE);
 				if (str == null || str.isEmpty()) {
 					return;
 				}
@@ -253,17 +253,11 @@ public class AccountManager extends JDialog implements ActionListener {
 		gbl.rowHeights = new int[]{0, 0};
 		gbl.rowWeights = new double[]{0.0, 1.0E-4};
 		newButton.setText("Add");
-		bar.add(newButton,
-				new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-						new Insets(0, 0, 5, 5), 0, 0));
+		bar.add(newButton, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 5, 5), 0, 0));
 		removeButton.setText("Remove");
-		bar.add(removeButton,
-				new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-						new Insets(0, 0, 5, 5), 0, 0));
+		bar.add(removeButton, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 5, 5), 0, 0));
 		doneButton.setText("Done");
-		bar.add(doneButton,
-				new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-						new Insets(0, 0, 5, 0), 0, 0));
+		bar.add(doneButton, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 5, 0), 0, 0));
 		newButton.addActionListener(this);
 		doneButton.addActionListener(this);
 		removeButton.addActionListener(this);
