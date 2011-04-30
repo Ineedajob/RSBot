@@ -208,6 +208,10 @@ public class GlobalConfiguration {
 	private static final OperatingSystem CURRENT_OS;
 	public static boolean RUNNING_FROM_JAR = false;
 	public static final boolean SCRIPT_DRM = true;
+	
+	public static final String TwitterName = "rsbotorg";
+	public static final String TwitterHashtag = "#" + NAME_LOWERCASE;
+	public static final int TwitterMessages = 3;
 
 	static {
 		final URL resource = GlobalConfiguration.class.getClassLoader().getResource(Paths.Resources.VERSION);

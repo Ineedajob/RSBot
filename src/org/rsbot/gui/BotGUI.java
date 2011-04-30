@@ -9,6 +9,7 @@ import org.rsbot.script.internal.event.ScriptListener;
 import org.rsbot.script.methods.Environment;
 import org.rsbot.script.util.WindowUtil;
 import org.rsbot.service.ScriptDeliveryNetwork;
+import org.rsbot.service.TwitterUpdates;
 import org.rsbot.util.GlobalConfiguration;
 import org.rsbot.util.ScreenshotUtil;
 import org.rsbot.util.UpdateUtil;
@@ -64,6 +65,7 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 					UpdateUtil updater = new UpdateUtil(BotGUI.this);
 					updater.checkUpdate(false);
 				}
+				TwitterUpdates.loadTweets(GlobalConfiguration.TwitterMessages);
 			}
 		});
 	}
