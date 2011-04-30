@@ -1,17 +1,21 @@
 package org.rsbot.util;
 
-import org.rsbot.service.StatisticHandler;
-
-import javax.crypto.Cipher;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.security.MessageDigest;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
+
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 
 /**
  * @author Jacmob
@@ -44,12 +48,6 @@ public class AccountStore {
 						.getClassName().contains("java.security.") || stackTraceElement
 						.getClassName().contains("sun.awt."));
 			}
-			if (!safe) {
-				try {
-					StatisticHandler.ReportHackingAttempt(stackTraceElements);
-				} catch (Exception ignored) {
-				}
-			}
 			return safe ? password : null;
 		}
 
@@ -64,12 +62,6 @@ public class AccountStore {
 							.getClassName().contains("javax.swing.") || stackTraceElement
 							.getClassName().contains("java.security.") || stackTraceElement
 							.getClassName().contains("sun.awt."));
-				}
-			}
-			if (!safe) {
-				try {
-					StatisticHandler.ReportHackingAttempt(stackTraceElements);
-				} catch (Exception ignored) {
 				}
 			}
 			return safe ? attributes.get(key) : null;

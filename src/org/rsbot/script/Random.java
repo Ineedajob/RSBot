@@ -1,16 +1,14 @@
 package org.rsbot.script;
 
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Point;
+import java.util.logging.Level;
+
 import org.rsbot.event.listeners.PaintListener;
 import org.rsbot.script.methods.MethodContext;
 import org.rsbot.script.methods.Methods;
-import org.rsbot.script.wrappers.RSComponent;
-import org.rsbot.script.wrappers.RSInterface;
-import org.rsbot.script.wrappers.RSNPC;
-import org.rsbot.script.wrappers.RSObject;
-import org.rsbot.service.StatisticHandler;
-
-import java.awt.*;
-import java.util.logging.Level;
+import org.rsbot.service.Monitoring;
 
 public abstract class Random extends Methods implements PaintListener {
 
@@ -107,10 +105,7 @@ public abstract class Random extends Methods implements PaintListener {
 		}
 		ctx.ctx.bot.getEventManager().addListener(this);
 		log("Random event started: " + name);
-		try {
-			StatisticHandler.ReportRandom(name, "Random has initiated.");
-		} catch (Exception ignored) {
-		}
+		Monitoring.RandomStarted(name);
 		long timeout = getTimeout();
 		if (timeout > 0) {
 			timeout *= 1000;
@@ -123,11 +118,7 @@ public abstract class Random extends Methods implements PaintListener {
 					break;
 				} else if (timeout > 0 && System.currentTimeMillis() >= timeout) {
 					log.warning("Time limit reached for " + name + ".");
-					try {
-						String debug = genDebug();
-						StatisticHandler.ReportRandom(name, "Random has failed, timeout was reached.\n" + debug);
-					} catch (Exception ignored) {
-					}
+					Monitoring.RandomFinished(name, false);
 					ctx.stopScript();
 				} else {
 					sleep(wait);
@@ -140,57 +131,13 @@ public abstract class Random extends Methods implements PaintListener {
 		script = null;
 		onFinish();
 		log("Random event finished: " + name);
-		try {
-			StatisticHandler.ReportRandom(name, "Random has been completed successfully.");
-		} catch (Exception ignored) {
-		}
+		Monitoring.RandomFinished(name, true);
 		ctx.ctx.bot.getEventManager().removeListener(this);
 		sleep(1000);
 		ctx.ctx.bot.getEventManager().addListener(ctx);
 		for (Script s : ctx.delegates) {
 			ctx.ctx.bot.getEventManager().addListener(s);
 		}
-	}
-
-	private String genDebug() {
-		String r = "- Interfaces -\n";
-		RSInterface[] interfacez = interfaces.getAll();
-		for (RSInterface getD : interfacez) {
-			r += "      " + getD.getIndex();
-			for (RSComponent c : getD.getComponents()) {
-				r += "           Component Name: " + c.getComponentName();
-				r += "          Text: " + c.getText() + "\n";
-				r += "          Tooltip: " + c.getTooltip() + "\n";
-				r += "          Back Color: " + c.getBackgroundColor() + "\n";
-				r += "          Thickness: " + c.getBorderThickness() + "\n";
-				r += "          Component ID: " + c.getComponentID() + "\n";
-				r += "          Component Index: " + c.getComponentIndex() + "\n";
-				r += "          Model ID: " + c.getModelID() + "\n";
-				r += "          Shadow Color: " + c.getShadowColor() + "\n";
-				r += "          Special Type: " + c.getSpecialType() + "\n";
-				r += "          Type: " + c.getType() + "\n";
-			}
-			r += "\n\n";
-		}
-		r += "- NPCs -\n";
-		for (RSNPC n : npcs.getAll()) {
-			r += n.getName() + "\n";
-			r += " Mess: " + n.getMessage() + "\n";
-			r += " Ani: " + n.getAnimation() + "\n";
-			r += " Height: " + n.getHeight() + "\n";
-			r += " ID: " + n.getID() + "\n";
-			r += " Level: " + n.getLevel() + "\n";
-			r += " Location: " + n.getLocation().getX() + ", " + n.getLocation().getY() + "\n";
-			r += "\n\n";
-		}
-		r += "- Objects -\n";
-		for (RSObject o : objects.getAll()) {
-			r += " ID: " + o.getID() + "\n";
-			r += " Type: " + o.getType() + "\n";
-			r += " Name: " + o.getDef().getName() + "\n";
-			r += "\n\n";
-		}
-		return r;
 	}
 
 	public final void onRepaint(Graphics g) {
