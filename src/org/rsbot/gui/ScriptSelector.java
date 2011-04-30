@@ -14,7 +14,6 @@ import javax.swing.table.AbstractTableModel;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -122,12 +121,7 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 				JPopupMenu contextMenu = new JPopupMenu();
 				JMenuItem visit = new JMenuItem();
 				visit.setText("Visit Site");
-				try {
-					visit.setIcon(new ImageIcon(GlobalConfiguration.RUNNING_FROM_JAR ?
-							ScriptSelector.class.getResource(GlobalConfiguration.Paths.Resources.ICON_WEBLINK) :
-							new File(GlobalConfiguration.Paths.ICON_WEBLINK).toURI().toURL()));
-				} catch (IOException ioe) {
-				}
+				visit.setIcon(new ImageIcon(GlobalConfiguration.getImage(GlobalConfiguration.Paths.Resources.ICON_WEBLINK)));
 				visit.addMouseListener(new MouseAdapter() {
 					public void mousePressed(MouseEvent e) {
 						BotGUI.openURL(def.website);
@@ -166,11 +160,9 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 			}
 		});
 		submit = new JButton("Start Script", new ImageIcon(
-				GlobalConfiguration.getImage(GlobalConfiguration.Paths.Resources.ICON_START,
-						GlobalConfiguration.Paths.ICON_START)));
+				GlobalConfiguration.getImage(GlobalConfiguration.Paths.Resources.ICON_START)));
 		final JButton connect = new JButton(new ImageIcon(
-				GlobalConfiguration.getImage(GlobalConfiguration.Paths.Resources.ICON_DISCONNECT,
-						GlobalConfiguration.Paths.ICON_DISCONNECT)));
+				GlobalConfiguration.getImage(GlobalConfiguration.Paths.Resources.ICON_DISCONNECT)));
 		submit.setEnabled(false);
 		submit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
@@ -191,14 +183,12 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 				public void actionPerformed(ActionEvent e) {
 					if (connected) {
 						connect.setIcon(new ImageIcon(
-								GlobalConfiguration.getImage(GlobalConfiguration.Paths.Resources.ICON_DISCONNECT,
-										GlobalConfiguration.Paths.ICON_DISCONNECT)));
+								GlobalConfiguration.getImage(GlobalConfiguration.Paths.Resources.ICON_DISCONNECT)));
 						connect.repaint();
 						connected = false;
 					} else {
 						connect.setIcon(new ImageIcon(
-								GlobalConfiguration.getImage(GlobalConfiguration.Paths.Resources.ICON_CONNECT,
-										GlobalConfiguration.Paths.ICON_CONNECT)));
+								GlobalConfiguration.getImage(GlobalConfiguration.Paths.Resources.ICON_CONNECT)));
 						connect.repaint();
 						load();
 						connected = true;
@@ -266,17 +256,13 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 	private static class ScriptTableModel extends AbstractTableModel {
 		private static final long serialVersionUID = 1L;
 		public static final ImageIcon ICON_SCRIPT_SRC = new ImageIcon(
-				GlobalConfiguration.getImage(GlobalConfiguration.Paths.Resources.ICON_SCRIPT_SRC,
-						GlobalConfiguration.Paths.ICON_SCRIPT_SRC));
+				GlobalConfiguration.getImage(GlobalConfiguration.Paths.Resources.ICON_SCRIPT_SRC));
 		public static final ImageIcon ICON_SCRIPT_PRE = new ImageIcon(
-				GlobalConfiguration.getImage(GlobalConfiguration.Paths.Resources.ICON_SCRIPT_PRE,
-						GlobalConfiguration.Paths.ICON_SCRIPT_PRE));
+				GlobalConfiguration.getImage(GlobalConfiguration.Paths.Resources.ICON_SCRIPT_PRE));
 		public static final ImageIcon ICON_SCRIPT_DRM = new ImageIcon(
-				GlobalConfiguration.getImage(GlobalConfiguration.Paths.Resources.ICON_SCRIPT_DRM,
-						GlobalConfiguration.Paths.ICON_SCRIPT_DRM));
+				GlobalConfiguration.getImage(GlobalConfiguration.Paths.Resources.ICON_SCRIPT_DRM));
 		public static final ImageIcon ICON_SCRIPT_BDL = new ImageIcon(
-				GlobalConfiguration.getImage(GlobalConfiguration.Paths.Resources.ICON_SCRIPT_BDL,
-						GlobalConfiguration.Paths.ICON_SCRIPT_BDL));
+				GlobalConfiguration.getImage(GlobalConfiguration.Paths.Resources.ICON_SCRIPT_BDL));
 		private final List<ScriptDefinition> scripts;
 		private final List<ScriptDefinition> matches;
 

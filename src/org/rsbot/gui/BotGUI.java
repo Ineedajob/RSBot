@@ -389,7 +389,7 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 				}
 			}
 		});
-		setIconImage(GlobalConfiguration.getImage(GlobalConfiguration.Paths.Resources.ICON, GlobalConfiguration.Paths.ICON));
+		setIconImage(GlobalConfiguration.getImage(GlobalConfiguration.Paths.Resources.ICON));
 		JPopupMenu.setDefaultLightWeightPopupEnabled(false);
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());

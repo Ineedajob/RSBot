@@ -7,6 +7,7 @@ import org.rsbot.log.TextAreaLogHandler;
 import javax.swing.filechooser.FileSystemView;
 import java.awt.*;
 import java.io.*;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLDecoder;
@@ -25,31 +26,31 @@ public class GlobalConfiguration {
 		public static class Resources {
 			public static final String ROOT = "resources";
 			public static final String SCRIPTS = Paths.SCRIPTS_NAME_SRC + "/";
-			public static final String ROOT_IMG = "/" + Resources.ROOT + "/images";
-			public static final String ICON = Resources.ROOT_IMG + "/icon.png";
-			public static final String ICON_DELETE = Resources.ROOT_IMG + "/delete.png";
-			public static final String ICON_PLAY = Resources.ROOT_IMG + "/control_play_blue.png";
-			public static final String ICON_PAUSE = Resources.ROOT_IMG + "/control_pause.png";
-			public static final String ICON_ADD = Resources.ROOT_IMG + "/add.png";
-			public static final String ICON_ADD_OVER = Resources.ROOT_IMG + "/add_over.png";
-			public static final String ICON_ADD_DOWN = Resources.ROOT_IMG + "/add_down.png";
-			public static final String ICON_HOME = Resources.ROOT_IMG + "/home.png";
-			public static final String ICON_BOT = Resources.ROOT_IMG + "/bot.png";
-			public static final String ICON_CLOSE = Resources.ROOT_IMG + "/close.png";
-			public static final String ICON_CLOSE_OVER = Resources.ROOT_IMG + "/close_over.png";
-			public static final String ICON_TICK = Resources.ROOT_IMG + "/tick.png";
-			public static final String ICON_MOUSE = Resources.ROOT_IMG + "/mouse.png";
-			public static final String ICON_KEYBOARD = Resources.ROOT_IMG + "/keyboard.png";
-			public static final String ICON_CONNECT = Resources.ROOT_IMG + "/connect.png";
-			public static final String ICON_DISCONNECT = Resources.ROOT_IMG + "/disconnect.png";
-			public static final String ICON_START = Resources.ROOT_IMG + "/control_play.png";
-			public static final String ICON_SCRIPT_BDL = Resources.ROOT_IMG + "/script_bdl.png";
-			public static final String ICON_SCRIPT_DRM = Resources.ROOT_IMG + "/script_drm.png";
-			public static final String ICON_SCRIPT_PRE = Resources.ROOT_IMG + "/script_pre.png";
-			public static final String ICON_SCRIPT_SRC = Resources.ROOT_IMG + "/script_src.png";
-			public static final String ICON_WEBLINK = Resources.ROOT_IMG + "/world_link.png";
+			public static final String ROOT_IMG = ROOT + "/images";
+			public static final String ICON = ROOT_IMG + "/icon.png";
+			public static final String ICON_DELETE = ROOT_IMG + "/delete.png";
+			public static final String ICON_PLAY = ROOT_IMG + "/control_play_blue.png";
+			public static final String ICON_PAUSE = ROOT_IMG + "/control_pause.png";
+			public static final String ICON_ADD = ROOT_IMG + "/add.png";
+			public static final String ICON_ADD_OVER = ROOT_IMG + "/add_over.png";
+			public static final String ICON_ADD_DOWN = ROOT_IMG + "/add_down.png";
+			public static final String ICON_HOME = ROOT_IMG + "/home.png";
+			public static final String ICON_BOT = ROOT_IMG + "/bot.png";
+			public static final String ICON_CLOSE = ROOT_IMG + "/close.png";
+			public static final String ICON_CLOSE_OVER = ROOT_IMG + "/close_over.png";
+			public static final String ICON_TICK = ROOT_IMG + "/tick.png";
+			public static final String ICON_MOUSE = ROOT_IMG + "/mouse.png";
+			public static final String ICON_KEYBOARD = ROOT_IMG + "/keyboard.png";
+			public static final String ICON_CONNECT = ROOT_IMG + "/connect.png";
+			public static final String ICON_DISCONNECT = ROOT_IMG + "/disconnect.png";
+			public static final String ICON_START = ROOT_IMG + "/control_play.png";
+			public static final String ICON_SCRIPT_BDL = ROOT_IMG + "/script_bdl.png";
+			public static final String ICON_SCRIPT_DRM = ROOT_IMG + "/script_drm.png";
+			public static final String ICON_SCRIPT_PRE = ROOT_IMG + "/script_pre.png";
+			public static final String ICON_SCRIPT_SRC = ROOT_IMG + "/script_src.png";
+			public static final String ICON_WEBLINK = ROOT_IMG + "/world_link.png";
 
-			public static final String VERSION = Resources.ROOT + "/version.txt";
+			public static final String VERSION = ROOT + "/version.txt";
 		}
 
 		public static class URLs {
@@ -64,35 +65,9 @@ public class GlobalConfiguration {
 			public static final String AD_INFO = BASE + "botad-info";
 		}
 
-		public static final String ROOT = "." + File.separator + "resources";
-
 		public static final String COMPILE_SCRIPTS_BAT = "Compile-Scripts.bat";
 		public static final String COMPILE_SCRIPTS_SH = "compile-scripts.sh";
 		public static final String COMPILE_FIND_JDK = "FindJDK.bat";
-
-		public static final String ROOT_IMG = Paths.ROOT + File.separator + "images";
-		public static final String ICON = Paths.ROOT_IMG + File.separator + "icon.png";
-		public static final String ICON_DELETE = Paths.ROOT_IMG + File.separator + "delete.png";
-		public static final String ICON_PLAY = Paths.ROOT_IMG + File.separator + "control_play_blue.png";
-		public static final String ICON_PAUSE = Paths.ROOT_IMG + File.separator + "control_pause.png";
-		public static final String ICON_ADD = Paths.ROOT_IMG + File.separator + "add.png";
-		public static final String ICON_ADD_OVER = Paths.ROOT_IMG + File.separator + "add_over.png";
-		public static final String ICON_ADD_DOWN = Paths.ROOT_IMG + File.separator + "add_down.png";
-		public static final String ICON_HOME = Paths.ROOT_IMG + File.separator + "home.png";
-		public static final String ICON_BOT = Paths.ROOT_IMG + File.separator + "bot.png";
-		public static final String ICON_CLOSE = Paths.ROOT_IMG + File.separator + "close.png";
-		public static final String ICON_CLOSE_OVER = Paths.ROOT_IMG + File.separator + "close_over.png";
-		public static final String ICON_TICK = Paths.ROOT_IMG + File.separator + "tick.png";
-		public static final String ICON_MOUSE = Paths.ROOT_IMG + File.separator + "mouse.png";
-		public static final String ICON_KEYBOARD = Paths.ROOT_IMG + File.separator + "keyboard.png";
-		public static final String ICON_CONNECT = Paths.ROOT_IMG + File.separator + "connect.png";
-		public static final String ICON_DISCONNECT = Paths.ROOT_IMG + File.separator + "disconnect.png";
-		public static final String ICON_START = Paths.ROOT_IMG + File.separator + "control_play.png";
-		public static final String ICON_SCRIPT_BDL = Paths.ROOT_IMG + File.separator + "script_bdl.png";
-		public static final String ICON_SCRIPT_DRM = Paths.ROOT_IMG + File.separator + "script_drm.png";
-		public static final String ICON_SCRIPT_PRE = Paths.ROOT_IMG + File.separator + "script_pre.png";
-		public static final String ICON_SCRIPT_SRC = Paths.ROOT_IMG + File.separator + "script_src.png";
-		public static final String ICON_WEBLINK = Paths.ROOT_IMG + File.separator + "world_link.png";
 
 		public static final String SCRIPTS_NAME_SRC = "scripts";
 		public static final String SCRIPTS_NAME_OUT = "Scripts";
@@ -204,7 +179,6 @@ public class GlobalConfiguration {
 
 	public static final String NAME = "RSBot";
 	public static final String NAME_LOWERCASE = NAME.toLowerCase();
-	public static final String SITE_NAME = "powerbot";
 	private static final OperatingSystem CURRENT_OS;
 	public static boolean RUNNING_FROM_JAR = false;
 	public static final boolean SCRIPT_DRM = true;
@@ -288,14 +262,15 @@ public class GlobalConfiguration {
 			}
 		}
 	}
+	
+	public static URL getResourceURL(final String path) throws MalformedURLException {
+		return RUNNING_FROM_JAR ? GlobalConfiguration.class.getResource("/" + path) : new File(path).toURI().toURL();
+	}
 
-	public static Image getImage(String resource, String path) {
+	public static Image getImage(String resource) {
 		try {
-			return Toolkit.getDefaultToolkit().getImage(
-					GlobalConfiguration.RUNNING_FROM_JAR ? GlobalConfiguration.class.getResource(resource) :
-							new File(path).toURI().toURL());
-		} catch (Exception ignored) {
-		}
+			return Toolkit.getDefaultToolkit().getImage(getResourceURL(resource));
+		} catch (Exception e) { }
 		return null;
 	}
 

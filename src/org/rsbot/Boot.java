@@ -37,7 +37,7 @@ public class Boot {
 			param.append(s);
 			param.append("-Xdock:icon=");
 			param.append(q);
-			param.append(GlobalConfiguration.Paths.ICON);
+			param.append(GlobalConfiguration.Paths.Resources.ICON);
 			param.append(q);
 			break;
 		default:
