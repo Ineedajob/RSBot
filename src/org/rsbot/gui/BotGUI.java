@@ -140,7 +140,7 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 						boolean selected = ((JCheckBoxMenuItem) evt.getSource()).isSelected();
 						current.overrideInput = selected;
 						toolBar.setOverrideInput(selected);
-					} else if (option.equals("Disable Rendering")) {
+					} else if (option.equals("Less-CPU Usage")) {
 						current.disableRendering = ((JCheckBoxMenuItem) evt.getSource()).isSelected();
 					} else if (option.equals("Disable Canvas")) {
 						current.disableCanvas = ((JCheckBoxMenuItem) evt.getSource()).isSelected();
