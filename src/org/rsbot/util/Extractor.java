@@ -81,9 +81,9 @@ public class Extractor implements Runnable {
 		} else if (args.length > 2) {
 			if (args[0].toLowerCase().startsWith("delete")) {
 				File jarOld = new File(args[1]);
-				if (jarOld.exists()) {
-					jarOld.delete();
-				}
+				if (jarOld.exists())
+					if (!jarOld.delete())
+						jarOld.deleteOnExit();
 			}
 		}
 	}
