@@ -69,7 +69,8 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener, Pa
 					UpdateUtil updater = new UpdateUtil(BotGUI.this);
 					updater.checkUpdate(false);
 				}
-				TwitterUpdates.loadTweets(GlobalConfiguration.TwitterMessages);
+				if (GlobalConfiguration.Twitter.ENABLED)
+					TwitterUpdates.loadTweets(GlobalConfiguration.Twitter.MESSAGES);
 				(new Thread() {
 					public void run() {
 						ScriptDeliveryNetwork.getInstance().start();

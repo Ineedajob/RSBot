@@ -18,7 +18,7 @@ public class HttpAgent {
 	private static final Logger log = Logger.getLogger(HttpAgent.class.getName());
 	
 	public static HttpURLConnection download(final URL url, final File file) throws IOException {
-		HttpURLConnection con = GlobalConfiguration.getHttpConnection(url, null);
+		HttpURLConnection con = GlobalConfiguration.getHttpConnection(url);
 		con.setUseCaches(true);
 		
 		if (file.exists()) {
@@ -26,6 +26,7 @@ public class HttpAgent {
 			con.connect();
 			if (con.getResponseCode() == HttpURLConnection.HTTP_NOT_MODIFIED) {
 				log.fine("Using " + file.getName() + " from cache");
+				con.disconnect();
 				return con;
 			}
 		}
@@ -54,6 +55,7 @@ public class HttpAgent {
 		
 		file.setLastModified(con.getLastModified());
 		
+		con.disconnect();
 		return con;
 	}
 	
