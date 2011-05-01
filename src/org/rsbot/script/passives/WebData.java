@@ -28,7 +28,7 @@ public class WebData extends PassiveScript {
 		sleep(5000);
 		lb = curr_base;
 		Node t;
-		log("Memorizing new region.");
+		log("Analysing new region to your web.");
 		final int flags[][] = walking.getCollisionFlags(game.getPlane());
 		for (int i = 0; i < 104; i++) {
 			for (int j = 0; j < 104; j++) {
