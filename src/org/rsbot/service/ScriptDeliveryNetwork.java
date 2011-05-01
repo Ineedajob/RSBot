@@ -64,6 +64,7 @@ public class ScriptDeliveryNetwork implements ScriptSource {
 			HttpAgent.download(source, cache);
 			BufferedReader reader = new BufferedReader(new FileReader(cache));
 			keys = IniParser.deserialise(reader).get(IniParser.emptySection);
+			reader.close();
 		} catch (Exception e) {
 			enabled = false;
 		}

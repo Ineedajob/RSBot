@@ -101,6 +101,7 @@ public class SplashAd extends JDialog implements MouseListener {
 			HttpAgent.download(source, cache);
 			BufferedReader reader = new BufferedReader(new FileReader(cache));
 			keys = IniParser.deserialise(reader).get(IniParser.emptySection);
+			reader.close();
 		} catch (Exception e) {
 			return false;
 		}
