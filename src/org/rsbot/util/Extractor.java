@@ -48,12 +48,16 @@ public class Extractor implements Runnable {
 				}
 				JarFile jar = new JarFile(new File(p));
 				File out = new File(GlobalConfiguration.Paths.getScriptsExtractedCache());
-				FileOutputStream fos = new FileOutputStream(out);
-				JarOutputStream jos = new JarOutputStream(fos);
+				FileOutputStream fos = null;
+				JarOutputStream jos = null;
 				Enumeration<JarEntry> entries = jar.entries();
 				while (entries.hasMoreElements()) {
 					JarEntry e = entries.nextElement();
 					if (e.getName().startsWith("scripts/")) {
+						if (fos == null) {
+							fos = new FileOutputStream(out);
+							jos = new JarOutputStream(fos);
+						}
 						InputStream in = loader.getResourceAsStream(e.getName());
 						jos.putNextEntry(new JarEntry(e.getName().substring(8)));
 						byte[] buffer = new byte[256];
@@ -67,8 +71,10 @@ public class Extractor implements Runnable {
 						in.close();
 					}
 				}
-				jos.close();
-				fos.close();
+				if (fos != null) {
+					jos.close();
+					fos.close();
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

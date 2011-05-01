@@ -1,6 +1,7 @@
 package org.rsbot.gui;
 
 import org.rsbot.util.GlobalConfiguration;
+import org.rsbot.util.HttpAgent;
 import org.rsbot.util.IniParser;
 
 import javax.imageio.ImageIO;
@@ -9,7 +10,9 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
 import java.text.ParseException;
@@ -94,7 +97,11 @@ public class SplashAd extends JDialog implements MouseListener {
 
 		try {
 			URL source = new URL(GlobalConfiguration.Paths.URLs.AD_INFO);
-			keys = IniParser.deserialise(source).get(IniParser.emptySection);
+			final File cache = new File(GlobalConfiguration.Paths.getCacheDirectory(), "ads.txt");
+			HttpAgent.download(source, cache);
+			BufferedReader reader = new BufferedReader(new FileReader(cache));
+			keys = IniParser.deserialise(reader).get(IniParser.emptySection);
+			reader.close();
 		} catch (Exception e) {
 			return false;
 		}

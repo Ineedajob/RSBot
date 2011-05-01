@@ -3,9 +3,6 @@ package org.rsbot.util;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
@@ -50,30 +47,6 @@ public class IniParser {
 			out.write(keyBound);
 			out.write(entry.getValue());
 			out.newLine();
-		}
-	}
-
-
-	public static HashMap<String, HashMap<String, String>> deserialise(URL source) throws IOException {
-		InputStreamReader stream = null;
-		BufferedReader reader = null;
-
-		try {
-			URLConnection connection = source.openConnection();
-			stream = new InputStreamReader(connection.getInputStream());
-			reader = new BufferedReader(stream);
-			return deserialise(reader);
-		} catch (final IOException ioe) {
-			try {
-				if (reader != null) {
-					reader.close();
-				}
-				if (stream != null) {
-					stream.close();
-				}
-			} catch (final IOException ioe1) {
-			}
-			throw ioe;
 		}
 	}
 
