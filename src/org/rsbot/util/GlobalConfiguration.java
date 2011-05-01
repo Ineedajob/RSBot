@@ -281,8 +281,12 @@ public class GlobalConfiguration {
 	public static OperatingSystem getCurrentOperatingSystem() {
 		return GlobalConfiguration.CURRENT_OS;
 	}
+	
+	static String httpUserAgent = null;
 
 	public static String getHttpUserAgent() {
+		if (httpUserAgent != null)
+			return httpUserAgent;
 		String plat = "Windows", os = "Windows NT 5.2";
 		if (GlobalConfiguration.getCurrentOperatingSystem() == GlobalConfiguration.OperatingSystem.MAC) {
 			plat = "Macintosh";
@@ -294,7 +298,8 @@ public class GlobalConfiguration {
 		StringBuilder buf = new StringBuilder(125);
 		buf.append("Mozilla/5.0 (").append(plat).append("; U; ").append(os);
 		buf.append("; en-US) AppleWebKit/534.7 (KHTML, like Gecko) Chrome/7.0.517.44 Safari/534.7");
-		return buf.toString();
+		httpUserAgent = buf.toString();
+		return httpUserAgent;
 	}
 
 	public static HttpURLConnection getHttpConnection(final URL url, final String referer) throws IOException {
