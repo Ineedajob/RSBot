@@ -162,7 +162,7 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 		submit = new JButton("Start Script", new ImageIcon(
 				GlobalConfiguration.getImage(GlobalConfiguration.Paths.Resources.ICON_START)));
 		final JButton connect = new JButton(new ImageIcon(
-				GlobalConfiguration.getImage(GlobalConfiguration.Paths.Resources.ICON_DISCONNECT)));
+				GlobalConfiguration.getImage(GlobalConfiguration.Paths.Resources.ICON_CONNECT)));
 		submit.setEnabled(false);
 		submit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
@@ -181,18 +181,12 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 		if (connect.isEnabled()) {
 			ActionListener listenConnect = new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					if (connected) {
-						connect.setIcon(new ImageIcon(
-								GlobalConfiguration.getImage(GlobalConfiguration.Paths.Resources.ICON_DISCONNECT)));
-						connect.repaint();
-						connected = false;
-					} else {
-						connect.setIcon(new ImageIcon(
-								GlobalConfiguration.getImage(GlobalConfiguration.Paths.Resources.ICON_CONNECT)));
-						connect.repaint();
-						load();
-						connected = true;
-					}
+					final String icon = connected ? GlobalConfiguration.Paths.Resources.ICON_DISCONNECT :
+						GlobalConfiguration.Paths.Resources.ICON_CONNECT;
+					connect.setIcon(new ImageIcon(icon));
+					connect.repaint();
+					connected = !connected;
+					load();
 				}
 			};
 			connect.addActionListener(listenConnect);
