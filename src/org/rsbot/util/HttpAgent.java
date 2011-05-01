@@ -26,6 +26,7 @@ public class HttpAgent {
 			con.connect();
 			if (con.getResponseCode() == HttpURLConnection.HTTP_NOT_MODIFIED) {
 				log.fine("Using " + file.getName() + " from cache");
+				con.disconnect();
 				return con;
 			}
 		}
@@ -54,6 +55,7 @@ public class HttpAgent {
 		
 		file.setLastModified(con.getLastModified());
 		
+		con.disconnect();
 		return con;
 	}
 	
