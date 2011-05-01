@@ -104,12 +104,6 @@ public class RSLoader extends Applet implements Runnable, Loader {
 
 	public void load() {
 		try {
-			HttpAgent.download(new URL(GlobalConfiguration.Paths.URLs.WEB),
-					new File(GlobalConfiguration.Paths.getWebCache()));
-		} catch (IOException wex) {
-			log.severe("Unable to load web matrix: " + wex.getMessage());
-		}
-		try {
 			ClientLoader cl = new ClientLoader();
 			cl.init(new URL(GlobalConfiguration.Paths.URLs.UPDATE), new File(
 					GlobalConfiguration.Paths.getModScriptCache()));
