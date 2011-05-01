@@ -17,7 +17,7 @@ import java.util.zip.GZIPInputStream;
 public class HttpAgent {
 	private static final Logger log = Logger.getLogger(HttpAgent.class.getName());
 	
-	public static void download(final URL url, final File file) throws IOException {
+	public static HttpURLConnection download(final URL url, final File file) throws IOException {
 		HttpURLConnection con = GlobalConfiguration.getHttpConnection(url, null);
 		con.setUseCaches(true);
 		
@@ -26,7 +26,7 @@ public class HttpAgent {
 			con.connect();
 			if (con.getResponseCode() == HttpURLConnection.HTTP_NOT_MODIFIED) {
 				log.fine("Using " + file.getName() + " from cache");
-				return;
+				return con;
 			}
 		}
 		
@@ -53,6 +53,8 @@ public class HttpAgent {
 		}
 		
 		file.setLastModified(con.getLastModified());
+		
+		return con;
 	}
 	
 
