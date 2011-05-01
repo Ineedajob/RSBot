@@ -10,17 +10,14 @@ import org.rsbot.script.methods.Environment;
 import org.rsbot.script.util.WindowUtil;
 import org.rsbot.service.ScriptDeliveryNetwork;
 import org.rsbot.service.TwitterUpdates;
+import org.rsbot.service.WebQueue;
 import org.rsbot.util.GlobalConfiguration;
 import org.rsbot.util.ScreenshotUtil;
 import org.rsbot.util.UpdateUtil;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowStateListener;
+import java.awt.event.*;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -274,7 +271,7 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 
 	public void addBot() {
 		final int max = 6;
-		if (bots.size() >= max) {
+		if (bots.size() >= max && GlobalConfiguration.RUNNING_FROM_JAR) {
 			log.warning("Cannot run more than " + Integer.toString(max) + " bots");
 			return;
 		}
@@ -366,9 +363,10 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 			bot.disableRendering = enable;
 		}
 	}
-	
+
 	private void init() {
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+		WebQueue.Create();
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				if (cleanExit()) {
@@ -377,15 +375,14 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 			}
 		});
 		addWindowStateListener(new WindowStateListener() {
-			@Override
 			public void windowStateChanged(WindowEvent arg0) {
-				switch (arg0.getID()){
-				case WindowEvent.WINDOW_ICONIFIED:
-					lessCpu(true);
-					break;
-				case WindowEvent.WINDOW_DEICONIFIED:
-					lessCpu(false);
-					break;
+				switch (arg0.getID()) {
+					case WindowEvent.WINDOW_ICONIFIED:
+						lessCpu(true);
+						break;
+					case WindowEvent.WINDOW_DEICONIFIED:
+						lessCpu(false);
+						break;
 				}
 			}
 		});
@@ -529,6 +526,7 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 			menuBar.savePrefs();
 			System.exit(0);
 		}
+		WebQueue.Destroy();
 		return doExit;
 	}
 }

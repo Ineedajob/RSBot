@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -14,6 +15,18 @@ public class CacheWriter {
 
 	public CacheWriter(final String fileName) {
 		writer = new QueueWriter(fileName);
+		writer.start();
+	}
+
+	public void add(String list) {
+		if (list != null) {
+			String[] lines = list.split("\n");
+			if (lines != null) {
+				queue.addAll(Arrays.asList(lines));
+			}
+			lines = null;
+		}
+		list = null;
 	}
 
 	public void destroy() {
