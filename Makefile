@@ -32,7 +32,7 @@ Bundle: Scripts
 	@echo "Specification-Version: \"$(VERSION)\"" >> $(LSTF)
 	@echo "Implementation-Version: \"$(VERSION)\"" >> $(LSTF)
 	@if [ -e $(DIST) ]; then rm -fv $(DIST); fi
-	jar cfm $(DIST) $(LSTF) -C $(BINDIR) . $(VERSIONFILE) $(SCRIPTS)/*.class $(IMGDIR)/* $(RES)/*.bat $(RES)/*.sh
+	jar cfm $(DIST) $(LSTF) -C $(BINDIR) . $(VERSIONFILE) $(IMGDIR)/* $(RES)/*.bat $(RES)/*.sh
 	@rm -f $(LSTF)
 
 mostlyclean:

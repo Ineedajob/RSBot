@@ -63,6 +63,11 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 					updater.checkUpdate(false);
 				}
 				TwitterUpdates.loadTweets(GlobalConfiguration.TwitterMessages);
+				(new Thread() {
+					public void run() {
+						ScriptDeliveryNetwork.getInstance().start();
+					}
+				}).start();
 			}
 		});
 	}
