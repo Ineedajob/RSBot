@@ -63,7 +63,6 @@ GOTO :eof
 :end
 CALL :clean 2>NUL
 ECHO Compilation successful.
-PAUSE
 GOTO :eof
 
 :append
