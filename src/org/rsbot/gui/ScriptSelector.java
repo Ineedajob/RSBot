@@ -172,7 +172,6 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 					bot.setAccount((String) accounts.getSelectedItem());
 					bot.getScriptHandler().runScript(def.source.load(def));
 					bot.getScriptHandler().removeScriptListener(ScriptSelector.this);
-					bot.getPassiveScriptHandler().runScript(new Web());
 					dispose();
 				} catch (ServiceException e) {
 					e.printStackTrace();
