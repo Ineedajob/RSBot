@@ -15,13 +15,13 @@ public class TwitterUpdates {
 	private TwitterUpdates() { }
 	
 	public static void loadTweets(final int count) {
-		final Logger log = Logger.getLogger("@" + GlobalConfiguration.TwitterName);
+		final Logger log = Logger.getLogger("@" + GlobalConfiguration.Twitter.NAME);
 		final Level level = Level.INFO;
 		final Object[] param = new Object[] { new Color(0x1d, 0x83, 0xae) };
 		
 		StringBuilder url = new StringBuilder();
 		url.append("http://api.twitter.com/1/statuses/user_timeline.xml?screen_name=");
-		url.append(GlobalConfiguration.TwitterName);
+		url.append(GlobalConfiguration.Twitter.NAME);
 		url.append("&count=");
 		url.append(count * 5);
 		
@@ -43,10 +43,10 @@ public class TwitterUpdates {
 		    	if (y == -1)
 		    		continue;
 		    	String msg = s.substring(x, y).trim();
-		    	if (!msg.contains(GlobalConfiguration.TwitterHashtag))
+		    	if (!msg.contains(GlobalConfiguration.Twitter.HASHTAG))
 		    		continue;
-		    	if (msg.endsWith(GlobalConfiguration.TwitterHashtag))
-		    		msg = msg.substring(0, msg.length() - GlobalConfiguration.TwitterHashtag.length()).trim();
+		    	if (msg.endsWith(GlobalConfiguration.Twitter.HASHTAG))
+		    		msg = msg.substring(0, msg.length() - GlobalConfiguration.Twitter.HASHTAG.length()).trim();
 		    	if (msg.isEmpty())
 		    		continue;
 		    	log.log(level, msg, param);

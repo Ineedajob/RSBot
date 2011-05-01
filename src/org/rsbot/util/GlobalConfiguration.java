@@ -183,9 +183,13 @@ public class GlobalConfiguration {
 	public static boolean RUNNING_FROM_JAR = false;
 	public static final boolean SCRIPT_DRM = true;
 	
-	public static final String TwitterName = "rsbotorg";
-	public static final String TwitterHashtag = "#" + NAME_LOWERCASE;
-	public static final int TwitterMessages = 3;
+	
+	public static class Twitter {
+		public static final boolean ENABLED = true;
+		public static final String NAME = "rsbotorg";
+		public static final String HASHTAG = "#" + NAME_LOWERCASE;
+		public static final int MESSAGES = 3;
+	}
 
 	static {
 		final URL resource = GlobalConfiguration.class.getClassLoader().getResource(Paths.Resources.VERSION);
@@ -277,35 +281,33 @@ public class GlobalConfiguration {
 	public static OperatingSystem getCurrentOperatingSystem() {
 		return GlobalConfiguration.CURRENT_OS;
 	}
+	
+	static String httpUserAgent = null;
 
 	public static String getHttpUserAgent() {
-		String plat = "Windows", os = "Windows NT 5.2";
-		if (GlobalConfiguration.getCurrentOperatingSystem() == GlobalConfiguration.OperatingSystem.MAC) {
-			plat = "Macintosh";
-			os = "Intel Mac OS X 10_6_4";
-		} else if (GlobalConfiguration.getCurrentOperatingSystem() != GlobalConfiguration.OperatingSystem.WINDOWS) {
-			plat = "X11";
-			os = "Linux i686";
-		}
+		if (httpUserAgent != null)
+			return httpUserAgent;
+		String os = "Windows NT 6.1";
+		if (GlobalConfiguration.getCurrentOperatingSystem() == GlobalConfiguration.OperatingSystem.MAC)
+			os = "Macintosh; Intel Mac OS X 10_6_6";
+		else if (GlobalConfiguration.getCurrentOperatingSystem() != GlobalConfiguration.OperatingSystem.WINDOWS)
+			os = "X11; Linux x86_64";
 		StringBuilder buf = new StringBuilder(125);
-		buf.append("Mozilla/5.0 (").append(plat).append("; U; ").append(os);
-		buf.append("; en-US) AppleWebKit/534.7 (KHTML, like Gecko) Chrome/7.0.517.44 Safari/534.7");
-		return buf.toString();
+		buf.append("Mozilla/5.0 (").append(os).append(")");
+		buf.append(" AppleWebKit/534.24 (KHTML, like Gecko) Chrome/11.0.696.60 Safari/534.24");
+		httpUserAgent = buf.toString();
+		return httpUserAgent;
 	}
 
-	public static HttpURLConnection getHttpConnection(final URL url, final String referer) throws IOException {
+	public static HttpURLConnection getHttpConnection(final URL url) throws IOException {
 		final HttpURLConnection con = (HttpURLConnection) url.openConnection();
 		con.addRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
 		con.addRequestProperty("Accept-Charset", "ISO-8859-1,utf-8;q=0.7,*;q=0.7");
 		con.addRequestProperty("Accept-Encoding", "gzip,deflate");
 		con.addRequestProperty("Accept-Language", "en-us,en;q=0.5");
-		con.addRequestProperty("Connection", "keep-alive");
 		con.addRequestProperty("Host", url.getHost());
-		con.addRequestProperty("Keep-Alive", "300");
-		if (referer != null) {
-			con.addRequestProperty("Referer", referer);
-		}
 		con.addRequestProperty("User-Agent", getHttpUserAgent());
+		con.setConnectTimeout(10000);
 		return con;
 	}
 

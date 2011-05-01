@@ -81,23 +81,24 @@ public class Extractor implements Runnable {
 		} else if (args.length > 2) {
 			if (args[0].toLowerCase().startsWith("delete")) {
 				File jarOld = new File(args[1]);
-				if (jarOld.exists()) {
-					jarOld.delete();
-				}
+				if (jarOld.exists())
+					if (!jarOld.delete())
+						jarOld.deleteOnExit();
+				clearDirectory(new File(GlobalConfiguration.Paths.getCacheDirectory()), false);
 			}
 		}
 	}
 
-	public void clearDirectory(File path) {
-		if (path.exists()) {
-			for (File file : path.listFiles()) {
-				if (file.isDirectory()) {
-					clearDirectory(file);
-				}
-				if (!file.delete()) {
-					System.err.println("Failed to delete file: " + file);
-				}
-			}
+	public void clearDirectory(File path, final boolean deleteParent) {
+		if (!path.exists())
+			return;
+		for (File file : path.listFiles()) {
+			if (file.isDirectory())
+				clearDirectory(file, true);
+			else
+				file.delete();
 		}
+		if (deleteParent)
+			path.delete();
 	}
 }

@@ -65,7 +65,8 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 					UpdateUtil updater = new UpdateUtil(BotGUI.this);
 					updater.checkUpdate(false);
 				}
-				TwitterUpdates.loadTweets(GlobalConfiguration.TwitterMessages);
+				if (GlobalConfiguration.Twitter.ENABLED)
+					TwitterUpdates.loadTweets(GlobalConfiguration.Twitter.MESSAGES);
 				(new Thread() {
 					public void run() {
 						ScriptDeliveryNetwork.getInstance().start();
@@ -279,7 +280,7 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 
 	public void addBot() {
 		final int max = 6;
-		if (bots.size() >= max && !GlobalConfiguration.RUNNING_FROM_JAR) {
+		if (bots.size() >= max && GlobalConfiguration.RUNNING_FROM_JAR) {
 			log.warning("Cannot run more than " + Integer.toString(max) + " bots");
 			return;
 		}
