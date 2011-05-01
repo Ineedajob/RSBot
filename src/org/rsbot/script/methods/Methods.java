@@ -142,6 +142,11 @@ public class Methods {
 	 */
 	protected Trade trade;
 
+	/**
+	 * The singleton of Web
+	 */
+	protected Web web;
+
 
 	/**
 	 * For internal use only: initializes the method providers.

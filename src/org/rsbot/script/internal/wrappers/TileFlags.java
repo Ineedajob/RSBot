@@ -63,4 +63,27 @@ public class TileFlags {
 		}
 		return tile.toString() + flags;
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof TileFlags) {
+			TileFlags tileFlags = (TileFlags) o;
+			return getTile().equals(tileFlags.getTile()) && flagsEqual(tileFlags, this);
+		}
+		return false;
+	}
+
+	private static final boolean flagsEqual(final TileFlags c, final TileFlags v) {
+		if (c.keys.size() == v.keys.size()) {
+			Iterator<Integer> keysIterator = c.keys.listIterator();
+			while (keysIterator.hasNext()) {
+				int flag = keysIterator.next();
+				if (!v.keys.contains(flag)) {
+					return false;
+				}
+			}
+			return true;
+		}
+		return false;
+	}
 }
