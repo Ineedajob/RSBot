@@ -287,17 +287,14 @@ public class GlobalConfiguration {
 	public static String getHttpUserAgent() {
 		if (httpUserAgent != null)
 			return httpUserAgent;
-		String plat = "Windows", os = "Windows NT 5.2";
-		if (GlobalConfiguration.getCurrentOperatingSystem() == GlobalConfiguration.OperatingSystem.MAC) {
-			plat = "Macintosh";
-			os = "Intel Mac OS X 10_6_4";
-		} else if (GlobalConfiguration.getCurrentOperatingSystem() != GlobalConfiguration.OperatingSystem.WINDOWS) {
-			plat = "X11";
-			os = "Linux i686";
-		}
+		String os = "Windows NT 6.1";
+		if (GlobalConfiguration.getCurrentOperatingSystem() == GlobalConfiguration.OperatingSystem.MAC)
+			os = "Macintosh; Intel Mac OS X 10_6_6";
+		else if (GlobalConfiguration.getCurrentOperatingSystem() != GlobalConfiguration.OperatingSystem.WINDOWS)
+			os = "X11; Linux x86_64";
 		StringBuilder buf = new StringBuilder(125);
-		buf.append("Mozilla/5.0 (").append(plat).append("; U; ").append(os);
-		buf.append("; en-US) AppleWebKit/534.7 (KHTML, like Gecko) Chrome/7.0.517.44 Safari/534.7");
+		buf.append("Mozilla/5.0 (").append(os).append(")");
+		buf.append(" AppleWebKit/534.24 (KHTML, like Gecko) Chrome/11.0.696.60 Safari/534.24");
 		httpUserAgent = buf.toString();
 		return httpUserAgent;
 	}
