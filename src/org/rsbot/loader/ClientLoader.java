@@ -4,18 +4,17 @@ import org.rsbot.loader.asm.ClassReader;
 import org.rsbot.loader.script.ModScript;
 import org.rsbot.loader.script.ParseException;
 import org.rsbot.util.GlobalConfiguration;
+import org.rsbot.util.HttpAgent;
 
 import javax.swing.*;
 import java.io.*;
 import java.net.JarURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
 import java.util.logging.Logger;
-import java.util.zip.GZIPInputStream;
 
 /**
  * @author Jacmob
@@ -29,48 +28,23 @@ public class ClientLoader {
 	private int world = nextWorld();
 
 	public void init(URL script, File cache) throws IOException, ParseException {
-		byte[] data;
-		try {
-			data = download(script);
-
-			if (cache.exists() || cache.createNewFile()) {
-				FileOutputStream fos = new FileOutputStream(cache);
-				fos.write(data);
-				fos.close();
-			}
-		} catch (IOException ex) {
-			if (cache.exists()) {
-				long length = cache.length();
-
-				if (length == 0) {
-					throw new IOException("Unable to download ModScript data. Local copy empty.");
-				}
-				if (length > Integer.MAX_VALUE) {
-					throw new IOException("Unable to download ModScript data. Local copy invalid.");
-				}
-
-				FileInputStream fis = new FileInputStream(cache);
-				data = new byte[(int) length];
-				int total = 0;
-				while (total < data.length) {
-					int read = fis.read(data, total, data.length - total);
-					if (read < 0) {
-						break;
-					}
-					total += read;
-				}
-
-				if (total < data.length) {
-					throw new IOException("Unable to download ModScript data. Local copy could not be read fully.");
-				}
-
-				fis.close();
-			} else {
-				throw new IOException("Unable to download ModScript data.");
-			}
+		byte[] data = null;
+		FileInputStream fis = null;
+		
+		try{
+			HttpAgent.download(script, cache);
+			fis = new FileInputStream(cache);
+			data = load(fis);
+		} catch (IOException ioe) {
+			log.severe("Could not load ModScript data");
+		} finally {
+			try {
+				if (fis != null)
+					fis.close();
+			} catch (IOException ioe1) { }
 		}
-
-		this.script = new ModScript(unpack(data));
+		
+		this.script = new ModScript(data);
 	}
 
 	public void load(File cache, File version_file) throws IOException {
@@ -211,10 +185,6 @@ public class ClientLoader {
 		return 1 + new Random().nextInt(169);
 	}
 
-	private byte[] unpack(byte[] packed) throws IOException {
-		return load(new GZIPInputStream(new ByteArrayInputStream(packed)));
-	}
-
 	private byte[] load(InputStream is) throws IOException {
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		byte[] buffer = new byte[4096];
@@ -224,15 +194,4 @@ public class ClientLoader {
 		}
 		return os.toByteArray();
 	}
-
-	private byte[] download(URL url) throws IOException {
-		URLConnection uc = url.openConnection();
-		uc.setConnectTimeout(10000);
-		DataInputStream di = new DataInputStream(uc.getInputStream());
-		byte[] buffer = new byte[uc.getContentLength()];
-		di.readFully(buffer);
-		di.close();
-		return buffer;
-	}
-
 }

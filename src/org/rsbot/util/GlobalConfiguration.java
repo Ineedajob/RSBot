@@ -7,9 +7,9 @@ import org.rsbot.log.TextAreaLogHandler;
 import javax.swing.filechooser.FileSystemView;
 import java.awt.*;
 import java.io.*;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Properties;
@@ -293,8 +293,8 @@ public class GlobalConfiguration {
 		return buf.toString();
 	}
 
-	public static URLConnection getURLConnection(final URL url, final String referer) throws IOException {
-		final URLConnection con = url.openConnection();
+	public static HttpURLConnection getHttpConnection(final URL url, final String referer) throws IOException {
+		final HttpURLConnection con = (HttpURLConnection) url.openConnection();
 		con.addRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
 		con.addRequestProperty("Accept-Charset", "ISO-8859-1,utf-8;q=0.7,*;q=0.7");
 		con.addRequestProperty("Accept-Encoding", "gzip,deflate");

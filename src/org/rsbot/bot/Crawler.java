@@ -54,7 +54,7 @@ class Crawler {
 	private String downloadPage(final String url, final String referer) {
 		try {
 			final BufferedReader reader = new BufferedReader(
-					new InputStreamReader(GlobalConfiguration.getURLConnection(
+					new InputStreamReader(GlobalConfiguration.getHttpConnection(
 							new URL(url), referer).getInputStream()));
 			final StringBuilder buf = new StringBuilder();
 			String line;
