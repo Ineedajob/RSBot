@@ -4,6 +4,7 @@ import org.rsbot.util.GlobalConfiguration;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.logging.Logger;
@@ -53,9 +54,9 @@ class Crawler {
 
 	private String downloadPage(final String url, final String referer) {
 		try {
-			final BufferedReader reader = new BufferedReader(
-					new InputStreamReader(GlobalConfiguration.getHttpConnection(
-							new URL(url), referer).getInputStream()));
+			HttpURLConnection con = GlobalConfiguration.getHttpConnection(new URL(url));
+			con.addRequestProperty("Referer", referer);
+			final BufferedReader reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
 			final StringBuilder buf = new StringBuilder();
 			String line;
 			while ((line = reader.readLine()) != null) {

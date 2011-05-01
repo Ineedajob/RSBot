@@ -302,16 +302,13 @@ public class GlobalConfiguration {
 		return httpUserAgent;
 	}
 
-	public static HttpURLConnection getHttpConnection(final URL url, final String referer) throws IOException {
+	public static HttpURLConnection getHttpConnection(final URL url) throws IOException {
 		final HttpURLConnection con = (HttpURLConnection) url.openConnection();
 		con.addRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
 		con.addRequestProperty("Accept-Charset", "ISO-8859-1,utf-8;q=0.7,*;q=0.7");
 		con.addRequestProperty("Accept-Encoding", "gzip,deflate");
 		con.addRequestProperty("Accept-Language", "en-us,en;q=0.5");
 		con.addRequestProperty("Host", url.getHost());
-		if (referer != null) {
-			con.addRequestProperty("Referer", referer);
-		}
 		con.addRequestProperty("User-Agent", getHttpUserAgent());
 		return con;
 	}

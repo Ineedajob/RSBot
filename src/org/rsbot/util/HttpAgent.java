@@ -18,7 +18,7 @@ public class HttpAgent {
 	private static final Logger log = Logger.getLogger(HttpAgent.class.getName());
 	
 	public static HttpURLConnection download(final URL url, final File file) throws IOException {
-		HttpURLConnection con = GlobalConfiguration.getHttpConnection(url, null);
+		HttpURLConnection con = GlobalConfiguration.getHttpConnection(url);
 		con.setUseCaches(true);
 		
 		if (file.exists()) {
