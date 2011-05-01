@@ -1,5 +1,7 @@
 package org.rsbot.script.methods;
 
+import org.rsbot.script.util.SkillTracker;
+
 /**
  * This class is for all the skill calculations.
  * <p/>
@@ -229,5 +231,17 @@ public class Skills extends MethodProvider {
 		sleep(random(10, 100));
 		return methods.interfaces.getComponent(INTERFACE_TAB_STATS, component)
 				.doHover();
+	}
+
+	/**
+	 * Creates a new SkillTracker.
+	 *
+	 * @param skills Skills to track.
+	 * @return New instance of SkillTracker.
+	 * @see SkillTracker
+	 */
+	@Deprecated
+	public SkillTracker createTracker(final int... skills) {
+		return new SkillTracker(methods.bot, skills);
 	}
 }

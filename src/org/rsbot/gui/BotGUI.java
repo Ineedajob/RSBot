@@ -45,6 +45,7 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener, Pa
 	private boolean showAds = true;
 	private boolean disableConfirmations = false;
 	private static final ScriptDeliveryNetwork sdn = ScriptDeliveryNetwork.getInstance();
+	private final List<Bot> noModificationBots = new ArrayList<Bot>();
 
 	public BotGUI() {
 		init();
@@ -150,8 +151,10 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener, Pa
 						boolean selected = ((JCheckBoxMenuItem) evt.getSource()).isSelected();
 						current.overrideInput = selected;
 						toolBar.setOverrideInput(selected);
-					} else if (option.equals("Less CPU")) {
-						log.info("Minimize the window to significantly reduce CPU usage.");
+					} else if (option.equals("Disable Rendering")) {
+						current.disableRendering = ((JCheckBoxMenuItem) evt.getSource()).isSelected();
+					} else if (option.equals("Disable Canvas")) {
+						current.disableCanvas = ((JCheckBoxMenuItem) evt.getSource()).isSelected();
 					} else if (option.equals("Disable Anti-Randoms")) {
 						current.disableRandoms = ((JCheckBoxMenuItem) evt.getSource()).isSelected();
 					} else if (option.equals("Disable Auto Login")) {
@@ -369,9 +372,20 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener, Pa
 	}
 
 	private void lessCpu(final boolean enable) {
+		if (enable) {
+			noModificationBots.clear();
+			for (final Bot bot : bots) {
+				if (bot.disableCanvas || bot.disableRendering) {
+					noModificationBots.add(bot);
+				}
+			}
+		}
 		for (final Bot bot : bots) {
-			bot.disableCanvas = enable;
-			bot.disableRendering = enable;
+			boolean restore = !enable && noModificationBots.contains(bot);
+			int botIndex = noModificationBots.indexOf(bot);
+			Bot rBot = restore ? noModificationBots.get(botIndex) : null;
+			bot.disableCanvas = rBot != null ? rBot.disableCanvas : enable;
+			bot.disableRendering = rBot != null ? rBot.disableRendering : enable;
 		}
 	}
 
