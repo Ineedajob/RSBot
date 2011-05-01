@@ -45,6 +45,10 @@ public class TileFlags {
 		return tile;
 	}
 
+	public boolean isBlocked() {
+		return keys.size() > 0 && !keys.contains(Keys.TILE_CLEAR);
+	}
+
 	public void addKey(final int key) {
 		keys.add(key);
 	}
