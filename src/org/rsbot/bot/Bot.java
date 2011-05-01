@@ -9,9 +9,11 @@ import org.rsbot.event.events.TextPaintEvent;
 import org.rsbot.gui.AccountManager;
 import org.rsbot.script.internal.BreakHandler;
 import org.rsbot.script.internal.InputManager;
+import org.rsbot.script.internal.PassiveScriptHandler;
 import org.rsbot.script.internal.ScriptHandler;
 import org.rsbot.script.methods.Environment;
 import org.rsbot.script.methods.MethodContext;
+import org.rsbot.script.passives.Web;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -34,6 +36,7 @@ public class Bot {
 	private final InputManager im;
 	private RSLoader loader;
 	private final ScriptHandler sh;
+	private final PassiveScriptHandler psh;
 	private final BreakHandler bh;
 	private final Map<String, EventListener> listeners;
 
@@ -83,6 +86,7 @@ public class Bot {
 			}
 		});
 		sh = new ScriptHandler(this);
+		psh = new PassiveScriptHandler(this);
 		bh = new BreakHandler(this);
 		backBuffer = new BufferedImage(size.width, size.height, BufferedImage.TYPE_INT_RGB);
 		image = new BufferedImage(size.width, size.height, BufferedImage.TYPE_INT_RGB);
@@ -90,6 +94,7 @@ public class Bot {
 		textPaintEvent = new TextPaintEvent();
 		eventManager = new EventManager();
 		listeners = new TreeMap<String, EventListener>();
+		psh.runScript(new Web());
 	}
 
 	public void start() {
@@ -223,6 +228,10 @@ public class Bot {
 
 	public ScriptHandler getScriptHandler() {
 		return sh;
+	}
+
+	public PassiveScriptHandler getPassiveScriptHandler() {
+		return psh;
 	}
 
 	private void setClient(final Client cl) {

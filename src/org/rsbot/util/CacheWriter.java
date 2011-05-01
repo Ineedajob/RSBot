@@ -33,7 +33,7 @@ public class CacheWriter {
 		writer.destroyWriter();
 	}
 
-	private class QueueWriter extends Thread { //For slow systems and reduced lag, let's make writing slow and threaded.
+	private class QueueWriter extends Thread { //For slow systems and reduced lag, let's make writing slow and threaded (lol at thread and reducing cpu usage..).
 		private boolean destroy = false;
 		private final File file;
 

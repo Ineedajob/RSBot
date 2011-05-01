@@ -148,16 +148,8 @@ public abstract class Random extends Methods implements PaintListener {
 		} else {
 			i++;
 			up = i < 130;
-//			if (!up) {
-//				currentIndex++;
-//				if (currentIndex >= fadeArray.length) {
-//					currentIndex = 0;
-//				}
-//			}
 		}
 		g.setColor(new Color(0, 255, 0, i));
-//		Color cur = fadeArray[currentIndex];
-//		g.setColor(new Color(cur.getRed(), cur.getBlue(), cur.getGreen(), i));
 		g.fillRect(0, 0, p.x - 1, p.y - 1);
 		g.fillRect(p.x + 1, 0, w - (p.x + 1), p.y - 1);
 		g.fillRect(0, p.y + 1, p.x - 1, h - (p.y - 1));
@@ -165,5 +157,4 @@ public abstract class Random extends Methods implements PaintListener {
 		g.setColor(Color.RED);
 		g.drawString("Random Active: " + name, 540, 20);
 	}
-
 }
