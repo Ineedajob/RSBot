@@ -538,9 +538,9 @@ public class Walking extends MethodProvider {
 	 * @param to The tile to walk to.
 	 * @return Returns the web allocation.
 	 */
-	public Web getWebPath(final RSTile to) {
+	public RSWeb getWebPath(final RSTile to) {
 		RSTile from = methods.players.getMyPlayer().getLocation();
-		return new Web(methods, new RSTile(from.getX(), from.getY(),
+		return new RSWeb(methods, new RSTile(from.getX(), from.getY(),
 				methods.game.getPlane()), to);
 	}
 

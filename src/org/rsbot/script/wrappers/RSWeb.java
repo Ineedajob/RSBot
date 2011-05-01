@@ -13,7 +13,7 @@ import java.util.*;
  * @author Aut0r
  */
 
-public class Web extends WebSkeleton {
+public class RSWeb extends RSWebSkeleton {
 
 	/**
 	 * The end tile.
@@ -23,19 +23,19 @@ public class Web extends WebSkeleton {
 	/**
 	 * The WebPath variable.
 	 */
-	public WebPath path = null;
+	public RSWebPath path = null;
 
 	/**
 	 * The WebMap allocation.
 	 */
-	private WebMap map = null;
+	private RSWebMap map = null;
 
 	/**
 	 * @param ctx   The MethodContext.
 	 * @param start The tile you wish to start the web at.
 	 * @param end   The end tile you wish to result at.
 	 */
-	public Web(final MethodContext ctx, final RSTile start, final RSTile end) {
+	public RSWeb(final MethodContext ctx, final RSTile start, final RSTile end) {
 		super(ctx);
 		this.from = start;
 		this.to = end;
@@ -56,7 +56,7 @@ public class Web extends WebSkeleton {
 	 */
 	public void setMap() {
 		try {
-			List<WebTile> teTiles = new ArrayList<WebTile>();
+			List<RSWebTile> teTiles = new ArrayList<RSWebTile>();
 			File mapData = new File(GlobalConfiguration.Paths.getWebCache());
 			if (mapData.exists() && mapData.canRead()) {
 				final int xOff = 2045;
@@ -86,7 +86,7 @@ public class Web extends WebSkeleton {
 									break;
 								}
 							}
-							teTiles.add(new WebTile(new RSTile(xOff + Integer
+							teTiles.add(new RSWebTile(new RSTile(xOff + Integer
 									.parseInt(strArr[0]), yOff - Integer
 									.parseInt(strArr[1])), nAA, null));
 						} else if (strArr != null && strArr.length == 5) {
@@ -107,7 +107,7 @@ public class Web extends WebSkeleton {
 									break;
 								}
 							}
-							teTiles.add(new WebTile(new RSTile(xOff + Integer
+							teTiles.add(new RSWebTile(new RSTile(xOff + Integer
 									.parseInt(strArr[0]), yOff - Integer
 									.parseInt(strArr[1])), nAA, null));
 						}
@@ -117,7 +117,7 @@ public class Web extends WebSkeleton {
 						return;
 					}
 				}
-				map = new WebMap(teTiles.toArray(new WebTile[teTiles.size()]));
+				map = new RSWebMap(teTiles.toArray(new RSWebTile[teTiles.size()]));
 				br.close();
 				return;
 			}
@@ -149,32 +149,32 @@ public class Web extends WebSkeleton {
 				path = null;
 				return;
 			}
-			WebTile start = map.getWebTile(from);
-			WebTile end = map.getWebTile(to);
+			RSWebTile start = map.getWebTile(from);
+			RSWebTile end = map.getWebTile(to);
 			if (start == null || end == null) {
 				path = null;
 				return;
 			}
 			if (start.equals(end)) {
-				path = new WebPath(methods, new WebTile[]{end});
+				path = new RSWebPath(methods, new RSWebTile[]{end});
 				return;
 			}
-			HashSet<WebTile> open = new HashSet<WebTile>();
-			HashSet<WebTile> closed = new HashSet<WebTile>();
-			WebTile curr = start;
-			WebTile dest = end;
+			HashSet<RSWebTile> open = new HashSet<RSWebTile>();
+			HashSet<RSWebTile> closed = new HashSet<RSWebTile>();
+			RSWebTile curr = start;
+			RSWebTile dest = end;
 			curr.f = map.heuristic(curr, dest);
 			open.add(curr);
 			while (!open.isEmpty()) {
 				curr = lowest_f(open);
 				if (curr.equals(dest)) {
-					path = new WebPath(methods, path(curr));
+					path = new RSWebPath(methods, path(curr));
 					return;
 				}
 				open.remove(curr);
 				closed.add(curr);
 				for (int iNext : curr.connectingIndex()) {
-					WebTile next = map.getWebTile(iNext);
+					RSWebTile next = map.getWebTile(iNext);
 					if (next.req != null) {
 						if (!next.req.canDo()) {
 							continue;
@@ -212,9 +212,9 @@ public class Web extends WebSkeleton {
 	 * @param open The set of web tiles.
 	 * @return The lowest f score tile.
 	 */
-	private WebTile lowest_f(Set<WebTile> open) {
-		WebTile best = null;
-		for (WebTile t : open) {
+	private RSWebTile lowest_f(Set<RSWebTile> open) {
+		RSWebTile best = null;
+		for (RSWebTile t : open) {
 			if (best == null || t.f < best.f) {
 				best = t;
 			}
@@ -236,7 +236,7 @@ public class Web extends WebSkeleton {
 	 *
 	 * @return The web map.
 	 */
-	public WebMap map() {
+	public RSWebMap map() {
 		if (mapNeedsSet()) {
 			setMap();
 		}
@@ -249,14 +249,14 @@ public class Web extends WebSkeleton {
 	 * @param end The final web tile.
 	 * @return The path.
 	 */
-	private WebTile[] path(WebTile end) {
+	private RSWebTile[] path(RSWebTile end) {
 		LinkedList<RSTile> path = new LinkedList<RSTile>();
-		WebTile p = end;
+		RSWebTile p = end;
 		while (p != null) {
 			path.addFirst(p);
 			p = p.parent;
 		}
-		return path.toArray(new WebTile[path.size()]);
+		return path.toArray(new RSWebTile[path.size()]);
 	}
 
 	/**

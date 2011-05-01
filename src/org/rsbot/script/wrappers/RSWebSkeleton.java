@@ -12,7 +12,7 @@ import java.util.EnumSet;
  * @author Aut0r
  */
 
-public abstract class WebSkeleton extends MethodProvider {
+public abstract class RSWebSkeleton extends MethodProvider {
 
 	/**
 	 * Optional handlers while walking the web path.
@@ -21,7 +21,7 @@ public abstract class WebSkeleton extends MethodProvider {
 		HANDLE_RUN, SPACE_ACTIONS
 	}
 
-	public WebSkeleton(final MethodContext ctx) {
+	public RSWebSkeleton(final MethodContext ctx) {
 		super(ctx);
 	}
 

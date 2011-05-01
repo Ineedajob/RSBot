@@ -6,14 +6,14 @@ package org.rsbot.script.wrappers;
  * @author Timer
  * @author Aut0r
  */
-public class WebTile extends RSTile {
+public class RSWebTile extends RSTile {
 
 	private int[] neighbors = null;
-	public WebTile parent = null;
+	public RSWebTile parent = null;
 	public Task req = null;
 	public double g = 0.00, f = 0.00;
 
-	public WebTile(final RSTile tile, final int[] neighbors,
+	public RSWebTile(final RSTile tile, final int[] neighbors,
 	               final Task requirement) {
 		super(tile.getX(), tile.getY());
 		this.neighbors = neighbors;

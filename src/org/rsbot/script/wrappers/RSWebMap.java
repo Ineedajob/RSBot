@@ -7,13 +7,13 @@ package org.rsbot.script.wrappers;
  * @author Aut0r
  */
 
-public class WebMap {
+public class RSWebMap {
 	/**
 	 * The tile array.
 	 */
-	private final WebTile[] tiles;
+	private final RSWebTile[] tiles;
 
-	public WebMap(final WebTile[] tiles) {
+	public RSWebMap(final RSWebTile[] tiles) {
 		this.tiles = tiles;
 	}
 
@@ -23,7 +23,7 @@ public class WebMap {
 	 * @param index The index of the tile in the map.
 	 * @return The tile.
 	 */
-	public WebTile getWebTile(final int index) {
+	public RSWebTile getWebTile(final int index) {
 		try {
 			return tiles[index];
 		} catch (Exception e) {
@@ -36,7 +36,7 @@ public class WebMap {
 	 *
 	 * @return The tile array.
 	 */
-	public WebTile[] getTiles() {
+	public RSWebTile[] getTiles() {
 		return tiles;
 	}
 
@@ -46,10 +46,10 @@ public class WebMap {
 	 * @param tile The web tile from a tile.
 	 * @return The resulting web tile.
 	 */
-	public WebTile getWebTile(final RSTile tile) {
+	public RSWebTile getWebTile(final RSTile tile) {
 		double maxDist = 999999.0;
-		WebTile webTile = null;
-		for (WebTile ctrl : tiles) {
+		RSWebTile webTile = null;
+		for (RSWebTile ctrl : tiles) {
 			if (maxDist == 0.0) {
 				break;
 			}
@@ -72,7 +72,7 @@ public class WebMap {
 	 * @param end   The ending tile.
 	 * @return The heuristic.
 	 */
-	public double heuristic(WebTile start, WebTile end) {
+	public double heuristic(RSWebTile start, RSWebTile end) {
 		double dx = start.getX() - end.getX();
 		double dy = start.getY() - end.getY();
 		if (dx < 0) {
@@ -91,7 +91,7 @@ public class WebMap {
 	 * @param end   Ending web tile.
 	 * @return The dist.
 	 */
-	public double dist(WebTile start, WebTile end) {
+	public double dist(RSWebTile start, RSWebTile end) {
 		if (start.getX() != end.getX() && start.getY() != end.getY()) {
 			RSTile curr = start.tile();
 			RSTile dest = end.tile();

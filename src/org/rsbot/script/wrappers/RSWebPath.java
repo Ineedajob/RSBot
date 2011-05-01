@@ -12,15 +12,15 @@ import java.util.logging.Logger;
  * @author Aut0r
  */
 
-public class WebPath extends WebSkeleton {
+public class RSWebPath extends RSWebSkeleton {
 	/**
 	 * The web tile array.
 	 */
-	private final WebTile[] web;
+	private final RSWebTile[] web;
 
-	private final Logger log = Logger.getLogger(WebPath.class.getName());
+	private final Logger log = Logger.getLogger(RSWebPath.class.getName());
 
-	public WebPath(final MethodContext ctx, final WebTile[] tiles) {
+	public RSWebPath(final MethodContext ctx, final RSWebTile[] tiles) {
 		super(ctx);
 		this.web = tiles;
 	}
