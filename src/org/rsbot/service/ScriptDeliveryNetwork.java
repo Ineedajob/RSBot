@@ -62,7 +62,7 @@ public class ScriptDeliveryNetwork implements ScriptSource {
 		}
 
 		if (keys == null || keys.isEmpty() || (keys.containsKey("enabled") && !parseBool(keys.get("enabled")))) {
-			//enabled = false;
+			enabled = false;
 		}
 
 		if (keys.containsKey("error")) {
