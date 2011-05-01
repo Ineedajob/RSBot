@@ -23,6 +23,7 @@ public class WebQueue {
 	}
 
 	public static void Add(final HashMap<RSTile, TileFlags> theFlagsList) {
+		Web.map.putAll(theFlagsList);
 		new Thread() {
 			public void run() {
 				String addedString = "";
@@ -34,9 +35,12 @@ public class WebQueue {
 					TileFlags tileFlags = tileFlagsIterator.next().getValue();
 					if (tileFlags != null) {
 						addedString += tileFlags.toString() + "\n";
+						try {
+							Thread.sleep(5);
+						} catch (InterruptedException ignored) {
+						}
 					}
 				}
-				Web.map.putAll(theFlagsList);
 				cacheWriter.add(addedString);
 				addedString = null;
 				theFlagsList2.clear();
