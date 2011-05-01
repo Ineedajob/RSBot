@@ -8,10 +8,14 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 
 import org.rsbot.script.Script;
@@ -141,7 +145,7 @@ public class ScriptDeliveryNetwork implements ScriptSource {
 	}
 	
 	private void sync(final HashMap<String, URL> scripts) {
-		int created = 0, deleted = 0, updated = 0, failed = 0;
+		int created = 0, deleted = 0, updated = 0;
 		final File dir = new File(GlobalConfiguration.Paths.getScriptsNetworkDirectory());
 		ArrayList<File> delete = new ArrayList<File>(64);
 
@@ -149,6 +153,8 @@ public class ScriptDeliveryNetwork implements ScriptSource {
 			if (f.getName().endsWith(".class"))
 				delete.add(f);
 		}
+		
+		ArrayList<Callable<Collection<Object>>> tasks = new ArrayList<Callable<Collection<Object>>>();
 		
 		for (final Entry<String, URL> key : scripts.entrySet()) {
 			final File path = new File(dir, key.getKey());
@@ -159,13 +165,21 @@ public class ScriptDeliveryNetwork implements ScriptSource {
 					created++;
 			}
 			delete.remove(path);
-			try {
-				System.out.println("Downloading: " + path);
-				HttpAgent.download(key.getValue(), path);
-			} catch (Exception e) {
-				if (!path.getName().contains("$"))
-					failed++;
-			}
+			tasks.add(new Callable<Collection<Object>>() {
+				@Override
+				public Collection<Object> call() throws Exception {
+					log.fine("Downloading: " + path.getName());
+					HttpAgent.download(key.getValue(), path);
+					return null;
+				};
+			});
+		}
+		
+		ExecutorService executorService = Executors.newFixedThreadPool(8);
+		try {
+			executorService.invokeAll(tasks);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
 		
 		for (final File f : delete) {
@@ -176,7 +190,7 @@ public class ScriptDeliveryNetwork implements ScriptSource {
 				deleted++;
 		}
 		
-		log.fine(String.format("Downloaded %1$d new scripts, updated %2$d and deleted %3$d (%4$d failed)", created, deleted, updated, failed));
+		log.fine(String.format("Downloaded %1$d new scripts, updated %2$d and deleted %3$d", created, deleted, updated));
 	}
 	
 	private String getFileName(final URL url) {
