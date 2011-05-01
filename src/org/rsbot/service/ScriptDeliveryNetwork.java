@@ -60,7 +60,10 @@ public class ScriptDeliveryNetwork implements ScriptSource {
 
 		try {
 			URL source = new URL(GlobalConfiguration.Paths.URLs.SDN_CONTROL);
-			keys = IniParser.deserialise(source).get(IniParser.emptySection);
+			final File cache = getChachedFile("control.txt");
+			HttpAgent.download(source, cache);
+			BufferedReader reader = new BufferedReader(new FileReader(cache));
+			keys = IniParser.deserialise(reader).get(IniParser.emptySection);
 		} catch (Exception e) {
 			enabled = false;
 		}
