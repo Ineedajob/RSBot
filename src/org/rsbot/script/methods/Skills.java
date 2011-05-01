@@ -240,6 +240,7 @@ public class Skills extends MethodProvider {
 	 * @return New instance of SkillTracker.
 	 * @see SkillTracker
 	 */
+	@Deprecated
 	public SkillTracker createTracker(final int... skills) {
 		return new SkillTracker(methods.bot, skills);
 	}

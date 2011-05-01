@@ -16,7 +16,7 @@ import java.util.Arrays;
  * @author LastCoder
  * @version 1.0
  */
-@SuppressWarnings("unused")
+@Deprecated
 public class SkillTracker {
 	public int[] skills;
 	public int[] startExp, currentExp;
@@ -26,7 +26,6 @@ public class SkillTracker {
 
 	public transient int firstIndex;
 	public transient int lastIndex;
-
 	public long start;
 	public boolean started;
 
