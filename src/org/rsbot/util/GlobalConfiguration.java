@@ -308,9 +308,7 @@ public class GlobalConfiguration {
 		con.addRequestProperty("Accept-Charset", "ISO-8859-1,utf-8;q=0.7,*;q=0.7");
 		con.addRequestProperty("Accept-Encoding", "gzip,deflate");
 		con.addRequestProperty("Accept-Language", "en-us,en;q=0.5");
-		con.addRequestProperty("Connection", "keep-alive");
 		con.addRequestProperty("Host", url.getHost());
-		con.addRequestProperty("Keep-Alive", "300");
 		if (referer != null) {
 			con.addRequestProperty("Referer", referer);
 		}
