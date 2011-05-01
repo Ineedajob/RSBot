@@ -183,7 +183,7 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 				public void actionPerformed(ActionEvent e) {
 					final String icon = connected ? GlobalConfiguration.Paths.Resources.ICON_DISCONNECT :
 						GlobalConfiguration.Paths.Resources.ICON_CONNECT;
-					connect.setIcon(new ImageIcon(icon));
+					connect.setIcon(new ImageIcon(GlobalConfiguration.getImage(icon)));
 					connect.repaint();
 					connected = !connected;
 					load();
