@@ -165,7 +165,7 @@ public class BotPanel extends JPanel {
 			g.fillRect(0, 0, 768, 503);
 			g.setColor(new Color(150, 0, 0));
 			g.drawRect(230, 233, 303, 33);
-			String s = "The canvas has been disabled!";
+			String s = "Canvas disabled...";
 			g.setFont(font);
 			g.setColor(Color.WHITE);
 			g.drawString(s, (768 - fontMetrics.stringWidth(s)) / 2, 255);
