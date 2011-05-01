@@ -2,10 +2,15 @@ package org.rsbot.event.impl;
 
 import org.rsbot.bot.Bot;
 import org.rsbot.event.listeners.PaintListener;
+import org.rsbot.script.internal.wrappers.TileFlags;
 import org.rsbot.script.methods.MethodContext;
-import org.rsbot.script.wrappers.*;
+import org.rsbot.script.methods.Web;
+import org.rsbot.script.wrappers.RSPlayer;
+import org.rsbot.script.wrappers.RSTile;
 
 import java.awt.*;
+import java.util.Iterator;
+import java.util.Map;
 
 public class DrawWeb implements PaintListener {
 
@@ -31,24 +36,12 @@ public class DrawWeb implements PaintListener {
 		if (player == null) {
 			return;
 		}
-		render.setColor(Color.white);
-		final WebMap map = new Web(ctx, null, null).map();
-		final WebTile[] webTiles = map.getTiles();
-		for (WebTile webTile : webTiles) {
-			if (ctx.calc.distanceTo(webTile.tile()) < 100) {
-				Point p = tileToMap(webTile, player);
-				for (int l : webTile.connectingIndex()) {
-					Point pp = tileToMap(webTiles[l], player);
-					render.drawLine(pp.x, pp.y, p.x, p.y);
-				}
-			}
-		}
-		render.setColor(Color.red);
-		for (WebTile webTile : map.getTiles()) {
-			if (ctx.calc.distanceTo(webTile.tile()) < 100) {
-				Point p = tileToMap(webTile, player);
-				render.fillRect(p.x - 2, p.y - 2, 4, 4);
-			}
+		Iterator<Map.Entry<RSTile, TileFlags>> rs = Web.map.entrySet().iterator();
+		while (rs.hasNext()) {
+			TileFlags t = rs.next().getValue();
+			render.setColor(t.isBlocked() ? Color.red : Color.green);
+			Point p = tileToMap(t.getTile(), player);
+			render.drawLine(p.x, p.y, p.x, p.y);
 		}
 	}
 }
