@@ -3,12 +3,16 @@ package org.rsbot.script.passives;
 import org.rsbot.script.PassiveScript;
 import org.rsbot.script.PassiveScriptManifest;
 import org.rsbot.script.internal.wrappers.TileFlags;
+import org.rsbot.script.methods.Web;
 import org.rsbot.script.wrappers.RSTile;
 import org.rsbot.service.WebQueue;
+
+import java.util.HashMap;
 
 @PassiveScriptManifest(name = "Web Data Collector", authors = {"Timer"})
 public class WebData extends PassiveScript {
 	private RSTile lb = null;
+	public final HashMap<RSTile, TileFlags> rs_map = new HashMap<RSTile, TileFlags>();
 
 	@Override
 	public boolean activateCondition() {
@@ -24,6 +28,7 @@ public class WebData extends PassiveScript {
 		sleep(5000);
 		lb = curr_base;
 		Node t;
+		log("Memorizing new region.");
 		final int flags[][] = walking.getCollisionFlags(game.getPlane());
 		for (int i = 0; i < 104; i++) {
 			for (int j = 0; j < 104; j++) {
@@ -71,15 +76,16 @@ public class WebData extends PassiveScript {
 				if (!tI.isBlocked()) {
 					tI.addKey(TileFlags.Keys.TILE_CLEAR);
 				}
-				if (!WebQueue.rs_map.containsKey(start) && f_y > 0 && f_x < 103) {
-					WebQueue.rs_map.put(start, tI);
+				if (!Web.map.containsKey(start) && f_y > 0 && f_x < 103) {
+					rs_map.put(start, tI);
 				} else {
-					if (!WebQueue.rs_map.get(start).equals(tI)) {
-						WebQueue.rs_map.remove(start);
+					if (!Web.map.get(start).equals(tI)) {
+						Web.map.remove(start);
 					}
 				}
 			}
 		}
+		WebQueue.Add(rs_map);
 		return -1;
 	}
 

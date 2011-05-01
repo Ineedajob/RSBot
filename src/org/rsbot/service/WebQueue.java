@@ -8,11 +8,12 @@ import org.rsbot.util.GlobalConfiguration;
 
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
 
 public class WebQueue {
 	private static CacheWriter cacheWriter = null;
-	public static final HashMap<RSTile, TileFlags> rs_map = new HashMap<RSTile, TileFlags>();
+	private static final Logger log = Logger.getLogger("WebQueue");
 
 	public static void Create() {
 		if (cacheWriter == null) {
@@ -20,18 +21,17 @@ public class WebQueue {
 		}
 	}
 
-	public static void Add(final List<TileFlags> tileFlagsList) {
+	public static void Add(final HashMap<RSTile, TileFlags> theFlagsList) {
 		String addedString = "";
-		Iterator<TileFlags> tileFlagsIterator = tileFlagsList.listIterator();
+		Iterator<Map.Entry<RSTile, TileFlags>> tileFlagsIterator = theFlagsList.entrySet().iterator();
 		while (tileFlagsIterator.hasNext()) {
-			TileFlags tileFlags = tileFlagsIterator.next();
+			TileFlags tileFlags = tileFlagsIterator.next().getValue();
 			if (tileFlags != null) {
 				addedString += tileFlags.toString() + "\n";
 			}
 		}
+		Web.map.putAll(theFlagsList);
 		cacheWriter.add(addedString);
-		Web.map.putAll(rs_map);
-		rs_map.clear();
 		addedString = null;
 	}
 
