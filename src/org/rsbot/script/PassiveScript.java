@@ -1,10 +1,8 @@
 package org.rsbot.script;
 
-import org.rsbot.event.listeners.PaintListener;
 import org.rsbot.script.methods.MethodContext;
 import org.rsbot.script.methods.Methods;
 
-import java.awt.*;
 import java.util.EventListener;
 
 public abstract class PassiveScript extends Methods implements EventListener, Runnable {
@@ -17,6 +15,8 @@ public abstract class PassiveScript extends Methods implements EventListener, Ru
 	public abstract boolean activateCondition();
 
 	public abstract int loop();
+
+	public abstract int iterationSleep();
 
 	public boolean onStart() {
 		return true;
@@ -59,16 +59,12 @@ public abstract class PassiveScript extends Methods implements EventListener, Ru
 						onFinish();
 					}
 				}
+				Thread.sleep(iterationSleep());
 			}
 		} catch (Exception ignored) {
 		}
 		ctx.bot.getEventManager().removeListener(this);
 		running = false;
-	}
-
-	public final void onRepaint(Graphics g) {
-		g.setColor(Color.RED);
-		g.drawString("Passive Script active: " + name, 540, 20);
 	}
 
 	public final void deactivate(int id) {
@@ -83,6 +79,10 @@ public abstract class PassiveScript extends Methods implements EventListener, Ru
 			throw new IllegalStateException("Already added to pool!");
 		}
 		this.id = id;
+	}
+
+	public final int getID() {
+		return id;
 	}
 
 	public final boolean isRunning() {

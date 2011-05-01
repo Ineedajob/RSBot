@@ -83,6 +83,11 @@ public class WebData extends PassiveScript {
 		return -1;
 	}
 
+	@Override
+	public int iterationSleep() {
+		return 1000;
+	}
+
 	private class Node {
 		public int x, y;
 

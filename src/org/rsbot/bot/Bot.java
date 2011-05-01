@@ -14,6 +14,7 @@ import org.rsbot.script.internal.ScriptHandler;
 import org.rsbot.script.methods.Environment;
 import org.rsbot.script.methods.MethodContext;
 import org.rsbot.script.passives.WebData;
+import org.rsbot.script.passives.WebLoader;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -121,6 +122,7 @@ public class Bot {
 					}
 					if (methods != null && !kill_passive) {
 						psh.runScript(new WebData());
+						psh.runScript(new WebLoader());
 					}
 				}
 			}.start();
