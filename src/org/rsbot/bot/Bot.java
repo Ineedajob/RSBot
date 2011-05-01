@@ -13,7 +13,6 @@ import org.rsbot.script.internal.PassiveScriptHandler;
 import org.rsbot.script.internal.ScriptHandler;
 import org.rsbot.script.methods.Environment;
 import org.rsbot.script.methods.MethodContext;
-import org.rsbot.script.passives.Web;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -94,7 +93,6 @@ public class Bot {
 		textPaintEvent = new TextPaintEvent();
 		eventManager = new EventManager();
 		listeners = new TreeMap<String, EventListener>();
-		psh.runScript(new Web());
 	}
 
 	public void start() {
@@ -118,6 +116,7 @@ public class Bot {
 	public void stop() {
 		eventManager.killThread(false);
 		sh.stopScript();
+		psh.stopScript();
 		loader.stop();
 		loader.destroy();
 		loader = null;

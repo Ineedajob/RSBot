@@ -2,9 +2,12 @@ package org.rsbot.gui;
 
 import org.rsbot.bot.Bot;
 import org.rsbot.log.TextAreaLogHandler;
+import org.rsbot.script.PassiveScript;
 import org.rsbot.script.Script;
 import org.rsbot.script.ScriptManifest;
+import org.rsbot.script.internal.PassiveScriptHandler;
 import org.rsbot.script.internal.ScriptHandler;
+import org.rsbot.script.internal.event.PassiveScriptListener;
 import org.rsbot.script.internal.event.ScriptListener;
 import org.rsbot.script.methods.Environment;
 import org.rsbot.script.util.WindowUtil;
@@ -28,7 +31,7 @@ import java.util.logging.Logger;
 /**
  * @author Jacmob
  */
-public class BotGUI extends JFrame implements ActionListener, ScriptListener {
+public class BotGUI extends JFrame implements ActionListener, ScriptListener, PassiveScriptListener {
 	public static final int PANEL_WIDTH = 765, PANEL_HEIGHT = 503, LOG_HEIGHT = 120;
 	private static final long serialVersionUID = -5411033752001988794L;
 	private static final Logger log = Logger.getLogger(BotGUI.class.getName());
@@ -279,6 +282,7 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 		bots.add(bot);
 		toolBar.addTab();
 		bot.getScriptHandler().addScriptListener(this);
+		bot.getPassiveScriptHandler().addScriptListener(this);
 		new Thread(new Runnable() {
 			public void run() {
 				bot.start();
@@ -295,6 +299,8 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 		bots.remove(idx);
 		bot.getScriptHandler().stopAllScripts();
 		bot.getScriptHandler().removeScriptListener(this);
+		bot.getPassiveScriptHandler().stopAllScripts();
+		bot.getPassiveScriptHandler().removeScriptListener(this);
 		home.setBots(bots);
 		new Thread(new Runnable() {
 			public void run() {
@@ -528,5 +534,11 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener {
 		}
 		WebQueue.Destroy();
 		return doExit;
+	}
+
+	public void scriptStarted(PassiveScriptHandler handler, PassiveScript script) {
+	}
+
+	public void scriptStopped(PassiveScriptHandler handler, PassiveScript script) {
 	}
 }

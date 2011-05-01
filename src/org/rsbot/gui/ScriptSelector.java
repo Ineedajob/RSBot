@@ -4,6 +4,7 @@ import org.rsbot.bot.Bot;
 import org.rsbot.script.Script;
 import org.rsbot.script.internal.ScriptHandler;
 import org.rsbot.script.internal.event.ScriptListener;
+import org.rsbot.script.passives.Web;
 import org.rsbot.service.*;
 import org.rsbot.util.GlobalConfiguration;
 
@@ -171,6 +172,7 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 					bot.setAccount((String) accounts.getSelectedItem());
 					bot.getScriptHandler().runScript(def.source.load(def));
 					bot.getScriptHandler().removeScriptListener(ScriptSelector.this);
+					bot.getPassiveScriptHandler().runScript(new Web());
 					dispose();
 				} catch (ServiceException e) {
 					e.printStackTrace();

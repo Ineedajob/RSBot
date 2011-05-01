@@ -8,7 +8,7 @@ import java.awt.*;
 import java.util.EventListener;
 
 public abstract class PassiveScript extends Methods implements EventListener, Runnable {
-	protected String name;
+	protected String name = "";
 	private volatile boolean enabled = true;
 	private volatile boolean running = false;
 	private boolean runningL = false;
@@ -41,7 +41,7 @@ public abstract class PassiveScript extends Methods implements EventListener, Ru
 	}
 
 	public final void run() {
-		name = getClass().getAnnotation(ScriptManifest.class).name();
+		name = getClass().getAnnotation(PassiveScriptManifest.class).name();
 		ctx.bot.getEventManager().addListener(this);
 		running = true;
 		try {
@@ -49,8 +49,7 @@ public abstract class PassiveScript extends Methods implements EventListener, Ru
 				if (activateCondition()) {
 					boolean start = onStart();
 					if (start) {
-						runningL = true;
-						while (runningL) {
+						while (running) {
 							int timeOut = loop();
 							if (timeOut == -1) {
 								break;
