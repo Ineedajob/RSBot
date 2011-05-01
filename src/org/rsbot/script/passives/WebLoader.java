@@ -14,13 +14,16 @@ public class WebLoader extends PassiveScript {
 	@Override
 	public int loop() {
 		if (!Web.loaded) {
-			//TODO load the web.
-			Web.loaded = true;
+			try {
+				Web.loaded = true;
+			} catch (Exception e) {
+				log("Failed to load the web.. trying again.");
+			}
 		}
 		if (Web.loaded) {
 			deactivate(getID());
 		}
-		return 50;
+		return -1;
 	}
 
 	@Override

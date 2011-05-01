@@ -29,11 +29,12 @@ public class WebData extends PassiveScript {
 			sleep(5000);
 			lb = curr_base;
 			Node t;
-			log("Analysing new region to your web.");
-			final int flags[][] = walking.getCollisionFlags(game.getPlane());
+			log("Analysing new region into your local web.");
+			int plane = game.getPlane();
+			final int flags[][] = walking.getCollisionFlags(plane);
 			for (int i = 0; i < 104; i++) {
 				for (int j = 0; j < 104; j++) {
-					RSTile start = new RSTile(curr_base.getX() + i, curr_base.getY() + j);
+					RSTile start = new RSTile(curr_base.getX() + i, curr_base.getY() + j, plane);
 					int base_x = game.getBaseX(), base_y = game.getBaseY();
 					int curr_x = start.getX() - base_x, curr_y = start.getY() - base_y;
 					t = new Node(curr_x, curr_y);
