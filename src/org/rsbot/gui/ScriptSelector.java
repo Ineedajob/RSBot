@@ -4,7 +4,6 @@ import org.rsbot.bot.Bot;
 import org.rsbot.script.Script;
 import org.rsbot.script.internal.ScriptHandler;
 import org.rsbot.script.internal.event.ScriptListener;
-import org.rsbot.script.passives.Web;
 import org.rsbot.service.*;
 import org.rsbot.util.GlobalConfiguration;
 
@@ -35,7 +34,6 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 	private static final ScriptSource SRC_PRECOMPILED;
 	private static final ScriptSource SRC_BUNDLED;
 	private static final ScriptSource SRC_DRM;
-
 	private final Bot bot;
 	private JTable table;
 	private JTextField search;
@@ -46,16 +44,12 @@ public class ScriptSelector extends JDialog implements ScriptListener {
 	private boolean connected = true;
 
 	static {
-		SRC_SOURCES = new FileScriptSource(new File(
-				GlobalConfiguration.Paths.getScriptsSourcesDirectory()));
-		SRC_PRECOMPILED = new FileScriptSource(new File(
-				GlobalConfiguration.Paths.getScriptsPrecompiledDirectory()));
+		SRC_SOURCES = new FileScriptSource(new File(GlobalConfiguration.Paths.getScriptsSourcesDirectory()));
+		SRC_PRECOMPILED = new FileScriptSource(new File(GlobalConfiguration.Paths.getScriptsPrecompiledDirectory()));
 		if (GlobalConfiguration.RUNNING_FROM_JAR) {
-			SRC_BUNDLED = new FileScriptSource(new File(
-					GlobalConfiguration.Paths.getScriptsExtractedCache()));
+			SRC_BUNDLED = new FileScriptSource(new File(GlobalConfiguration.Paths.getScriptsExtractedCache()));
 		} else {
-			SRC_BUNDLED = new FileScriptSource(new File("." + File.separator + GlobalConfiguration.Paths
-					.SCRIPTS_NAME_SRC));
+			SRC_BUNDLED = new FileScriptSource(new File("." + File.separator + GlobalConfiguration.Paths.SCRIPTS_NAME_SRC));
 		}
 		SRC_DRM = ScriptDeliveryNetwork.getInstance();
 	}

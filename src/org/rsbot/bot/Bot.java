@@ -13,6 +13,7 @@ import org.rsbot.script.internal.PassiveScriptHandler;
 import org.rsbot.script.internal.ScriptHandler;
 import org.rsbot.script.methods.Environment;
 import org.rsbot.script.methods.MethodContext;
+import org.rsbot.script.passives.Web;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -38,6 +39,7 @@ public class Bot {
 	private final PassiveScriptHandler psh;
 	private final BreakHandler bh;
 	private final Map<String, EventListener> listeners;
+	private boolean kill_passive = false;
 
 	/**
 	 * Whether or not user input is allowed despite a script's preference.
@@ -109,6 +111,19 @@ public class Bot {
 			ThreadGroup tg = new ThreadGroup("RSClient-" + hashCode());
 			Thread thread = new Thread(tg, loader, "Loader");
 			thread.start();
+			new Thread() {
+				public void run() {
+					try {
+						while (methods == null && !kill_passive) {
+							Thread.sleep(50);
+						}
+					} catch (InterruptedException ignored) {
+					}
+					if (methods != null && !kill_passive) {
+						psh.runScript(new Web());
+					}
+				}
+			}.start();
 		} catch (Exception ignored) {
 		}
 	}
@@ -119,6 +134,7 @@ public class Bot {
 		psh.stopScript();
 		loader.stop();
 		loader.destroy();
+		kill_passive = true;
 		loader = null;
 	}
 
