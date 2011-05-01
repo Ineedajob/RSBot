@@ -80,15 +80,16 @@ public class WebData extends PassiveScript {
 					if (!Web.map.containsKey(start) && f_y > 0 && f_x < 103) {
 						rs_map.put(start, tI);
 					} else {
-						if (!Web.map.get(start).equals(tI) && f_y > 0 && f_x < 103) {
-							Web.map.remove(start);
+						try {
+							if (f_y > 0 && f_x < 103 && !Web.map.get(start).equals(tI)) {
+								Web.map.remove(start);
+							}
+						} catch (NullPointerException ignored) {
 						}
 					}
 				}
 			}
-			log("Hi");
 			WebQueue.Add(rs_map);
-			log("bye.");
 			return -1;
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -61,7 +61,7 @@ public class TileFlags {
 			int flag = keysIterator.next();
 			flags += flag + "=";
 		}
-		return tile.toString() + flags;
+		return tile.getX() + "," + tile.getY() + tile.getZ() + "." + flags;
 	}
 
 	@Override
