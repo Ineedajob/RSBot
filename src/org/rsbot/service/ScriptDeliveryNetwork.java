@@ -177,7 +177,8 @@ public class ScriptDeliveryNetwork extends FileScriptSource {
 			});
 		}
 		
-		ExecutorService executorService = Executors.newFixedThreadPool(8);
+		final int threads = 2;
+		ExecutorService executorService = Executors.newFixedThreadPool(threads);
 		try {
 			executorService.invokeAll(tasks);
 		} catch (InterruptedException e) {
