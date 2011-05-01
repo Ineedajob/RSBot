@@ -3,6 +3,7 @@ package org.rsbot.script.methods;
 import org.rsbot.script.util.Filter;
 import org.rsbot.script.wrappers.*;
 
+import java.lang.Integer;
 import java.awt.*;
 
 /**
@@ -368,6 +369,25 @@ public class Bank extends MethodProvider {
 		return methods.interfaces.get(INTERFACE_DEPOSIT_BOX).isValid();
 	}
 
+	private static class ReachableBankerFilter implements Filter<RSNPC> {
+		@Override
+		public boolean accept(RSNPC npc) {
+			final int id = npc.getID();
+			final RSTile location = npc.getLocation();
+			for (int banker : BANKERS) {
+				if (banker == id) {
+					for (RSTile unreachableBanker : UNREACHABLE_BANKERS) {
+						if (unreachableBanker.equals(location)) {
+							return false;
+						}
+					}
+					return true;
+				}
+			}
+			return false;
+		}
+	}
+
 	/**
 	 * Opens one of the supported banker NPCs, booths, or chests nearby. If they
 	 * are not nearby, and they are not null, it will automatically walk to the
@@ -376,96 +396,58 @@ public class Bank extends MethodProvider {
 	 * @return <tt>true</tt> if the bank was opened; otherwise <tt>false</tt>.
 	 */
 	public boolean open() {
+		if (isOpen()) {
+			return true;
+		}
 		try {
-			if (!isOpen()) {
-				if (methods.menu.isOpen()) {
-					methods.mouse.moveSlightly();
-					sleep(random(20, 30));
+			if (methods.menu.isOpen()) {
+				methods.mouse.moveSlightly();
+				sleep(random(20, 30));
+			}
+			RSObject bankBooth = methods.objects.getNearest(BANK_BOOTHS);
+			RSNPC banker = methods.npcs.getNearest(new ReachableBankerFilter());
+			RSObject bankChest = methods.objects.getNearest(BANK_CHESTS);
+			/* Find closese one, others are set to null. Remember distance and tile. */
+			int lowestDist = Integer.MAX_VALUE;
+			RSTile tile = null;
+			if (bankBooth != null) {
+				tile = bankBooth.getLocation();
+				lowestDist = methods.calc.distanceTo(tile);
+			}
+			if (banker != null && methods.calc.distanceTo(banker) < lowestDist) {
+				tile = banker.getLocation();
+				lowestDist = methods.calc.distanceTo(tile);
+				bankBooth = null;
+			}
+			if (bankChest != null && methods.calc.distanceTo(bankChest) < lowestDist) {
+				tile = bankChest.getLocation();
+				lowestDist = methods.calc.distanceTo(tile);
+				bankBooth = null;
+				banker = null;
+			}
+			/* Open closest one, if any found */
+			if (lowestDist < 5 && methods.calc.tileOnMap(tile) && methods.calc.canReach(tile, true)) {
+				boolean didAction = false;
+				if (bankBooth != null) {
+					didAction = bankBooth.doAction("Use-Quickly");
+				} else if (banker != null) {
+					didAction = banker.doAction("Bank", "Banker");
+				} else if (bankChest != null) {
+					didAction = bankChest.doAction("Bank") || methods.menu.doAction("Use");
 				}
-				RSObject bankBooth = methods.objects.getNearest(BANK_BOOTHS);
-				RSNPC banker = methods.npcs.getNearest(new Filter<RSNPC>() {
-					public boolean accept(RSNPC npc) {
-						int id = npc.getID();
-						for (int banker : BANKERS) {
-							if (banker == id) {
-								RSTile location = npc.getLocation();
-								for (RSTile unreachableBanker : UNREACHABLE_BANKERS) {
-									if (unreachableBanker.equals(location)) {
-										return false;
-									}
-								}
-								return true;
-							}
-						}
-						return false;
-					}
-				});
-				final RSObject bankChest = methods.objects.getNearest(
-						BANK_CHESTS);
-				int lowestDist = methods.calc.distanceTo(bankBooth);
-				if ((banker != null) && (methods.calc.distanceTo(banker) < lowestDist)) {
-					lowestDist = methods.calc.distanceTo(banker);
-					bankBooth = null;
-				}
-				if ((bankChest != null) && (methods.calc.distanceTo(bankChest) < lowestDist)) {
-					bankBooth = null;
-					banker = null;
-				}
-				if (((bankBooth != null) && (methods.calc.distanceTo(bankBooth) < 5) && methods.calc.tileOnMap(
-						bankBooth.getLocation()) && methods.calc.canReach(
-						bankBooth.getLocation(),
-						true)) || ((banker != null) && (methods.calc.distanceTo(banker) < 5) && methods.calc.tileOnMap(
-						banker.getLocation()) && methods.calc.canReach(
-						banker.getLocation(),
-						true)) || ((bankChest != null) && (methods.calc.distanceTo(
-						bankChest) < 5) && methods.calc.tileOnMap(bankChest.getLocation()) && methods.calc.canReach(
-						bankChest.getLocation(), true) && !isOpen())) {
-					if (bankBooth != null) {
-						if (bankBooth.doAction("Use-Quickly")) {
-							int count = 0;
-							while (!isOpen() && ++count < 10) {
-								sleep(random(200, 400));
-								if (methods.players.getMyPlayer().isMoving()) {
-									count = 0;
-								}
-							}
-						} else {
-							methods.camera.turnTo(bankBooth);
-						}
-					} else if (banker != null) {
-						if (banker.doAction("Bank Banker")) {
-							int count = 0;
-							while (!isOpen() && ++count < 10) {
-								sleep(random(200, 400));
-								if (methods.players.getMyPlayer().isMoving()) {
-									count = 0;
-								}
-							}
-						} else {
-							methods.camera.turnTo(banker, 20);
-						}
-					} else if (bankChest != null) {
-						if (bankChest.doAction("Bank") || methods.menu.doAction("Use")) {
-							int count = 0;
-							while (!isOpen() && ++count < 10) {
-								sleep(random(200, 400));
-								if (methods.players.getMyPlayer().isMoving()) {
-									count = 0;
-								}
-							}
-						} else {
-							methods.camera.turnTo(bankChest);
+				if (didAction) {
+					int count = 0;
+					while (!isOpen() && ++count < 10) {
+						sleep(random(200, 400));
+						if (methods.players.getMyPlayer().isMoving()) {
+							count = 0;
 						}
 					}
 				} else {
-					if (bankBooth != null) {
-						methods.walking.walkTileMM(bankBooth.getLocation());
-					} else if (banker != null) {
-						methods.walking.walkTileMM(banker.getLocation());
-					} else if (bankChest != null) {
-						methods.walking.walkTileMM(bankChest.getLocation());
-					}
+					methods.camera.turnTo(tile);
 				}
+			} else if (tile != null) {
+				methods.walking.walkTileMM(tile);
 			}
 			return isOpen();
 		} catch (final Exception e) {
@@ -744,6 +726,7 @@ public class Bank extends MethodProvider {
 	 * Gets the equipment items from the bank interface.
 	 *
 	 * @return All equipment items that are being worn.
+	 * @author LastCoder
 	 */
 	public RSItem[] getEquipmentItems() {
 		if (methods.interfaces.get(INTERFACE_EQUIPMENT).getComponent(
