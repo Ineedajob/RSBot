@@ -390,7 +390,6 @@ public class BotGUI extends JFrame implements ActionListener, ScriptListener, Pa
 			}
 		});
 		addWindowStateListener(new WindowStateListener() {
-			@Override
 			public void windowStateChanged(WindowEvent arg0) {
 				switch (arg0.getID()){
 				case WindowEvent.WINDOW_ICONIFIED:
