@@ -5,6 +5,7 @@ import org.rsbot.client.Loader;
 import org.rsbot.loader.ClientLoader;
 import org.rsbot.loader.script.ParseException;
 import org.rsbot.util.GlobalConfiguration;
+import org.rsbot.util.HttpAgent;
 
 import java.applet.Applet;
 import java.awt.*;
@@ -103,22 +104,23 @@ public class RSLoader extends Applet implements Runnable, Loader {
 
 	public void load() {
 		try {
-			WebLoader webLoader = new WebLoader();
-			if (webLoader.load()) {
-				ClientLoader cl = new ClientLoader();
-				cl.init(new URL(GlobalConfiguration.Paths.URLs.UPDATE),
-						new File(GlobalConfiguration.Paths.getModScriptCache()));
-				cl.load(new File(GlobalConfiguration.Paths.getClientCache()),
-						new File(GlobalConfiguration.Paths.getVersionCache()));
-				targetName = cl.getTargetName();
-				classLoader = new RSClassLoader(cl.getClasses(), new URL("http://" + targetName + ".com/"));
-			} else {
-				log.severe("Unable to download web data.");
-			}
+			HttpAgent.download(new URL(GlobalConfiguration.Paths.URLs.WEB),
+					new File(GlobalConfiguration.Paths.getWebCache()));
+		} catch (IOException wex) {
+			log.severe("Unable to load web matrix: " + wex.getMessage());
+		}
+		try {
+			ClientLoader cl = new ClientLoader();
+			cl.init(new URL(GlobalConfiguration.Paths.URLs.UPDATE), new File(
+					GlobalConfiguration.Paths.getModScriptCache()));
+			cl.load(new File(GlobalConfiguration.Paths.getClientCache()),
+					new File(GlobalConfiguration.Paths.getVersionCache()));
+			targetName = cl.getTargetName();
+			classLoader = new RSClassLoader(cl.getClasses(), new URL("http://" + targetName + ".com/"));
 		} catch (IOException ex) {
-			log.severe("Unable to load client - " + ex.getMessage());
+			log.severe("Unable to load client: " + ex.getMessage());
 		} catch (ParseException ex) {
-			log.severe("Unable to load client - " + ex.toString());
+			log.severe("Unable to load client: " + ex.toString());
 		}
 	}
 
