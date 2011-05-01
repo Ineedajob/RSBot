@@ -26,7 +26,9 @@ public class WebQueue {
 		new Thread() {
 			public void run() {
 				String addedString = "";
-				final Map<RSTile, TileFlags> tl = Collections.unmodifiableMap(theFlagsList);
+				final HashMap<RSTile, TileFlags> theFlagsList2 = new HashMap<RSTile, TileFlags>();
+				theFlagsList2.putAll(theFlagsList);
+				final Map<RSTile, TileFlags> tl = Collections.unmodifiableMap(theFlagsList2);
 				Iterator<Map.Entry<RSTile, TileFlags>> tileFlagsIterator = tl.entrySet().iterator();
 				while (tileFlagsIterator.hasNext()) {
 					TileFlags tileFlags = tileFlagsIterator.next().getValue();
@@ -37,6 +39,7 @@ public class WebQueue {
 				Web.map.putAll(theFlagsList);
 				cacheWriter.add(addedString);
 				addedString = null;
+				theFlagsList2.clear();
 			}
 		}.start();
 	}
