@@ -6,7 +6,7 @@ import org.rsbot.script.wrappers.RSTile;
 import java.util.HashMap;
 
 public class Web extends MethodProvider {
-	public static final HashMap<RSTile, TileFlags> rs_map = new HashMap<RSTile, TileFlags>();
+	public static final HashMap<RSTile, TileFlags> map = new HashMap<RSTile, TileFlags>();
 
 	Web(final MethodContext ctx) {
 		super(ctx);

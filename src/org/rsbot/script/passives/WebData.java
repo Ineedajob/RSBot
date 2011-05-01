@@ -3,8 +3,8 @@ package org.rsbot.script.passives;
 import org.rsbot.script.PassiveScript;
 import org.rsbot.script.PassiveScriptManifest;
 import org.rsbot.script.internal.wrappers.TileFlags;
-import org.rsbot.script.methods.Web;
 import org.rsbot.script.wrappers.RSTile;
+import org.rsbot.service.WebQueue;
 
 @PassiveScriptManifest(name = "Web Data Collector", authors = {"Timer"})
 public class WebData extends PassiveScript {
@@ -71,11 +71,11 @@ public class WebData extends PassiveScript {
 				if (!tI.isBlocked()) {
 					tI.addKey(TileFlags.Keys.TILE_CLEAR);
 				}
-				if (!Web.rs_map.containsKey(start) && f_y > 0 && f_x < 103) {
-					Web.rs_map.put(start, tI);
+				if (!WebQueue.rs_map.containsKey(start) && f_y > 0 && f_x < 103) {
+					WebQueue.rs_map.put(start, tI);
 				} else {
-					if (!Web.rs_map.get(start).equals(tI)) {
-						Web.rs_map.remove(start);
+					if (!WebQueue.rs_map.get(start).equals(tI)) {
+						WebQueue.rs_map.remove(start);
 					}
 				}
 			}
