@@ -310,6 +310,7 @@ public class GlobalConfiguration {
 		con.addRequestProperty("Accept-Language", "en-us,en;q=0.5");
 		con.addRequestProperty("Host", url.getHost());
 		con.addRequestProperty("User-Agent", getHttpUserAgent());
+		con.setConnectTimeout(10000);
 		return con;
 	}
 
