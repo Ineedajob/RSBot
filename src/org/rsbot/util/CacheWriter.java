@@ -54,7 +54,7 @@ public class CacheWriter {
 
 		public void run() {
 			List<String> outList = new ArrayList<String>();
-			while (!destroy && file.exists() && file.canWrite() && queue.size() > 0) {
+			while ((!destroy || queue.size() > 0) && file.exists() && file.canWrite()) {
 				try {
 					FileWriter fileWriter = new FileWriter(file);
 					BufferedWriter out = new BufferedWriter(fileWriter);
