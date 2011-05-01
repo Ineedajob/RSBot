@@ -60,8 +60,8 @@ public class CacheWriter {
 					BufferedWriter out = new BufferedWriter(fileWriter);
 					if (queue.size() > 0) {
 						outList.clear();
-						if (queue.size() >= 500) {
-							outList.addAll(queue.subList(0, 499));
+						if (queue.size() >= 1000) {
+							outList.addAll(queue.subList(0, 999));
 							queue.removeAll(outList);
 						} else {
 							outList.addAll(queue);
@@ -76,7 +76,7 @@ public class CacheWriter {
 					out.flush();
 					out.close();
 					try {
-						Thread.sleep(10000);
+						Thread.sleep(5000);
 					} catch (InterruptedException ignored) {
 					}
 				} catch (IOException ignored) {
