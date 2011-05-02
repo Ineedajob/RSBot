@@ -51,7 +51,7 @@ public class QuizSolver extends Random {
 		public boolean clickAnswer() {
 			answer = -1;
 			int count = 0;
-
+			sleep(random(1000,1700));
 			for (int j = 0; j < items.length; j++) {
 				if (arrayContains(items[j], ID_One)) {
 					log.info("Slot 1: " + names[j]);

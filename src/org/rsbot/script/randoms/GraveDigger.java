@@ -88,7 +88,12 @@ public class GraveDigger extends Random {
 
 	private int tmpID = -1, tmpStatus = -1; // used to store some data across
 	// loops
-
+	
+	public void onFinish() {
+		tmpID = -1;
+		tmpStatus = -1;
+	}
+	
 	public GraveDigger() {
 		groups.add(new Group(7614, new int[]{7603, 7605, 7612}));
 		groups.add(new Group(7615, new int[]{7600, 7601, 7604}));
@@ -100,7 +105,6 @@ public class GraveDigger extends Random {
 	@Override
 	public boolean activateCondition() {
 		if ((settings.getSetting(696) != 0) && (objects.getNearest(12731) != null)) {
-			tmpID = tmpStatus = -1;
 			return true;
 		}
 		return false;

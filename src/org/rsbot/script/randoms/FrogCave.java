@@ -42,14 +42,17 @@ public class FrogCave extends Random {
 		return interfaces.canContinue()
 				|| interfaces.getComponent(65, 6).isValid();
 	}
+	
+	public void onFinish() {
+		talkedToHerald = false;
+		frog = null;
+		tries = 0;
+	}
 
 	@Override
 	public int loop() {
 		try {
 			if (!activateCondition()) {
-				talkedToHerald = false;
-				frog = null;
-				tries = 0;
 				return -1;
 			}
 			if (canContinue()) {

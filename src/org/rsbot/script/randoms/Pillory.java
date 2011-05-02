@@ -28,6 +28,11 @@ public class Pillory extends Random implements MessageListener {
 			new RSTile(3226, 3407), new RSTile(3228, 3407), new RSTile(3230, 3407),
 			new RSTile(2685, 3489), new RSTile(2683, 3489), new RSTile(2681, 3489)};
 
+	public void onFinish() {
+		fail = 0;
+		inCage = false;
+		myLoc = null;
+	}
 	@Override
 	public boolean activateCondition() {
 		if (!game.isLoggedIn()) {

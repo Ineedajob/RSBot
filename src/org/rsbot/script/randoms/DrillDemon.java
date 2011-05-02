@@ -15,6 +15,14 @@ public class DrillDemon extends Random {
 	public int sign3;
 	public int sign4;
 
+	public void onFinish() {
+		sign1 = -1;
+		sign2 = -1;
+		sign3 = -1;
+		sign4 = -1;
+	}
+	
+	
 	@Override
 	public boolean activateCondition() {
 		return playerInArea(3167, 4822, 3159, 4818);

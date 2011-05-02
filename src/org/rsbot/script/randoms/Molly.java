@@ -39,6 +39,16 @@ public class Molly extends Random {
 	private boolean talkedToMolly;
 	private boolean finished;
 	private long delayTime;
+	
+	public void onFinish() {
+		RSNPC molly = null;
+		RSObject controlPanel = null;
+		mollyID = -1;
+		cameraSet = false;
+		talkedToMolly = false;
+		finished = false;
+		delayTime = -1;
+	}
 
 	@Override
 	public boolean activateCondition() {

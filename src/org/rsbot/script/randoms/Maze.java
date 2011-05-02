@@ -15,7 +15,7 @@ import java.util.ArrayList;
 @ScriptManifest(authors = {"Zenzie", "Iscream"}, name = "Maze", version = 1.6)
 public class Maze extends Random {
 
-	public final ArrayList<Door> paths = new ArrayList<Door>();
+	ArrayList<Door> paths = new ArrayList<Door>();
 
 	String usePath = "None";
 
@@ -283,7 +283,15 @@ public class Maze extends Random {
 	}
 
 	@Override
-	public void onFinish() {
+	public void onFinish() {	
+	paths = new ArrayList<Door>();
+	usePath = "None";
+	doorDir = 'a';
+	walkToTile = null;
+	doorIndex = 0;
+	tryCount = 0;
+	lastTry = 0;
+	lastDoor = null;
 		log("Random event finished ~ Made By Zenzie");
 	}
 

@@ -31,7 +31,7 @@ public class LoginBot extends Random {
 	private static final int INTERFACE_WELCOME_SCREEN_BUTTON_PLAY_2 = 171;
 	//private static final int INTERFACE_WELCOME_SCREEN_BUTTON_LOGOUT = 193;
 	private static final int INTERFACE_WELCOME_SCREEN_TEXT_RETURN = 221;
-	private static final int INTERFACE_WELCOME_SCREEN_BUTTON_BACK = 228;
+	private static final int INTERFACE_WELCOME_SCREEN_BUTTON_BACK = 218;
 	private static final int INTERFACE_WELCOME_SCREEN_HIGH_RISK_WORLD_TEXT = 86;
 	private static final int INTERFACE_WELCOME_SCREEN_HIGH_RISK_WORLD_LOGIN_BUTTON = 93;
 	private static final int INTERFACE_GRAPHICS_NOTICE = 976;
@@ -96,6 +96,9 @@ public class LoginBot extends Random {
 							INTERFACE_WELCOME_SCREEN_BUTTON_BACK).doClick();
 					stopScript(false);
 				}
+		        if (interfaces.get(INTERFACE_WELCOME_SCREEN).getComponent(INTERFACE_WELCOME_SCREEN_BUTTON_BACK).isValid()) {
+		        	         interfaces.get(INTERFACE_WELCOME_SCREEN).getComponent(INTERFACE_WELCOME_SCREEN_BUTTON_BACK).doClick();
+		        } 
 
 				if (returnText.contains("login limit exceeded")) {
 					if (interfaces.getComponent(INTERFACE_WELCOME_SCREEN_BUTTON_BACK).isValid()) {
@@ -104,6 +107,8 @@ public class LoginBot extends Random {
 				}
 
 				if (returnText.contains("your account has not logged out")) {
+				interfaces.getComponent(INTERFACE_WELCOME_SCREEN,
+						INTERFACE_WELCOME_SCREEN_BUTTON_BACK).doClick();
 					if (invalidCount > 10) {
 						log.warning("Unable to login after 10 attempts. Stopping script.");
 						log.severe("It seems you are actually already logged in?");
@@ -169,6 +174,7 @@ public class LoginBot extends Random {
 				stopScript(false);
 			}
 			if (returnText.contains("your account has not logged out")) {
+			  interfaces.get(INTERFACE_LOGIN_SCREEN).getComponent(INTERFACE_BUTTON_BACK).doClick(); 
 				if (invalidCount > 10) {
 					log.warning("Unable to login after 10 attempts. Stopping script.");
 					log.severe("It seems you are actually already logged in?");

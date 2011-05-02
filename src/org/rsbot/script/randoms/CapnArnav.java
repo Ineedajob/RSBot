@@ -32,7 +32,7 @@ public class CapnArnav extends Random {
 	}
 
 	private int index = -1;
-
+	
 	@Override
 	public boolean activateCondition() {
 		final RSNPC captain = npcs.getNearest(ARNAV_ID);
@@ -90,7 +90,7 @@ public class CapnArnav extends Random {
 						camera.turnTo(portal);
 					}
 					if (portal.doAction("Enter")) {
-						return random(1000, 1300);
+						return random(3000,3500);
 					}
 				}
 				break;

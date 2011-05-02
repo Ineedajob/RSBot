@@ -15,6 +15,10 @@ public class Mime extends Random {
 	private int animation;
 	private RSNPC mime;
 
+	public void onFinish() {
+		mime = null;
+		animation = -1;
+	}
 	@Override
 	public boolean activateCondition() {
 		final RSNPC mime = npcs.getNearest(1056);
@@ -28,7 +32,10 @@ public class Mime extends Random {
 		for (int a = 0; a < interfaces.get(188).getChildCount(); a++) {
 			if (interfaces.get(188).getComponent(a).getText().contains(find)) {
 				log("Clicked on: " + find);
-				return interfaces.get(188).getComponent(a).doClick();
+				sleep(random(500,1000));
+				interfaces.get(188).getComponent(a).doClick();
+				sleep(random(1000,1200));
+				return true; 
 			}
 		}
 		return false;

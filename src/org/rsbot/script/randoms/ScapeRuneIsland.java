@@ -30,6 +30,7 @@ public class ScapeRuneIsland extends Random {
 		direction = null;
 		finished = false;
 		fishing = false;
+		forceTalk = false;
 	}
 
 	@Override

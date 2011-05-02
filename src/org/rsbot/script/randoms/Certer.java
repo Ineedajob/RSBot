@@ -23,7 +23,10 @@ public class Certer extends Random {
 
 	private boolean readyToLeave = false;
 	private int failCount = 0;
-
+	public void onFinish() {
+		failCount = 0;
+		readyToLeave = false;
+	}
 	@Override
 	public boolean activateCondition() {
 		return game.isLoggedIn() && objects.getNearest(bookPiles) != null;

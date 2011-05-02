@@ -437,6 +437,12 @@ public class Prison extends Random {
 			sleep(5000, 10000);
 			stopScript(false);
 		}
+		unlocked = state = 0;
+		balloonToPop = null;
+		pete = null;
+		talkedtopete = false;
+		key = false;
+		lucky = false;
 	}
 
 	public short[] setItemIDs(final int b2p) {

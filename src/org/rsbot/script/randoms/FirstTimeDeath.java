@@ -69,6 +69,9 @@ public class FirstTimeDeath extends Random {
 
 	@Override
 	public void onFinish() {
+		step = -1;
+		exit = false;
+		reaper = null;
 	}
 
 }
