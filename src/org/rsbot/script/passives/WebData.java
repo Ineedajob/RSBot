@@ -38,7 +38,7 @@ public class WebData extends PassiveScript {
 					int base_x = game.getBaseX(), base_y = game.getBaseY();
 					int curr_x = start.getX() - base_x, curr_y = start.getY() - base_y;
 					t = new Node(curr_x, curr_y);
-					RSTile offset = walking.getCollisionOffset(game.getPlane());
+					RSTile offset = walking.getCollisionOffset(plane);
 					int off_x = offset.getX();
 					int off_y = offset.getY();
 					int x = t.x, y = t.y;
@@ -71,11 +71,12 @@ public class WebData extends PassiveScript {
 					}
 					if ((here & TileFlags.Flags.BLOCKED) != 0) {
 						tI.addKey(TileFlags.Keys.BLOCKED);
+					} else {
+						if ((here & TileFlags.Flags.WATER) != 0) {
+							tI.addKey(TileFlags.Keys.TILE_WATER);
+						}
 					}
-					if ((here & TileFlags.Flags.WATER) != 0) {
-						tI.addKey(TileFlags.Keys.TILE_WATER);
-					}
-					if (!tI.isBlocked()) {
+					if (!tI.isQuestionable()) {
 						tI.addKey(TileFlags.Keys.TILE_CLEAR);
 					}
 					if (!Web.map.containsKey(start) && f_y > 0 && f_x < 103) {
@@ -83,7 +84,7 @@ public class WebData extends PassiveScript {
 					} else {
 						try {
 							if (f_y > 0 && f_x < 103 && !Web.map.get(start).equals(tI)) {
-								Web.map.remove(start);
+								WebQueue.Remove(start);
 							}
 						} catch (NullPointerException ignored) {
 						}

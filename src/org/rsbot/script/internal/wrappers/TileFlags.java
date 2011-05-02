@@ -45,8 +45,16 @@ public class TileFlags {
 		return tile;
 	}
 
-	public boolean isBlocked() {
+	public boolean isQuestionable() {
 		return keys.size() > 0 && !keys.contains(Keys.TILE_CLEAR);
+	}
+
+	public boolean isWalkable() {
+		return !keys.contains(Keys.TILE_WATER) && !keys.contains(Keys.BLOCKED);
+	}
+
+	public boolean isWater() {
+		return keys.contains(Keys.TILE_WATER);
 	}
 
 	public void addKey(final int key) {
@@ -61,7 +69,7 @@ public class TileFlags {
 			int flag = keysIterator.next();
 			flags += flag + "=";
 		}
-		return tile.getX() + "," + tile.getY() + tile.getZ() + "." + flags;
+		return tile.getX() + "," + tile.getY() + "," + tile.getZ() + "tile=data" + flags;
 	}
 
 	@Override

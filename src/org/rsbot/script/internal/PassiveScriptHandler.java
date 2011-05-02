@@ -73,8 +73,15 @@ public class PassiveScriptHandler {
 	}
 
 	public void stopAllScripts() {
-		for (int i : scripts.keySet()) {
-			stopScript(i);
+		Set<Integer> theSet = scripts.keySet();
+		int[] arr = new int[theSet.size()];
+		int c = 0;
+		for (int i : theSet) {
+			arr[c] = i;
+			c++;
+		}
+		for (int id : arr) {
+			stopScript(id);
 		}
 	}
 

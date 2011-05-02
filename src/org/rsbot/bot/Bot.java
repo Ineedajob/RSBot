@@ -146,8 +146,11 @@ public class Bot {
 		// client reads size of loader applet for drawing
 		loader.setSize(width, height);
 		// simulate loader repaint awt event dispatch
-		loader.update(backBuffer.getGraphics());
-		loader.paint(backBuffer.getGraphics());
+		Graphics g = backBuffer.getGraphics();
+		loader.update(g);
+		if (!disableCanvas) {
+			loader.paint(g);
+		}
 	}
 
 	public boolean setAccount(final String name) {
