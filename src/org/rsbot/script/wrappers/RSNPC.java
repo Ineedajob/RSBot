@@ -89,5 +89,21 @@ public class RSNPC extends RSCharacter {
 			return c.getRSNPCDef();
 		}
 	}
+	
+	/**
+	 * Turns towards the RSNPC.
+	 * @author LastCoder
+	 * @return <tt>true</tt> - If RSNPC is on screen after attempting to move camera angle.
+	 */
+	public boolean turnTo() {
+		final RSNPC n = methods.npcs.getNearest(getID());
+		if(n != null) {
+			if(!n.isOnScreen()) {
+				methods.camera.turnTo(n);
+				return n.isOnScreen();
+			}
+		}
+		return false;
+	}
 
 }

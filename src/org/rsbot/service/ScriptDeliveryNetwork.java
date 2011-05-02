@@ -25,7 +25,7 @@ import org.rsbot.util.IniParser;
  */
 public class ScriptDeliveryNetwork extends FileScriptSource {
 	private static final Logger log = Logger.getLogger("ScriptDelivery");
-	private static final ScriptDeliveryNetwork instance = new ScriptDeliveryNetwork();
+	private static ScriptDeliveryNetwork instance;
 	private String key;
 	private final String defaultKey = "0000000000000000000000000000000000000000";
 	private final int version = 1;
@@ -48,6 +48,8 @@ public class ScriptDeliveryNetwork extends FileScriptSource {
 	}
 
 	public static ScriptDeliveryNetwork getInstance() {
+		if (instance == null)
+			instance = new ScriptDeliveryNetwork();
 		return instance;
 	}
 
@@ -147,6 +149,13 @@ public class ScriptDeliveryNetwork extends FileScriptSource {
 	}
 	
 	private void sync(final HashMap<String, URL> scripts) {
+		int n = 0;
+		for (String name : scripts.keySet())
+			if (!name.contains("$"))
+				n++;
+		if (n > 0)
+			log.info("Loading " + Integer.toString(n) + " scripts from the network");
+		
 		int created = 0, deleted = 0, updated = 0;
 		final File dir = new File(GlobalConfiguration.Paths.getScriptsNetworkDirectory());
 		ArrayList<File> delete = new ArrayList<File>(64);

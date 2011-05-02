@@ -240,5 +240,21 @@ public class RSObject extends MethodProvider {
 	public int hashCode() {
 		return obj.hashCode();
 	}
+	
+	/**
+	 * Turns the camera towards the RSObject.
+	 * @author LastCoder
+	 * @return <tt>true</tt> If RSObject is on screen after attempted to move camera angle.
+	 */
+	public boolean turnTo() {
+		final RSObject o = methods.objects.getNearest(getID());
+		if(o != null) {
+			if(!o.isOnScreen()) {
+				methods.camera.turnTo(o);
+				return o.isOnScreen();
+			}
+		}
+		return false;
+	}
 
 }
