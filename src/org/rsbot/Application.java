@@ -4,7 +4,6 @@ import org.rsbot.bot.Bot;
 import org.rsbot.gui.BotGUI;
 import org.rsbot.log.LogOutputStream;
 import org.rsbot.log.SystemConsoleHandler;
-import org.rsbot.security.RestrictedSecurityManager;
 import org.rsbot.util.Extractor;
 
 import java.awt.*;
@@ -16,7 +15,6 @@ public class Application {
 	private static BotGUI gui;
 
 	public static void main(final String[] args) throws Exception {
-		System.setSecurityManager(new RestrictedSecurityManager());
 		bootstrap();
 		new Extractor(args).run();
 		gui = new BotGUI();
