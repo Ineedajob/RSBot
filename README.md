@@ -2,7 +2,7 @@
 
 RSBot is an immensely popular and successful bot for a Java MMORPG. The program source code is completely open and free - whether you're a Java expert or just keen to explore, the bot is a valuable learning resource. 
 
-###Get the code
+### Get the code
 
 Download the latest source code with:
 
@@ -21,9 +21,9 @@ Subversion is also supported:
  * [Java Development Kit](http://www.oracle.com/technetwork/java/javase/downloads/)
 
 
-##Microsoft Windows
+## Microsoft Windows
 
-###Compiling
+### Compiling
 
 Make sure JDK is installed, then execute the `make.bat` file by *double clicking* it.
 
@@ -32,7 +32,7 @@ Make sure JDK is installed, then execute the `make.bat` file by *double clicking
 Java is required to run RSBot. You can run the client by *double clicking* the JAR file named `RSBot.jar`.
 
 
-##Linux, Mac OS X and other Unix systems
+## Linux, Mac OS X and other Unix systems
 
 ### Compiling
 
